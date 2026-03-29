@@ -1,0 +1,153 @@
+import "server-only";
+
+import { and, desc, eq } from "drizzle-orm";
+
+import { db } from "@/db";
+import { projectContents, projects } from "@/db/schema";
+
+type CreateProjectInput = {
+  name: string;
+  themeKey?: string;
+};
+
+function isUuid(value: string) {
+  return /^[0-9a-f]{8}-[0-9a-f]{4}-[1-5][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i.test(
+    value
+  );
+}
+
+function slugifyProjectName(name: string) {
+  const baseSlug = name
+    .toLowerCase()
+    .trim()
+    .replace(/[^a-z0-9]+/g, "-")
+    .replace(/^-+|-+$/g, "")
+    .slice(0, 200);
+
+  return baseSlug || "project";
+}
+
+async function generateUniqueProjectSlug(baseName: string) {
+  const baseSlug = slugifyProjectName(baseName);
+  let slug = baseSlug;
+  let suffix = 2;
+
+  while (true) {
+    const [existingProject] = await db
+      .select({ id: projects.id })
+      .from(projects)
+      .where(eq(projects.slug, slug))
+      .limit(1);
+
+    if (!existingProject) {
+      return slug;
+    }
+
+    slug = `${baseSlug}-${suffix}`;
+    suffix += 1;
+  }
+}
+
+export async function getProjectsByUserId(userId: string) {
+  return db
+    .select({
+      id: projects.id,
+      name: projects.name,
+      slug: projects.slug,
+      themeKey: projects.themeKey,
+      status: projects.status,
+      publishedAt: projects.publishedAt,
+      createdAt: projects.createdAt,
+      updatedAt: projects.updatedAt,
+    })
+    .from(projects)
+    .where(eq(projects.userId, userId))
+    .orderBy(desc(projects.updatedAt), desc(projects.createdAt));
+}
+
+export async function getProjectByIdForUser(projectId: string, userId: string) {
+  if (!isUuid(projectId)) {
+    return null;
+  }
+
+  try {
+    const [project] = await db
+      .select({
+        id: projects.id,
+        userId: projects.userId,
+        name: projects.name,
+        slug: projects.slug,
+        themeKey: projects.themeKey,
+        status: projects.status,
+        publishedAt: projects.publishedAt,
+        createdAt: projects.createdAt,
+        updatedAt: projects.updatedAt,
+        contentId: projectContents.id,
+        contentJson: projectContents.contentJson,
+        schemaVersion: projectContents.schemaVersion,
+      })
+      .from(projects)
+      .innerJoin(projectContents, eq(projectContents.projectId, projects.id))
+      .where(and(eq(projects.id, projectId), eq(projects.userId, userId)))
+      .limit(1);
+
+    return project ?? null;
+  } catch (error) {
+    if (
+      typeof error === "object" &&
+      error !== null &&
+      "cause" in error &&
+      typeof error.cause === "object" &&
+      error.cause !== null &&
+      "code" in error.cause &&
+      error.cause.code === "22P02"
+    ) {
+      return null;
+    }
+
+    throw error;
+  }
+}
+
+export async function createProjectForUser(userId: string, input: CreateProjectInput) {
+  const name = input.name.trim();
+
+  if (!name) {
+    throw new Error("Project name is required");
+  }
+
+  const slug = await generateUniqueProjectSlug(name);
+  const themeKey = input.themeKey ?? "classic-light";
+
+  return db.transaction(async (tx) => {
+    const [project] = await tx
+      .insert(projects)
+      .values({
+        userId,
+        name,
+        slug,
+        themeKey,
+        status: "draft",
+      })
+      .returning({
+        id: projects.id,
+        userId: projects.userId,
+        name: projects.name,
+        slug: projects.slug,
+        themeKey: projects.themeKey,
+        status: projects.status,
+        createdAt: projects.createdAt,
+        updatedAt: projects.updatedAt,
+      });
+
+    await tx.insert(projectContents).values({
+      projectId: project.id,
+      contentJson: {
+        blocks: [],
+      },
+      schemaVersion: 1,
+    });
+
+    return project;
+  });
+}
