@@ -109,4 +109,4 @@ The database is **owned by this application** and follows a **code-first approac
 - Do not assume DB structure outside `schema.ts`
 - Do not introduce schema changes without migrations
 - Prefer existing query patterns over raw SQL
-- Keep changes minimal and explicit
+- Keep changes minimal and explicit.
