@@ -17,7 +17,8 @@
     "test:watch": "vitest",
     "test:coverage": "npm run test:db:setup && vitest run --coverage",
     "test:e2e": "npm run test:db:setup && playwright test",
-    "test:e2e:ui": "npm run test:db:setup && playwright test --ui"
+    "test:e2e:ui": "npm run test:db:setup && playwright test --ui",
+    "test:all": "npm run test && npm run test:e2e"
   },
   "dependencies": {
     "bcryptjs": "^3.0.3",

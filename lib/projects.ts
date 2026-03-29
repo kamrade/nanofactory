@@ -4,6 +4,7 @@ import { and, desc, eq } from "drizzle-orm";
 
 import { db } from "@/db";
 import { projectContents, projects } from "@/db/schema";
+import { buildProjectSlugCandidate, slugifyProjectName } from "@/lib/projects/slug";
 
 type CreateProjectInput = {
   name: string;
@@ -16,23 +17,12 @@ function isUuid(value: string) {
   );
 }
 
-function slugifyProjectName(name: string) {
-  const baseSlug = name
-    .toLowerCase()
-    .trim()
-    .replace(/[^a-z0-9]+/g, "-")
-    .replace(/^-+|-+$/g, "")
-    .slice(0, 200);
-
-  return baseSlug || "project";
-}
-
 async function generateUniqueProjectSlug(baseName: string) {
   const baseSlug = slugifyProjectName(baseName);
-  let slug = baseSlug;
-  let suffix = 2;
+  let attempt = 1;
 
   while (true) {
+    const slug = buildProjectSlugCandidate(baseSlug, attempt);
     const [existingProject] = await db
       .select({ id: projects.id })
       .from(projects)
@@ -43,8 +33,7 @@ async function generateUniqueProjectSlug(baseName: string) {
       return slug;
     }
 
-    slug = `${baseSlug}-${suffix}`;
-    suffix += 1;
+    attempt += 1;
   }
 }
 

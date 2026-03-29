@@ -6,7 +6,7 @@ import { Pool } from "pg";
 import { users } from "../schema";
 import { TEST_USER } from "./test-data";
 
-dotenv.config({ path: process.env.DOTENV_CONFIG_PATH ?? ".env.local" });
+dotenv.config({ path: process.env.DOTENV_CONFIG_PATH ?? ".env.local", quiet: true });
 
 async function main() {
   if (!process.env.DATABASE_URL) {
@@ -25,6 +25,7 @@ async function main() {
     await db
       .insert(users)
       .values({
+        id: TEST_USER.id,
         email: TEST_USER.email,
         displayName: TEST_USER.displayName,
         passwordHash,
@@ -37,7 +38,9 @@ async function main() {
         },
       });
 
-    console.log(`Seeded test user: ${TEST_USER.email}`);
+    if (process.env.DOTENV_CONFIG_PATH !== ".env.test") {
+      console.log(`Seeded test user: ${TEST_USER.email}`);
+    }
   } finally {
     await pool.end();
   }

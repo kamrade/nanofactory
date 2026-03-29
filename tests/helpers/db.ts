@@ -21,9 +21,18 @@ export async function seedTestUser() {
   const [user] = await db
     .insert(users)
     .values({
+      id: TEST_USER.id,
       email: TEST_USER.email,
       displayName: TEST_USER.displayName,
       passwordHash,
+    })
+    .onConflictDoUpdate({
+      target: users.email,
+      set: {
+        id: TEST_USER.id,
+        displayName: TEST_USER.displayName,
+        passwordHash,
+      },
     })
     .returning({
       id: users.id,
