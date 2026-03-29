@@ -4,14 +4,9 @@ import { drizzle } from "drizzle-orm/node-postgres";
 import { Pool } from "pg";
 
 import { users } from "../schema";
+import { TEST_USER } from "./test-data";
 
-dotenv.config({ path: ".env.local" });
-
-const TEST_USER = {
-  email: "test.user@nanofactory.local",
-  displayName: "Test User",
-  password: "dev-password-123",
-} as const;
+dotenv.config({ path: process.env.DOTENV_CONFIG_PATH ?? ".env.local" });
 
 async function main() {
   if (!process.env.DATABASE_URL) {

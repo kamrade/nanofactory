@@ -10,7 +10,14 @@
     "db:push": "drizzle-kit push",
     "db:generate": "drizzle-kit generate",
     "db:migrate": "drizzle-kit migrate",
-    "db:seed:test-user": "tsx db/seeds/test-user.ts"
+    "db:seed:test-user": "tsx db/seeds/test-user.ts",
+    "test:db:setup": "tsx scripts/test-db-setup.ts",
+    "test:db:reset": "tsx scripts/test-db-reset.ts",
+    "test": "npm run test:db:setup && vitest run",
+    "test:watch": "vitest",
+    "test:coverage": "npm run test:db:setup && vitest run --coverage",
+    "test:e2e": "npm run test:db:setup && playwright test",
+    "test:e2e:ui": "npm run test:db:setup && playwright test --ui"
   },
   "dependencies": {
     "bcryptjs": "^3.0.3",
@@ -19,20 +26,24 @@
     "next-auth": "^4.24.13",
     "pg": "^8.20.0",
     "react": "19.2.4",
-    "react-dom": "19.2.4"
+    "react-dom": "19.2.4",
+    "server-only": "^0.0.1"
   },
   "devDependencies": {
+    "@playwright/test": "^1.58.2",
     "@tailwindcss/postcss": "^4",
     "@types/node": "^20",
     "@types/pg": "^8.20.0",
     "@types/react": "^19",
     "@types/react-dom": "^19",
+    "@vitest/coverage-v8": "^4.1.2",
     "dotenv": "^17.3.1",
     "drizzle-kit": "^0.31.10",
     "eslint": "^9",
     "eslint-config-next": "16.2.1",
     "tailwindcss": "^4",
     "tsx": "^4.21.0",
-    "typescript": "^5"
+    "typescript": "^5",
+    "vitest": "^4.1.2"
   }
 }
