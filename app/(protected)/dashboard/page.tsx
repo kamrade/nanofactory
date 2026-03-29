@@ -91,6 +91,16 @@ export default async function DashboardPage() {
                       </h3>
                       <p className="text-sm text-zinc-600">Slug: {project.slug}</p>
                       <p className="text-sm text-zinc-600">Status: {project.status}</p>
+                      {project.status === "published" ? (
+                        <Link
+                          href={`/p/${project.slug}`}
+                          target="_blank"
+                          rel="noreferrer"
+                          className="inline-flex items-center text-sm font-medium text-emerald-700 transition hover:text-emerald-900"
+                        >
+                          View public page
+                        </Link>
+                      ) : null}
                     </div>
 
                     <Link

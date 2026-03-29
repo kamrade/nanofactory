@@ -106,6 +106,85 @@ export async function getProjectByIdForUser(projectId: string, userId: string) {
   }
 }
 
+export async function getPublishedProjectBySlug(slug: string) {
+  const [project] = await db
+    .select({
+      id: projects.id,
+      name: projects.name,
+      slug: projects.slug,
+      themeKey: projects.themeKey,
+      status: projects.status,
+      publishedAt: projects.publishedAt,
+      updatedAt: projects.updatedAt,
+      contentJson: projectContents.contentJson,
+      schemaVersion: projectContents.schemaVersion,
+    })
+    .from(projects)
+    .leftJoin(projectContents, eq(projectContents.projectId, projects.id))
+    .where(and(eq(projects.slug, slug), eq(projects.status, "published")))
+    .limit(1);
+
+  if (!project) {
+    return null;
+  }
+
+  return {
+    ...project,
+    contentJson: project.contentJson ?? { blocks: [] },
+    schemaVersion: project.schemaVersion ?? 1,
+  };
+}
+
+export async function publishProjectForUser(projectId: string, userId: string) {
+  if (!isUuid(projectId)) {
+    return null;
+  }
+
+  const now = new Date();
+  const [project] = await db
+    .update(projects)
+    .set({
+      status: "published",
+      publishedAt: now,
+      updatedAt: now,
+    })
+    .where(and(eq(projects.id, projectId), eq(projects.userId, userId)))
+    .returning({
+      id: projects.id,
+      slug: projects.slug,
+      status: projects.status,
+      publishedAt: projects.publishedAt,
+      updatedAt: projects.updatedAt,
+    });
+
+  return project ?? null;
+}
+
+export async function unpublishProjectForUser(projectId: string, userId: string) {
+  if (!isUuid(projectId)) {
+    return null;
+  }
+
+  const now = new Date();
+  const [project] = await db
+    .update(projects)
+    .set({
+      status: "draft",
+      publishedAt: null,
+      updatedAt: now,
+    })
+    .where(and(eq(projects.id, projectId), eq(projects.userId, userId)))
+    .returning({
+      id: projects.id,
+      slug: projects.slug,
+      status: projects.status,
+      publishedAt: projects.publishedAt,
+      updatedAt: projects.updatedAt,
+    });
+
+  return project ?? null;
+}
+
 export async function saveProjectContentForUser(
   projectId: string,
   userId: string,

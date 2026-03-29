@@ -74,6 +74,39 @@ test("adds a block, saves content, and reloads the editor state", async ({ page 
   await expect(page.getByLabel("Button text", { exact: true })).toHaveValue("Launch");
 });
 
+test("publishes and unpublishes a project through the editor", async ({ page }) => {
+  await page.goto("/dashboard");
+  await page.getByLabel("Project name").fill("Public Flow Project");
+  await page.getByRole("button", { name: "Create project" }).click();
+
+  await page.waitForURL(/\/projects\/.+/);
+  await expect(page.getByText("Status: draft").first()).toBeVisible();
+
+  await page.getByRole("button", { name: "Publish" }).click();
+  await page.waitForURL(/\/projects\/.+/);
+  await expect(page.getByText("Status: published").first()).toBeVisible();
+
+  const publicLink = page.getByRole("link", { name: "Open public page" });
+  await expect(publicLink).toBeVisible();
+  const publicUrl = await publicLink.getAttribute("href");
+
+  if (!publicUrl) {
+    throw new Error("Public URL was not generated");
+  }
+
+  await page.goto(publicUrl);
+  await expect(page.getByText("Published with Nanofactory")).toBeVisible();
+
+  await page.goto("/dashboard");
+  await page.getByRole("link", { name: "Open" }).first().click();
+  await page.getByRole("button", { name: "Unpublish" }).click();
+  await page.waitForURL(/\/projects\/.+/);
+  await expect(page.getByText("Status: draft").first()).toBeVisible();
+
+  await page.goto(publicUrl);
+  await expect(page.getByText("This page could not be found.")).toBeVisible();
+});
+
 test("does not show or open projects owned by another user", async ({ page }) => {
   const otherUser = await seedUser({
     email: "other.user@nanofactory.local",

@@ -5,6 +5,10 @@ import { ProjectEditor } from "@/components/editor/project-editor";
 import { requireCurrentUser } from "@/lib/auth/current-user";
 import { normalizePageContent } from "@/lib/editor/content";
 import { getProjectByIdForUser } from "@/lib/projects";
+import {
+  publishProjectAction,
+  unpublishProjectAction,
+} from "@/app/(protected)/projects/[projectId]/actions";
 
 type ProjectPageProps = {
   params: Promise<{
@@ -22,6 +26,10 @@ export default async function ProjectPage({ params }: ProjectPageProps) {
   }
 
   const normalizedContent = normalizePageContent(project.contentJson);
+  const publicationAction =
+    project.status === "published"
+      ? unpublishProjectAction.bind(null, project.id)
+      : publishProjectAction.bind(null, project.id);
 
   return (
     <main className="min-h-screen bg-zinc-50 px-4 py-16 text-zinc-950">
@@ -43,11 +51,40 @@ export default async function ProjectPage({ params }: ProjectPageProps) {
             </Link>
           </div>
 
+          <div className="flex flex-wrap items-center gap-3">
+            <form action={publicationAction}>
+              <button
+                type="submit"
+                className={
+                  project.status === "published"
+                    ? "inline-flex items-center justify-center rounded-2xl border border-zinc-300 bg-white px-4 py-2 text-sm font-medium text-zinc-800 transition hover:border-zinc-400 hover:bg-zinc-50"
+                    : "inline-flex items-center justify-center rounded-2xl bg-zinc-950 px-4 py-2 text-sm font-medium text-white transition hover:bg-zinc-800"
+                }
+              >
+                {project.status === "published" ? "Unpublish" : "Publish"}
+              </button>
+            </form>
+
+            {project.status === "published" ? (
+              <Link
+                href={`/p/${project.slug}`}
+                target="_blank"
+                rel="noreferrer"
+                className="inline-flex items-center justify-center rounded-2xl border border-emerald-300 bg-emerald-50 px-4 py-2 text-sm font-medium text-emerald-800 transition hover:border-emerald-400 hover:bg-emerald-100"
+              >
+                Open public page
+              </Link>
+            ) : null}
+          </div>
+
           <div className="grid gap-3 text-sm text-zinc-600 sm:grid-cols-2">
             <p>Status: {project.status}</p>
             <p>Slug: {project.slug}</p>
             <p>Theme: {project.themeKey}</p>
             <p>Schema version: {project.schemaVersion}</p>
+            <p>
+              Published at: {project.publishedAt ? project.publishedAt.toISOString() : "Not published"}
+            </p>
           </div>
         </div>
 

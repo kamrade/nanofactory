@@ -3,10 +3,15 @@
 import "server-only";
 
 import { revalidatePath } from "next/cache";
+import { redirect } from "next/navigation";
 
 import { requireCurrentUser } from "@/lib/auth/current-user";
 import { parsePageContentJson } from "@/lib/editor/content";
-import { saveProjectContentForUser } from "@/lib/projects";
+import {
+  publishProjectForUser,
+  saveProjectContentForUser,
+  unpublishProjectForUser,
+} from "@/lib/projects";
 
 export type SaveEditorState = {
   status: "idle" | "success" | "error";
@@ -57,4 +62,32 @@ export async function saveProjectContentAction(
     status: "success",
     message: "Project content saved.",
   };
+}
+
+export async function publishProjectAction(projectId: string) {
+  const currentUser = await requireCurrentUser();
+  const publishedProject = await publishProjectForUser(projectId, currentUser.id);
+
+  if (!publishedProject) {
+    redirect("/dashboard");
+  }
+
+  revalidatePath(`/projects/${projectId}`);
+  revalidatePath("/dashboard");
+  revalidatePath(`/p/${publishedProject.slug}`);
+  redirect(`/projects/${projectId}`);
+}
+
+export async function unpublishProjectAction(projectId: string) {
+  const currentUser = await requireCurrentUser();
+  const unpublishedProject = await unpublishProjectForUser(projectId, currentUser.id);
+
+  if (!unpublishedProject) {
+    redirect("/dashboard");
+  }
+
+  revalidatePath(`/projects/${projectId}`);
+  revalidatePath("/dashboard");
+  revalidatePath(`/p/${unpublishedProject.slug}`);
+  redirect(`/projects/${projectId}`);
 }
