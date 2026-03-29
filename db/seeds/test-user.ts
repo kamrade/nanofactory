@@ -6,7 +6,7 @@ import { Pool } from "pg";
 import { users } from "../schema";
 import { TEST_USER } from "./test-data";
 
-dotenv.config({ path: process.env.DOTENV_CONFIG_PATH ?? ".env.local", quiet: true });
+dotenv.config({ path: process.env.DOTENV_CONFIG_PATH ?? ".env", quiet: true });
 
 async function main() {
   if (!process.env.DATABASE_URL) {

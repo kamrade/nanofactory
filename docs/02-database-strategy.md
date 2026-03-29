@@ -153,7 +153,7 @@ Connection is controlled via `DATABASE_URL`.
 
 ### Local switching:
 
-* `.env.local` → local DB
+* `.env` → local DB
 * `.env.dev` → dev DB (via SSH tunnel)
 
 ---

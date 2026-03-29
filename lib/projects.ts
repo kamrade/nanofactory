@@ -3,7 +3,7 @@ import "server-only";
 import { and, desc, eq } from "drizzle-orm";
 
 import { db } from "@/db";
-import { projectContents, projects } from "@/db/schema";
+import { projectContents, projects, type PageContent } from "@/db/schema";
 import { buildProjectSlugCandidate, slugifyProjectName } from "@/lib/projects/slug";
 
 type CreateProjectInput = {
@@ -76,11 +76,19 @@ export async function getProjectByIdForUser(projectId: string, userId: string) {
         schemaVersion: projectContents.schemaVersion,
       })
       .from(projects)
-      .innerJoin(projectContents, eq(projectContents.projectId, projects.id))
+      .leftJoin(projectContents, eq(projectContents.projectId, projects.id))
       .where(and(eq(projects.id, projectId), eq(projects.userId, userId)))
       .limit(1);
 
-    return project ?? null;
+    if (!project) {
+      return null;
+    }
+
+    return {
+      ...project,
+      contentJson: project.contentJson ?? { blocks: [] },
+      schemaVersion: project.schemaVersion ?? 1,
+    };
   } catch (error) {
     if (
       typeof error === "object" &&
@@ -96,6 +104,77 @@ export async function getProjectByIdForUser(projectId: string, userId: string) {
 
     throw error;
   }
+}
+
+export async function saveProjectContentForUser(
+  projectId: string,
+  userId: string,
+  content: PageContent
+) {
+  if (!isUuid(projectId)) {
+    return null;
+  }
+
+  const now = new Date();
+
+  return db.transaction(async (tx) => {
+    const [project] = await tx
+      .select({
+        id: projects.id,
+      })
+      .from(projects)
+      .where(and(eq(projects.id, projectId), eq(projects.userId, userId)))
+      .limit(1);
+
+    if (!project) {
+      return null;
+    }
+
+    const [existingContent] = await tx
+      .select({
+        id: projectContents.id,
+      })
+      .from(projectContents)
+      .where(eq(projectContents.projectId, projectId))
+      .limit(1);
+
+    if (existingContent) {
+      const [updatedContent] = await tx
+        .update(projectContents)
+        .set({
+          contentJson: content,
+          updatedAt: now,
+        })
+        .where(eq(projectContents.projectId, projectId))
+        .returning({
+          id: projectContents.id,
+          projectId: projectContents.projectId,
+          contentJson: projectContents.contentJson,
+          schemaVersion: projectContents.schemaVersion,
+          updatedAt: projectContents.updatedAt,
+        });
+
+      return updatedContent;
+    }
+
+    const [createdContent] = await tx
+      .insert(projectContents)
+      .values({
+        projectId,
+        contentJson: content,
+        schemaVersion: 1,
+        updatedAt: now,
+      })
+      .returning({
+        id: projectContents.id,
+        projectId: projectContents.projectId,
+        contentJson: projectContents.contentJson,
+        schemaVersion: projectContents.schemaVersion,
+        updatedAt: projectContents.updatedAt,
+      });
+
+    return createdContent;
+  });
 }
 
 export async function createProjectForUser(userId: string, input: CreateProjectInput) {

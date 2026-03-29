@@ -8,7 +8,7 @@ Core Logic: Opinionated, block-based landing page builder. Structured JSON conte
 2. Infrastructure & Environments
 Deployment: Dokploy on Hetzner.
 
-DB Strategy: * Local: .env.local -> Local Postgres / Dev DB via SSH Tunnel (localhost:5433).
+DB Strategy: * Local: .env -> Local Postgres / Dev DB via SSH Tunnel (localhost:5433).
 
 Dev/Prod: Isolated databases within Dokploy.
 

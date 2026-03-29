@@ -47,7 +47,31 @@ test("creates a project from dashboard and opens it", async ({ page }) => {
 
   await page.waitForURL(/\/projects\/.+/);
   await expect(page.getByRole("heading", { name: "Playwright Project" })).toBeVisible();
-  await expect(page.getByText("Slug: playwright-project")).toBeVisible();
+  await expect(page.getByText("Slug: playwright-project").first()).toBeVisible();
+});
+
+test("adds a block, saves content, and reloads the editor state", async ({ page }) => {
+  await page.goto("/dashboard");
+  await page.getByLabel("Project name").fill("Editor Save Project");
+  await page.getByRole("button", { name: "Create project" }).click();
+
+  await page.waitForURL(/\/projects\/.+/);
+  await page.getByRole("button", { name: "Hero Add" }).click();
+  await page.getByLabel("Title", { exact: true }).fill("Saved Hero Title");
+  await page.getByRole("textbox", { name: "Subtitle" }).fill(
+    "Saved hero subtitle from Playwright."
+  );
+  await page.getByLabel("Button text", { exact: true }).fill("Launch");
+  await page.getByRole("button", { name: "Save" }).click();
+
+  await expect(page.getByText("Project content saved.")).toBeVisible();
+  await page.reload();
+
+  await expect(page.getByLabel("Title", { exact: true })).toHaveValue("Saved Hero Title");
+  await expect(page.getByRole("textbox", { name: "Subtitle" })).toHaveValue(
+    "Saved hero subtitle from Playwright."
+  );
+  await expect(page.getByLabel("Button text", { exact: true })).toHaveValue("Launch");
 });
 
 test("does not show or open projects owned by another user", async ({ page }) => {

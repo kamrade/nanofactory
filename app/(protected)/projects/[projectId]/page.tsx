@@ -1,7 +1,9 @@
 import Link from "next/link";
 import { notFound } from "next/navigation";
 
+import { ProjectEditor } from "@/components/editor/project-editor";
 import { requireCurrentUser } from "@/lib/auth/current-user";
+import { normalizePageContent } from "@/lib/editor/content";
 import { getProjectByIdForUser } from "@/lib/projects";
 
 type ProjectPageProps = {
@@ -18,6 +20,8 @@ export default async function ProjectPage({ params }: ProjectPageProps) {
   if (!project) {
     notFound();
   }
+
+  const normalizedContent = normalizePageContent(project.contentJson);
 
   return (
     <main className="min-h-screen bg-zinc-50 px-4 py-16 text-zinc-950">
@@ -47,15 +51,16 @@ export default async function ProjectPage({ params }: ProjectPageProps) {
           </div>
         </div>
 
-        <section className="rounded-3xl border border-dashed border-zinc-300 bg-white p-6">
-          <h2 className="text-lg font-semibold text-zinc-950">Editor placeholder</h2>
-          <p className="mt-2 text-sm leading-6 text-zinc-600">
-            This project route is owner-protected and ready for the editor step.
-          </p>
-          <p className="mt-2 text-sm leading-6 text-zinc-600">
-            Current blocks: {project.contentJson.blocks.length}
-          </p>
-        </section>
+        <ProjectEditor
+          project={{
+            id: project.id,
+            name: project.name,
+            slug: project.slug,
+            themeKey: project.themeKey,
+            status: project.status,
+            contentJson: normalizedContent,
+          }}
+        />
       </div>
     </main>
   );
