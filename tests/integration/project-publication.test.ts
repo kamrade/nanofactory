@@ -1,9 +1,14 @@
+import { renderToStaticMarkup } from "react-dom/server";
 import { afterAll, beforeEach, describe, expect, it } from "vitest";
 
+import { ProjectRenderer } from "../../components/projects/project-renderer";
+import { createAssetForProject, getAssetsByProjectId } from "../../lib/assets";
+import { normalizePageContent } from "../../lib/editor/content";
 import {
   getProjectByIdForUser,
   getPublishedProjectBySlug,
   publishProjectForUser,
+  saveProjectContentForUser,
   unpublishProjectForUser,
 } from "../../lib/projects";
 import {
@@ -78,5 +83,60 @@ describe("project publication", () => {
 
     expect(publishAttempt).toBeNull();
     expect(unpublishAttempt).toBeNull();
+  });
+
+  it("renders a published hero image only from assets scoped to the current project", async () => {
+    const owner = await getSeededTestUser();
+    const project = await seedProject({
+      userId: owner.id,
+      name: "Rendered Public Project",
+      slug: "rendered-public-project",
+    });
+
+    const heroAsset = await createAssetForProject({
+      projectId: project.id,
+      storageKey: `projects/${project.id}/assets/public-hero.webp`,
+      originalFilename: "public-hero.webp",
+      mimeType: "image/webp",
+      sizeBytes: 1024,
+      width: null,
+      height: null,
+      alt: "Published hero image",
+    });
+
+    await saveProjectContentForUser(project.id, owner.id, {
+      blocks: [
+        {
+          id: "hero-1",
+          type: "hero",
+          props: {
+            title: "Public Hero Title",
+            subtitle: "Public hero subtitle",
+            buttonText: "Explore",
+            imageAssetId: heroAsset.id,
+          },
+        },
+      ],
+    });
+
+    await publishProjectForUser(project.id, owner.id);
+
+    const publicProject = await getPublishedProjectBySlug(project.slug);
+    const publicAssets = await getAssetsByProjectId(project.id);
+
+    const html = renderToStaticMarkup(
+      ProjectRenderer({
+        name: publicProject!.name,
+        themeKey: publicProject!.themeKey,
+        content: normalizePageContent(publicProject!.contentJson),
+        assets: publicAssets,
+      })
+    );
+
+    expect(publicProject).not.toBeNull();
+    expect(publicAssets).toHaveLength(1);
+    expect(html).toContain(heroAsset.publicUrl);
+    expect(html).toContain('alt="Published hero image"');
+    expect(html).toContain("Public Hero Title");
   });
 });

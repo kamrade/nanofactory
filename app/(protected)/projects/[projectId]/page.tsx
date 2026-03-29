@@ -1,7 +1,9 @@
 import Link from "next/link";
 import { notFound } from "next/navigation";
 
+import { ProjectAssetsPanel } from "@/components/assets/project-assets-panel";
 import { ProjectEditor } from "@/components/editor/project-editor";
+import { getAssetsByProjectIdForUser } from "@/lib/assets";
 import { requireCurrentUser } from "@/lib/auth/current-user";
 import { normalizePageContent } from "@/lib/editor/content";
 import { getProjectByIdForUser } from "@/lib/projects";
@@ -20,6 +22,7 @@ export default async function ProjectPage({ params }: ProjectPageProps) {
   const currentUser = await requireCurrentUser();
   const { projectId } = await params;
   const project = await getProjectByIdForUser(projectId, currentUser.id);
+  const projectAssets = await getAssetsByProjectIdForUser(projectId, currentUser.id);
 
   if (!project) {
     notFound();
@@ -97,6 +100,16 @@ export default async function ProjectPage({ params }: ProjectPageProps) {
             status: project.status,
             contentJson: normalizedContent,
           }}
+          assets={projectAssets}
+        />
+
+        <ProjectAssetsPanel
+          projectId={project.id}
+          initialAssets={projectAssets.map((asset) => ({
+            ...asset,
+            createdAt: asset.createdAt.toISOString(),
+            updatedAt: asset.updatedAt.toISOString(),
+          }))}
         />
       </div>
     </main>

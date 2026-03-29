@@ -5,6 +5,7 @@ import "server-only";
 import { revalidatePath } from "next/cache";
 import { redirect } from "next/navigation";
 
+import { AssetUploadError, validateHeroAssetReferencesForProject } from "@/lib/assets";
 import { requireCurrentUser } from "@/lib/auth/current-user";
 import { parsePageContentJson } from "@/lib/editor/content";
 import {
@@ -40,6 +41,23 @@ export async function saveProjectContentAction(
       status: "error",
       message: parsedContent.error,
     };
+  }
+
+  try {
+    await validateHeroAssetReferencesForProject(
+      projectId,
+      currentUser.id,
+      parsedContent.data
+    );
+  } catch (error) {
+    if (error instanceof AssetUploadError) {
+      return {
+        status: "error",
+        message: error.message,
+      };
+    }
+
+    throw error;
   }
 
   const savedContent = await saveProjectContentForUser(

@@ -31,9 +31,33 @@ describe("page content validation", () => {
         title: "Hero title",
       });
       expect(result.data.blocks[0]?.props).toHaveProperty("subtitle");
+      expect(result.data.blocks[0]?.props.imageAssetId).toBeUndefined();
       expect(result.data.blocks[1]?.props).toMatchObject({
         sectionTitle: "Features",
         items: ["Fast", "Flexible"],
+      });
+    }
+  });
+
+  it("accepts hero imageAssetId and keeps it in normalized props", () => {
+    const result = validatePageContent({
+      blocks: [
+        {
+          id: "hero-1",
+          type: "hero",
+          props: {
+            title: "Hero title",
+            imageAssetId: "asset-123",
+          },
+        },
+      ],
+    });
+
+    expect(result.success).toBe(true);
+
+    if (result.success) {
+      expect(result.data.blocks[0]?.props).toMatchObject({
+        imageAssetId: "asset-123",
       });
     }
   });

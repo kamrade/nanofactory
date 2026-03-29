@@ -1,6 +1,7 @@
 import { notFound } from "next/navigation";
 
 import { ProjectRenderer } from "@/components/projects/project-renderer";
+import { getAssetsByProjectId } from "@/lib/assets";
 import { normalizePageContent } from "@/lib/editor/content";
 import { getPublishedProjectBySlug } from "@/lib/projects";
 
@@ -18,11 +19,14 @@ export default async function PublicProjectPage({ params }: PublicProjectPagePro
     notFound();
   }
 
+  const assets = await getAssetsByProjectId(project.id);
+
   return (
     <ProjectRenderer
       name={project.name}
       themeKey={project.themeKey}
       content={normalizePageContent(project.contentJson)}
+      assets={assets}
     />
   );
 }

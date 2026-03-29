@@ -1,8 +1,11 @@
 "use client";
 
+import Image from "next/image";
 import { useActionState, useMemo, useState } from "react";
 
 import type { PageContent } from "@/db/schema";
+import type { ProjectAssetRecord } from "@/lib/assets";
+import { buildAssetMap, resolveAssetById } from "@/lib/assets/resolution";
 import {
   blockDefinitions,
   createPageBlock,
@@ -27,6 +30,7 @@ type EditorProject = {
 
 type ProjectEditorProps = {
   project: EditorProject;
+  assets: ProjectAssetRecord[];
 };
 
 function readFieldValue(content: PageContent, blockId: string, field: BlockFieldDefinition) {
@@ -65,7 +69,7 @@ function SaveStatus({ state }: { state: SaveEditorState }) {
   );
 }
 
-export function ProjectEditor({ project }: ProjectEditorProps) {
+export function ProjectEditor({ project, assets }: ProjectEditorProps) {
   const [content, setContent] = useState<PageContent>(project.contentJson);
   const initialSaveEditorState: SaveEditorState = {
     status: "idle",
@@ -78,6 +82,7 @@ export function ProjectEditor({ project }: ProjectEditorProps) {
   );
 
   const serializedContent = useMemo(() => JSON.stringify(content), [content]);
+  const assetMap = useMemo(() => buildAssetMap(assets), [assets]);
 
   function handleAddBlock(type: SupportedBlockType) {
     setContent((currentContent) => ({
@@ -113,6 +118,24 @@ export function ProjectEditor({ project }: ProjectEditorProps) {
                     .map((item) => item.trim())
                     .filter(Boolean)
                 : nextValue,
+          },
+        };
+      }),
+    }));
+  }
+
+  function handleSelectAsset(blockId: string, assetId?: string) {
+    setContent((currentContent) => ({
+      blocks: currentContent.blocks.map((block) => {
+        if (block.id !== blockId) {
+          return block;
+        }
+
+        return {
+          ...block,
+          props: {
+            ...block.props,
+            imageAssetId: assetId,
           },
         };
       }),
@@ -192,6 +215,7 @@ export function ProjectEditor({ project }: ProjectEditorProps) {
           ) : (
             content.blocks.map((block, index) => {
               const definition = getBlockDefinition(block.type);
+              const selectedAsset = resolveAssetById(block.props.imageAssetId, assetMap);
 
               if (!definition) {
                 return null;
@@ -258,6 +282,104 @@ export function ProjectEditor({ project }: ProjectEditorProps) {
                         </label>
                       );
                     })}
+
+                    {definition.supportsAssetSelection ? (
+                      <div className="grid gap-3 rounded-2xl border border-zinc-200 bg-zinc-50 p-4">
+                        <div className="space-y-1">
+                          <h4 className="text-sm font-semibold text-zinc-900">
+                            Hero image asset
+                          </h4>
+                          <p className="text-sm text-zinc-600">
+                            Select one of the uploaded project assets. The editor stores only
+                            the asset id in `content_json`.
+                          </p>
+                        </div>
+
+                        {assets.length === 0 ? (
+                          <p className="text-sm text-zinc-500">
+                            Upload an asset in the project assets panel below to use it in this
+                            block.
+                          </p>
+                        ) : (
+                          <div className="grid gap-3">
+                            {assets.map((asset) => {
+                              const isSelected = block.props.imageAssetId === asset.id;
+
+                              return (
+                                <article
+                                  key={asset.id}
+                                  className={
+                                    isSelected
+                                      ? "grid gap-3 rounded-2xl border border-emerald-300 bg-emerald-50 p-3"
+                                      : "grid gap-3 rounded-2xl border border-zinc-200 bg-white p-3"
+                                  }
+                                >
+                                  <div className="flex flex-wrap items-start justify-between gap-3">
+                                    <div className="space-y-1">
+                                      <p className="text-sm font-medium text-zinc-900">
+                                        {asset.originalFilename}
+                                      </p>
+                                      <p className="text-xs text-zinc-500">{asset.mimeType}</p>
+                                    </div>
+
+                                    <button
+                                      type="button"
+                                      onClick={() => handleSelectAsset(block.id, asset.id)}
+                                      className={
+                                        isSelected
+                                          ? "inline-flex items-center justify-center rounded-2xl bg-emerald-700 px-3 py-2 text-sm font-medium text-white transition hover:bg-emerald-800"
+                                          : "inline-flex items-center justify-center rounded-2xl border border-zinc-300 bg-white px-3 py-2 text-sm font-medium text-zinc-800 transition hover:border-zinc-400 hover:bg-zinc-50"
+                                      }
+                                    >
+                                      {isSelected ? "Selected" : "Use"}
+                                    </button>
+                                  </div>
+
+                                  <div className="overflow-hidden rounded-2xl border border-zinc-200 bg-zinc-100">
+                                    <Image
+                                      src={asset.publicUrl}
+                                      alt={asset.alt ?? asset.originalFilename}
+                                      width={640}
+                                      height={320}
+                                      unoptimized
+                                      className="h-40 w-full object-cover"
+                                    />
+                                  </div>
+                                </article>
+                              );
+                            })}
+                          </div>
+                        )}
+
+                        {selectedAsset ? (
+                          <div className="grid gap-3 rounded-2xl border border-zinc-200 bg-white p-4">
+                            <p className="text-sm font-medium text-zinc-900">
+                              Selected asset preview
+                            </p>
+                            <div className="overflow-hidden rounded-2xl border border-zinc-200 bg-zinc-100">
+                              <Image
+                                src={selectedAsset.publicUrl}
+                                alt={selectedAsset.alt ?? selectedAsset.originalFilename}
+                                width={960}
+                                height={448}
+                                unoptimized
+                                className="h-56 w-full object-cover"
+                              />
+                            </div>
+                            <div className="flex flex-wrap items-center justify-between gap-3 text-sm text-zinc-600">
+                              <span>Asset ID: {selectedAsset.id}</span>
+                              <button
+                                type="button"
+                                onClick={() => handleSelectAsset(block.id, undefined)}
+                                className="inline-flex items-center justify-center rounded-2xl border border-zinc-300 bg-white px-3 py-2 text-sm font-medium text-zinc-800 transition hover:border-zinc-400 hover:bg-zinc-50"
+                              >
+                                Clear image
+                              </button>
+                            </div>
+                          </div>
+                        ) : null}
+                      </div>
+                    ) : null}
                   </div>
                 </article>
               );

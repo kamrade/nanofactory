@@ -1,4 +1,8 @@
+import Image from "next/image";
+
 import type { PageContent } from "@/db/schema";
+import type { ProjectAssetRecord } from "@/lib/assets";
+import { buildAssetMap, resolveAssetById } from "@/lib/assets/resolution";
 
 import { getBlockDefinition } from "@/lib/editor/blocks";
 
@@ -6,6 +10,7 @@ type RenderedProject = {
   name: string;
   themeKey: string;
   content: PageContent;
+  assets: ProjectAssetRecord[];
 };
 
 function getThemeClasses(themeKey: string) {
@@ -24,30 +29,50 @@ function getThemeClasses(themeKey: string) {
   }
 }
 
-function renderBlock(block: PageContent["blocks"][number], mutedClassName: string, buttonClassName: string) {
+function renderBlock(
+  block: PageContent["blocks"][number],
+  assetMap: Map<string, ProjectAssetRecord>,
+  mutedClassName: string,
+  buttonClassName: string
+) {
   const definition = getBlockDefinition(block.type);
 
   if (!definition) {
     return null;
   }
-
   if (block.type === "hero") {
     const title = typeof block.props.title === "string" ? block.props.title : "";
     const subtitle =
       typeof block.props.subtitle === "string" ? block.props.subtitle : "";
     const buttonText =
       typeof block.props.buttonText === "string" ? block.props.buttonText : "";
+    const heroImageAsset = resolveAssetById(block.props.imageAssetId, assetMap);
 
     return (
-      <section className="space-y-5">
-        <p className="text-sm font-medium uppercase tracking-[0.22em] text-zinc-500">
-          Hero
-        </p>
-        <h1 className="text-4xl font-semibold tracking-tight sm:text-5xl">{title}</h1>
-        <p className={`max-w-3xl text-base leading-7 ${mutedClassName}`}>{subtitle}</p>
-        <div>
-          <span className={buttonClassName}>{buttonText}</span>
+      <section className="grid gap-8 lg:grid-cols-[1.05fr_0.95fr] lg:items-center">
+        <div className="space-y-5">
+          <p className="text-sm font-medium uppercase tracking-[0.22em] text-zinc-500">
+            Hero
+          </p>
+          <h1 className="text-4xl font-semibold tracking-tight sm:text-5xl">{title}</h1>
+          <p className={`max-w-3xl text-base leading-7 ${mutedClassName}`}>{subtitle}</p>
+          <div>
+            <span className={buttonClassName}>{buttonText}</span>
+          </div>
         </div>
+
+        {heroImageAsset ? (
+          <div className="overflow-hidden rounded-[1.75rem] border border-zinc-200 bg-zinc-100 shadow-sm">
+            <Image
+              src={heroImageAsset.publicUrl}
+              alt={heroImageAsset.alt ?? heroImageAsset.originalFilename}
+              width={1200}
+              height={900}
+              unoptimized
+              className="h-full w-full object-cover"
+            />
+          </div>
+        ) : null}
       </section>
     );
   }
@@ -94,8 +119,9 @@ function renderBlock(block: PageContent["blocks"][number], mutedClassName: strin
   return null;
 }
 
-export function ProjectRenderer({ name, themeKey, content }: RenderedProject) {
+export function ProjectRenderer({ name, themeKey, content, assets }: RenderedProject) {
   const theme = getThemeClasses(themeKey);
+  const assetMap = buildAssetMap(assets);
 
   return (
     <main className={`min-h-screen px-4 py-16 ${theme.page}`}>
@@ -117,7 +143,7 @@ export function ProjectRenderer({ name, themeKey, content }: RenderedProject) {
         ) : (
           content.blocks.map((block) => (
             <section key={block.id} className={theme.sectionCard}>
-              {renderBlock(block, theme.muted, theme.button)}
+              {renderBlock(block, assetMap, theme.muted, theme.button)}
             </section>
           ))
         )}

@@ -1,5 +1,9 @@
 import { afterAll, beforeEach, describe, expect, it } from "vitest";
 
+import {
+  createAssetForProject,
+  validateHeroAssetReferencesForProject,
+} from "../../lib/assets";
 import { saveProjectContentForUser, getProjectByIdForUser } from "../../lib/projects";
 import {
   closeTestDatabase,
@@ -75,5 +79,107 @@ describe("project content persistence", () => {
     });
 
     expect(saved).toBeNull();
+  });
+
+  it("accepts hero imageAssetId only when the asset belongs to the same project", async () => {
+    const owner = await getSeededTestUser();
+    const project = await seedProject({
+      userId: owner.id,
+      name: "Image Project",
+      slug: "image-project",
+    });
+    const foreignProject = await seedProject({
+      userId: owner.id,
+      name: "Foreign Image Project",
+      slug: "foreign-image-project",
+    });
+
+    const localAsset = await createAssetForProject({
+      projectId: project.id,
+      storageKey: `projects/${project.id}/assets/local.webp`,
+      originalFilename: "local.webp",
+      mimeType: "image/webp",
+      sizeBytes: 1024,
+      width: null,
+      height: null,
+      alt: null,
+    });
+
+    const foreignAsset = await createAssetForProject({
+      projectId: foreignProject.id,
+      storageKey: `projects/${foreignProject.id}/assets/foreign.webp`,
+      originalFilename: "foreign.webp",
+      mimeType: "image/webp",
+      sizeBytes: 1024,
+      width: null,
+      height: null,
+      alt: null,
+    });
+
+    await expect(
+      validateHeroAssetReferencesForProject(project.id, owner.id, {
+        blocks: [
+          {
+            id: "hero-1",
+            type: "hero",
+            props: {
+              title: "Hero",
+              subtitle: "Subtitle",
+              buttonText: "CTA",
+              imageAssetId: localAsset.id,
+            },
+          },
+        ],
+      })
+    ).resolves.toBeUndefined();
+
+    await expect(
+      validateHeroAssetReferencesForProject(project.id, owner.id, {
+        blocks: [
+          {
+            id: "hero-1",
+            type: "hero",
+            props: {
+              title: "Hero",
+              subtitle: "Subtitle",
+              buttonText: "CTA",
+              imageAssetId: foreignAsset.id,
+            },
+          },
+        ],
+      })
+    ).rejects.toThrow("Selected asset does not belong to this project.");
+
+    await saveProjectContentForUser(project.id, owner.id, {
+      blocks: [
+        {
+          id: "hero-1",
+          type: "hero",
+          props: {
+            title: "Hero",
+            subtitle: "Subtitle",
+            buttonText: "CTA",
+            imageAssetId: localAsset.id,
+          },
+        },
+      ],
+    });
+
+    const reloadedProject = await getProjectByIdForUser(project.id, owner.id);
+
+    expect(reloadedProject?.contentJson).toEqual({
+      blocks: [
+        {
+          id: "hero-1",
+          type: "hero",
+          props: {
+            title: "Hero",
+            subtitle: "Subtitle",
+            buttonText: "CTA",
+            imageAssetId: localAsset.id,
+          },
+        },
+      ],
+    });
   });
 });

@@ -13,6 +13,7 @@ type BlockDefinition = {
   type: SupportedBlockType;
   label: string;
   fields: BlockFieldDefinition[];
+  supportsAssetSelection?: boolean;
   createDefaultProps: () => Record<string, unknown>;
   normalizeProps: (input: unknown) => Record<string, unknown>;
 };
@@ -23,6 +24,15 @@ function isPlainObject(input: unknown): input is Record<string, unknown> {
 
 function readString(input: unknown, fallback: string) {
   return typeof input === "string" ? input : fallback;
+}
+
+function readOptionalString(input: unknown) {
+  if (typeof input !== "string") {
+    return undefined;
+  }
+
+  const value = input.trim();
+  return value.length > 0 ? value : undefined;
 }
 
 function readStringList(input: unknown, fallback: string[]) {
@@ -50,6 +60,7 @@ export const blockRegistry: Record<SupportedBlockType, BlockDefinition> = {
   hero: {
     type: "hero",
     label: "Hero",
+    supportsAssetSelection: true,
     fields: [
       {
         key: "title",
@@ -74,6 +85,7 @@ export const blockRegistry: Record<SupportedBlockType, BlockDefinition> = {
       title: "Build a page that ships this afternoon",
       subtitle: "Write the core message, add a call to action, and publish a focused landing page without a long setup.",
       buttonText: "Start now",
+      imageAssetId: undefined,
     }),
     normalizeProps: (input) => {
       const props = isPlainObject(input) ? input : {};
@@ -85,6 +97,7 @@ export const blockRegistry: Record<SupportedBlockType, BlockDefinition> = {
           "Write the core message, add a call to action, and publish a focused landing page without a long setup."
         ),
         buttonText: readString(props.buttonText, "Start now"),
+        imageAssetId: readOptionalString(props.imageAssetId),
       };
     },
   },
