@@ -8,8 +8,8 @@ export function LoginForm() {
   const router = useRouter();
   const searchParams = useSearchParams();
 
-  const [email, setEmail] = useState("test.user@nanofactory.local");
-  const [password, setPassword] = useState("dev-password-123");
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
   const [error, setError] = useState<string | null>(null);
   const [isSubmitting, setIsSubmitting] = useState(false);
 
