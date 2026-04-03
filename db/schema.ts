@@ -9,18 +9,15 @@ import {
   pgEnum,
 } from "drizzle-orm/pg-core";
 import { relations } from "drizzle-orm";
+import type {
+  PageBlock as BlockContentPageBlock,
+  PageContent as BlockContentPageContent,
+} from "@/features/blocks/shared/content";
+
+export type PageBlock = BlockContentPageBlock;
+export type PageContent = BlockContentPageContent;
 
 export const projectStatusEnum = pgEnum("project_status", ["draft", "published"]);
-
-export type PageBlock = {
-  id: string;
-  type: string;
-  props: Record<string, unknown>;
-};
-
-export type PageContent = {
-  blocks: PageBlock[];
-};
 
 // 1. Users
 export const users = pgTable("users", {

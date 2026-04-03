@@ -1,5 +1,6 @@
 import type { PageBlock, PageContent } from "@/db/schema";
 
+import { isPlainObject } from "@/features/blocks/shared/base";
 import { getBlockDefinition } from "@/lib/editor/blocks";
 
 type ValidationSuccess = {
@@ -14,16 +15,12 @@ type ValidationFailure = {
 
 export type PageContentValidationResult = ValidationSuccess | ValidationFailure;
 
-function isPlainObject(input: unknown): input is Record<string, unknown> {
-  return typeof input === "object" && input !== null && !Array.isArray(input);
-}
-
 function normalizeBlock(input: unknown): PageBlock | null {
   if (!isPlainObject(input)) {
     return null;
   }
 
-  const { id, type, props } = input;
+  const { id, type, variant, props } = input;
 
   if (typeof id !== "string" || id.trim().length === 0) {
     return null;
@@ -33,7 +30,7 @@ function normalizeBlock(input: unknown): PageBlock | null {
     return null;
   }
 
-  const definition = getBlockDefinition(type);
+  const definition = getBlockDefinition(type, typeof variant === "string" ? variant : undefined);
 
   if (!definition) {
     return null;
@@ -41,7 +38,8 @@ function normalizeBlock(input: unknown): PageBlock | null {
 
   return {
     id,
-    type,
+    type: definition.type,
+    variant: definition.variant,
     props: definition.normalizeProps(props),
   };
 }

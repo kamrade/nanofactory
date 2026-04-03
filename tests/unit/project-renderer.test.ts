@@ -22,6 +22,40 @@ function createHeroContent(imageAssetId?: string): PageContent {
   };
 }
 
+function createCenteredHeroContent(imageAssetId?: string): PageContent {
+  return {
+    blocks: [
+      {
+        id: "hero-centered-1",
+        type: "hero",
+        variant: "centered",
+        props: {
+          title: "Centered Hero",
+          subtitle: "A tighter centered hero variant",
+          buttonText: "Launch",
+          imageAssetId,
+        },
+      },
+    ],
+  };
+}
+
+function createFeaturesCardsContent(): PageContent {
+  return {
+    blocks: [
+      {
+        id: "features-cards-1",
+        type: "features",
+        variant: "cards",
+        props: {
+          sectionTitle: "Why this setup scales",
+          items: ["Fewer moving parts", "Variant-aware rendering", "Clear growth path"],
+        },
+      },
+    ],
+  };
+}
+
 function createAsset(id: string): ProjectAssetRecord {
   const timestamp = new Date("2026-03-29T12:00:00.000Z");
 
@@ -71,5 +105,37 @@ describe("ProjectRenderer", () => {
     expect(html).not.toContain("assets.olala.beauty");
     expect(html).toContain("Hello from Nanofactory");
     expect(html).toContain("Public hero subtitle");
+  });
+
+  it("renders a variant-aware hero block without breaking the page contract", () => {
+    const asset = createAsset("asset-centered");
+    const html = renderToStaticMarkup(
+      ProjectRenderer({
+        name: "Centered Hero Project",
+        themeKey: "classic-light",
+        content: createCenteredHeroContent(asset.id),
+        assets: [asset],
+      })
+    );
+
+    expect(html).toContain("Centered Hero");
+    expect(html).toContain("A tighter centered hero variant");
+    expect(html).toContain(asset.publicUrl);
+  });
+
+  it("renders a cards-based features variant", () => {
+    const html = renderToStaticMarkup(
+      ProjectRenderer({
+        name: "Features Cards Project",
+        themeKey: "classic-light",
+        content: createFeaturesCardsContent(),
+        assets: [],
+      })
+    );
+
+    expect(html).toContain("Why this setup scales");
+    expect(html).toContain("Fewer moving parts");
+    expect(html).toContain("Variant-aware rendering");
+    expect(html).toContain("Clear growth path");
   });
 });

@@ -62,6 +62,56 @@ describe("page content validation", () => {
     }
   });
 
+  it("accepts a supported hero variant and preserves it in normalized content", () => {
+    const result = validatePageContent({
+      blocks: [
+        {
+          id: "hero-centered-1",
+          type: "hero",
+          variant: "centered",
+          props: {
+            title: "Centered Hero",
+          },
+        },
+      ],
+    });
+
+    expect(result.success).toBe(true);
+
+    if (result.success) {
+      expect(result.data.blocks[0]?.variant).toBe("centered");
+      expect(result.data.blocks[0]?.props).toMatchObject({
+        title: "Centered Hero",
+      });
+    }
+  });
+
+  it("accepts a supported features variant and preserves it in normalized content", () => {
+    const result = validatePageContent({
+      blocks: [
+        {
+          id: "features-cards-1",
+          type: "features",
+          variant: "cards",
+          props: {
+            sectionTitle: "Feature cards",
+            items: ["Speed", "Structure", "Control"],
+          },
+        },
+      ],
+    });
+
+    expect(result.success).toBe(true);
+
+    if (result.success) {
+      expect(result.data.blocks[0]?.variant).toBe("cards");
+      expect(result.data.blocks[0]?.props).toMatchObject({
+        sectionTitle: "Feature cards",
+        items: ["Speed", "Structure", "Control"],
+      });
+    }
+  });
+
   it("rejects unsupported block types", () => {
     const result = validatePageContent({
       blocks: [

@@ -1,8 +1,6 @@
-import Image from "next/image";
-
 import type { PageContent } from "@/db/schema";
 import type { ProjectAssetRecord } from "@/lib/assets";
-import { buildAssetMap, resolveAssetById } from "@/lib/assets/resolution";
+import { buildAssetMap } from "@/lib/assets/resolution";
 
 import { getBlockDefinition } from "@/lib/editor/blocks";
 
@@ -32,91 +30,17 @@ function getThemeClasses(themeKey: string) {
 function renderBlock(
   block: PageContent["blocks"][number],
   assetMap: Map<string, ProjectAssetRecord>,
-  mutedClassName: string,
-  buttonClassName: string
+  theme: ReturnType<typeof getThemeClasses>
 ) {
-  const definition = getBlockDefinition(block.type);
+  const definition = getBlockDefinition(block.type, block.variant);
 
   if (!definition) {
     return null;
   }
-  if (block.type === "hero") {
-    const title = typeof block.props.title === "string" ? block.props.title : "";
-    const subtitle =
-      typeof block.props.subtitle === "string" ? block.props.subtitle : "";
-    const buttonText =
-      typeof block.props.buttonText === "string" ? block.props.buttonText : "";
-    const heroImageAsset = resolveAssetById(block.props.imageAssetId, assetMap);
 
-    return (
-      <section className="grid gap-8 lg:grid-cols-[1.05fr_0.95fr] lg:items-center">
-        <div className="space-y-5">
-          <p className="text-sm font-medium uppercase tracking-[0.22em] text-zinc-500">
-            Hero
-          </p>
-          <h1 className="text-4xl font-semibold tracking-tight sm:text-5xl">{title}</h1>
-          <p className={`max-w-3xl text-base leading-7 ${mutedClassName}`}>{subtitle}</p>
-          <div>
-            <span className={buttonClassName}>{buttonText}</span>
-          </div>
-        </div>
+  const Renderer = definition.Renderer;
 
-        {heroImageAsset ? (
-          <div className="overflow-hidden rounded-[1.75rem] border border-zinc-200 bg-zinc-100 shadow-sm">
-            <Image
-              src={heroImageAsset.publicUrl}
-              alt={heroImageAsset.alt ?? heroImageAsset.originalFilename}
-              width={1200}
-              height={900}
-              unoptimized
-              className="h-full w-full object-cover"
-            />
-          </div>
-        ) : null}
-      </section>
-    );
-  }
-
-  if (block.type === "features") {
-    const sectionTitle =
-      typeof block.props.sectionTitle === "string" ? block.props.sectionTitle : "";
-    const items = Array.isArray(block.props.items)
-      ? block.props.items.filter((item): item is string => typeof item === "string")
-      : [];
-
-    return (
-      <section className="space-y-5">
-        <h2 className="text-2xl font-semibold tracking-tight">{sectionTitle}</h2>
-        <ul className="grid gap-3">
-          {items.map((item) => (
-            <li
-              key={`${block.id}-${item}`}
-              className="rounded-2xl border border-zinc-200 bg-zinc-50 px-4 py-3 text-sm leading-6 text-zinc-700"
-            >
-              {item}
-            </li>
-          ))}
-        </ul>
-      </section>
-    );
-  }
-
-  if (block.type === "cta") {
-    const title = typeof block.props.title === "string" ? block.props.title : "";
-    const buttonText =
-      typeof block.props.buttonText === "string" ? block.props.buttonText : "";
-
-    return (
-      <section className="space-y-5 text-center">
-        <h2 className="text-3xl font-semibold tracking-tight">{title}</h2>
-        <div>
-          <span className={buttonClassName}>{buttonText}</span>
-        </div>
-      </section>
-    );
-  }
-
-  return null;
+  return <Renderer block={block} assetMap={assetMap} theme={theme} />;
 }
 
 export function ProjectRenderer({ name, themeKey, content, assets }: RenderedProject) {
@@ -143,7 +67,7 @@ export function ProjectRenderer({ name, themeKey, content, assets }: RenderedPro
         ) : (
           content.blocks.map((block) => (
             <section key={block.id} className={theme.sectionCard}>
-              {renderBlock(block, assetMap, theme.muted, theme.button)}
+              {renderBlock(block, assetMap, theme)}
             </section>
           ))
         )}
