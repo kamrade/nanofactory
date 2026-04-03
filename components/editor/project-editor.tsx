@@ -1,7 +1,7 @@
 "use client";
 
 import Image from "next/image";
-import { useActionState, useMemo, useState } from "react";
+import { useActionState, useEffect, useMemo, useRef, useState } from "react";
 
 import type { PageContent } from "@/db/schema";
 import type { ProjectAssetRecord } from "@/lib/assets";
@@ -71,10 +71,12 @@ function SaveStatus({ state }: { state: SaveEditorState }) {
 
 export function ProjectEditor({ project, assets }: ProjectEditorProps) {
   const [content, setContent] = useState<PageContent>(project.contentJson);
+  const [isAddBlockMenuOpen, setIsAddBlockMenuOpen] = useState(false);
   const initialSaveEditorState: SaveEditorState = {
     status: "idle",
     message: "",
   };
+  const addBlockMenuRef = useRef<HTMLDivElement>(null);
   const saveAction = saveProjectContentAction.bind(null, project.id);
   const [saveState, formAction, isPending] = useActionState(
     saveAction,
@@ -84,10 +86,37 @@ export function ProjectEditor({ project, assets }: ProjectEditorProps) {
   const serializedContent = useMemo(() => JSON.stringify(content), [content]);
   const assetMap = useMemo(() => buildAssetMap(assets), [assets]);
 
+  useEffect(() => {
+    if (!isAddBlockMenuOpen) {
+      return;
+    }
+
+    function handlePointerDown(event: MouseEvent) {
+      if (!addBlockMenuRef.current?.contains(event.target as Node)) {
+        setIsAddBlockMenuOpen(false);
+      }
+    }
+
+    function handleEscape(event: KeyboardEvent) {
+      if (event.key === "Escape") {
+        setIsAddBlockMenuOpen(false);
+      }
+    }
+
+    document.addEventListener("mousedown", handlePointerDown);
+    document.addEventListener("keydown", handleEscape);
+
+    return () => {
+      document.removeEventListener("mousedown", handlePointerDown);
+      document.removeEventListener("keydown", handleEscape);
+    };
+  }, [isAddBlockMenuOpen]);
+
   function handleAddBlock(type: SupportedBlockType) {
     setContent((currentContent) => ({
       blocks: [...currentContent.blocks, createPageBlock(type)],
     }));
+    setIsAddBlockMenuOpen(false);
   }
 
   function handleDeleteBlock(blockId: string) {
@@ -143,48 +172,7 @@ export function ProjectEditor({ project, assets }: ProjectEditorProps) {
   }
 
   return (
-    <div className="grid gap-6 lg:grid-cols-[0.82fr_1.18fr]">
-      <aside className="space-y-6 rounded-3xl border border-zinc-200 bg-white p-6 shadow-sm">
-        <div className="space-y-2">
-          <h2 className="text-lg font-semibold text-zinc-950">Project metadata</h2>
-          <div className="grid gap-2 text-sm text-zinc-600">
-            <p>Name: {project.name}</p>
-            <p>Slug: {project.slug}</p>
-            <p>Status: {project.status}</p>
-            <p>Theme: {project.themeKey}</p>
-            <p>Blocks: {content.blocks.length}</p>
-          </div>
-        </div>
-
-        <div className="space-y-3">
-          <h3 className="text-sm font-semibold uppercase tracking-[0.18em] text-zinc-500">
-            Add block
-          </h3>
-          <div className="grid gap-2">
-            {blockDefinitions.map((definition) => (
-              <button
-                key={definition.type}
-                type="button"
-                onClick={() => handleAddBlock(definition.type)}
-                className="inline-flex items-center justify-between rounded-2xl border border-zinc-200 bg-white px-4 py-3 text-left text-sm font-medium text-zinc-900 transition hover:border-zinc-400 hover:bg-zinc-50"
-              >
-                <span>{definition.label}</span>
-                <span className="text-zinc-500">Add</span>
-              </button>
-            ))}
-          </div>
-        </div>
-
-        <div className="space-y-3">
-          <h3 className="text-sm font-semibold uppercase tracking-[0.18em] text-zinc-500">
-            Content shape
-          </h3>
-          <pre className="overflow-x-auto whitespace-pre-wrap break-words rounded-2xl bg-zinc-950 p-4 text-xs leading-6 text-zinc-100">
-            {serializedContent}
-          </pre>
-        </div>
-      </aside>
-
+    <div className="grid gap-6">
       <section className="rounded-3xl border border-zinc-200 bg-white p-6 shadow-sm">
         <div className="flex flex-wrap items-center justify-between gap-4">
           <div>
@@ -194,7 +182,39 @@ export function ProjectEditor({ project, assets }: ProjectEditorProps) {
             </p>
           </div>
 
-          <form action={formAction} className="flex items-center gap-3">
+          <div className="flex flex-wrap items-center gap-3">
+            <div ref={addBlockMenuRef} className="relative">
+              <button
+                type="button"
+                onClick={() => setIsAddBlockMenuOpen((current) => !current)}
+                aria-expanded={isAddBlockMenuOpen}
+                aria-haspopup="menu"
+                className="inline-flex items-center justify-center rounded-2xl border border-zinc-300 bg-white px-4 py-2.5 text-sm font-medium text-zinc-800 transition hover:border-zinc-400 hover:bg-zinc-50"
+              >
+                Add block
+              </button>
+
+              {isAddBlockMenuOpen ? (
+                <div
+                  role="menu"
+                  className="absolute right-0 top-full z-10 mt-2 grid min-w-64 gap-2 rounded-2xl border border-zinc-200 bg-white p-2 shadow-lg"
+                >
+                  {blockDefinitions.map((definition) => (
+                    <button
+                      key={definition.type}
+                      type="button"
+                      onClick={() => handleAddBlock(definition.type)}
+                      className="inline-flex items-center justify-between rounded-2xl px-4 py-3 text-left text-sm font-medium text-zinc-900 transition hover:bg-zinc-50"
+                    >
+                      <span>{definition.label}</span>
+                      <span className="text-zinc-500">Add</span>
+                    </button>
+                  ))}
+                </div>
+              ) : null}
+            </div>
+
+            <form action={formAction} className="flex items-center gap-3">
             <input type="hidden" name="content" value={serializedContent} />
             <SaveStatus state={saveState} />
             <button
@@ -204,13 +224,15 @@ export function ProjectEditor({ project, assets }: ProjectEditorProps) {
             >
               {isPending ? "Saving..." : "Save"}
             </button>
-          </form>
+            </form>
+          </div>
         </div>
 
         <div className="mt-6 grid gap-4">
           {content.blocks.length === 0 ? (
             <div className="rounded-2xl border border-dashed border-zinc-300 px-5 py-8 text-sm text-zinc-500">
-              No blocks yet. Add a `hero`, `features`, or `cta` block from the left panel.
+              No blocks yet. Use `Add block` in the header to insert a `hero`, `features`,
+              or `cta` section.
             </div>
           ) : (
             content.blocks.map((block, index) => {
@@ -385,6 +407,17 @@ export function ProjectEditor({ project, assets }: ProjectEditorProps) {
               );
             })
           )}
+        </div>
+      </section>
+
+      <section className="rounded-3xl border border-zinc-200 bg-white p-6 shadow-sm">
+        <div className="space-y-3">
+          <h3 className="text-sm font-semibold uppercase tracking-[0.18em] text-zinc-500">
+            Content shape
+          </h3>
+          <pre className="overflow-x-auto whitespace-pre-wrap break-words rounded-2xl bg-zinc-950 p-4 text-xs leading-6 text-zinc-100">
+            {serializedContent}
+          </pre>
         </div>
       </section>
     </div>
