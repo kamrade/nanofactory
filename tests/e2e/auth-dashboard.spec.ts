@@ -56,7 +56,9 @@ test("adds a block, saves content, and reloads the editor state", async ({ page 
   await page.getByRole("button", { name: "Create project" }).click();
 
   await page.waitForURL(/\/projects\/.+/);
-  await page.getByRole("button", { name: "Hero Add" }).click();
+  await page.getByRole("button", { name: "Add block" }).click();
+  await page.getByRole("button", { name: "Hero Choose variant" }).click();
+  await page.getByRole("button", { name: "Split image" }).click();
   await page.getByLabel("Title", { exact: true }).fill("Saved Hero Title");
   await page.getByRole("textbox", { name: "Subtitle" }).fill(
     "Saved hero subtitle from Playwright."
