@@ -17,9 +17,16 @@ import {
   type SaveEditorState,
   saveProjectContentAction,
 } from "@/app/(protected)/projects/[projectId]/actions";
+import {
+  applyVariantSwitchToContent,
+  createPendingVariantSwitch,
+  type PendingVariantSwitch,
+  type VariantUndo,
+  undoVariantSwitchInContent,
+} from "@/components/editor/project-editor-variants";
 import { setPreviewDraftContent } from "@/components/editor/preview-draft-store";
 import { BlockChrome } from "@/features/blocks/shared/block-chrome";
-import type { BlockFieldDefinition, BlockVariantDefinition } from "@/features/blocks/shared/types";
+import type { BlockVariantDefinition } from "@/features/blocks/shared/types";
 import type { PageBlock } from "@/features/blocks/shared/content";
 
 type EditorProject = {
@@ -39,61 +46,6 @@ type ProjectEditorProps = {
 function formatDefinitionLabel(definition: { typeLabel: string; label: string; variant: string }) {
   return definition.typeLabel;
 }
-
-function getDefinitionPropKeys(definition: BlockVariantDefinition) {
-  const keys = definition.fields.map((field) => field.key);
-
-  if (definition.supportsAssetSelection) {
-    keys.push("imageAssetId");
-  }
-
-  return keys;
-}
-
-function isMeaningfulValue(value: unknown) {
-  if (value === null || value === undefined) {
-    return false;
-  }
-
-  if (typeof value === "string") {
-    return value.trim().length > 0;
-  }
-
-  if (Array.isArray(value)) {
-    return value.length > 0;
-  }
-
-  if (typeof value === "object") {
-    return Object.keys(value).length > 0;
-  }
-
-  return true;
-}
-
-function getFieldLabel(fieldKey: string, fields: BlockFieldDefinition[]) {
-  if (fieldKey === "imageAssetId") {
-    return "Image asset";
-  }
-
-  return fields.find((field) => field.key === fieldKey)?.label ?? fieldKey;
-}
-
-type PendingVariantSwitch = {
-  blockId: string;
-  nextVariant: BlockVariant;
-  lostKeys: string[];
-  lostLabels: string[];
-  previousBlock: PageBlock;
-  nextDefinition: BlockVariantDefinition;
-};
-
-type VariantUndo = {
-  blockId: string;
-  previousBlock: PageBlock;
-  fromLabel: string;
-  toLabel: string;
-  typeLabel: string;
-};
 
 function SaveStatus({ state }: { state: SaveEditorState }) {
   if (state.status === "idle" || !state.message) {
@@ -216,91 +168,43 @@ export function ProjectEditor({ project, assets }: ProjectEditorProps) {
     }));
   }
 
-  function mapPropsToDefinition(
-    props: Record<string, unknown>,
-    definition: BlockVariantDefinition
-  ) {
-    const allowedKeys = new Set(getDefinitionPropKeys(definition));
-    const nextProps: Record<string, unknown> = {};
-
-    Object.entries(props).forEach(([key, value]) => {
-      if (allowedKeys.has(key)) {
-        nextProps[key] = value;
-      }
-    });
-
-    return definition.normalizeProps(nextProps);
-  }
-
   function applyVariantSwitch(blockId: string, nextDefinition: BlockVariantDefinition) {
     setContent((currentContent) => {
-      const targetBlock = currentContent.blocks.find((block) => block.id === blockId);
+      const result = applyVariantSwitchToContent(
+        currentContent,
+        blockId,
+        nextDefinition,
+        getBlockDefinition
+      );
 
-      if (!targetBlock) {
-        return currentContent;
+      if (result.undo) {
+        setLastVariantUndo(result.undo);
       }
 
-      const currentDefinition = getBlockDefinition(targetBlock.type, targetBlock.variant);
-      const fromLabel = currentDefinition?.label ?? targetBlock.variant ?? "default";
-      const toLabel = nextDefinition.label ?? nextDefinition.variant;
-      const typeLabel = currentDefinition?.typeLabel ?? nextDefinition.typeLabel;
-
-      const nextBlocks = currentContent.blocks.map((block) => {
-        if (block.id !== blockId) {
-          return block;
-        }
-
-        return {
-          ...block,
-          variant: nextDefinition.variant,
-          props: mapPropsToDefinition(block.props, nextDefinition),
-        };
-      });
-
-      setLastVariantUndo({
-        blockId,
-        previousBlock: targetBlock,
-        fromLabel,
-        toLabel,
-        typeLabel,
-      });
-
-      return { blocks: nextBlocks };
+      return result.content;
     });
     setPendingVariantSwitch(null);
   }
 
   function handleSelectVariant(block: PageBlock, definition: BlockVariantDefinition, nextVariant: BlockVariant) {
-    if (definition.variant === nextVariant) {
+    const pendingSwitch = createPendingVariantSwitch(
+      block,
+      definition,
+      nextVariant,
+      getBlockDefinition
+    );
+
+    if (!pendingSwitch) {
       setPendingVariantSwitch(null);
       return;
     }
 
-    const nextDefinition = getBlockDefinition(block.type, nextVariant);
-
-    if (!nextDefinition) {
+    if (pendingSwitch.lostKeys.length === 0) {
+      applyVariantSwitch(block.id, pendingSwitch.nextDefinition);
       return;
     }
 
-    const allowedKeys = new Set(getDefinitionPropKeys(nextDefinition));
-    const lostKeys = Object.keys(block.props).filter(
-      (key) => !allowedKeys.has(key) && isMeaningfulValue(block.props[key])
-    );
-    const lostLabels = lostKeys.map((key) => getFieldLabel(key, definition.fields));
-
-    if (lostKeys.length === 0) {
-      applyVariantSwitch(block.id, nextDefinition);
-      return;
-    }
-
-    setPendingVariantSwitch({
-      blockId: block.id,
-      nextVariant,
-      lostKeys,
-      lostLabels,
-      previousBlock: block,
-      nextDefinition,
-    });
+    setPendingVariantSwitch(pendingSwitch);
   }
 
   function handleConfirmVariantSwitch() {
@@ -320,11 +224,7 @@ export function ProjectEditor({ project, assets }: ProjectEditorProps) {
       return;
     }
 
-    setContent((currentContent) => ({
-      blocks: currentContent.blocks.map((block) =>
-        block.id === lastVariantUndo.blockId ? lastVariantUndo.previousBlock : block
-      ),
-    }));
+    setContent((currentContent) => undoVariantSwitchInContent(currentContent, lastVariantUndo));
     setLastVariantUndo(null);
   }
 

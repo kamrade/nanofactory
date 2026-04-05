@@ -13,6 +13,14 @@ type AssetRouteProps = {
   }>;
 };
 
+type PostAssetDependencies = {
+  uploadAssetForProject: typeof uploadAssetForProject;
+};
+
+const postAssetDependencies: PostAssetDependencies = {
+  uploadAssetForProject,
+};
+
 export const runtime = "nodejs";
 
 export async function GET(_request: Request, { params }: AssetRouteProps) {
@@ -44,10 +52,19 @@ export async function POST(request: Request, { params }: AssetRouteProps) {
 
   const { projectId } = await params;
 
+  return postAssetWithDependencies(projectId, session.user.id, file, postAssetDependencies);
+}
+
+export async function postAssetWithDependencies(
+  projectId: string,
+  userId: string,
+  file: File,
+  dependencies: PostAssetDependencies
+) {
   try {
-    const asset = await uploadAssetForProject({
+    const asset = await dependencies.uploadAssetForProject({
       projectId,
-      userId: session.user.id,
+      userId,
       file,
     });
 
