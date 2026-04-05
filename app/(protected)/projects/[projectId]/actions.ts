@@ -35,6 +35,34 @@ const saveProjectContentDependencies: SaveProjectContentDependencies = {
   revalidatePath,
 };
 
+type PublishProjectDependencies = {
+  requireCurrentUser: typeof requireCurrentUser;
+  publishProjectForUser: typeof publishProjectForUser;
+  revalidatePath: typeof revalidatePath;
+  redirect: typeof redirect;
+};
+
+type UnpublishProjectDependencies = {
+  requireCurrentUser: typeof requireCurrentUser;
+  unpublishProjectForUser: typeof unpublishProjectForUser;
+  revalidatePath: typeof revalidatePath;
+  redirect: typeof redirect;
+};
+
+const publishProjectDependencies: PublishProjectDependencies = {
+  requireCurrentUser,
+  publishProjectForUser,
+  revalidatePath,
+  redirect,
+};
+
+const unpublishProjectDependencies: UnpublishProjectDependencies = {
+  requireCurrentUser,
+  unpublishProjectForUser,
+  revalidatePath,
+  redirect,
+};
+
 export async function saveProjectContentForUserWithDependencies(
   projectId: string,
   userId: string,
@@ -121,29 +149,55 @@ export async function createProjectPreviewDraftAction(
 }
 
 export async function publishProjectAction(projectId: string) {
-  const currentUser = await requireCurrentUser();
-  const publishedProject = await publishProjectForUser(projectId, currentUser.id);
+  return publishProjectActionWithDependencies(
+    projectId,
+    publishProjectDependencies
+  );
+}
+
+export async function publishProjectActionWithDependencies(
+  projectId: string,
+  dependencies: PublishProjectDependencies
+) {
+  const currentUser = await dependencies.requireCurrentUser();
+  const publishedProject = await dependencies.publishProjectForUser(
+    projectId,
+    currentUser.id
+  );
 
   if (!publishedProject) {
-    redirect("/dashboard");
+    dependencies.redirect("/dashboard");
   }
 
-  revalidatePath(`/projects/${projectId}`);
-  revalidatePath("/dashboard");
-  revalidatePath(`/p/${publishedProject.slug}`);
-  redirect(`/projects/${projectId}`);
+  dependencies.revalidatePath(`/projects/${projectId}`);
+  dependencies.revalidatePath("/dashboard");
+  dependencies.revalidatePath(`/p/${publishedProject.slug}`);
+  dependencies.redirect(`/projects/${projectId}`);
 }
 
 export async function unpublishProjectAction(projectId: string) {
-  const currentUser = await requireCurrentUser();
-  const unpublishedProject = await unpublishProjectForUser(projectId, currentUser.id);
+  return unpublishProjectActionWithDependencies(
+    projectId,
+    unpublishProjectDependencies
+  );
+}
+
+export async function unpublishProjectActionWithDependencies(
+  projectId: string,
+  dependencies: UnpublishProjectDependencies
+) {
+  const currentUser = await dependencies.requireCurrentUser();
+  const unpublishedProject = await dependencies.unpublishProjectForUser(
+    projectId,
+    currentUser.id
+  );
 
   if (!unpublishedProject) {
-    redirect("/dashboard");
+    dependencies.redirect("/dashboard");
   }
 
-  revalidatePath(`/projects/${projectId}`);
-  revalidatePath("/dashboard");
-  revalidatePath(`/p/${unpublishedProject.slug}`);
-  redirect(`/projects/${projectId}`);
+  dependencies.revalidatePath(`/projects/${projectId}`);
+  dependencies.revalidatePath("/dashboard");
+  dependencies.revalidatePath(`/p/${unpublishedProject.slug}`);
+  dependencies.redirect(`/projects/${projectId}`);
 }

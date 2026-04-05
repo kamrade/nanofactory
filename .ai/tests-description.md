@@ -50,17 +50,66 @@ Purpose:
 
 ## Unit Tests
 
+### `tests/unit/auth.test.ts`
+
+What it covers:
+
+- `authorizeCredentials(...)` in `auth.ts`
+- `authOptions.callbacks.jwt`
+- `authOptions.callbacks.session`
+
+What each test does:
+
+- Returns `null` for empty credentials.
+- Returns `null` for unknown users.
+- Returns `null` for invalid passwords.
+- Returns user payload for valid credentials.
+- Stores `token.id` in the JWT callback.
+- Stores `session.user.id` in the session callback.
+
+### `tests/unit/current-user.test.ts`
+
+What it covers:
+
+- `getCurrentUser(...)`
+- `requireCurrentUser(...)`
+
+What each test does:
+
+- Returns `null` when the session is missing a user id.
+- Returns the user when the session has a valid user id.
+- Redirects to `/login` when the current user is missing.
+- Returns the user when present and does not redirect.
+
 ### `tests/unit/assets-route.test.ts`
 
 What it covers:
 
 - `postAssetWithDependencies(...)` success path.
 - `postAssetWithDependencies(...)` `AssetUploadError` path.
+- `postAssetWithDependencies(...)` infra error handling.
 
 What each test does:
 
 - Verifies that a successful upload returns HTTP `201` with the created asset payload.
 - Verifies that `AssetUploadError` is converted into the correct HTTP status and `{ error }` JSON response.
+- Returns `500` for `NoSuchBucket` and `AccessDenied` errors with actionable messages.
+- Returns error details in non-production when upload throws an `Error`.
+- Hides error details in production and returns `"Upload failed."`.
+
+### `tests/unit/assets-route-http.test.ts`
+
+What it covers:
+
+- Route-level GET and POST auth guards.
+- Route-level GET/POST request validation.
+
+What each test does:
+
+- Returns `401` for GET when unauthenticated.
+- Returns assets list for GET when authenticated.
+- Returns `401` for POST when unauthenticated.
+- Returns `400` for POST when the file is missing.
 
 ### `tests/unit/assets.test.ts`
 
@@ -124,6 +173,33 @@ What each test does:
 
 - Verifies successful content save flow, including asset validation, persistence, and revalidation of project paths.
 - Verifies that `AssetUploadError` is converted into an editor error result and stops save/revalidation.
+- Returns an error when the content payload is missing.
+- Returns an error for invalid JSON payloads.
+- Returns an error when the project is not found.
+
+### `tests/unit/publish-actions.test.ts`
+
+What it covers:
+
+- `publishProjectActionWithDependencies(...)`
+- `unpublishProjectActionWithDependencies(...)`
+
+What each test does:
+
+- Redirects to `/dashboard` when publish/unpublish returns `null`.
+- Revalidates project, dashboard, and public routes on success.
+- Redirects back to the project after publish/unpublish.
+
+### `tests/unit/dashboard-actions.test.ts`
+
+What it covers:
+
+- `createProjectActionWithDependencies(...)`
+
+What each test does:
+
+- Throws when the project name is empty after trimming.
+- Trims the project name and redirects to the created project.
 
 ### `tests/unit/project-editor-variants.test.ts`
 

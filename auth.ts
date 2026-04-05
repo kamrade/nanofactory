@@ -6,6 +6,45 @@ import CredentialsProvider from "next-auth/providers/credentials";
 import { db } from "@/db";
 import { users } from "@/db/schema";
 
+export async function authorizeCredentials(credentials?: {
+  email?: string;
+  password?: string;
+}) {
+  const email = credentials?.email?.trim();
+  const password = credentials?.password;
+
+  if (!email || !password) {
+    return null;
+  }
+
+  const [user] = await db
+    .select({
+      id: users.id,
+      email: users.email,
+      displayName: users.displayName,
+      passwordHash: users.passwordHash,
+    })
+    .from(users)
+    .where(eq(users.email, email))
+    .limit(1);
+
+  if (!user?.passwordHash) {
+    return null;
+  }
+
+  const isValidPassword = await compare(password, user.passwordHash);
+
+  if (!isValidPassword) {
+    return null;
+  }
+
+  return {
+    id: user.id,
+    email: user.email,
+    name: user.displayName ?? user.email,
+  };
+}
+
 export const authOptions: NextAuthOptions = {
   secret: process.env.AUTH_SECRET,
   pages: {
@@ -27,41 +66,7 @@ export const authOptions: NextAuthOptions = {
           type: "password",
         },
       },
-      async authorize(credentials) {
-        const email = credentials?.email?.trim();
-        const password = credentials?.password;
-
-        if (!email || !password) {
-          return null;
-        }
-
-        const [user] = await db
-          .select({
-            id: users.id,
-            email: users.email,
-            displayName: users.displayName,
-            passwordHash: users.passwordHash,
-          })
-          .from(users)
-          .where(eq(users.email, email))
-          .limit(1);
-
-        if (!user?.passwordHash) {
-          return null;
-        }
-
-        const isValidPassword = await compare(password, user.passwordHash);
-
-        if (!isValidPassword) {
-          return null;
-        }
-
-        return {
-          id: user.id,
-          email: user.email,
-          name: user.displayName ?? user.email,
-        };
-      },
+      authorize: authorizeCredentials,
     }),
   ],
   callbacks: {

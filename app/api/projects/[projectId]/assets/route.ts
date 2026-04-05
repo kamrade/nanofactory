@@ -21,23 +21,58 @@ const postAssetDependencies: PostAssetDependencies = {
   uploadAssetForProject,
 };
 
+type GetAssetsDependencies = {
+  getServerAuthSession: typeof getServerAuthSession;
+  getAssetsByProjectIdForUser: typeof getAssetsByProjectIdForUser;
+};
+
+type PostAssetsRouteDependencies = {
+  getServerAuthSession: typeof getServerAuthSession;
+  uploadAssetForProject: typeof uploadAssetForProject;
+};
+
+const getAssetsDependencies: GetAssetsDependencies = {
+  getServerAuthSession,
+  getAssetsByProjectIdForUser,
+};
+
+const postAssetsRouteDependencies: PostAssetsRouteDependencies = {
+  getServerAuthSession,
+  uploadAssetForProject,
+};
+
 export const runtime = "nodejs";
 
-export async function GET(_request: Request, { params }: AssetRouteProps) {
-  const session = await getServerAuthSession();
+export async function getAssetsWithDependencies(
+  _request: Request,
+  { params }: AssetRouteProps,
+  dependencies: GetAssetsDependencies
+) {
+  const session = await dependencies.getServerAuthSession();
 
   if (!session?.user?.id) {
     return NextResponse.json({ error: "Unauthorized." }, { status: 401 });
   }
 
   const { projectId } = await params;
-  const assets = await getAssetsByProjectIdForUser(projectId, session.user.id);
+  const assets = await dependencies.getAssetsByProjectIdForUser(
+    projectId,
+    session.user.id
+  );
 
   return NextResponse.json({ assets });
 }
 
-export async function POST(request: Request, { params }: AssetRouteProps) {
-  const session = await getServerAuthSession();
+export async function GET(request: Request, { params }: AssetRouteProps) {
+  return getAssetsWithDependencies(request, { params }, getAssetsDependencies);
+}
+
+export async function postAssetRouteWithDependencies(
+  request: Request,
+  { params }: AssetRouteProps,
+  dependencies: PostAssetsRouteDependencies
+) {
+  const session = await dependencies.getServerAuthSession();
 
   if (!session?.user?.id) {
     return NextResponse.json({ error: "Unauthorized." }, { status: 401 });
@@ -52,7 +87,17 @@ export async function POST(request: Request, { params }: AssetRouteProps) {
 
   const { projectId } = await params;
 
-  return postAssetWithDependencies(projectId, session.user.id, file, postAssetDependencies);
+  return postAssetWithDependencies(projectId, session.user.id, file, {
+    uploadAssetForProject: dependencies.uploadAssetForProject,
+  });
+}
+
+export async function POST(request: Request, { params }: AssetRouteProps) {
+  return postAssetRouteWithDependencies(
+    request,
+    { params },
+    postAssetsRouteDependencies
+  );
 }
 
 export async function postAssetWithDependencies(
