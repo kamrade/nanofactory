@@ -3,6 +3,7 @@ import { notFound } from "next/navigation";
 
 import { ProjectAssetsPanel } from "@/components/assets/project-assets-panel";
 import { ProjectEditor } from "@/components/editor/project-editor";
+import { OpenPreviewButton } from "@/components/editor/open-preview-button";
 import { getAssetsByProjectIdForUser } from "@/lib/assets";
 import { requireCurrentUser } from "@/lib/auth/current-user";
 import { normalizePageContent } from "@/lib/editor/content";
@@ -68,14 +69,7 @@ export default async function ProjectPage({ params }: ProjectPageProps) {
               </button>
             </form>
 
-            <Link
-              href={`/projects/${project.id}/preview`}
-              target="_blank"
-              rel="noreferrer"
-              className="inline-flex items-center justify-center rounded-2xl border border-zinc-300 bg-white px-4 py-2 text-sm font-medium text-zinc-800 transition hover:border-zinc-400 hover:bg-zinc-50"
-            >
-              Open preview
-            </Link>
+            <OpenPreviewButton projectId={project.id} />
 
             {project.status === "published" ? (
               <Link

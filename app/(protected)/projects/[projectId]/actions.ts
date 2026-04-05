@@ -9,6 +9,10 @@ import { AssetUploadError, validateHeroAssetReferencesForProject } from "@/lib/a
 import { requireCurrentUser } from "@/lib/auth/current-user";
 import { parsePageContentJson } from "@/lib/editor/content";
 import {
+  createProjectPreviewDraftForUser,
+  type PreviewDraftState,
+} from "@/lib/project-preview";
+import {
   publishProjectForUser,
   saveProjectContentForUser,
   unpublishProjectForUser,
@@ -19,12 +23,24 @@ export type SaveEditorState = {
   message: string;
 };
 
-export async function saveProjectContentAction(
+type SaveProjectContentDependencies = {
+  validateHeroAssetReferencesForProject: typeof validateHeroAssetReferencesForProject;
+  saveProjectContentForUser: typeof saveProjectContentForUser;
+  revalidatePath: typeof revalidatePath;
+};
+
+const saveProjectContentDependencies: SaveProjectContentDependencies = {
+  validateHeroAssetReferencesForProject,
+  saveProjectContentForUser,
+  revalidatePath,
+};
+
+export async function saveProjectContentForUserWithDependencies(
   projectId: string,
-  _prevState: SaveEditorState,
-  formData: FormData
+  userId: string,
+  formData: FormData,
+  dependencies: SaveProjectContentDependencies
 ): Promise<SaveEditorState> {
-  const currentUser = await requireCurrentUser();
   const rawContent = formData.get("content");
 
   if (typeof rawContent !== "string") {
@@ -44,9 +60,9 @@ export async function saveProjectContentAction(
   }
 
   try {
-    await validateHeroAssetReferencesForProject(
+    await dependencies.validateHeroAssetReferencesForProject(
       projectId,
-      currentUser.id,
+      userId,
       parsedContent.data
     );
   } catch (error) {
@@ -60,9 +76,9 @@ export async function saveProjectContentAction(
     throw error;
   }
 
-  const savedContent = await saveProjectContentForUser(
+  const savedContent = await dependencies.saveProjectContentForUser(
     projectId,
-    currentUser.id,
+    userId,
     parsedContent.data
   );
 
@@ -73,13 +89,35 @@ export async function saveProjectContentAction(
     };
   }
 
-  revalidatePath(`/projects/${projectId}`);
-  revalidatePath("/dashboard");
+  dependencies.revalidatePath(`/projects/${projectId}`);
+  dependencies.revalidatePath("/dashboard");
 
   return {
     status: "success",
     message: "Project content saved.",
   };
+}
+
+export async function saveProjectContentAction(
+  projectId: string,
+  _prevState: SaveEditorState,
+  formData: FormData
+): Promise<SaveEditorState> {
+  const currentUser = await requireCurrentUser();
+  return saveProjectContentForUserWithDependencies(
+    projectId,
+    currentUser.id,
+    formData,
+    saveProjectContentDependencies
+  );
+}
+
+export async function createProjectPreviewDraftAction(
+  projectId: string,
+  rawContent: string
+): Promise<PreviewDraftState> {
+  const currentUser = await requireCurrentUser();
+  return createProjectPreviewDraftForUser(projectId, currentUser.id, rawContent);
 }
 
 export async function publishProjectAction(projectId: string) {

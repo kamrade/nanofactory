@@ -5,15 +5,22 @@ import { ProjectRenderer } from "@/components/projects/project-renderer";
 import { getAssetsByProjectIdForUser } from "@/lib/assets";
 import { requireCurrentUser } from "@/lib/auth/current-user";
 import { normalizePageContent } from "@/lib/editor/content";
+import { getPreviewDraft } from "@/lib/preview-drafts";
 import { getProjectByIdForUser } from "@/lib/projects";
 
 type ProjectPreviewPageProps = {
   params: Promise<{
     projectId: string;
   }>;
+  searchParams?: Promise<{
+    draft?: string;
+  }>;
 };
 
-export default async function ProjectPreviewPage({ params }: ProjectPreviewPageProps) {
+export default async function ProjectPreviewPage({
+  params,
+  searchParams,
+}: ProjectPreviewPageProps) {
   const currentUser = await requireCurrentUser();
   const { projectId } = await params;
   const project = await getProjectByIdForUser(projectId, currentUser.id);
@@ -23,6 +30,20 @@ export default async function ProjectPreviewPage({ params }: ProjectPreviewPageP
   }
 
   const assets = await getAssetsByProjectIdForUser(project.id, currentUser.id);
+  const resolvedSearchParams = searchParams ? await searchParams : {};
+  const draftToken = resolvedSearchParams.draft;
+  const draft = draftToken ? getPreviewDraft(draftToken) : null;
+  const hasValidDraft =
+    !!draft &&
+    draft.projectId === project.id &&
+    draft.userId === currentUser.id;
+  const content = hasValidDraft ? draft.content : project.contentJson;
+  const bannerTitle = hasValidDraft ? "Draft preview" : "Saved preview";
+  const bannerDescription = hasValidDraft
+    ? "Shows unsaved changes. Drafts expire after 15 minutes."
+    : draftToken
+      ? "Draft expired or not found. Showing last saved content."
+      : "Shows last saved content.";
 
   return (
     <div>
@@ -30,9 +51,9 @@ export default async function ProjectPreviewPage({ params }: ProjectPreviewPageP
         <div className="mx-auto flex w-full max-w-5xl flex-wrap items-center justify-between gap-3">
           <div className="flex flex-wrap items-center gap-3">
             <span className="rounded-full border border-zinc-300 bg-white px-3 py-1 text-xs font-semibold uppercase tracking-[0.2em] text-zinc-600">
-              Draft preview
+              {bannerTitle}
             </span>
-            <span>Shows last saved content.</span>
+            <span>{bannerDescription}</span>
           </div>
           <Link
             href={`/projects/${project.id}`}
@@ -46,7 +67,7 @@ export default async function ProjectPreviewPage({ params }: ProjectPreviewPageP
       <ProjectRenderer
         name={project.name}
         themeKey={project.themeKey}
-        content={normalizePageContent(project.contentJson)}
+        content={normalizePageContent(content)}
         assets={assets}
       />
     </div>

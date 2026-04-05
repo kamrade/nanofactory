@@ -17,6 +17,7 @@ import {
   type SaveEditorState,
   saveProjectContentAction,
 } from "@/app/(protected)/projects/[projectId]/actions";
+import { setPreviewDraftContent } from "@/components/editor/preview-draft-store";
 import { BlockChrome } from "@/features/blocks/shared/block-chrome";
 import type { BlockFieldDefinition, BlockVariantDefinition } from "@/features/blocks/shared/types";
 import type { PageBlock } from "@/features/blocks/shared/content";
@@ -139,6 +140,10 @@ export function ProjectEditor({ project, assets }: ProjectEditorProps) {
     () => (selectedAddBlockType ? getBlockVariants(selectedAddBlockType) : []),
     [selectedAddBlockType]
   );
+
+  useEffect(() => {
+    setPreviewDraftContent(content);
+  }, [content]);
 
   useEffect(() => {
     if (!isAddBlockMenuOpen) {
