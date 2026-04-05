@@ -18,6 +18,8 @@ import {
   saveProjectContentAction,
 } from "@/app/(protected)/projects/[projectId]/actions";
 import { BlockChrome } from "@/features/blocks/shared/block-chrome";
+import type { BlockFieldDefinition, BlockVariantDefinition } from "@/features/blocks/shared/types";
+import type { PageBlock } from "@/features/blocks/shared/content";
 
 type EditorProject = {
   id: string;
@@ -34,10 +36,63 @@ type ProjectEditorProps = {
 };
 
 function formatDefinitionLabel(definition: { typeLabel: string; label: string; variant: string }) {
-  return definition.variant === "default"
-    ? definition.typeLabel
-    : `${definition.typeLabel} / ${definition.label}`;
+  return definition.typeLabel;
 }
+
+function getDefinitionPropKeys(definition: BlockVariantDefinition) {
+  const keys = definition.fields.map((field) => field.key);
+
+  if (definition.supportsAssetSelection) {
+    keys.push("imageAssetId");
+  }
+
+  return keys;
+}
+
+function isMeaningfulValue(value: unknown) {
+  if (value === null || value === undefined) {
+    return false;
+  }
+
+  if (typeof value === "string") {
+    return value.trim().length > 0;
+  }
+
+  if (Array.isArray(value)) {
+    return value.length > 0;
+  }
+
+  if (typeof value === "object") {
+    return Object.keys(value).length > 0;
+  }
+
+  return true;
+}
+
+function getFieldLabel(fieldKey: string, fields: BlockFieldDefinition[]) {
+  if (fieldKey === "imageAssetId") {
+    return "Image asset";
+  }
+
+  return fields.find((field) => field.key === fieldKey)?.label ?? fieldKey;
+}
+
+type PendingVariantSwitch = {
+  blockId: string;
+  nextVariant: BlockVariant;
+  lostKeys: string[];
+  lostLabels: string[];
+  previousBlock: PageBlock;
+  nextDefinition: BlockVariantDefinition;
+};
+
+type VariantUndo = {
+  blockId: string;
+  previousBlock: PageBlock;
+  fromLabel: string;
+  toLabel: string;
+  typeLabel: string;
+};
 
 function SaveStatus({ state }: { state: SaveEditorState }) {
   if (state.status === "idle" || !state.message) {
@@ -63,6 +118,10 @@ export function ProjectEditor({ project, assets }: ProjectEditorProps) {
   const [selectedAddBlockType, setSelectedAddBlockType] = useState<SupportedBlockType | null>(
     null
   );
+  const [pendingVariantSwitch, setPendingVariantSwitch] = useState<PendingVariantSwitch | null>(
+    null
+  );
+  const [lastVariantUndo, setLastVariantUndo] = useState<VariantUndo | null>(null);
   const initialSaveEditorState: SaveEditorState = {
     status: "idle",
     message: "",
@@ -109,6 +168,18 @@ export function ProjectEditor({ project, assets }: ProjectEditorProps) {
     };
   }, [isAddBlockMenuOpen]);
 
+  useEffect(() => {
+    if (!lastVariantUndo) {
+      return;
+    }
+
+    const timer = window.setTimeout(() => {
+      setLastVariantUndo(null);
+    }, 10_000);
+
+    return () => window.clearTimeout(timer);
+  }, [lastVariantUndo]);
+
   function handleAddBlock(type: SupportedBlockType, variant: BlockVariant = "default") {
     setContent((currentContent) => ({
       blocks: [...currentContent.blocks, createPageBlock(type, variant)],
@@ -121,6 +192,8 @@ export function ProjectEditor({ project, assets }: ProjectEditorProps) {
     setContent((currentContent) => ({
       blocks: currentContent.blocks.filter((block) => block.id !== blockId),
     }));
+    setPendingVariantSwitch((current) => (current?.blockId === blockId ? null : current));
+    setLastVariantUndo((current) => (current?.blockId === blockId ? null : current));
   }
 
   function handleUpdateBlockProps(blockId: string, nextProps: Record<string, unknown>) {
@@ -136,6 +209,118 @@ export function ProjectEditor({ project, assets }: ProjectEditorProps) {
         };
       }),
     }));
+  }
+
+  function mapPropsToDefinition(
+    props: Record<string, unknown>,
+    definition: BlockVariantDefinition
+  ) {
+    const allowedKeys = new Set(getDefinitionPropKeys(definition));
+    const nextProps: Record<string, unknown> = {};
+
+    Object.entries(props).forEach(([key, value]) => {
+      if (allowedKeys.has(key)) {
+        nextProps[key] = value;
+      }
+    });
+
+    return definition.normalizeProps(nextProps);
+  }
+
+  function applyVariantSwitch(blockId: string, nextDefinition: BlockVariantDefinition) {
+    setContent((currentContent) => {
+      const targetBlock = currentContent.blocks.find((block) => block.id === blockId);
+
+      if (!targetBlock) {
+        return currentContent;
+      }
+
+      const currentDefinition = getBlockDefinition(targetBlock.type, targetBlock.variant);
+      const fromLabel = currentDefinition?.label ?? targetBlock.variant ?? "default";
+      const toLabel = nextDefinition.label ?? nextDefinition.variant;
+      const typeLabel = currentDefinition?.typeLabel ?? nextDefinition.typeLabel;
+
+      const nextBlocks = currentContent.blocks.map((block) => {
+        if (block.id !== blockId) {
+          return block;
+        }
+
+        return {
+          ...block,
+          variant: nextDefinition.variant,
+          props: mapPropsToDefinition(block.props, nextDefinition),
+        };
+      });
+
+      setLastVariantUndo({
+        blockId,
+        previousBlock: targetBlock,
+        fromLabel,
+        toLabel,
+        typeLabel,
+      });
+
+      return { blocks: nextBlocks };
+    });
+    setPendingVariantSwitch(null);
+  }
+
+  function handleSelectVariant(block: PageBlock, definition: BlockVariantDefinition, nextVariant: BlockVariant) {
+    if (definition.variant === nextVariant) {
+      setPendingVariantSwitch(null);
+      return;
+    }
+
+    const nextDefinition = getBlockDefinition(block.type, nextVariant);
+
+    if (!nextDefinition) {
+      return;
+    }
+
+    const allowedKeys = new Set(getDefinitionPropKeys(nextDefinition));
+    const lostKeys = Object.keys(block.props).filter(
+      (key) => !allowedKeys.has(key) && isMeaningfulValue(block.props[key])
+    );
+    const lostLabels = lostKeys.map((key) => getFieldLabel(key, definition.fields));
+
+    if (lostKeys.length === 0) {
+      applyVariantSwitch(block.id, nextDefinition);
+      return;
+    }
+
+    setPendingVariantSwitch({
+      blockId: block.id,
+      nextVariant,
+      lostKeys,
+      lostLabels,
+      previousBlock: block,
+      nextDefinition,
+    });
+  }
+
+  function handleConfirmVariantSwitch() {
+    if (!pendingVariantSwitch) {
+      return;
+    }
+
+    applyVariantSwitch(pendingVariantSwitch.blockId, pendingVariantSwitch.nextDefinition);
+  }
+
+  function handleCancelVariantSwitch() {
+    setPendingVariantSwitch(null);
+  }
+
+  function handleUndoVariantSwitch() {
+    if (!lastVariantUndo) {
+      return;
+    }
+
+    setContent((currentContent) => ({
+      blocks: currentContent.blocks.map((block) =>
+        block.id === lastVariantUndo.blockId ? lastVariantUndo.previousBlock : block
+      ),
+    }));
+    setLastVariantUndo(null);
   }
 
   return (
@@ -228,6 +413,33 @@ export function ProjectEditor({ project, assets }: ProjectEditorProps) {
         </div>
 
         <div className="mt-6 grid gap-4">
+          {lastVariantUndo ? (
+            <div className="flex flex-wrap items-center justify-between gap-3 rounded-2xl border border-emerald-200 bg-emerald-50 px-4 py-3 text-sm text-emerald-800">
+              <span>
+                Variant switched for {lastVariantUndo.typeLabel}: {lastVariantUndo.fromLabel} →{" "}
+                {lastVariantUndo.toLabel}.
+              </span>
+              <div className="flex flex-wrap items-center gap-2">
+                <button
+                  type="button"
+                  onClick={handleUndoVariantSwitch}
+                  className="inline-flex items-center justify-center rounded-2xl border border-emerald-200 bg-white px-3 py-1.5 text-sm font-medium text-emerald-800 transition hover:border-emerald-300 hover:bg-emerald-100"
+                >
+                  Undo
+                </button>
+                <button
+                  type="button"
+                  onClick={() => setLastVariantUndo(null)}
+                  aria-label="Dismiss"
+                  title="Dismiss"
+                  className="inline-flex h-8 w-8 items-center justify-center rounded-full border border-emerald-200 bg-white text-lg font-semibold text-emerald-800 transition hover:border-emerald-300 hover:bg-emerald-100"
+                >
+                  ×
+                </button>
+              </div>
+            </div>
+          ) : null}
+
           {content.blocks.length === 0 ? (
             <div className="rounded-2xl border border-dashed border-zinc-300 px-5 py-8 text-sm text-zinc-500">
               No blocks yet. Use `Add block` in the header to choose a block type and
@@ -242,17 +454,70 @@ export function ProjectEditor({ project, assets }: ProjectEditorProps) {
               }
 
               const BlockEditor = definition.Editor;
+              const variantOptions = getBlockVariants(definition.type);
+              const activePending =
+                pendingVariantSwitch && pendingVariantSwitch.blockId === block.id
+                  ? pendingVariantSwitch
+                  : null;
+              const selectedVariant = activePending
+                ? activePending.nextVariant
+                : definition.variant;
 
               return (
                 <BlockChrome
                   key={block.id}
                   index={index}
                   title={formatDefinitionLabel(definition)}
-                  meta={`Type: ${definition.typeLabel}${
-                    definition.variant !== "default" ? ` / ${definition.label}` : ""
-                  }`}
+                  meta={`Type: ${definition.typeLabel} · Variant: ${definition.variant}`}
                   onDelete={() => handleDeleteBlock(block.id)}
+                  actions={
+                    variantOptions.length > 1 ? (
+                      <label className="flex items-center gap-2 text-xs font-semibold uppercase tracking-[0.16em] text-zinc-400">
+                        <span>Variant</span>
+                        <select
+                          value={selectedVariant}
+                          onChange={(event) =>
+                            handleSelectVariant(
+                              block,
+                              definition,
+                              event.target.value as BlockVariant
+                            )
+                          }
+                          className="rounded-xl border border-zinc-200 bg-white px-2 py-1 text-xs font-medium text-zinc-700"
+                        >
+                          {variantOptions.map((option) => (
+                            <option key={`${option.type}:${option.variant}`} value={option.variant}>
+                              {option.label}
+                            </option>
+                          ))}
+                        </select>
+                      </label>
+                    ) : null
+                  }
                 >
+                  {activePending ? (
+                    <div className="rounded-2xl border border-amber-200 bg-amber-50 px-4 py-3 text-sm text-amber-900">
+                      <p className="font-medium">
+                        Switching variant will remove: {activePending.lostLabels.join(", ")}.
+                      </p>
+                      <div className="mt-3 flex flex-wrap gap-2">
+                        <button
+                          type="button"
+                          onClick={handleConfirmVariantSwitch}
+                          className="inline-flex items-center justify-center rounded-2xl border border-amber-300 bg-amber-100 px-3 py-1.5 text-sm font-medium text-amber-900 transition hover:border-amber-400 hover:bg-amber-200"
+                        >
+                          Switch variant
+                        </button>
+                        <button
+                          type="button"
+                          onClick={handleCancelVariantSwitch}
+                          className="inline-flex items-center justify-center rounded-2xl border border-amber-200 bg-white px-3 py-1.5 text-sm font-medium text-amber-900 transition hover:border-amber-300 hover:bg-amber-100"
+                        >
+                          Cancel
+                        </button>
+                      </div>
+                    </div>
+                  ) : null}
                   <BlockEditor
                     block={block}
                     assets={assets}

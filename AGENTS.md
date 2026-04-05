@@ -1,4 +1,6 @@
 <!-- BEGIN:nextjs-agent-rules -->
+For more information about the project, see the MD files in the .ai folder
+
 # This is NOT the Next.js you know
 
 This version has breaking changes — APIs, conventions, and file structure may all differ from your training data. Read the relevant guide in `node_modules/next/dist/docs/` before writing any code. Heed deprecation notices.
