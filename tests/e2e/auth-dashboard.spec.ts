@@ -109,6 +109,42 @@ test("publishes and unpublishes a project through the editor", async ({ page }) 
   await expect(page.getByText("This page could not be found.")).toBeVisible();
 });
 
+test("applies selected theme in preview before save and persists after apply", async ({
+  page,
+}) => {
+  await page.goto("/dashboard");
+  await page.getByLabel("Project name").fill("Theme Preview Project");
+  await page.getByRole("button", { name: "Create project" }).click();
+
+  await page.waitForURL(/\/projects\/.+/);
+  await page.locator('select[name="themeKey"]').selectOption("nightfall");
+  await expect(page.getByText("Theme: sunwash").first()).toBeVisible();
+
+  const previewPopupBeforeSavePromise = page.waitForEvent("popup");
+  await page.getByRole("button", { name: "Open preview" }).click();
+  const previewPopupBeforeSave = await previewPopupBeforeSavePromise;
+
+  await previewPopupBeforeSave.waitForLoadState("domcontentloaded");
+  await expect(previewPopupBeforeSave).toHaveURL(/theme=nightfall/);
+  await expect(previewPopupBeforeSave.locator('main[data-theme="nightfall"]')).toBeVisible();
+  await expect(previewPopupBeforeSave.getByText("Theme preview: nightfall.")).toBeVisible();
+  await previewPopupBeforeSave.close();
+
+  await expect(page.getByText("Theme: sunwash").first()).toBeVisible();
+  await page.getByRole("button", { name: "Apply theme" }).click();
+  await page.waitForURL(/\/projects\/.+/);
+  await expect(page.getByText("Theme: nightfall").first()).toBeVisible();
+
+  const previewPopupAfterSavePromise = page.waitForEvent("popup");
+  await page.getByRole("button", { name: "Open preview" }).click();
+  const previewPopupAfterSave = await previewPopupAfterSavePromise;
+
+  await previewPopupAfterSave.waitForLoadState("domcontentloaded");
+  await expect(previewPopupAfterSave.locator('main[data-theme="nightfall"]')).toBeVisible();
+  await expect(previewPopupAfterSave.getByText("Theme: nightfall.")).toBeVisible();
+  await previewPopupAfterSave.close();
+});
+
 test("does not show or open projects owned by another user", async ({ page }) => {
   const otherUser = await seedUser({
     email: "other.user@nanofactory.local",
