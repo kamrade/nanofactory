@@ -145,6 +145,28 @@ test("applies selected theme in preview before save and persists after apply", a
   await previewPopupAfterSave.close();
 });
 
+test("switches preview mode between light and dark", async ({ page }) => {
+  await page.goto("/dashboard");
+  await page.getByLabel("Project name").fill("Mode Switch Project");
+  await page.getByRole("button", { name: "Create project" }).click();
+
+  await page.waitForURL(/\/projects\/.+/);
+
+  const previewPopupPromise = page.waitForEvent("popup");
+  await page.getByRole("button", { name: "Open preview" }).click();
+  const previewPopup = await previewPopupPromise;
+
+  await previewPopup.waitForLoadState("domcontentloaded");
+  await expect(previewPopup.locator('main[data-mode="light"]')).toBeVisible();
+
+  await previewPopup.getByRole("button", { name: "Dark" }).click();
+  await expect(previewPopup.locator('main[data-mode="dark"]')).toBeVisible();
+
+  await previewPopup.getByRole("button", { name: "Light" }).click();
+  await expect(previewPopup.locator('main[data-mode="light"]')).toBeVisible();
+  await previewPopup.close();
+});
+
 test("does not show or open projects owned by another user", async ({ page }) => {
   const otherUser = await seedUser({
     email: "other.user@nanofactory.local",

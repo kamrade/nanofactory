@@ -165,4 +165,17 @@ describe("ProjectRenderer", () => {
 
     expect(html).toContain(`data-theme="${DEFAULT_THEME_KEY}"`);
   });
+
+  it("renders with light mode by default on the root container", () => {
+    const html = renderToStaticMarkup(
+      ProjectRenderer({
+        name: "Mode Default Project",
+        themeKey: "sunwash",
+        content: createHeroContent(),
+        assets: [],
+      })
+    );
+
+    expect(html).toContain('data-mode="light"');
+  });
 });

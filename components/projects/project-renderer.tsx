@@ -1,6 +1,7 @@
 import type { PageContent } from "@/db/schema";
 import type { ProjectAssetRecord } from "@/lib/assets";
 import { buildAssetMap } from "@/lib/assets/resolution";
+import { ProjectModeSwitcher } from "@/components/projects/project-mode-switcher";
 import { DEFAULT_THEME_KEY, isThemeKey } from "@/lib/themes";
 
 import { getBlockDefinition } from "@/lib/editor/blocks";
@@ -62,7 +63,10 @@ export function ProjectRenderer({ name, themeKey, content, assets }: RenderedPro
           <p className={`text-sm font-medium uppercase tracking-[0.2em] ${theme.kicker}`}>
             Published with Nanofactory
           </p>
-          <p className={`mt-3 text-sm ${theme.muted}`}>Project: {name}</p>
+          <div className="mt-3 flex flex-wrap items-center justify-between gap-3">
+            <p className={`text-sm ${theme.muted}`}>Project: {name}</p>
+            <ProjectModeSwitcher />
+          </div>
         </header>
 
         {content.blocks.length === 0 ? (
