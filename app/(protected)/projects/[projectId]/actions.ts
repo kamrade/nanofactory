@@ -16,7 +16,9 @@ import {
   publishProjectForUser,
   saveProjectContentForUser,
   unpublishProjectForUser,
+  updateProjectThemeForUser,
 } from "@/lib/projects";
+import { isThemeKey } from "@/lib/themes";
 
 export type SaveEditorState = {
   status: "idle" | "success" | "error";
@@ -49,6 +51,13 @@ type UnpublishProjectDependencies = {
   redirect: typeof redirect;
 };
 
+type UpdateProjectThemeDependencies = {
+  requireCurrentUser: typeof requireCurrentUser;
+  updateProjectThemeForUser: typeof updateProjectThemeForUser;
+  revalidatePath: typeof revalidatePath;
+  redirect: typeof redirect;
+};
+
 const publishProjectDependencies: PublishProjectDependencies = {
   requireCurrentUser,
   publishProjectForUser,
@@ -59,6 +68,13 @@ const publishProjectDependencies: PublishProjectDependencies = {
 const unpublishProjectDependencies: UnpublishProjectDependencies = {
   requireCurrentUser,
   unpublishProjectForUser,
+  revalidatePath,
+  redirect,
+};
+
+const updateProjectThemeDependencies: UpdateProjectThemeDependencies = {
+  requireCurrentUser,
+  updateProjectThemeForUser,
   revalidatePath,
   redirect,
 };
@@ -199,5 +215,41 @@ export async function unpublishProjectActionWithDependencies(
   dependencies.revalidatePath(`/projects/${projectId}`);
   dependencies.revalidatePath("/dashboard");
   dependencies.revalidatePath(`/p/${unpublishedProject.slug}`);
+  dependencies.redirect(`/projects/${projectId}`);
+}
+
+export async function updateProjectThemeAction(projectId: string, formData: FormData) {
+  return updateProjectThemeActionWithDependencies(
+    projectId,
+    formData,
+    updateProjectThemeDependencies
+  );
+}
+
+export async function updateProjectThemeActionWithDependencies(
+  projectId: string,
+  formData: FormData,
+  dependencies: UpdateProjectThemeDependencies
+) {
+  const currentUser = await dependencies.requireCurrentUser();
+  const themeKey = String(formData.get("themeKey") ?? "");
+
+  if (!isThemeKey(themeKey)) {
+    dependencies.redirect(`/projects/${projectId}`);
+  }
+
+  const updatedProject = await dependencies.updateProjectThemeForUser(
+    projectId,
+    currentUser.id,
+    themeKey
+  );
+
+  if (!updatedProject) {
+    dependencies.redirect("/dashboard");
+  }
+
+  dependencies.revalidatePath(`/projects/${projectId}`);
+  dependencies.revalidatePath("/dashboard");
+  dependencies.revalidatePath(`/p/${updatedProject.slug}`);
   dependencies.redirect(`/projects/${projectId}`);
 }

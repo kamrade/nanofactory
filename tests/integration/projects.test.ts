@@ -4,6 +4,7 @@ import {
   createProjectForUser,
   getProjectByIdForUser,
   getProjectsByUserId,
+  updateProjectThemeForUser,
 } from "../../lib/projects";
 import {
   closeTestDatabase,
@@ -91,5 +92,58 @@ describe("project queries", () => {
 
     expect(foreignProject).toBeNull();
     expect(invalidProject).toBeNull();
+  });
+
+  it("updates theme when project is owned by current user", async () => {
+    const testUser = await getSeededTestUser();
+    const project = await seedProject({
+      userId: testUser.id,
+      name: "Themed Project",
+      slug: "themed-project",
+      themeKey: "sunwash",
+    });
+
+    const updatedProject = await updateProjectThemeForUser(
+      project.id,
+      testUser.id,
+      "nightfall"
+    );
+    const loadedProject = await getProjectByIdForUser(project.id, testUser.id);
+
+    expect(updatedProject).not.toBeNull();
+    expect(updatedProject?.themeKey).toBe("nightfall");
+    expect(loadedProject?.themeKey).toBe("nightfall");
+  });
+
+  it("does not update theme for foreign project owner", async () => {
+    const testUser = await getSeededTestUser();
+    const otherUser = await seedUser({
+      email: "theme.owner@nanofactory.local",
+      displayName: "Theme Owner",
+    });
+    const otherProject = await seedProject({
+      userId: otherUser.id,
+      name: "Other User Project",
+      slug: "other-user-project",
+      themeKey: "sunwash",
+    });
+
+    const result = await updateProjectThemeForUser(
+      otherProject.id,
+      testUser.id,
+      "nightfall"
+    );
+    const unchangedProject = await getProjectByIdForUser(otherProject.id, otherUser.id);
+
+    expect(result).toBeNull();
+    expect(unchangedProject?.themeKey).toBe("sunwash");
+  });
+
+  it("returns null when project id is invalid", async () => {
+    const testUser = await getSeededTestUser();
+
+    const result = await updateProjectThemeForUser("invalid-id", testUser.id, "nightfall");
+
+    expect(result).toBeNull();
   });
 });

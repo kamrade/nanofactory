@@ -8,6 +8,13 @@
       "when": 1774751914788,
       "tag": "0000_magenta_whiplash",
       "breakpoints": true
+    },
+    {
+      "idx": 1,
+      "version": "7",
+      "when": 1775856809406,
+      "tag": "0001_graceful_puppet_master",
+      "breakpoints": true
     }
   ]
 }

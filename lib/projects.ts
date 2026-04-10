@@ -5,10 +5,11 @@ import { and, desc, eq } from "drizzle-orm";
 import { db } from "@/db";
 import { projectContents, projects, type PageContent } from "@/db/schema";
 import { buildProjectSlugCandidate, slugifyProjectName } from "@/lib/projects/slug";
+import { DEFAULT_THEME_KEY, type ThemeKey } from "@/lib/themes";
 
 type CreateProjectInput = {
   name: string;
-  themeKey?: string;
+  themeKey?: ThemeKey;
 };
 
 function isUuid(value: string) {
@@ -256,6 +257,33 @@ export async function saveProjectContentForUser(
   });
 }
 
+export async function updateProjectThemeForUser(
+  projectId: string,
+  userId: string,
+  themeKey: ThemeKey
+) {
+  if (!isUuid(projectId)) {
+    return null;
+  }
+
+  const now = new Date();
+  const [project] = await db
+    .update(projects)
+    .set({
+      themeKey,
+      updatedAt: now,
+    })
+    .where(and(eq(projects.id, projectId), eq(projects.userId, userId)))
+    .returning({
+      id: projects.id,
+      slug: projects.slug,
+      themeKey: projects.themeKey,
+      updatedAt: projects.updatedAt,
+    });
+
+  return project ?? null;
+}
+
 export async function createProjectForUser(userId: string, input: CreateProjectInput) {
   const name = input.name.trim();
 
@@ -264,7 +292,7 @@ export async function createProjectForUser(userId: string, input: CreateProjectI
   }
 
   const slug = await generateUniqueProjectSlug(name);
-  const themeKey = input.themeKey ?? "classic-light";
+  const themeKey = input.themeKey ?? DEFAULT_THEME_KEY;
 
   return db.transaction(async (tx) => {
     const [project] = await tx

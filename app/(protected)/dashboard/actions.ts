@@ -4,6 +4,7 @@ import { redirect } from "next/navigation";
 
 import { requireCurrentUser } from "@/lib/auth/current-user";
 import { createProjectForUser } from "@/lib/projects";
+import { DEFAULT_THEME_KEY } from "@/lib/themes";
 
 type CreateProjectDependencies = {
   requireCurrentUser: typeof requireCurrentUser;
@@ -30,7 +31,7 @@ export async function createProjectActionWithDependencies(
 
   const project = await dependencies.createProjectForUser(currentUser.id, {
     name,
-    themeKey: "classic-light",
+    themeKey: DEFAULT_THEME_KEY,
   });
 
   dependencies.redirect(`/projects/${project.id}`);

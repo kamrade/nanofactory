@@ -12,6 +12,35 @@ function getDraftSnapshot() {
   return getPreviewDraftContent();
 }
 
+export function getSelectedThemeKeyFromDocument(
+  doc: Pick<Document, "querySelector"> = document
+) {
+  const themeField = doc.querySelector<HTMLSelectElement>('select[name="themeKey"]');
+  const value = themeField?.value?.trim();
+  return value ? value : null;
+}
+
+export function buildPreviewUrl(
+  basePath: string,
+  options?: {
+    draftToken?: string;
+    selectedThemeKey?: string | null;
+  }
+) {
+  const params = new URLSearchParams();
+
+  if (options?.draftToken) {
+    params.set("draft", options.draftToken);
+  }
+
+  if (options?.selectedThemeKey) {
+    params.set("theme", options.selectedThemeKey);
+  }
+
+  const query = params.toString();
+  return query ? `${basePath}?${query}` : basePath;
+}
+
 export function OpenPreviewButton({ projectId }: { projectId: string }) {
   const content = useSyncExternalStore(subscribePreviewDraft, getDraftSnapshot, () => null);
   const [isPending, startTransition] = useTransition();
@@ -22,8 +51,14 @@ export function OpenPreviewButton({ projectId }: { projectId: string }) {
   }
 
   function handleOpenPreview() {
+    const selectedThemeKey = getSelectedThemeKeyFromDocument();
+
     if (!content) {
-      openPreviewUrl(`/projects/${projectId}/preview`);
+      openPreviewUrl(
+        buildPreviewUrl(`/projects/${projectId}/preview`, {
+          selectedThemeKey,
+        })
+      );
       return;
     }
 
@@ -41,7 +76,12 @@ export function OpenPreviewButton({ projectId }: { projectId: string }) {
           return;
         }
 
-        openPreviewUrl(`/projects/${projectId}/preview?draft=${result.token}`);
+        openPreviewUrl(
+          buildPreviewUrl(`/projects/${projectId}/preview`, {
+            draftToken: result.token,
+            selectedThemeKey,
+          })
+        );
       } catch (error) {
         setErrorMessage("Preview failed. Please try again.");
         console.error(error);

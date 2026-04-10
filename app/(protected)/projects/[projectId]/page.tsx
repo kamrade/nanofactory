@@ -8,8 +8,10 @@ import { getAssetsByProjectIdForUser } from "@/lib/assets";
 import { requireCurrentUser } from "@/lib/auth/current-user";
 import { normalizePageContent } from "@/lib/editor/content";
 import { getProjectByIdForUser } from "@/lib/projects";
+import { THEME_OPTIONS } from "@/lib/themes";
 import {
   publishProjectAction,
+  updateProjectThemeAction,
   unpublishProjectAction,
 } from "@/app/(protected)/projects/[projectId]/actions";
 
@@ -34,6 +36,7 @@ export default async function ProjectPage({ params }: ProjectPageProps) {
     project.status === "published"
       ? unpublishProjectAction.bind(null, project.id)
       : publishProjectAction.bind(null, project.id);
+  const themeAction = updateProjectThemeAction.bind(null, project.id);
 
   return (
     <main className="min-h-screen bg-zinc-50 px-4 py-16 text-zinc-950">
@@ -70,6 +73,30 @@ export default async function ProjectPage({ params }: ProjectPageProps) {
             </form>
 
             <OpenPreviewButton projectId={project.id} />
+
+            <form action={themeAction} className="flex items-center gap-2">
+              <label className="sr-only" htmlFor="themeKey">
+                Theme
+              </label>
+              <select
+                id="themeKey"
+                name="themeKey"
+                defaultValue={project.themeKey}
+                className="rounded-2xl border border-zinc-300 bg-white px-3 py-2 text-sm font-medium text-zinc-800"
+              >
+                {THEME_OPTIONS.map((theme) => (
+                  <option key={theme.key} value={theme.key}>
+                    {theme.label}
+                  </option>
+                ))}
+              </select>
+              <button
+                type="submit"
+                className="inline-flex items-center justify-center rounded-2xl border border-zinc-300 bg-white px-4 py-2 text-sm font-medium text-zinc-800 transition hover:border-zinc-400 hover:bg-zinc-50"
+              >
+                Apply theme
+              </button>
+            </form>
 
             {project.status === "published" ? (
               <Link

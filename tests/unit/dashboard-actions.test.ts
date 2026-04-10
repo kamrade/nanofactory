@@ -1,6 +1,7 @@
 import { beforeEach, describe, expect, it, vi } from "vitest";
 
 import { createProjectActionWithDependencies } from "@/app/(protected)/dashboard/actions";
+import { DEFAULT_THEME_KEY } from "@/lib/themes";
 
 const mocks = {
   requireCurrentUser: vi.fn(),
@@ -47,7 +48,7 @@ describe("createProjectActionWithDependencies", () => {
     ).rejects.toThrow("redirected");
     expect(mocks.createProjectForUser).toHaveBeenCalledWith("user-1", {
       name: "My Project",
-      themeKey: "classic-light",
+      themeKey: DEFAULT_THEME_KEY,
     });
     expect(mocks.redirect).toHaveBeenCalledWith("/projects/project-1");
   });

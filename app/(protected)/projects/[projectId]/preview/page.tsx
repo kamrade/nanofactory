@@ -7,6 +7,7 @@ import { requireCurrentUser } from "@/lib/auth/current-user";
 import { normalizePageContent } from "@/lib/editor/content";
 import { getPreviewDraft } from "@/lib/preview-drafts";
 import { getProjectByIdForUser } from "@/lib/projects";
+import { isThemeKey } from "@/lib/themes";
 
 type ProjectPreviewPageProps = {
   params: Promise<{
@@ -14,36 +15,68 @@ type ProjectPreviewPageProps = {
   }>;
   searchParams?: Promise<{
     draft?: string;
+    theme?: string;
   }>;
 };
 
-export default async function ProjectPreviewPage({
-  params,
-  searchParams,
-}: ProjectPreviewPageProps) {
-  const currentUser = await requireCurrentUser();
+type ProjectPreviewDependencies = {
+  requireCurrentUser: typeof requireCurrentUser;
+  getProjectByIdForUser: typeof getProjectByIdForUser;
+  getAssetsByProjectIdForUser: typeof getAssetsByProjectIdForUser;
+  getPreviewDraft: typeof getPreviewDraft;
+  normalizePageContent: typeof normalizePageContent;
+};
+
+const projectPreviewDependencies: ProjectPreviewDependencies = {
+  requireCurrentUser,
+  getProjectByIdForUser,
+  getAssetsByProjectIdForUser,
+  getPreviewDraft,
+  normalizePageContent,
+};
+
+export async function ProjectPreviewPageWithDependencies(
+  {
+    params,
+    searchParams,
+  }: ProjectPreviewPageProps,
+  dependencies: ProjectPreviewDependencies
+) {
+  const currentUser = await dependencies.requireCurrentUser();
   const { projectId } = await params;
-  const project = await getProjectByIdForUser(projectId, currentUser.id);
+  const project = await dependencies.getProjectByIdForUser(projectId, currentUser.id);
 
   if (!project) {
     notFound();
   }
 
-  const assets = await getAssetsByProjectIdForUser(project.id, currentUser.id);
+  const assets = await dependencies.getAssetsByProjectIdForUser(
+    project.id,
+    currentUser.id
+  );
   const resolvedSearchParams = searchParams ? await searchParams : {};
   const draftToken = resolvedSearchParams.draft;
-  const draft = draftToken ? getPreviewDraft(draftToken) : null;
+  const requestedThemeKey = resolvedSearchParams.theme;
+  const draft = draftToken ? dependencies.getPreviewDraft(draftToken) : null;
   const hasValidDraft =
     !!draft &&
     draft.projectId === project.id &&
     draft.userId === currentUser.id;
   const content = hasValidDraft ? draft.content : project.contentJson;
+  const resolvedThemeKey =
+    requestedThemeKey && isThemeKey(requestedThemeKey)
+      ? requestedThemeKey
+      : project.themeKey;
+  const hasThemeOverride = !!requestedThemeKey && resolvedThemeKey !== project.themeKey;
   const bannerTitle = hasValidDraft ? "Draft preview" : "Saved preview";
   const bannerDescription = hasValidDraft
     ? "Shows unsaved changes. Drafts expire after 15 minutes."
     : draftToken
       ? "Draft expired or not found. Showing last saved content."
       : "Shows last saved content.";
+  const bannerThemeNote = hasThemeOverride
+    ? `Theme preview: ${resolvedThemeKey}.`
+    : `Theme: ${project.themeKey}.`;
 
   return (
     <div>
@@ -54,6 +87,7 @@ export default async function ProjectPreviewPage({
               {bannerTitle}
             </span>
             <span>{bannerDescription}</span>
+            <span>{bannerThemeNote}</span>
           </div>
           <Link
             href={`/projects/${project.id}`}
@@ -66,10 +100,23 @@ export default async function ProjectPreviewPage({
 
       <ProjectRenderer
         name={project.name}
-        themeKey={project.themeKey}
-        content={normalizePageContent(content)}
+        themeKey={resolvedThemeKey}
+        content={dependencies.normalizePageContent(content)}
         assets={assets}
       />
     </div>
+  );
+}
+
+export default async function ProjectPreviewPage({
+  params,
+  searchParams,
+}: ProjectPreviewPageProps) {
+  return ProjectPreviewPageWithDependencies(
+    {
+      params,
+      searchParams,
+    },
+    projectPreviewDependencies
   );
 }

@@ -4,6 +4,7 @@ import { describe, expect, it } from "vitest";
 import { ProjectRenderer } from "../../components/projects/project-renderer";
 import type { PageContent } from "../../db/schema";
 import type { ProjectAssetRecord } from "../../lib/assets";
+import { DEFAULT_THEME_KEY } from "../../lib/themes";
 
 function createHeroContent(imageAssetId?: string): PageContent {
   return {
@@ -137,5 +138,31 @@ describe("ProjectRenderer", () => {
     expect(html).toContain("Fewer moving parts");
     expect(html).toContain("Variant-aware rendering");
     expect(html).toContain("Clear growth path");
+  });
+
+  it("applies the provided valid theme key to renderer root", () => {
+    const html = renderToStaticMarkup(
+      ProjectRenderer({
+        name: "Themed Project",
+        themeKey: "nightfall",
+        content: createHeroContent(),
+        assets: [],
+      })
+    );
+
+    expect(html).toContain('data-theme="nightfall"');
+  });
+
+  it("falls back to default theme when theme key is invalid", () => {
+    const html = renderToStaticMarkup(
+      ProjectRenderer({
+        name: "Fallback Theme Project",
+        themeKey: "unknown-theme",
+        content: createHeroContent(),
+        assets: [],
+      })
+    );
+
+    expect(html).toContain(`data-theme="${DEFAULT_THEME_KEY}"`);
   });
 });

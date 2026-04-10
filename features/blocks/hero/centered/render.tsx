@@ -15,7 +15,7 @@ export function HeroCenteredRender({ block, assetMap, theme }: BlockRenderProps)
   return (
     <section className="mx-auto flex max-w-3xl flex-col items-center gap-6 text-center">
       {heroImageAsset ? (
-        <div className="overflow-hidden rounded-[1.75rem] border border-zinc-200 bg-zinc-100 shadow-sm">
+        <div className="overflow-hidden rounded-[1.75rem] border border-line bg-surface-alt shadow-sm">
           <Image
             src={heroImageAsset.publicUrl}
             alt={heroImageAsset.alt ?? heroImageAsset.originalFilename}
@@ -28,7 +28,7 @@ export function HeroCenteredRender({ block, assetMap, theme }: BlockRenderProps)
       ) : null}
 
       <div className="space-y-5">
-        <p className="text-sm font-medium uppercase tracking-[0.22em] text-zinc-500">
+        <p className="text-text-placeholder text-sm font-medium uppercase tracking-[0.22em]">
           Hero
         </p>
         <h1 className="text-4xl font-semibold tracking-tight sm:text-6xl">{title}</h1>

@@ -1,26 +1,120 @@
 @import "tailwindcss";
 
 :root {
-  --background: #ffffff;
-  --foreground: #171717;
+  /* Fallback tokens (same as sunwash light) */
+  --primary-100: #303029;
+  --primary-200: #292923;
+  --primary-300: #21211e;
+  --primary-line: #1b1b18;
+
+  --neutral-100: #ecede4;
+  --neutral-200: #e2e3da;
+  --neutral-300: #d8d9d0;
+  --neutral-line: #ced0c4;
+
+  --bg: #e4e5dc;
+  --surface: #ffffff;
+  --surface-alt: #f7f7f0;
+  --line: #ecede4;
+  --overlay: #606159;
+
+  --text-main: #21211e;
+  --text-muted: #585850;
+  --text-placeholder: #98988a;
+  --text-inverted-main: #ffffff;
+  --text-inverted-muted: #ffffffcc;
+  --text-inverted-placeholder: #ffffff99;
+
+  --focus: #b8b882;
 }
 
 @theme inline {
-  --color-background: var(--background);
-  --color-foreground: var(--foreground);
+  --color-primary-100: var(--primary-100);
+  --color-primary-200: var(--primary-200);
+  --color-primary-300: var(--primary-300);
+  --color-primary-line: var(--primary-line);
+
+  --color-neutral-100: var(--neutral-100);
+  --color-neutral-200: var(--neutral-200);
+  --color-neutral-300: var(--neutral-300);
+  --color-neutral-line: var(--neutral-line);
+
+  --color-bg: var(--bg);
+  --color-surface: var(--surface);
+  --color-surface-alt: var(--surface-alt);
+  --color-line: var(--line);
+  --color-overlay: var(--overlay);
+
+  --color-text-main: var(--text-main);
+  --color-text-muted: var(--text-muted);
+  --color-text-placeholder: var(--text-placeholder);
+  --color-text-inverted-main: var(--text-inverted-main);
+  --color-text-inverted-muted: var(--text-inverted-muted);
+  --color-text-inverted-placeholder: var(--text-inverted-placeholder);
+
+  --color-focus: var(--focus);
   --font-sans: var(--font-geist-sans);
   --font-mono: var(--font-geist-mono);
 }
 
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
-  }
+[data-theme="sunwash"][data-mode="light"],
+[data-theme="sunwash"] {
+  --primary-100: #303029;
+  --primary-200: #292923;
+  --primary-300: #21211e;
+  --primary-line: #1b1b18;
+
+  --neutral-100: #ecede4;
+  --neutral-200: #e2e3da;
+  --neutral-300: #d8d9d0;
+  --neutral-line: #ced0c4;
+
+  --bg: #e4e5dc;
+  --surface: #ffffff;
+  --surface-alt: #f7f7f0;
+  --line: #ecede4;
+  --overlay: #606159;
+
+  --text-main: #21211e;
+  --text-muted: #585850;
+  --text-placeholder: #98988a;
+  --text-inverted-main: #ffffff;
+  --text-inverted-muted: #ffffffcc;
+  --text-inverted-placeholder: #ffffff99;
+
+  --focus: #b8b882;
+}
+
+[data-theme="nightfall"][data-mode="light"],
+[data-theme="nightfall"] {
+  --primary-100: #a9c8ff;
+  --primary-200: #8cb6ff;
+  --primary-300: #6a9fff;
+  --primary-line: #4e83e0;
+
+  --neutral-100: #11161d;
+  --neutral-200: #161d25;
+  --neutral-300: #1d2630;
+  --neutral-line: #2a3643;
+
+  --bg: #0d1218;
+  --surface: #151c25;
+  --surface-alt: #1b2430;
+  --line: #2a3643;
+  --overlay: #0a0f14;
+
+  --text-main: #ecf3ff;
+  --text-muted: #b5c3d6;
+  --text-placeholder: #7f93ab;
+  --text-inverted-main: #ffffff;
+  --text-inverted-muted: #ffffffcc;
+  --text-inverted-placeholder: #ffffff99;
+
+  --focus: #7aa2ff;
 }
 
 body {
-  background: var(--background);
-  color: var(--foreground);
+  background: var(--bg);
+  color: var(--text-main);
   font-family: Arial, Helvetica, sans-serif;
 }

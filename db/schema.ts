@@ -37,7 +37,7 @@ export const projects = pgTable("projects", {
     .notNull(),
   name: text("name").notNull(),
   slug: varchar("slug", { length: 255 }).notNull().unique(),
-  themeKey: text("theme_key").default("classic-light").notNull(),
+  themeKey: text("theme_key").default("sunwash").notNull(),
   status: projectStatusEnum("status").default("draft").notNull(),
   publishedAt: timestamp("published_at", { withTimezone: true }),
   createdAt: timestamp("created_at", { withTimezone: true }).defaultNow().notNull(),
