@@ -9,6 +9,7 @@ import { getBlockDefinition } from "@/lib/editor/blocks";
 type RenderedProject = {
   name: string;
   themeKey: string;
+  mode?: "light" | "dark";
   content: PageContent;
   assets: ProjectAssetRecord[];
 };
@@ -47,7 +48,13 @@ function renderBlock(
   return <Renderer block={block} assetMap={assetMap} theme={theme} />;
 }
 
-export function ProjectRenderer({ name, themeKey, content, assets }: RenderedProject) {
+export function ProjectRenderer({
+  name,
+  themeKey,
+  mode = "light",
+  content,
+  assets,
+}: RenderedProject) {
   const resolvedThemeKey = isThemeKey(themeKey) ? themeKey : DEFAULT_THEME_KEY;
   const theme = getThemeClasses(resolvedThemeKey);
   const assetMap = buildAssetMap(assets);
@@ -55,7 +62,7 @@ export function ProjectRenderer({ name, themeKey, content, assets }: RenderedPro
   return (
     <main
       data-theme={resolvedThemeKey}
-      data-mode="light"
+      data-mode={mode}
       className={`min-h-screen px-4 py-16 ${theme.page}`}
     >
       <div className="mx-auto flex w-full max-w-5xl flex-col gap-8">
