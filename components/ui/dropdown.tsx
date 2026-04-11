@@ -36,6 +36,7 @@ export type UIDropdownProps = {
   onOpenChange: (nextOpen: boolean) => void;
   placement?: Placement;
   offsetPx?: number;
+  hasPopup?: "menu" | "listbox";
   ariaLabel?: string;
   className?: string;
   children: ReactNode;
@@ -51,6 +52,7 @@ export function UIDropdown({
   onOpenChange,
   placement = "bottom-end",
   offsetPx = 8,
+  hasPopup = "menu",
   ariaLabel = "Dropdown",
   className,
   children,
@@ -125,7 +127,7 @@ export function UIDropdown({
   }, [open, refs.reference]);
 
   const referenceProps = getReferenceProps({
-    "aria-haspopup": "menu",
+    "aria-haspopup": hasPopup,
     "aria-expanded": open,
   });
 

@@ -2,7 +2,7 @@
 
 import { useEffect, useState } from "react";
 import { usePathname, useRouter, useSearchParams } from "next/navigation";
-import { FiArchive, FiArrowRight, FiCopy, FiEdit2, FiMoreVertical, FiPlus, FiSettings, FiTrash2 } from "react-icons/fi";
+import { FiArchive, FiArrowRight, FiCopy, FiEdit2, FiMoreVertical, FiPlus, FiSearch, FiSettings, FiTrash2 } from "react-icons/fi";
 
 import { ProjectRenderer } from "@/components/projects/project-renderer";
 import { UIButton } from "@/components/ui/button";
@@ -14,6 +14,8 @@ import { UISegmentedControl } from "@/components/ui/segmented-control";
 import { UIStickyHeader } from "@/components/ui/sticky-header";
 import { UISwitcher } from "@/components/ui/switcher";
 import { UITabs } from "@/components/ui/tabs";
+import { UITextInput } from "@/components/ui/text-input";
+import { UISelect } from "@/components/ui/select";
 import type { PageContent } from "@/db/schema";
 import { DEFAULT_THEME_KEY, THEME_OPTIONS, type ThemeKey } from "@/lib/themes";
 
@@ -41,7 +43,15 @@ export function ShowcaseClient({
   const buttonThemes = ["base", "primary", "danger"] as const;
   const buttonVariants = ["text", "contained", "outlined"] as const;
   const [isSmallButtonSize, setIsSmallButtonSize] = useState(true);
+  const [textInputSize, setTextInputSize] = useState<"sm" | "lg">("sm");
+  const [selectSize, setSelectSize] = useState<"sm" | "lg">("sm");
   const [segmentedValue, setSegmentedValue] = useState<ShowcaseMode>("light");
+  const [searchValue, setSearchValue] = useState("");
+  const [emailValue, setEmailValue] = useState("john@");
+  const [passwordValue, setPasswordValue] = useState("");
+  const [selectValue, setSelectValue] = useState("react");
+  const [selectSearchValue, setSelectSearchValue] = useState("typescript");
+  const [keyboardEventLog, setKeyboardEventLog] = useState("none");
   const [menuAction, setMenuAction] = useState("none");
   const [manualMenuAction, setManualMenuAction] = useState("none");
   const [inlineMenuAction, setInlineMenuAction] = useState("none");
@@ -363,6 +373,140 @@ export function ShowcaseClient({
                   </div>
                   <p className="text-sm text-text-muted">Inline action: {inlineMenuAction}</p>
                 </div>
+              </div>
+            </UICard>
+
+            <UICard title="UIKit · Text Input">
+              <div className="grid gap-4">
+                <div className="flex flex-wrap items-center gap-3">
+                  <UISegmentedControl
+                    ariaLabel="Text input size"
+                    value={textInputSize}
+                    onValueChange={setTextInputSize}
+                    options={[
+                      { value: "sm", label: "Small" },
+                      { value: "lg", label: "Large" },
+                    ]}
+                  />
+                </div>
+
+                <div className="max-w-xl">
+                  <UITextInput
+                    size={textInputSize}
+                    type="search"
+                    placeholder="Search components..."
+                    value={searchValue}
+                    onValueChange={setSearchValue}
+                    clearable
+                    onEnterPress={(value) => setKeyboardEventLog(`enter:${value}`)}
+                    onEscapePress={(value) => setKeyboardEventLog(`escape:${value}`)}
+                    prefix={<FiSearch aria-hidden className="h-4 w-4" />}
+                  />
+                </div>
+
+                <div className="max-w-xl">
+                  <UITextInput
+                    size={textInputSize}
+                    type="email"
+                    value={emailValue}
+                    onValueChange={setEmailValue}
+                    invalid
+                    validationState="error"
+                    placeholder="Email"
+                    suffix={<FiEdit2 aria-hidden className="h-4 w-4" />}
+                    autoComplete="email"
+                    inputMode="email"
+                  />
+                </div>
+
+                <div className="max-w-xl">
+                  <UITextInput
+                    size={textInputSize}
+                    type="password"
+                    value={passwordValue}
+                    onValueChange={setPasswordValue}
+                    placeholder="Password"
+                    showPasswordToggle
+                    clearable
+                    autoComplete="current-password"
+                  />
+                </div>
+
+                <div className="grid max-w-xl gap-3">
+                  <UITextInput size={textInputSize} value="Loading state" readOnly loading />
+                  <UITextInput size={textInputSize} value="Read-only state" readOnly />
+                  <UITextInput size={textInputSize} value="Disabled state" disabled />
+                </div>
+
+                <p className="text-sm text-text-muted">Keyboard event: {keyboardEventLog}</p>
+              </div>
+            </UICard>
+
+            <UICard title="UIKit · Select">
+              <div className="grid gap-4">
+                <div className="flex flex-wrap items-center gap-3">
+                  <UISegmentedControl
+                    ariaLabel="Select size"
+                    value={selectSize}
+                    onValueChange={setSelectSize}
+                    options={[
+                      { value: "sm", label: "Small" },
+                      { value: "lg", label: "Large" },
+                    ]}
+                  />
+                </div>
+
+                <div className="max-w-xl">
+                  <UISelect
+                    size={selectSize}
+                    value={selectValue}
+                    onValueChange={setSelectValue}
+                    placeholder="Pick framework"
+                    options={[
+                      { value: "react", label: "React", textValue: "react" },
+                      { value: "nextjs", label: "Next.js", textValue: "next js" },
+                      { value: "svelte", label: "Svelte", textValue: "svelte" },
+                      { value: "vue", label: "Vue", textValue: "vue" },
+                      { value: "solid", label: "Solid", textValue: "solid", disabled: true },
+                    ]}
+                  />
+                </div>
+
+                <div className="max-w-xl">
+                  <UISelect
+                    size={selectSize}
+                    value={selectSearchValue}
+                    onValueChange={setSelectSearchValue}
+                    placeholder="Search and select language"
+                    searchable
+                    clearable
+                    searchPlaceholder="Find language..."
+                    options={[
+                      { value: "typescript", label: "TypeScript", textValue: "typescript" },
+                      { value: "javascript", label: "JavaScript", textValue: "javascript" },
+                      { value: "go", label: "Go", textValue: "golang go" },
+                      { value: "rust", label: "Rust", textValue: "rust" },
+                      { value: "python", label: "Python", textValue: "python" },
+                    ]}
+                  />
+                </div>
+
+                <div className="max-w-xl">
+                  <UISelect
+                    size={selectSize}
+                    placeholder="Invalid state"
+                    invalid
+                    validationState="error"
+                    options={[
+                      { value: "one", label: "Option one" },
+                      { value: "two", label: "Option two" },
+                    ]}
+                  />
+                </div>
+
+                <p className="text-sm text-text-muted">
+                  Selected: {selectValue} · Search select: {selectSearchValue}
+                </p>
               </div>
             </UICard>
           </div>
