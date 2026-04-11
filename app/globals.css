@@ -161,10 +161,10 @@
 }
 
 [data-theme="nightfall"][data-mode="dark"] {
-  --primary-100: #3a78c2;
-  --primary-200: #326bb0;
-  --primary-300: #2a5d9c;
-  --primary-line: #214a7a;
+  --primary-100: #3b8bec;
+  --primary-200: #2b75d0;
+  --primary-300: #1f59a1;
+  --primary-line: #16406f;
 
   --neutral-100: #232b38;
   --neutral-200: #222f3f;
