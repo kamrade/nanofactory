@@ -1,6 +1,7 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
+import { usePathname, useRouter, useSearchParams } from "next/navigation";
 import { FiArchive, FiArrowRight, FiCopy, FiEdit2, FiMoreVertical, FiPlus, FiSettings, FiTrash2 } from "react-icons/fi";
 
 import { ProjectRenderer } from "@/components/projects/project-renderer";
@@ -22,11 +23,21 @@ type ShowcaseMode = "light" | "dark";
 type ShowcaseClientProps = {
   content: PageContent;
   activeTab: ShowcaseTab;
+  initialThemeKey?: ThemeKey;
+  initialMode?: ShowcaseMode;
 };
 
-export function ShowcaseClient({ content, activeTab }: ShowcaseClientProps) {
-  const [themeKey, setThemeKey] = useState<ThemeKey>(DEFAULT_THEME_KEY);
-  const [mode, setMode] = useState<ShowcaseMode>("light");
+export function ShowcaseClient({
+  content,
+  activeTab,
+  initialThemeKey = DEFAULT_THEME_KEY,
+  initialMode = "light",
+}: ShowcaseClientProps) {
+  const router = useRouter();
+  const pathname = usePathname();
+  const searchParams = useSearchParams();
+  const [themeKey, setThemeKey] = useState<ThemeKey>(initialThemeKey);
+  const [mode, setMode] = useState<ShowcaseMode>(initialMode);
   const buttonThemes = ["base", "primary", "danger"] as const;
   const buttonVariants = ["text", "contained", "outlined"] as const;
   const [isSmallButtonSize, setIsSmallButtonSize] = useState(true);
@@ -37,6 +48,21 @@ export function ShowcaseClient({ content, activeTab }: ShowcaseClientProps) {
   const [switcherValues, setSwitcherValues] = useState({
     enabled: true,
   });
+  const showcaseQuery = `theme=${themeKey}&mode=${mode}`;
+
+  useEffect(() => {
+    const currentTheme = searchParams.get("theme");
+    const currentMode = searchParams.get("mode");
+
+    if (currentTheme === themeKey && currentMode === mode) {
+      return;
+    }
+
+    const nextParams = new URLSearchParams(searchParams.toString());
+    nextParams.set("theme", themeKey);
+    nextParams.set("mode", mode);
+    router.replace(`${pathname}?${nextParams.toString()}`, { scroll: false });
+  }, [mode, pathname, router, searchParams, themeKey]);
 
   return (
     <div data-theme={themeKey} data-mode={mode} className="bg-bg text-text-main">
@@ -75,8 +101,8 @@ export function ShowcaseClient({ content, activeTab }: ShowcaseClientProps) {
         <UITabs
           ariaLabel="Showcase tabs"
           items={[
-            { label: "UIKit", href: "/showcase/uikit", active: activeTab === "uikit" },
-            { label: "Sections", href: "/showcase/sections", active: activeTab === "sections" },
+            { label: "UIKit", href: `/showcase/uikit?${showcaseQuery}`, active: activeTab === "uikit" },
+            { label: "Sections", href: `/showcase/sections?${showcaseQuery}`, active: activeTab === "sections" },
           ]}
         />
       </UIStickyHeader>

@@ -178,4 +178,22 @@ describe("ProjectRenderer", () => {
 
     expect(html).toContain('data-mode="light"');
   });
+
+  it("can hide project meta block when showProjectMeta is false", () => {
+    const html = renderToStaticMarkup(
+      ProjectRenderer({
+        name: "Meta Hidden Project",
+        themeKey: "sunwash",
+        content: createHeroContent(),
+        assets: [],
+        showPublishedBadge: false,
+        showProjectMeta: false,
+      })
+    );
+
+    expect(html).not.toContain("Project:");
+    expect(html).not.toContain("Mode:");
+    expect(html).not.toContain("Light");
+    expect(html).not.toContain("Dark");
+  });
 });

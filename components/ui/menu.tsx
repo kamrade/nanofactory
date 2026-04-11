@@ -15,9 +15,9 @@ import {
 import type { Placement } from "@floating-ui/react";
 
 import { UIDropdown } from "@/components/ui/dropdown";
-import { UIMenuList, type UIMenuItem } from "@/components/ui/menu-list";
+import { UIMenuList, type UIMenuItem as UIMenuDataItem } from "@/components/ui/menu-list";
 
-export type { UIMenuItem };
+export type { UIMenuDataItem };
 
 function cx(...parts: Array<string | false | null | undefined>) {
   return parts.filter(Boolean).join(" ");
@@ -32,7 +32,7 @@ type UIMenuCommonProps = {
 };
 
 type UIMenuItemsProps = UIMenuCommonProps & {
-  items: UIMenuItem[];
+  items: UIMenuDataItem[];
   onAction?: (id: string) => void;
   closeOnSelect?: boolean;
   children?: never;
@@ -46,6 +46,10 @@ type UIMenuChildrenProps = UIMenuCommonProps & {
 };
 
 export type UIMenuProps = UIMenuItemsProps | UIMenuChildrenProps;
+
+function isItemsProps(props: UIMenuProps): props is UIMenuItemsProps {
+  return "items" in props;
+}
 
 type MenuContextValue = {
   requestClose: () => void;
@@ -148,17 +152,16 @@ export function UIMenuLabel({ children, className }: { children: ReactNode; clas
   );
 }
 
-export function UIMenu({
-  trigger,
-  placement = "bottom-end",
-  offsetPx = 8,
-  ariaLabel = "Menu",
-  className,
-  ...props
-}: UIMenuProps) {
+export function UIMenu(allProps: UIMenuProps) {
+  const {
+    trigger,
+    placement = "bottom-end",
+    offsetPx = 8,
+    ariaLabel = "Menu",
+    className,
+  } = allProps;
   const [open, setOpen] = useState(false);
   const [manualActiveItemId, setManualActiveItemId] = useState<string | null>(null);
-  const isItemsMode = "items" in props;
   const requestClose = () => setOpen(false);
   const manualContainerRef = useRef<HTMLDivElement | null>(null);
   const typeaheadBufferRef = useRef("");
@@ -270,6 +273,43 @@ export function UIMenu({
     }
   }
 
+  let menuContent: ReactNode;
+  if (isItemsProps(allProps)) {
+    menuContent = (
+      <UIMenuList
+        items={allProps.items}
+        onAction={allProps.onAction}
+        onRequestClose={requestClose}
+        closeOnSelect={allProps.closeOnSelect}
+        ariaLabel={ariaLabel}
+        className={cx("shadow-[0_10px_30px_rgba(0,0,0,0.12)]", className)}
+      />
+    );
+  } else {
+    menuContent = (
+      <MenuContext.Provider
+        value={{
+          requestClose,
+          activeItemId: manualActiveItemId,
+          setActiveItemId: setManualActiveItemId,
+        }}
+      >
+        <div
+          ref={manualContainerRef}
+          role="menu"
+          aria-label={ariaLabel}
+          onKeyDown={handleManualKeyDown}
+          className={cx(
+            "min-w-44 rounded-xl border border-line bg-surface p-1 shadow-[0_10px_30px_rgba(0,0,0,0.12)]",
+            className
+          )}
+        >
+          {allProps.children}
+        </div>
+      </MenuContext.Provider>
+    );
+  }
+
   return (
     <UIDropdown
       trigger={trigger}
@@ -279,37 +319,7 @@ export function UIMenu({
       offsetPx={offsetPx}
       ariaLabel={ariaLabel}
     >
-      {isItemsMode ? (
-        <UIMenuList
-          items={props.items}
-          onAction={props.onAction}
-          onRequestClose={requestClose}
-          closeOnSelect={props.closeOnSelect}
-          ariaLabel={ariaLabel}
-          className={cx("shadow-[0_10px_30px_rgba(0,0,0,0.12)]", className)}
-        />
-      ) : (
-        <MenuContext.Provider
-          value={{
-            requestClose,
-            activeItemId: manualActiveItemId,
-            setActiveItemId: setManualActiveItemId,
-          }}
-        >
-          <div
-            ref={manualContainerRef}
-            role="menu"
-            aria-label={ariaLabel}
-            onKeyDown={handleManualKeyDown}
-            className={cx(
-              "min-w-44 rounded-xl border border-line bg-surface p-1 shadow-[0_10px_30px_rgba(0,0,0,0.12)]",
-              className
-            )}
-          >
-            {props.children}
-          </div>
-        </MenuContext.Provider>
-      )}
+      {menuContent}
     </UIDropdown>
   );
 }
