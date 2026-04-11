@@ -8,6 +8,7 @@ import { ProjectRenderer } from "@/components/projects/project-renderer";
 import { UIButton } from "@/components/ui/button";
 import { UICard } from "@/components/ui/card";
 import { UICheckbox } from "@/components/ui/checkbox";
+import { UIDivider } from "@/components/ui/divider";
 import { UISwitcher } from "@/components/ui/switcher";
 import type { PageContent } from "@/db/schema";
 import { DEFAULT_THEME_KEY, THEME_OPTIONS, type ThemeKey } from "@/lib/themes";
@@ -148,7 +149,8 @@ export function ShowcaseClient({ content, activeTab }: ShowcaseClientProps) {
                 </div>
               ))}
 
-              <div className="grid gap-3 border-t border-line pt-3">
+              <UIDivider spacing="sm" />
+              <div className="grid gap-3">
                 <p className="text-sm font-medium text-text-muted">With Icons</p>
                 <div className="flex flex-wrap items-center gap-3">
                   <UIButton theme="primary" variant="contained" size={isSmallButtonSize ? "sm" : "lg"}>
@@ -171,7 +173,8 @@ export function ShowcaseClient({ content, activeTab }: ShowcaseClientProps) {
                 </div>
               </div>
 
-              <div className="grid gap-3 border-t border-line pt-3">
+              <UIDivider spacing="md" />
+              <div className="grid gap-3">
                 <p className="text-sm font-medium text-text-muted">Block</p>
                 <UIButton
                   theme="primary"
@@ -183,7 +186,8 @@ export function ShowcaseClient({ content, activeTab }: ShowcaseClientProps) {
                 </UIButton>
               </div>
 
-              <div className="grid gap-3 border-t border-line pt-3">
+              <UIDivider spacing="lg" />
+              <div className="grid gap-3">
                 <p className="text-sm font-medium text-text-muted">Disabled</p>
                 <div className="flex flex-wrap items-center gap-3">
                   <UIButton theme="base" variant="contained" size={isSmallButtonSize ? "sm" : "lg"} disabled>
