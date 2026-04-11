@@ -9,6 +9,7 @@ export type UIButtonProps = ButtonHTMLAttributes<HTMLButtonElement> & {
   variant?: ButtonVariant;
   size?: ButtonSize;
   iconButton?: boolean;
+  block?: boolean;
 };
 
 const sizeClasses: Record<ButtonSize, string> = {
@@ -48,6 +49,7 @@ export function UIButton({
   variant = "contained",
   size = "lg",
   iconButton = false,
+  block = false,
   className,
   type,
   ...props
@@ -60,6 +62,7 @@ export function UIButton({
         "focus:ring-2 focus:ring-focus/50 focus:ring-offset-2 focus:ring-offset-bg",
         "focus-visible:ring-2 focus-visible:ring-focus/50 focus-visible:ring-offset-2 focus-visible:ring-offset-bg",
         "disabled:pointer-events-none disabled:opacity-50",
+        block && "w-full",
         iconButton ? iconSizeClasses[size] : sizeClasses[size],
         variantThemeClasses[variant][theme],
         className

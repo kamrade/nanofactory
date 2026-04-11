@@ -170,6 +170,35 @@ export function ShowcaseClient({ content, activeTab }: ShowcaseClientProps) {
                   </UIButton>
                 </div>
               </div>
+
+              <div className="grid gap-3 border-t border-line pt-3">
+                <p className="text-sm font-medium text-text-muted">Block</p>
+                <UIButton
+                  theme="primary"
+                  variant="contained"
+                  size={isSmallButtonSize ? "sm" : "lg"}
+                  block
+                >
+                  Primary Block Button
+                </UIButton>
+              </div>
+
+              <div className="grid gap-3 border-t border-line pt-3">
+                <p className="text-sm font-medium text-text-muted">Disabled</p>
+                <div className="flex flex-wrap items-center gap-3">
+                  <UIButton theme="base" variant="contained" size={isSmallButtonSize ? "sm" : "lg"} disabled>
+                    Base Disabled
+                  </UIButton>
+                  <UIButton
+                    theme="primary"
+                    variant="contained"
+                    size={isSmallButtonSize ? "sm" : "lg"}
+                    disabled
+                  >
+                    Primary Disabled
+                  </UIButton>
+                </div>
+              </div>
             </UICard>
 
             <UICard title="UIKit · Checkbox">
