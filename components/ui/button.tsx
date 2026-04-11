@@ -11,8 +11,8 @@ export type UIButtonProps = ButtonHTMLAttributes<HTMLButtonElement> & {
 };
 
 const sizeClasses: Record<ButtonSize, string> = {
-  sm: "h-7 rounded-lg px-3 text-xs",
-  lg: "h-10 rounded-xl px-4 text-sm",
+  sm: "h-7 rounded-lg px-3 text-sm",
+  lg: "h-10 rounded-lg px-4 text-base",
 };
 
 const variantThemeClasses: Record<ButtonVariant, Record<ButtonTheme, string>> = {
