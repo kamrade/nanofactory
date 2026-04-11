@@ -25,10 +25,9 @@ export function ShowcaseClient({ content, activeTab }: ShowcaseClientProps) {
   const [mode, setMode] = useState<ShowcaseMode>("light");
   const buttonThemes = ["base", "primary"] as const;
   const buttonVariants = ["text", "contained", "outlined"] as const;
-  const buttonSizes = ["sm", "lg"] as const;
+  const [isSmallButtonSize, setIsSmallButtonSize] = useState(true);
   const [switcherValues, setSwitcherValues] = useState({
     enabled: true,
-    secondary: false,
   });
 
   function handleTabChange(nextTab: ShowcaseTab) {
@@ -123,6 +122,13 @@ export function ShowcaseClient({ content, activeTab }: ShowcaseClientProps) {
                 Themes: <code>base</code>, <code>primary</code> · Variants: <code>text</code>,{" "}
                 <code>contained</code>, <code>outlined</code> · Sizes: <code>sm</code>, <code>lg</code>
               </p>
+              <div className="flex flex-wrap items-center gap-3">
+                <UISwitcher
+                  checked={isSmallButtonSize}
+                  onCheckedChange={setIsSmallButtonSize}
+                  label={`Small: ${isSmallButtonSize ? "yes" : "no"}`}
+                />
+              </div>
 
               {buttonThemes.map((buttonTheme) => (
                 <div key={buttonTheme} className="grid gap-3">
@@ -132,16 +138,14 @@ export function ShowcaseClient({ content, activeTab }: ShowcaseClientProps) {
                       <span className="w-20 text-xs uppercase tracking-[0.12em] text-text-placeholder">
                         {variant}
                       </span>
-                      {buttonSizes.map((size) => (
-                        <UIButton
-                          key={`${buttonTheme}-${variant}-${size}`}
-                          theme={buttonTheme}
-                          variant={variant}
-                          size={size}
-                        >
-                          {buttonTheme} · {variant} · {size}
-                        </UIButton>
-                      ))}
+                      <UIButton
+                        key={`${buttonTheme}-${variant}-${isSmallButtonSize ? "sm" : "lg"}`}
+                        theme={buttonTheme}
+                        variant={variant}
+                        size={isSmallButtonSize ? "sm" : "lg"}
+                      >
+                        {buttonTheme} · {variant} · {isSmallButtonSize ? "sm" : "lg"}
+                      </UIButton>
                     </div>
                   ))}
                 </div>
@@ -169,13 +173,6 @@ export function ShowcaseClient({ content, activeTab }: ShowcaseClientProps) {
                       setSwitcherValues((prev) => ({ ...prev, enabled: checked }))
                     }
                     label="Enabled"
-                  />
-                  <UISwitcher
-                    checked={switcherValues.secondary}
-                    onCheckedChange={(checked) =>
-                      setSwitcherValues((prev) => ({ ...prev, secondary: checked }))
-                    }
-                    label="Secondary"
                   />
                   <UISwitcher checked disabled label="Disabled" />
                 </div>

@@ -79,9 +79,9 @@
 
 [data-theme="sunwash"][data-mode="light"],
 [data-theme="sunwash"] {
-  --primary-100: #303029;
-  --primary-200: #292923;
-  --primary-300: #21211e;
+  --primary-100: #43433a;
+  --primary-200: #3a3a32;
+  --primary-300: #20201d;
   --primary-line: #1b1b18;
 
   --neutral-100: #ecede4;
@@ -161,15 +161,15 @@
 }
 
 [data-theme="nightfall"][data-mode="dark"] {
-  --primary-100: #a9c8ff;
-  --primary-200: #8cb6ff;
-  --primary-300: #6a9fff;
-  --primary-line: #4e83e0;
+  --primary-100: #3a78c2;
+  --primary-200: #326bb0;
+  --primary-300: #2a5d9c;
+  --primary-line: #214a7a;
 
-  --neutral-100: #11161d;
-  --neutral-200: #161d25;
-  --neutral-300: #1d2630;
-  --neutral-line: #2a3643;
+  --neutral-100: #232b38;
+  --neutral-200: #222f3f;
+  --neutral-300: #27394b;
+  --neutral-line: #283e54;
 
   --bg: #0d1218;
   --surface: #151c25;

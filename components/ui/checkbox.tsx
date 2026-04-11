@@ -34,7 +34,7 @@ export function UICheckbox({
           "inline-flex shrink-0 items-center justify-center border transition",
           "peer-focus-visible:ring-2 peer-focus-visible:ring-focus peer-focus-visible:ring-offset-2 peer-focus-visible:ring-offset-bg",
           "h-5 w-5 rounded-lg",
-          "border-line bg-surface text-transparent peer-checked:border-text-main peer-checked:bg-text-main peer-checked:text-text-inverted-main"
+          "border-neutral-line bg-surface text-transparent peer-checked:border-text-main peer-checked:bg-text-main peer-checked:text-text-inverted-main"
         )}
         aria-hidden
       >

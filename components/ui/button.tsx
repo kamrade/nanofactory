@@ -17,19 +17,19 @@ const sizeClasses: Record<ButtonSize, string> = {
 
 const variantThemeClasses: Record<ButtonVariant, Record<ButtonTheme, string>> = {
   text: {
-    base: "border border-transparent bg-transparent text-text-main hover:bg-surface-alt",
+    base: "border border-transparent bg-transparent text-text-main hover:bg-neutral-200 active:bg-neutral-300",
     primary:
-      "border border-transparent bg-transparent text-primary-300 hover:bg-surface-alt",
+      "border border-transparent bg-transparent text-text-main hover:bg-primary-200 hover:text-text-inverted-main active:bg-primary-300",
   },
   contained: {
-    base: "border border-line bg-surface text-text-main hover:bg-surface-alt",
+    base: "border border-transparent bg-neutral-100 text-text-main hover:bg-neutral-200 active:bg-neutral-300",
     primary:
-      "border border-primary-line bg-primary-300 text-text-inverted-main hover:bg-primary-200",
+      "border border-primary-line bg-primary-100 text-text-inverted-main hover:bg-primary-200 active:bg-primary-300",
   },
   outlined: {
-    base: "border border-line bg-transparent text-text-main hover:bg-surface-alt",
+    base: "border border-neutral-line bg-transparent text-text-main hover:bg-neutral-200 active:bg-neutral-300",
     primary:
-      "border border-primary-line bg-transparent text-primary-300 hover:bg-surface-alt",
+      "border border-primary-line bg-transparent text-text-main hover:bg-primary-200 hover:text-text-inverted-main active:bg-primary-300",
   },
 };
 
@@ -50,7 +50,8 @@ export function UIButton({
       type={type ?? "button"}
       className={cx(
         "inline-flex items-center justify-center font-medium transition outline-none",
-        "focus-visible:ring-2 focus-visible:ring-focus focus-visible:ring-offset-2 focus-visible:ring-offset-bg",
+        "focus:ring-2 focus:ring-focus/50 focus:ring-offset-2 focus:ring-offset-bg",
+        "focus-visible:ring-2 focus-visible:ring-focus/50 focus-visible:ring-offset-2 focus-visible:ring-offset-bg",
         "disabled:pointer-events-none disabled:opacity-50",
         sizeClasses[size],
         variantThemeClasses[variant][theme],

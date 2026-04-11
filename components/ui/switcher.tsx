@@ -44,14 +44,15 @@ export function UISwitcher({
           "inline-flex shrink-0 items-center rounded-full border p-0.5 transition",
           "focus-visible:ring-2 focus-visible:ring-focus focus-visible:ring-offset-2 focus-visible:ring-offset-bg",
           "h-5 w-8",
-          checked ? "border-text-main bg-text-main" : "border-line bg-surface"
+          checked ? "border-text-main bg-text-main" : "border-neutral-line bg-surface"
         )}
         aria-hidden
       >
         <span
           className={cx(
-            "rounded-full bg-text-inverted-main transition-transform",
+            "rounded-full transition-transform",
             "h-4 w-4",
+            checked ? "bg-text-inverted-main" : "bg-text-main",
             checked && "translate-x-3"
           )}
         />
