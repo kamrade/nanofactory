@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 import { useRouter } from "next/navigation";
+import { FiArrowRight, FiPlus, FiSettings } from "react-icons/fi";
 
 import { ProjectRenderer } from "@/components/projects/project-renderer";
 import { UIButton } from "@/components/ui/button";
@@ -132,12 +133,8 @@ export function ShowcaseClient({ content, activeTab }: ShowcaseClientProps) {
 
               {buttonThemes.map((buttonTheme) => (
                 <div key={buttonTheme} className="grid gap-3">
-                  <p className="text-sm font-medium capitalize text-text-muted">Theme: {buttonTheme}</p>
                   {buttonVariants.map((variant) => (
                     <div key={`${buttonTheme}-${variant}`} className="flex flex-wrap items-center gap-3">
-                      <span className="w-20 text-xs uppercase tracking-[0.12em] text-text-placeholder">
-                        {variant}
-                      </span>
                       <UIButton
                         key={`${buttonTheme}-${variant}-${isSmallButtonSize ? "sm" : "lg"}`}
                         theme={buttonTheme}
@@ -150,6 +147,29 @@ export function ShowcaseClient({ content, activeTab }: ShowcaseClientProps) {
                   ))}
                 </div>
               ))}
+
+              <div className="grid gap-3 border-t border-line pt-3">
+                <p className="text-sm font-medium text-text-muted">With Icons</p>
+                <div className="flex flex-wrap items-center gap-3">
+                  <UIButton theme="primary" variant="contained" size={isSmallButtonSize ? "sm" : "lg"}>
+                    <FiPlus aria-hidden className="h-4 w-4" />
+                    <span>Create</span>
+                  </UIButton>
+                  <UIButton theme="base" variant="outlined" size={isSmallButtonSize ? "sm" : "lg"}>
+                    <span>Continue</span>
+                    <FiArrowRight aria-hidden className="h-4 w-4" />
+                  </UIButton>
+                  <UIButton
+                    aria-label="Settings"
+                    theme="base"
+                    variant="text"
+                    size={isSmallButtonSize ? "sm" : "lg"}
+                    iconButton
+                  >
+                    <FiSettings aria-hidden className="h-4 w-4" />
+                  </UIButton>
+                </div>
+              </div>
             </UICard>
 
             <UICard title="UIKit · Checkbox">

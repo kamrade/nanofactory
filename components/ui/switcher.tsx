@@ -41,10 +41,10 @@ export function UISwitcher({
     >
       <span
         className={cx(
-          "inline-flex shrink-0 items-center rounded-full border p-0.5 transition",
+          "inline-flex shrink-0 items-center rounded-full border p-[3px] transition",
           "focus-visible:ring-2 focus-visible:ring-focus focus-visible:ring-offset-2 focus-visible:ring-offset-bg",
-          "h-5 w-8",
-          checked ? "border-text-main bg-text-main" : "border-neutral-line bg-surface"
+          "h-[22px] w-[34px]",
+          checked ? "border-transparent bg-primary-100" : "border-neutral-line bg-surface"
         )}
         aria-hidden
       >

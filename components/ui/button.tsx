@@ -8,11 +8,17 @@ export type UIButtonProps = ButtonHTMLAttributes<HTMLButtonElement> & {
   theme?: ButtonTheme;
   variant?: ButtonVariant;
   size?: ButtonSize;
+  iconButton?: boolean;
 };
 
 const sizeClasses: Record<ButtonSize, string> = {
   sm: "h-7 rounded-lg px-3 text-sm",
   lg: "h-10 rounded-lg px-4 text-base",
+};
+
+const iconSizeClasses: Record<ButtonSize, string> = {
+  sm: "h-7 w-7 rounded-lg px-0",
+  lg: "h-10 w-10 rounded-lg px-0",
 };
 
 const variantThemeClasses: Record<ButtonVariant, Record<ButtonTheme, string>> = {
@@ -41,6 +47,7 @@ export function UIButton({
   theme = "base",
   variant = "contained",
   size = "lg",
+  iconButton = false,
   className,
   type,
   ...props
@@ -49,11 +56,11 @@ export function UIButton({
     <button
       type={type ?? "button"}
       className={cx(
-        "inline-flex items-center justify-center font-medium transition outline-none",
+        "inline-flex items-center justify-center gap-[0.375em] font-medium transition outline-none",
         "focus:ring-2 focus:ring-focus/50 focus:ring-offset-2 focus:ring-offset-bg",
         "focus-visible:ring-2 focus-visible:ring-focus/50 focus-visible:ring-offset-2 focus-visible:ring-offset-bg",
         "disabled:pointer-events-none disabled:opacity-50",
-        sizeClasses[size],
+        iconButton ? iconSizeClasses[size] : sizeClasses[size],
         variantThemeClasses[variant][theme],
         className
       )}
