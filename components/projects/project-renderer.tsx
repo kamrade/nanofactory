@@ -12,6 +12,8 @@ type RenderedProject = {
   mode?: "light" | "dark";
   content: PageContent;
   assets: ProjectAssetRecord[];
+  showPublishedBadge?: boolean;
+  showProjectMeta?: boolean;
 };
 
 function getThemeClasses(themeKey: string) {
@@ -54,6 +56,8 @@ export function ProjectRenderer({
   mode = "light",
   content,
   assets,
+  showPublishedBadge = true,
+  showProjectMeta = true,
 }: RenderedProject) {
   const resolvedThemeKey = isThemeKey(themeKey) ? themeKey : DEFAULT_THEME_KEY;
   const theme = getThemeClasses(resolvedThemeKey);
@@ -66,15 +70,21 @@ export function ProjectRenderer({
       className={`min-h-screen px-4 py-16 ${theme.page}`}
     >
       <div className="mx-auto flex w-full max-w-5xl flex-col gap-8">
-        <header className={theme.heroCard}>
-          <p className={`text-sm font-medium uppercase tracking-[0.2em] ${theme.kicker}`}>
-            Published with Nanofactory
-          </p>
-          <div className="mt-3 flex flex-wrap items-center justify-between gap-3">
-            <p className={`text-sm ${theme.muted}`}>Project: {name}</p>
-            <ProjectModeSwitcher />
-          </div>
-        </header>
+        {showPublishedBadge || showProjectMeta ? (
+          <header className={theme.heroCard}>
+            {showPublishedBadge ? (
+              <p className={`text-sm font-medium uppercase tracking-[0.2em] ${theme.kicker}`}>
+                Published with Nanofactory
+              </p>
+            ) : null}
+            {showProjectMeta ? (
+              <div className="mt-3 flex flex-wrap items-center justify-between gap-3">
+                <p className={`text-sm ${theme.muted}`}>Project: {name}</p>
+                <ProjectModeSwitcher />
+              </div>
+            ) : null}
+          </header>
+        ) : null}
 
         {content.blocks.length === 0 ? (
           <section className={theme.sectionCard}>

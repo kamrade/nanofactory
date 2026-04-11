@@ -1,15 +1,18 @@
 "use client";
 
 import { useState } from "react";
-import { useRouter } from "next/navigation";
-import { FiArrowRight, FiPlus, FiSettings } from "react-icons/fi";
+import { FiArchive, FiArrowRight, FiCopy, FiEdit2, FiMoreVertical, FiPlus, FiSettings, FiTrash2 } from "react-icons/fi";
 
 import { ProjectRenderer } from "@/components/projects/project-renderer";
 import { UIButton } from "@/components/ui/button";
 import { UICard } from "@/components/ui/card";
 import { UICheckbox } from "@/components/ui/checkbox";
 import { UIDivider } from "@/components/ui/divider";
+import { UIMenu, UIMenuItem, UIMenuLabel, UIMenuSeparator } from "@/components/ui/menu";
+import { UISegmentedControl } from "@/components/ui/segmented-control";
+import { UIStickyHeader } from "@/components/ui/sticky-header";
 import { UISwitcher } from "@/components/ui/switcher";
+import { UITabs } from "@/components/ui/tabs";
 import type { PageContent } from "@/db/schema";
 import { DEFAULT_THEME_KEY, THEME_OPTIONS, type ThemeKey } from "@/lib/themes";
 
@@ -22,85 +25,64 @@ type ShowcaseClientProps = {
 };
 
 export function ShowcaseClient({ content, activeTab }: ShowcaseClientProps) {
-  const router = useRouter();
   const [themeKey, setThemeKey] = useState<ThemeKey>(DEFAULT_THEME_KEY);
   const [mode, setMode] = useState<ShowcaseMode>("light");
-  const buttonThemes = ["base", "primary"] as const;
+  const buttonThemes = ["base", "primary", "danger"] as const;
   const buttonVariants = ["text", "contained", "outlined"] as const;
   const [isSmallButtonSize, setIsSmallButtonSize] = useState(true);
+  const [segmentedValue, setSegmentedValue] = useState<ShowcaseMode>("light");
+  const [menuAction, setMenuAction] = useState("none");
+  const [manualMenuAction, setManualMenuAction] = useState("none");
+  const [inlineMenuAction, setInlineMenuAction] = useState("none");
   const [switcherValues, setSwitcherValues] = useState({
     enabled: true,
   });
 
-  function handleTabChange(nextTab: ShowcaseTab) {
-    router.push(`/showcase/${nextTab}`);
-  }
-
   return (
-    <div>
-      <div className="border-b border-zinc-200 bg-zinc-50 px-4 py-4 text-zinc-900">
-        <div className="mx-auto flex w-full max-w-5xl flex-col gap-3">
-          <div className="flex flex-wrap items-center justify-between gap-3">
-            <p className="text-sm font-medium">Showcase controls</p>
-            <div className="flex flex-wrap items-center gap-2">
-              <label className="flex items-center gap-2 text-sm font-medium text-zinc-700">
-                <span>Theme</span>
-                <select
-                  name="showcaseThemeKey"
-                  value={themeKey}
-                  onChange={(event) => setThemeKey(event.target.value as ThemeKey)}
-                  className="rounded-xl border border-zinc-300 bg-white px-3 py-2 text-sm text-zinc-900"
-                >
-                  {THEME_OPTIONS.map((theme) => (
-                    <option key={theme.key} value={theme.key}>
-                      {theme.label}
-                    </option>
-                  ))}
-                </select>
-              </label>
+    <div data-theme={themeKey} data-mode={mode} className="bg-bg text-text-main">
+      <UIStickyHeader revealOnScrollUp>
+        <div className="flex flex-wrap items-center justify-between gap-3">
+          <p className="text-sm font-medium">Showcase controls</p>
+          <div className="flex flex-wrap items-center gap-2">
+            <div className="flex items-center gap-2 text-sm font-medium text-text-muted">
+              <span>Theme</span>
+              <UISegmentedControl
+                ariaLabel="Showcase theme"
+                value={themeKey}
+                onValueChange={setThemeKey}
+                options={THEME_OPTIONS.map((theme) => ({
+                  value: theme.key,
+                  label: theme.label,
+                }))}
+              />
+            </div>
 
-              <label className="flex items-center gap-2 text-sm font-medium text-zinc-700">
-                <span>Mode</span>
-                <select
-                  name="showcaseMode"
-                  value={mode}
-                  onChange={(event) => setMode(event.target.value as ShowcaseMode)}
-                  className="rounded-xl border border-zinc-300 bg-white px-3 py-2 text-sm text-zinc-900"
-                >
-                  <option value="light">Light</option>
-                  <option value="dark">Dark</option>
-                </select>
-              </label>
+            <div className="flex items-center gap-2 text-sm font-medium text-text-muted">
+              <span>Mode</span>
+              <UISegmentedControl
+                ariaLabel="Showcase mode"
+                value={mode}
+                onValueChange={setMode}
+                options={[
+                  { value: "light", label: "Light" },
+                  { value: "dark", label: "Dark" },
+                ]}
+              />
             </div>
           </div>
-
-          <div role="tablist" aria-label="Showcase tabs" className="flex flex-wrap items-center gap-2">
-            <UIButton
-              role="tab"
-              aria-selected={activeTab === "uikit"}
-              onClick={() => handleTabChange("uikit")}
-              theme={activeTab === "uikit" ? "primary" : "base"}
-              variant={activeTab === "uikit" ? "contained" : "outlined"}
-              size="sm"
-            >
-              UIKit
-            </UIButton>
-            <UIButton
-              role="tab"
-              aria-selected={activeTab === "sections"}
-              onClick={() => handleTabChange("sections")}
-              theme={activeTab === "sections" ? "primary" : "base"}
-              variant={activeTab === "sections" ? "contained" : "outlined"}
-              size="sm"
-            >
-              Sections
-            </UIButton>
-          </div>
         </div>
-      </div>
+
+        <UITabs
+          ariaLabel="Showcase tabs"
+          items={[
+            { label: "UIKit", href: "/showcase/uikit", active: activeTab === "uikit" },
+            { label: "Sections", href: "/showcase/sections", active: activeTab === "sections" },
+          ]}
+        />
+      </UIStickyHeader>
 
       {activeTab === "uikit" ? (
-        <section data-theme={themeKey} data-mode={mode} className="bg-bg px-4 py-8 text-text-main">
+        <section className="bg-bg px-4 py-8 text-text-main">
           <div className="mx-auto grid w-full max-w-5xl gap-8">
             <UICard title="Typography · Headings">
               <div className="grid gap-3">
@@ -121,14 +103,18 @@ export function ShowcaseClient({ content, activeTab }: ShowcaseClientProps) {
 
             <UICard title="UIKit · Buttons">
               <p className="text-sm text-text-muted">
-                Themes: <code>base</code>, <code>primary</code> · Variants: <code>text</code>,{" "}
+                Themes: <code>base</code>, <code>primary</code>, <code>danger</code> · Variants: <code>text</code>,{" "}
                 <code>contained</code>, <code>outlined</code> · Sizes: <code>sm</code>, <code>lg</code>
               </p>
               <div className="flex flex-wrap items-center gap-3">
-                <UISwitcher
-                  checked={isSmallButtonSize}
-                  onCheckedChange={setIsSmallButtonSize}
-                  label={`Small: ${isSmallButtonSize ? "yes" : "no"}`}
+                <UISegmentedControl
+                  ariaLabel="Button size"
+                  value={isSmallButtonSize ? "sm" : "lg"}
+                  onValueChange={(value) => setIsSmallButtonSize(value === "sm")}
+                  options={[
+                    { value: "sm", label: "Small" },
+                    { value: "lg", label: "Large" },
+                  ]}
                 />
               </div>
 
@@ -234,6 +220,125 @@ export function ShowcaseClient({ content, activeTab }: ShowcaseClientProps) {
                 </div>
               </div>
             </UICard>
+
+            <UICard title="UIKit · Segmented Control">
+              <div className="flex flex-wrap items-center gap-4">
+                <UISegmentedControl
+                  ariaLabel="Mode"
+                  value={segmentedValue}
+                  onValueChange={setSegmentedValue}
+                  options={[
+                    { value: "light", label: "Light" },
+                    { value: "dark", label: "Dark" },
+                  ]}
+                />
+                <p className="text-sm text-text-muted">Selected: {segmentedValue}</p>
+              </div>
+            </UICard>
+
+            <UICard title="UIKit · Menu">
+              <div className="grid gap-4">
+                <div className="flex flex-wrap items-center gap-4">
+                  <UIMenu
+                    ariaLabel="Card actions"
+                    placement="bottom-start"
+                    onAction={setMenuAction}
+                    items={[
+                      { id: "edit", label: "Edit", textValue: "Edit", icon: <FiEdit2 aria-hidden className="h-4 w-4" /> },
+                      {
+                        id: "duplicate",
+                        label: "Duplicate",
+                        textValue: "Duplicate",
+                        icon: <FiCopy aria-hidden className="h-4 w-4" />,
+                      },
+                      {
+                        id: "archive",
+                        label: "Archive",
+                        textValue: "Archive",
+                        icon: <FiArchive aria-hidden className="h-4 w-4" />,
+                      },
+                      {
+                        id: "delete",
+                        label: "Delete",
+                        textValue: "Delete",
+                        icon: <FiTrash2 aria-hidden className="h-4 w-4" />,
+                        tone: "danger",
+                      },
+                    ]}
+                    trigger={
+                      <UIButton aria-label="Open menu" theme="base" variant="outlined" size="sm" iconButton>
+                        <FiMoreVertical aria-hidden className="h-4 w-4" />
+                      </UIButton>
+                    }
+                  />
+                  <p className="text-sm text-text-muted">Dropdown action: {menuAction}</p>
+                </div>
+
+                <div className="flex flex-wrap items-center gap-4">
+                  <UIMenu
+                    ariaLabel="Card actions manual"
+                    placement="bottom-start"
+                    trigger={
+                      <UIButton aria-label="Open manual menu" theme="base" variant="outlined" size="sm" iconButton>
+                        <FiMoreVertical aria-hidden className="h-4 w-4" />
+                      </UIButton>
+                    }
+                  >
+                    <UIMenuLabel>Actions</UIMenuLabel>
+                    <UIMenuItem icon={<FiEdit2 aria-hidden className="h-4 w-4" />} onSelect={() => setManualMenuAction("edit")}>
+                      Edit
+                    </UIMenuItem>
+                    <UIMenuItem icon={<FiCopy aria-hidden className="h-4 w-4" />} onSelect={() => setManualMenuAction("duplicate")}>
+                      Duplicate
+                    </UIMenuItem>
+                    <UIMenuSeparator />
+                    <UIMenuLabel>Danger Zone</UIMenuLabel>
+                    <UIMenuItem icon={<FiArchive aria-hidden className="h-4 w-4" />} onSelect={() => setManualMenuAction("archive")}>
+                      Archive
+                    </UIMenuItem>
+                    <UIMenuItem
+                      tone="danger"
+                      icon={<FiTrash2 aria-hidden className="h-4 w-4" />}
+                      onSelect={() => setManualMenuAction("delete")}
+                    >
+                      Delete
+                    </UIMenuItem>
+                  </UIMenu>
+                  <p className="text-sm text-text-muted">Dropdown manual action: {manualMenuAction}</p>
+                </div>
+
+                <UIDivider spacing="sm" />
+
+                <div className="grid gap-3">
+                  <p className="text-sm font-medium text-text-muted">Inline Menu List (without Dropdown)</p>
+                  <div className="max-w-56">
+                    <div className="min-w-44 rounded-xl border border-line bg-surface p-1" role="menu" aria-label="Inline card actions">
+                      <UIMenuLabel>Actions</UIMenuLabel>
+                      <UIMenuItem icon={<FiEdit2 aria-hidden className="h-4 w-4" />} closeOnSelect={false} onSelect={() => setInlineMenuAction("edit")}>
+                        Edit
+                      </UIMenuItem>
+                      <UIMenuItem icon={<FiCopy aria-hidden className="h-4 w-4" />} closeOnSelect={false} onSelect={() => setInlineMenuAction("duplicate")}>
+                        Duplicate
+                      </UIMenuItem>
+                      <UIMenuSeparator />
+                      <UIMenuLabel>Danger Zone</UIMenuLabel>
+                      <UIMenuItem icon={<FiArchive aria-hidden className="h-4 w-4" />} closeOnSelect={false} onSelect={() => setInlineMenuAction("archive")}>
+                        Archive
+                      </UIMenuItem>
+                      <UIMenuItem
+                        tone="danger"
+                        icon={<FiTrash2 aria-hidden className="h-4 w-4" />}
+                        closeOnSelect={false}
+                        onSelect={() => setInlineMenuAction("delete")}
+                      >
+                        Delete
+                      </UIMenuItem>
+                    </div>
+                  </div>
+                  <p className="text-sm text-text-muted">Inline action: {inlineMenuAction}</p>
+                </div>
+              </div>
+            </UICard>
           </div>
         </section>
       ) : null}
@@ -245,6 +350,8 @@ export function ShowcaseClient({ content, activeTab }: ShowcaseClientProps) {
           mode={mode}
           content={content}
           assets={[]}
+          showPublishedBadge={false}
+          showProjectMeta={false}
         />
       ) : null}
     </div>
