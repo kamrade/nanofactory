@@ -149,6 +149,9 @@ export function ShowcaseClient({ content, activeTab }: ShowcaseClientProps) {
                 </div>
               ))}
 
+              <UIDivider spacing="md" stripped />
+
+
               <UIDivider spacing="sm" />
               <div className="grid gap-3">
                 <p className="text-sm font-medium text-text-muted">With Icons</p>
