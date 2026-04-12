@@ -20,7 +20,7 @@ function normalizeBlock(input: unknown): PageBlock | null {
     return null;
   }
 
-  const { id, type, variant, props } = input;
+  const { id, type, variant, props, fullBleed } = input;
 
   if (typeof id !== "string" || id.trim().length === 0) {
     return null;
@@ -40,6 +40,7 @@ function normalizeBlock(input: unknown): PageBlock | null {
     id,
     type: definition.type,
     variant: definition.variant,
+    fullBleed: typeof fullBleed === "boolean" ? fullBleed : false,
     props: definition.normalizeProps(props),
   };
 }

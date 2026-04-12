@@ -10,6 +10,7 @@ export type PageBlock = {
   id: string;
   type: SupportedBlockType;
   variant?: BlockVariant;
+  fullBleed?: boolean;
   props: Record<string, unknown>;
 };
 

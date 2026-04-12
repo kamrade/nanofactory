@@ -300,7 +300,7 @@ export function UIMenu(allProps: UIMenuProps) {
           aria-label={ariaLabel}
           onKeyDown={handleManualKeyDown}
           className={cx(
-            "flex min-w-44 flex-col gap-0.5 rounded-xl border border-line bg-surface p-1 shadow-[0_10px_30px_rgba(0,0,0,0.12)]",
+            "flex min-w-44 flex-col gap-[2px] rounded-xl border border-line bg-surface p-1 shadow-[0_10px_30px_rgba(0,0,0,0.12)]",
             className
           )}
         >

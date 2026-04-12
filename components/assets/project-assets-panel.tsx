@@ -1,6 +1,7 @@
 "use client";
 
 import { FormEvent, useRef, useState } from "react";
+import { UIButton } from "@/components/ui/button";
 
 type AssetListItem = {
   id: string;
@@ -117,13 +118,13 @@ export function ProjectAssetsPanel({
           </p>
         ) : null}
 
-        <button
+        <UIButton
           type="submit"
           disabled={isUploading}
           className="inline-flex items-center justify-center rounded-2xl bg-zinc-950 px-4 py-3 text-sm font-medium text-white transition hover:bg-zinc-800 disabled:cursor-not-allowed disabled:bg-zinc-400"
         >
           {isUploading ? "Uploading..." : "Upload asset"}
-        </button>
+        </UIButton>
       </form>
 
       <div className="mt-6 grid gap-4">

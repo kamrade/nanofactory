@@ -3,6 +3,7 @@
 import Image from "next/image";
 
 import type { ProjectAssetRecord } from "@/lib/assets";
+import { UIButton } from "@/components/ui/button";
 
 type AssetPickerProps = {
   assets: ProjectAssetRecord[];
@@ -86,7 +87,7 @@ export function AssetPicker({
                     <p className="text-xs text-zinc-500">{asset.mimeType}</p>
                   </div>
 
-                  <button
+                  <UIButton
                     type="button"
                     onClick={() => onSelect(asset.id)}
                     className={
@@ -96,7 +97,7 @@ export function AssetPicker({
                     }
                   >
                     {isSelected ? selectedLabel : selectLabel}
-                  </button>
+                  </UIButton>
                 </div>
               </article>
             );
@@ -119,13 +120,13 @@ export function AssetPicker({
           </div>
           <div className="flex flex-wrap items-center justify-between gap-3 text-sm text-zinc-600">
             <span>Asset ID: {selectedAsset.id}</span>
-            <button
+            <UIButton
               type="button"
               onClick={onClear}
               className="inline-flex items-center justify-center rounded-2xl border border-zinc-300 bg-white px-3 py-2 text-sm font-medium text-zinc-800 transition hover:border-zinc-400 hover:bg-zinc-50"
             >
               {clearLabel}
-            </button>
+            </UIButton>
           </div>
         </div>
       ) : null}

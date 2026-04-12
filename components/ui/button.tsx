@@ -1,4 +1,10 @@
-import { forwardRef, type ButtonHTMLAttributes } from "react";
+import {
+  cloneElement,
+  forwardRef,
+  isValidElement,
+  type ButtonHTMLAttributes,
+  type ReactElement,
+} from "react";
 
 type ButtonTheme = "base" | "primary" | "danger";
 type ButtonVariant = "text" | "contained" | "outlined";
@@ -10,16 +16,17 @@ export type UIButtonProps = ButtonHTMLAttributes<HTMLButtonElement> & {
   size?: ButtonSize;
   iconButton?: boolean;
   block?: boolean;
+  asChild?: boolean;
 };
 
 const sizeClasses: Record<ButtonSize, string> = {
   sm: "h-7 rounded-lg px-3 text-sm",
-  lg: "h-10 rounded-lg px-4 text-base",
+  lg: "h-10 rounded-[12px] px-4 text-sm leading-5",
 };
 
 const iconSizeClasses: Record<ButtonSize, string> = {
   sm: "h-7 w-7 rounded-lg px-0",
-  lg: "h-10 w-10 rounded-lg px-0",
+  lg: "h-10 w-10 rounded-[12px] px-0",
 };
 
 const variantThemeClasses: Record<ButtonVariant, Record<ButtonTheme, string>> = {
@@ -57,27 +64,40 @@ export const UIButton = forwardRef<HTMLButtonElement, UIButtonProps>(function UI
     size = "lg",
     iconButton = false,
     block = false,
+    asChild = false,
     className,
     type,
+    children,
     ...props
   },
   ref
 ) {
+  const buttonClassName = cx(
+    "inline-flex items-center justify-center gap-[0.375em] whitespace-nowrap font-medium transition outline-none",
+    "focus:ring-2 focus:ring-focus/50 focus:ring-offset-0 focus:ring-offset-bg",
+    "focus-visible:ring-2 focus-visible:ring-focus/50 focus-visible:ring-offset-0 focus-visible:ring-offset-bg",
+    "disabled:pointer-events-none disabled:opacity-50",
+    block && "w-full",
+    iconButton ? iconSizeClasses[size] : sizeClasses[size],
+    variantThemeClasses[variant][theme],
+    className
+  );
+
+  if (asChild && isValidElement(children)) {
+    const child = children as ReactElement<{ className?: string }>;
+    return cloneElement(child, {
+      className: cx(buttonClassName, child.props.className),
+    });
+  }
+
   return (
     <button
       ref={ref}
       type={type ?? "button"}
-      className={cx(
-        "inline-flex items-center justify-center gap-[0.375em] font-medium transition outline-none",
-        "focus:ring-2 focus:ring-focus/50 focus:ring-offset-0 focus:ring-offset-bg",
-        "focus-visible:ring-2 focus-visible:ring-focus/50 focus-visible:ring-offset-0 focus-visible:ring-offset-bg",
-        "disabled:pointer-events-none disabled:opacity-50",
-        block && "w-full",
-        iconButton ? iconSizeClasses[size] : sizeClasses[size],
-        variantThemeClasses[variant][theme],
-        className
-      )}
+      className={buttonClassName}
       {...props}
-    />
+    >
+      {children}
+    </button>
   );
 });

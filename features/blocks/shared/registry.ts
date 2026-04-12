@@ -56,6 +56,7 @@ export function createPageBlock(
     id: createBlockId(),
     type: definition.type,
     variant: definition.variant,
+    fullBleed: false,
     props: definition.createDefaultProps(),
   };
 }

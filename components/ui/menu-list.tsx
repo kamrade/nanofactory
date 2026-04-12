@@ -156,7 +156,7 @@ export function UIMenuList({
       aria-label={ariaLabel}
       onKeyDown={handleKeyDown}
       className={cx(
-        "flex min-w-44 flex-col gap-0.5 rounded-xl border border-line bg-surface p-1",
+        "flex min-w-44 flex-col rounded-xl border border-line bg-surface p-1",
         className
       )}
     >

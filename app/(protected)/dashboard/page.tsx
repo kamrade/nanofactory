@@ -5,6 +5,7 @@ import { requireCurrentUser } from "@/lib/auth/current-user";
 import { getProjectsByUserId } from "@/lib/projects";
 
 import { createProjectAction } from "./actions";
+import { UIButton } from "@/components/ui/button";
 
 export default async function DashboardPage() {
   const currentUser = await requireCurrentUser();
@@ -52,12 +53,12 @@ export default async function DashboardPage() {
                 />
               </div>
 
-              <button
+              <UIButton
                 type="submit"
                 className="inline-flex items-center justify-center rounded-2xl bg-zinc-950 px-4 py-3 text-sm font-medium text-white transition hover:bg-zinc-800"
               >
                 Create project
-              </button>
+              </UIButton>
             </form>
           </section>
 

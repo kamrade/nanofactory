@@ -112,6 +112,28 @@ describe("page content validation", () => {
     }
   });
 
+  it("preserves fullBleed when provided on a block", () => {
+    const result = validatePageContent({
+      blocks: [
+        {
+          id: "cta-1",
+          type: "cta",
+          fullBleed: true,
+          props: {
+            title: "Edge to edge",
+            buttonText: "Try",
+          },
+        },
+      ],
+    });
+
+    expect(result.success).toBe(true);
+
+    if (result.success) {
+      expect(result.data.blocks[0]?.fullBleed).toBe(true);
+    }
+  });
+
   it("rejects unsupported block types", () => {
     const result = validatePageContent({
       blocks: [

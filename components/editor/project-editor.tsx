@@ -28,6 +28,7 @@ import { setPreviewDraftContent } from "@/components/editor/preview-draft-store"
 import { BlockChrome } from "@/features/blocks/shared/block-chrome";
 import type { BlockVariantDefinition } from "@/features/blocks/shared/types";
 import type { PageBlock } from "@/features/blocks/shared/content";
+import { UIButton } from "@/components/ui/button";
 
 type EditorProject = {
   id: string;
@@ -168,6 +169,21 @@ export function ProjectEditor({ project, assets }: ProjectEditorProps) {
     }));
   }
 
+  function handleUpdateBlockFullBleed(blockId: string, nextFullBleed: boolean) {
+    setContent((currentContent) => ({
+      blocks: currentContent.blocks.map((block) => {
+        if (block.id !== blockId) {
+          return block;
+        }
+
+        return {
+          ...block,
+          fullBleed: nextFullBleed,
+        };
+      }),
+    }));
+  }
+
   function applyVariantSwitch(blockId: string, nextDefinition: BlockVariantDefinition) {
     setContent((currentContent) => {
       const result = applyVariantSwitchToContent(
@@ -241,7 +257,7 @@ export function ProjectEditor({ project, assets }: ProjectEditorProps) {
 
           <div className="flex flex-wrap items-center gap-3">
             <div ref={addBlockMenuRef} className="relative">
-              <button
+              <UIButton
                 type="button"
                 onClick={() => setIsAddBlockMenuOpen((current) => !current)}
                 aria-expanded={isAddBlockMenuOpen}
@@ -249,7 +265,7 @@ export function ProjectEditor({ project, assets }: ProjectEditorProps) {
                 className="inline-flex items-center justify-center rounded-2xl border border-zinc-300 bg-white px-4 py-2.5 text-sm font-medium text-zinc-800 transition hover:border-zinc-400 hover:bg-zinc-50"
               >
                 Add block
-              </button>
+              </UIButton>
 
               {isAddBlockMenuOpen ? (
                 <div
@@ -258,16 +274,16 @@ export function ProjectEditor({ project, assets }: ProjectEditorProps) {
                 >
                   {selectedAddBlockType ? (
                     <>
-                      <button
+                      <UIButton
                         type="button"
                         onClick={() => setSelectedAddBlockType(null)}
                         className="inline-flex items-center rounded-2xl px-4 py-2 text-left text-sm font-medium text-zinc-500 transition hover:bg-zinc-50 hover:text-zinc-900"
                       >
                         Back
-                      </button>
+                      </UIButton>
 
                       {selectedBlockVariants.map((definition) => (
-                        <button
+                        <UIButton
                           key={`${definition.type}:${definition.variant}`}
                           type="button"
                           onClick={() =>
@@ -283,12 +299,12 @@ export function ProjectEditor({ project, assets }: ProjectEditorProps) {
                               {definition.description}
                             </span>
                           ) : null}
-                        </button>
+                        </UIButton>
                       ))}
                     </>
                   ) : (
                     blockTypes.map((blockType) => (
-                      <button
+                      <UIButton
                         key={blockType.type}
                         type="button"
                         onClick={() => setSelectedAddBlockType(blockType.type)}
@@ -296,7 +312,7 @@ export function ProjectEditor({ project, assets }: ProjectEditorProps) {
                       >
                         <span>{blockType.label}</span>
                         <span className="text-zinc-500">Choose variant</span>
-                      </button>
+                      </UIButton>
                     ))
                   )}
                 </div>
@@ -306,13 +322,13 @@ export function ProjectEditor({ project, assets }: ProjectEditorProps) {
             <form action={formAction} className="flex items-center gap-3">
             <input type="hidden" name="content" value={serializedContent} />
             <SaveStatus state={saveState} />
-            <button
+            <UIButton
               type="submit"
               disabled={isPending}
               className="inline-flex items-center justify-center rounded-2xl bg-zinc-950 px-4 py-2.5 text-sm font-medium text-white transition hover:bg-zinc-800 disabled:cursor-not-allowed disabled:bg-zinc-400"
             >
               {isPending ? "Saving..." : "Save"}
-            </button>
+            </UIButton>
             </form>
           </div>
         </div>
@@ -325,14 +341,14 @@ export function ProjectEditor({ project, assets }: ProjectEditorProps) {
                 {lastVariantUndo.toLabel}.
               </span>
               <div className="flex flex-wrap items-center gap-2">
-                <button
+                <UIButton
                   type="button"
                   onClick={handleUndoVariantSwitch}
                   className="inline-flex items-center justify-center rounded-2xl border border-emerald-200 bg-white px-3 py-1.5 text-sm font-medium text-emerald-800 transition hover:border-emerald-300 hover:bg-emerald-100"
                 >
                   Undo
-                </button>
-                <button
+                </UIButton>
+                <UIButton
                   type="button"
                   onClick={() => setLastVariantUndo(null)}
                   aria-label="Dismiss"
@@ -340,7 +356,7 @@ export function ProjectEditor({ project, assets }: ProjectEditorProps) {
                   className="inline-flex h-8 w-8 items-center justify-center rounded-full border border-emerald-200 bg-white text-lg font-semibold text-emerald-800 transition hover:border-emerald-300 hover:bg-emerald-100"
                 >
                   ×
-                </button>
+                </UIButton>
               </div>
             </div>
           ) : null}
@@ -373,31 +389,47 @@ export function ProjectEditor({ project, assets }: ProjectEditorProps) {
                   key={block.id}
                   index={index}
                   title={formatDefinitionLabel(definition)}
-                  meta={`Type: ${definition.typeLabel} · Variant: ${definition.variant}`}
+                  meta={`Type: ${definition.typeLabel} · Variant: ${definition.variant} · Layout: ${
+                    block.fullBleed ? "Full bleed" : "Contained"
+                  }`}
                   onDelete={() => handleDeleteBlock(block.id)}
                   actions={
-                    variantOptions.length > 1 ? (
+                    <div className="flex flex-wrap items-center gap-3">
+                      {variantOptions.length > 1 ? (
+                        <label className="flex items-center gap-2 text-xs font-semibold uppercase tracking-[0.16em] text-zinc-400">
+                          <span>Variant</span>
+                          <select
+                            value={selectedVariant}
+                            onChange={(event) =>
+                              handleSelectVariant(
+                                block,
+                                definition,
+                                event.target.value as BlockVariant
+                              )
+                            }
+                            className="rounded-xl border border-zinc-200 bg-white px-2 py-1 text-xs font-medium text-zinc-700"
+                          >
+                            {variantOptions.map((option) => (
+                              <option key={`${option.type}:${option.variant}`} value={option.variant}>
+                                {option.label}
+                              </option>
+                            ))}
+                          </select>
+                        </label>
+                      ) : null}
+
                       <label className="flex items-center gap-2 text-xs font-semibold uppercase tracking-[0.16em] text-zinc-400">
-                        <span>Variant</span>
-                        <select
-                          value={selectedVariant}
+                        <input
+                          type="checkbox"
+                          checked={Boolean(block.fullBleed)}
                           onChange={(event) =>
-                            handleSelectVariant(
-                              block,
-                              definition,
-                              event.target.value as BlockVariant
-                            )
+                            handleUpdateBlockFullBleed(block.id, event.target.checked)
                           }
-                          className="rounded-xl border border-zinc-200 bg-white px-2 py-1 text-xs font-medium text-zinc-700"
-                        >
-                          {variantOptions.map((option) => (
-                            <option key={`${option.type}:${option.variant}`} value={option.variant}>
-                              {option.label}
-                            </option>
-                          ))}
-                        </select>
+                          className="h-4 w-4 rounded border-zinc-300 text-zinc-800 focus:ring-zinc-400"
+                        />
+                        <span>Full bleed</span>
                       </label>
-                    ) : null
+                    </div>
                   }
                 >
                   {activePending ? (
@@ -406,20 +438,20 @@ export function ProjectEditor({ project, assets }: ProjectEditorProps) {
                         Switching variant will remove: {activePending.lostLabels.join(", ")}.
                       </p>
                       <div className="mt-3 flex flex-wrap gap-2">
-                        <button
+                        <UIButton
                           type="button"
                           onClick={handleConfirmVariantSwitch}
                           className="inline-flex items-center justify-center rounded-2xl border border-amber-300 bg-amber-100 px-3 py-1.5 text-sm font-medium text-amber-900 transition hover:border-amber-400 hover:bg-amber-200"
                         >
                           Switch variant
-                        </button>
-                        <button
+                        </UIButton>
+                        <UIButton
                           type="button"
                           onClick={handleCancelVariantSwitch}
                           className="inline-flex items-center justify-center rounded-2xl border border-amber-200 bg-white px-3 py-1.5 text-sm font-medium text-amber-900 transition hover:border-amber-300 hover:bg-amber-100"
                         >
                           Cancel
-                        </button>
+                        </UIButton>
                       </div>
                     </div>
                   ) : null}

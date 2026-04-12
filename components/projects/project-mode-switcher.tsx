@@ -1,6 +1,7 @@
 "use client";
 
 import { useRef, useState } from "react";
+import { UIButton } from "@/components/ui/button";
 
 type ThemeMode = "light" | "dark";
 
@@ -45,7 +46,7 @@ export function ProjectModeSwitcher() {
 
   return (
     <div ref={containerRef} className="inline-flex items-center gap-1 rounded-xl border border-line bg-surface p-1">
-      <button
+      <UIButton
         type="button"
         onClick={() => applyMode("light")}
         aria-pressed={mode === "light"}
@@ -56,8 +57,8 @@ export function ProjectModeSwitcher() {
         }
       >
         Light
-      </button>
-      <button
+      </UIButton>
+      <UIButton
         type="button"
         onClick={() => applyMode("dark")}
         aria-pressed={mode === "dark"}
@@ -68,7 +69,7 @@ export function ProjectModeSwitcher() {
         }
       >
         Dark
-      </button>
+      </UIButton>
     </div>
   );
 }

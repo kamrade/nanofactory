@@ -316,7 +316,7 @@ export function UISelect({
                 ? "border-danger-line bg-danger-100"
                 : isSuccess
                   ? "border-primary-line bg-surface"
-                  : "border-line bg-surface",
+                  : "border-neutral-line bg-surface",
               !isInvalid && readOnly && "bg-surface-alt",
               className
             )}
@@ -476,7 +476,7 @@ export function UISelect({
           role="listbox"
           aria-label={ariaLabel}
           className={cx(
-            "flex min-w-44 flex-col gap-0.5 rounded-xl border border-line bg-surface shadow-[0_10px_30px_rgba(0,0,0,0.12)]",
+            "flex min-w-44 flex-col gap-[2px] rounded-xl border border-neutral-line bg-surface shadow-[0_10px_30px_rgba(0,0,0,0.12)]",
             sizeClasses.listPadding
           )}
           onKeyDown={(event) => {
@@ -548,7 +548,7 @@ export function UISelect({
                 }}
                 placeholder={searchPlaceholder}
                 className={cx(
-                  "w-full rounded-lg border border-line bg-surface px-2 text-text-main outline-none placeholder:text-text-placeholder",
+                  "w-full rounded-lg border border-neutral-line bg-surface px-2 text-text-main outline-none placeholder:text-text-placeholder",
                   "focus:ring-2 focus:ring-focus/50 focus:ring-offset-0 focus:ring-offset-surface",
                   sizeClasses.searchInput
                 )}

@@ -16,6 +16,7 @@ import {
   publishProjectForUser,
   saveProjectContentForUser,
   unpublishProjectForUser,
+  updateProjectNameForUser,
   updateProjectThemeForUser,
 } from "@/lib/projects";
 import { isThemeKey } from "@/lib/themes";
@@ -58,6 +59,13 @@ type UpdateProjectThemeDependencies = {
   redirect: typeof redirect;
 };
 
+type UpdateProjectNameDependencies = {
+  requireCurrentUser: typeof requireCurrentUser;
+  updateProjectNameForUser: typeof updateProjectNameForUser;
+  revalidatePath: typeof revalidatePath;
+  redirect: typeof redirect;
+};
+
 const publishProjectDependencies: PublishProjectDependencies = {
   requireCurrentUser,
   publishProjectForUser,
@@ -75,6 +83,13 @@ const unpublishProjectDependencies: UnpublishProjectDependencies = {
 const updateProjectThemeDependencies: UpdateProjectThemeDependencies = {
   requireCurrentUser,
   updateProjectThemeForUser,
+  revalidatePath,
+  redirect,
+};
+
+const updateProjectNameDependencies: UpdateProjectNameDependencies = {
+  requireCurrentUser,
+  updateProjectNameForUser,
   revalidatePath,
   redirect,
 };
@@ -226,6 +241,14 @@ export async function updateProjectThemeAction(projectId: string, formData: Form
   );
 }
 
+export async function updateProjectNameAction(projectId: string, formData: FormData) {
+  return updateProjectNameActionWithDependencies(
+    projectId,
+    formData,
+    updateProjectNameDependencies
+  );
+}
+
 export async function updateProjectThemeActionWithDependencies(
   projectId: string,
   formData: FormData,
@@ -242,6 +265,34 @@ export async function updateProjectThemeActionWithDependencies(
     projectId,
     currentUser.id,
     themeKey
+  );
+
+  if (!updatedProject) {
+    dependencies.redirect("/dashboard");
+  }
+
+  dependencies.revalidatePath(`/projects/${projectId}`);
+  dependencies.revalidatePath("/dashboard");
+  dependencies.revalidatePath(`/p/${updatedProject.slug}`);
+  dependencies.redirect(`/projects/${projectId}`);
+}
+
+export async function updateProjectNameActionWithDependencies(
+  projectId: string,
+  formData: FormData,
+  dependencies: UpdateProjectNameDependencies
+) {
+  const currentUser = await dependencies.requireCurrentUser();
+  const name = String(formData.get("name") ?? "").trim();
+
+  if (name.length === 0) {
+    dependencies.redirect(`/projects/${projectId}`);
+  }
+
+  const updatedProject = await dependencies.updateProjectNameForUser(
+    projectId,
+    currentUser.id,
+    name
   );
 
   if (!updatedProject) {

@@ -3,6 +3,7 @@
 import { FormEvent, useState } from "react";
 import { signIn } from "next-auth/react";
 import { useRouter, useSearchParams } from "next/navigation";
+import { UIButton } from "@/components/ui/button";
 
 export function LoginForm() {
   const router = useRouter();
@@ -80,13 +81,13 @@ export function LoginForm() {
         </p>
       ) : null}
 
-      <button
+      <UIButton
         type="submit"
         disabled={isSubmitting}
         className="inline-flex items-center justify-center rounded-2xl bg-zinc-950 px-4 py-3 text-sm font-medium text-white transition hover:bg-zinc-800 disabled:cursor-not-allowed disabled:bg-zinc-400"
       >
         {isSubmitting ? "Signing in..." : "Sign in"}
-      </button>
+      </UIButton>
     </form>
   );
 }

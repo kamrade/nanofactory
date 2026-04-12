@@ -6,6 +6,7 @@ import { FiArchive, FiArrowRight, FiCopy, FiEdit2, FiMoreVertical, FiPlus, FiSea
 
 import { ProjectRenderer } from "@/components/projects/project-renderer";
 import { UIButton } from "@/components/ui/button";
+import { UIBadge } from "@/components/ui/badge";
 import { UICard } from "@/components/ui/card";
 import { UICheckbox } from "@/components/ui/checkbox";
 import { UIDivider } from "@/components/ui/divider";
@@ -19,6 +20,18 @@ import { UISelect } from "@/components/ui/select";
 import { UIMultiSelect } from "@/components/ui/multi-select";
 import { UIMultiSelectList } from "@/components/ui/multi-select-list";
 import { UIAutocomplete } from "@/components/ui/autocomplete";
+import { UIModal, UIModalForm } from "@/components/ui/modal";
+import {
+  UIDialog,
+  UIDialogClose,
+  UIDialogContent,
+  UIDialogDescription,
+  UIDialogFooter,
+  UIDialogHeader,
+  UIDialogTitle,
+  UIDialogTrigger,
+} from "@/components/ui/dialog";
+import { UIConfirmDialog } from "@/components/ui/confirm-dialog";
 import type { PageContent } from "@/db/schema";
 import { DEFAULT_THEME_KEY, THEME_OPTIONS, type ThemeKey } from "@/lib/themes";
 
@@ -43,27 +56,30 @@ export function ShowcaseClient({
   const searchParams = useSearchParams();
   const [themeKey, setThemeKey] = useState<ThemeKey>(initialThemeKey);
   const [mode, setMode] = useState<ShowcaseMode>(initialMode);
+  const [uiSize, setUiSize] = useState<"sm" | "lg">("sm");
   const buttonThemes = ["base", "primary", "danger"] as const;
   const buttonVariants = ["text", "contained", "outlined"] as const;
-  const [isSmallButtonSize, setIsSmallButtonSize] = useState(true);
-  const [textInputSize, setTextInputSize] = useState<"sm" | "lg">("sm");
-  const [selectSize, setSelectSize] = useState<"sm" | "lg">("sm");
   const [segmentedValue, setSegmentedValue] = useState<ShowcaseMode>("light");
   const [searchValue, setSearchValue] = useState("");
   const [emailValue, setEmailValue] = useState("john@");
   const [passwordValue, setPasswordValue] = useState("");
   const [selectValue, setSelectValue] = useState("react");
   const [selectSearchValue, setSelectSearchValue] = useState("typescript");
-  const [autocompleteSize, setAutocompleteSize] = useState<"sm" | "lg">("sm");
   const [autocompleteValue, setAutocompleteValue] = useState("");
   const [autocompleteSelection, setAutocompleteSelection] = useState("none");
-  const [multiSelectSize, setMultiSelectSize] = useState<"sm" | "lg">("sm");
   const [multiSelectValue, setMultiSelectValue] = useState<string[]>(["react", "typescript"]);
   const [multiSelectDropdownValue, setMultiSelectDropdownValue] = useState<string[]>(["nextjs"]);
   const [keyboardEventLog, setKeyboardEventLog] = useState("none");
   const [menuAction, setMenuAction] = useState("none");
   const [manualMenuAction, setManualMenuAction] = useState("none");
   const [inlineMenuAction, setInlineMenuAction] = useState("none");
+  const [dialogOpen, setDialogOpen] = useState(false);
+  const [dialogAction, setDialogAction] = useState("none");
+  const [profileName, setProfileName] = useState("Jane Doe");
+  const [profileEmail, setProfileEmail] = useState("jane@example.com");
+  const [profileRole, setProfileRole] = useState("Designer");
+  const [profileSavedAt, setProfileSavedAt] = useState("never");
+  const [isProfileSaving, setIsProfileSaving] = useState(false);
   const [switcherValues, setSwitcherValues] = useState({
     enabled: true,
   });
@@ -114,6 +130,21 @@ export function ShowcaseClient({
                 ]}
               />
             </div>
+
+            {activeTab === "uikit" ? (
+              <div className="flex items-center gap-2 text-sm font-medium text-text-muted">
+                <span>Size</span>
+                <UISegmentedControl
+                  ariaLabel="UIKit size"
+                  value={uiSize}
+                  onValueChange={setUiSize}
+                  options={[
+                    { value: "sm", label: "Small" },
+                    { value: "lg", label: "Large" },
+                  ]}
+                />
+              </div>
+            ) : null}
           </div>
         </div>
 
@@ -151,29 +182,18 @@ export function ShowcaseClient({
                 Themes: <code>base</code>, <code>primary</code>, <code>danger</code> · Variants: <code>text</code>,{" "}
                 <code>contained</code>, <code>outlined</code> · Sizes: <code>sm</code>, <code>lg</code>
               </p>
-              <div className="flex flex-wrap items-center gap-3">
-                <UISegmentedControl
-                  ariaLabel="Button size"
-                  value={isSmallButtonSize ? "sm" : "lg"}
-                  onValueChange={(value) => setIsSmallButtonSize(value === "sm")}
-                  options={[
-                    { value: "sm", label: "Small" },
-                    { value: "lg", label: "Large" },
-                  ]}
-                />
-              </div>
 
               {buttonThemes.map((buttonTheme) => (
                 <div key={buttonTheme} className="grid gap-3">
                   {buttonVariants.map((variant) => (
                     <div key={`${buttonTheme}-${variant}`} className="flex flex-wrap items-center gap-3">
                       <UIButton
-                        key={`${buttonTheme}-${variant}-${isSmallButtonSize ? "sm" : "lg"}`}
+                        key={`${buttonTheme}-${variant}-${uiSize}`}
                         theme={buttonTheme}
                         variant={variant}
-                        size={isSmallButtonSize ? "sm" : "lg"}
+                        size={uiSize}
                       >
-                        {buttonTheme} · {variant} · {isSmallButtonSize ? "sm" : "lg"}
+                        {buttonTheme} · {variant} · {uiSize}
                       </UIButton>
                     </div>
                   ))}
@@ -187,11 +207,11 @@ export function ShowcaseClient({
               <div className="grid gap-3">
                 <p className="text-sm font-medium text-text-muted">With Icons</p>
                 <div className="flex flex-wrap items-center gap-3">
-                  <UIButton theme="primary" variant="contained" size={isSmallButtonSize ? "sm" : "lg"}>
+                  <UIButton theme="primary" variant="contained" size={uiSize}>
                     <FiPlus aria-hidden className="h-4 w-4" />
                     <span>Create</span>
                   </UIButton>
-                  <UIButton theme="base" variant="outlined" size={isSmallButtonSize ? "sm" : "lg"}>
+                  <UIButton theme="base" variant="outlined" size={uiSize}>
                     <span>Continue</span>
                     <FiArrowRight aria-hidden className="h-4 w-4" />
                   </UIButton>
@@ -199,7 +219,7 @@ export function ShowcaseClient({
                     aria-label="Settings"
                     theme="base"
                     variant="text"
-                    size={isSmallButtonSize ? "sm" : "lg"}
+                    size={uiSize}
                     iconButton
                   >
                     <FiSettings aria-hidden className="h-4 w-4" />
@@ -213,7 +233,7 @@ export function ShowcaseClient({
                 <UIButton
                   theme="primary"
                   variant="contained"
-                  size={isSmallButtonSize ? "sm" : "lg"}
+                  size={uiSize}
                   block
                 >
                   Primary Block Button
@@ -224,17 +244,51 @@ export function ShowcaseClient({
               <div className="grid gap-3">
                 <p className="text-sm font-medium text-text-muted">Disabled</p>
                 <div className="flex flex-wrap items-center gap-3">
-                  <UIButton theme="base" variant="contained" size={isSmallButtonSize ? "sm" : "lg"} disabled>
+                  <UIButton theme="base" variant="contained" size={uiSize} disabled>
                     Base Disabled
                   </UIButton>
                   <UIButton
                     theme="primary"
                     variant="contained"
-                    size={isSmallButtonSize ? "sm" : "lg"}
+                    size={uiSize}
                     disabled
                   >
                     Primary Disabled
                   </UIButton>
+                </div>
+              </div>
+            </UICard>
+
+            <UICard title="UIKit · Badges">
+              <p className="text-sm text-text-muted">
+                Same themes as buttons, variants: <code>contained</code>, <code>outlined</code>, with fully rounded corners.
+              </p>
+              <div className="grid gap-3">
+                {buttonThemes.map((badgeTheme) => (
+                  <div key={badgeTheme} className="flex flex-wrap items-center gap-3">
+                    {(["contained", "outlined"] as const).map((variant) => (
+                      <UIBadge key={`${badgeTheme}-${variant}-ui`} theme={badgeTheme} variant={variant} size={uiSize}>
+                        {badgeTheme} · {variant} · {uiSize}
+                      </UIBadge>
+                    ))}
+                  </div>
+                ))}
+
+                <UIDivider spacing="sm" />
+                <p className="text-sm font-medium text-text-muted">With Icons</p>
+                <div className="flex flex-wrap items-center gap-3">
+                  <UIBadge theme="primary" variant="contained" size={uiSize}>
+                    <FiPlus aria-hidden className="h-4 w-4" />
+                    <span>Create</span>
+                  </UIBadge>
+                  <UIBadge theme="base" variant="outlined" size={uiSize}>
+                    <span>Status</span>
+                    <FiSettings aria-hidden className="h-4 w-4" />
+                  </UIBadge>
+                  <UIBadge theme="danger" variant="contained" size={uiSize}>
+                    <FiTrash2 aria-hidden className="h-4 w-4" />
+                    <span>Danger</span>
+                  </UIBadge>
                 </div>
               </div>
             </UICard>
@@ -311,7 +365,7 @@ export function ShowcaseClient({
                       },
                     ]}
                     trigger={
-                      <UIButton aria-label="Open menu" theme="base" variant="outlined" size="sm" iconButton>
+                      <UIButton aria-label="Open menu" theme="base" variant="outlined" size={uiSize} iconButton>
                         <FiMoreVertical aria-hidden className="h-4 w-4" />
                       </UIButton>
                     }
@@ -324,7 +378,7 @@ export function ShowcaseClient({
                     ariaLabel="Card actions manual"
                     placement="bottom-start"
                     trigger={
-                      <UIButton aria-label="Open manual menu" theme="base" variant="outlined" size="sm" iconButton>
+                      <UIButton aria-label="Open manual menu" theme="base" variant="outlined" size={uiSize} iconButton>
                         <FiMoreVertical aria-hidden className="h-4 w-4" />
                       </UIButton>
                     }
@@ -357,7 +411,7 @@ export function ShowcaseClient({
                 <div className="grid gap-3">
                   <p className="text-sm font-medium text-text-muted">Inline Menu List (without Dropdown)</p>
                   <div className="max-w-56">
-                    <div className="flex min-w-44 flex-col gap-0.5 rounded-xl border border-line bg-surface p-1" role="menu" aria-label="Inline card actions">
+                    <div className="flex min-w-44 flex-col gap-1 rounded-xl border border-line bg-surface p-1" role="menu" aria-label="Inline card actions">
                       <UIMenuLabel>Actions</UIMenuLabel>
                       <UIMenuItem icon={<FiEdit2 aria-hidden className="h-4 w-4" />} closeOnSelect={false} onSelect={() => setInlineMenuAction("edit")}>
                         Edit
@@ -387,21 +441,9 @@ export function ShowcaseClient({
 
             <UICard title="UIKit · Text Input">
               <div className="grid gap-4">
-                <div className="flex flex-wrap items-center gap-3">
-                  <UISegmentedControl
-                    ariaLabel="Text input size"
-                    value={textInputSize}
-                    onValueChange={setTextInputSize}
-                    options={[
-                      { value: "sm", label: "Small" },
-                      { value: "lg", label: "Large" },
-                    ]}
-                  />
-                </div>
-
                 <div className="max-w-xl">
                   <UITextInput
-                    size={textInputSize}
+                    size={uiSize}
                     type="search"
                     placeholder="Search components..."
                     value={searchValue}
@@ -415,7 +457,7 @@ export function ShowcaseClient({
 
                 <div className="max-w-xl">
                   <UITextInput
-                    size={textInputSize}
+                    size={uiSize}
                     type="email"
                     value={emailValue}
                     onValueChange={setEmailValue}
@@ -430,7 +472,7 @@ export function ShowcaseClient({
 
                 <div className="max-w-xl">
                   <UITextInput
-                    size={textInputSize}
+                    size={uiSize}
                     type="password"
                     value={passwordValue}
                     onValueChange={setPasswordValue}
@@ -442,9 +484,9 @@ export function ShowcaseClient({
                 </div>
 
                 <div className="grid max-w-xl gap-3">
-                  <UITextInput size={textInputSize} value="Loading state" readOnly loading />
-                  <UITextInput size={textInputSize} value="Read-only state" readOnly />
-                  <UITextInput size={textInputSize} value="Disabled state" disabled />
+                  <UITextInput size={uiSize} value="Loading state" readOnly loading />
+                  <UITextInput size={uiSize} value="Read-only state" readOnly />
+                  <UITextInput size={uiSize} value="Disabled state" disabled />
                 </div>
 
                 <p className="text-sm text-text-muted">Keyboard event: {keyboardEventLog}</p>
@@ -453,21 +495,9 @@ export function ShowcaseClient({
 
             <UICard title="UIKit · Select">
               <div className="grid gap-4">
-                <div className="flex flex-wrap items-center gap-3">
-                  <UISegmentedControl
-                    ariaLabel="Select size"
-                    value={selectSize}
-                    onValueChange={setSelectSize}
-                    options={[
-                      { value: "sm", label: "Small" },
-                      { value: "lg", label: "Large" },
-                    ]}
-                  />
-                </div>
-
                 <div className="max-w-xl">
                   <UISelect
-                    size={selectSize}
+                    size={uiSize}
                     value={selectValue}
                     onValueChange={setSelectValue}
                     placeholder="Pick framework"
@@ -483,7 +513,7 @@ export function ShowcaseClient({
 
                 <div className="max-w-xl">
                   <UISelect
-                    size={selectSize}
+                    size={uiSize}
                     value={selectSearchValue}
                     onValueChange={setSelectSearchValue}
                     placeholder="Search and select language"
@@ -502,7 +532,7 @@ export function ShowcaseClient({
 
                 <div className="max-w-xl">
                   <UISelect
-                    size={selectSize}
+                    size={uiSize}
                     placeholder="Invalid state"
                     invalid
                     validationState="error"
@@ -521,24 +551,12 @@ export function ShowcaseClient({
 
             <UICard title="UIKit · MultiSelect List">
               <div className="grid gap-4">
-                <div className="flex flex-wrap items-center gap-3">
-                  <UISegmentedControl
-                    ariaLabel="Multi select list size"
-                    value={multiSelectSize}
-                    onValueChange={setMultiSelectSize}
-                    options={[
-                      { value: "sm", label: "Small" },
-                      { value: "lg", label: "Large" },
-                    ]}
-                  />
-                </div>
-
                 <div className="max-w-xl">
                   <UIMultiSelectList
                     ariaLabel="Frameworks and tools"
                     searchable
                     searchPlaceholder="Search options..."
-                    size={multiSelectSize}
+                    size={uiSize}
                     value={multiSelectValue}
                     onValueChange={setMultiSelectValue}
                     options={[
@@ -565,7 +583,7 @@ export function ShowcaseClient({
                     searchable
                     clearable
                     searchPlaceholder="Search options..."
-                    size={multiSelectSize}
+                    size={uiSize}
                     value={multiSelectDropdownValue}
                     onValueChange={setMultiSelectDropdownValue}
                     options={[
@@ -586,22 +604,10 @@ export function ShowcaseClient({
 
             <UICard title="UIKit · Autocomplete">
               <div className="grid gap-4">
-                <div className="flex flex-wrap items-center gap-3">
-                  <UISegmentedControl
-                    ariaLabel="Autocomplete size"
-                    value={autocompleteSize}
-                    onValueChange={setAutocompleteSize}
-                    options={[
-                      { value: "sm", label: "Small" },
-                      { value: "lg", label: "Large" },
-                    ]}
-                  />
-                </div>
-
                 <div className="max-w-xl">
                   <UIAutocomplete
                     ariaLabel="Framework autocomplete"
-                    size={autocompleteSize}
+                    size={uiSize}
                     value={autocompleteValue}
                     onValueChange={setAutocompleteValue}
                     onSelect={(item) => setAutocompleteSelection(item.value)}
@@ -620,7 +626,7 @@ export function ShowcaseClient({
                 <div className="max-w-xl">
                   <UIAutocomplete
                     ariaLabel="Autocomplete invalid"
-                    size={autocompleteSize}
+                    size={uiSize}
                     placeholder="Invalid state"
                     invalid
                     validationState="error"
@@ -633,6 +639,146 @@ export function ShowcaseClient({
 
                 <p className="text-sm text-text-muted">
                   Input: {autocompleteValue || "empty"} · Last selected: {autocompleteSelection}
+                </p>
+              </div>
+            </UICard>
+
+            <UICard title="UIKit · Dialog">
+              <div className="grid gap-4">
+                <div className="flex flex-wrap items-center gap-3">
+                  <UIDialog open={dialogOpen} onOpenChange={setDialogOpen}>
+                    <UIDialogTrigger>
+                      <UIButton theme="primary" variant="contained" size={uiSize}>
+                        Open dialog
+                      </UIButton>
+                    </UIDialogTrigger>
+                    <UIDialogContent>
+                      <UIDialogHeader>
+                        <UIDialogTitle>Publish changes</UIDialogTitle>
+                        <UIDialogDescription>
+                          Review content one more time before publishing this section.
+                        </UIDialogDescription>
+                      </UIDialogHeader>
+                      <UIDialogFooter>
+                        <UIDialogClose>
+                          <UIButton theme="base" variant="outlined" size={uiSize}>
+                            Cancel
+                          </UIButton>
+                        </UIDialogClose>
+                        <UIDialogClose>
+                          <UIButton
+                            theme="primary"
+                            variant="contained"
+                            size={uiSize}
+                            onClick={() => setDialogAction("published")}
+                          >
+                            Publish
+                          </UIButton>
+                        </UIDialogClose>
+                      </UIDialogFooter>
+                    </UIDialogContent>
+                  </UIDialog>
+
+                  <UIConfirmDialog
+                    trigger={
+                      <UIButton theme="danger" variant="outlined" size={uiSize}>
+                        Open confirm
+                      </UIButton>
+                    }
+                    title="Delete block?"
+                    description="This action cannot be undone."
+                    confirmLabel="Delete"
+                    onConfirm={() => setDialogAction("deleted")}
+                    confirmTheme="danger"
+                  />
+                </div>
+
+                <p className="text-sm text-text-muted">Dialog action: {dialogAction}</p>
+              </div>
+            </UICard>
+
+            <UICard title="UIKit · Modal">
+              <div className="grid gap-4">
+                <div className="flex flex-wrap items-center gap-3">
+                  <UIModal
+                    size="lg"
+                    trigger={
+                      <UIButton theme="base" variant="outlined" size={uiSize}>
+                        Open content modal
+                      </UIButton>
+                    }
+                    title="Modal content"
+                    description="Use this modal for rich, scrollable content."
+                  >
+                    <div className="grid gap-3 text-sm text-text-muted">
+                      <p>
+                        This is a generic content modal. Put any complex composition here:
+                        long text, lists, previews, or custom layouts.
+                      </p>
+                      <p>
+                        It uses the same dialog foundation with focus trap, escape handling,
+                        and overlay click close.
+                      </p>
+                    </div>
+                  </UIModal>
+
+                  <UIModalForm
+                    size="md"
+                    trigger={
+                      <UIButton theme="primary" variant="contained" size={uiSize}>
+                        Open form modal
+                      </UIButton>
+                    }
+                    title="Edit profile"
+                    description="Collect structured data in a modal form."
+                    submitLabel="Save profile"
+                    submitting={isProfileSaving}
+                    onSubmit={async () => {
+                      setIsProfileSaving(true);
+                      await new Promise((resolve) => setTimeout(resolve, 500));
+                      setIsProfileSaving(false);
+                      setProfileSavedAt(new Date().toLocaleTimeString());
+                    }}
+                  >
+                    <div className="grid gap-3">
+                      <label className="grid gap-1.5 text-sm">
+                        <span className="font-medium text-text-main">Name</span>
+                        <UITextInput
+                          value={profileName}
+                          onValueChange={setProfileName}
+                          size="sm"
+                          placeholder="Name"
+                        />
+                      </label>
+                      <label className="grid gap-1.5 text-sm">
+                        <span className="font-medium text-text-main">Email</span>
+                        <UITextInput
+                          type="email"
+                          value={profileEmail}
+                          onValueChange={setProfileEmail}
+                          size="sm"
+                          placeholder="Email"
+                        />
+                      </label>
+                      <label className="grid gap-1.5 text-sm">
+                        <span className="font-medium text-text-main">Role</span>
+                        <UISelect
+                          size="sm"
+                          value={profileRole}
+                          onValueChange={setProfileRole}
+                          options={[
+                            { value: "Designer", label: "Designer" },
+                            { value: "Engineer", label: "Engineer" },
+                            { value: "Product Manager", label: "Product Manager" },
+                          ]}
+                        />
+                      </label>
+                    </div>
+                  </UIModalForm>
+                </div>
+
+                <p className="text-sm text-text-muted">
+                  Profile: {profileName} · {profileEmail} · {profileRole} · Saved at: {profileSavedAt}
                 </p>
               </div>
             </UICard>

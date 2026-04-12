@@ -1,16 +1,21 @@
 import Link from "next/link";
 import { notFound } from "next/navigation";
+import { FiArrowLeft } from "react-icons/fi";
 
 import { ProjectAssetsPanel } from "@/components/assets/project-assets-panel";
 import { ProjectEditor } from "@/components/editor/project-editor";
 import { OpenPreviewButton } from "@/components/editor/open-preview-button";
+import { ProjectRenameForm } from "@/components/projects/project-rename-form";
+import { ProjectThemeForm } from "@/components/projects/project-theme-form";
 import { getAssetsByProjectIdForUser } from "@/lib/assets";
 import { requireCurrentUser } from "@/lib/auth/current-user";
 import { normalizePageContent } from "@/lib/editor/content";
 import { getProjectByIdForUser } from "@/lib/projects";
 import { THEME_OPTIONS } from "@/lib/themes";
+import { UIButton } from "@/components/ui/button";
 import {
   publishProjectAction,
+  updateProjectNameAction,
   updateProjectThemeAction,
   unpublishProjectAction,
 } from "@/app/(protected)/projects/[projectId]/actions";
@@ -37,12 +42,13 @@ export default async function ProjectPage({ params }: ProjectPageProps) {
       ? unpublishProjectAction.bind(null, project.id)
       : publishProjectAction.bind(null, project.id);
   const themeAction = updateProjectThemeAction.bind(null, project.id);
+  const nameAction = updateProjectNameAction.bind(null, project.id);
 
   return (
     <main className="min-h-screen bg-zinc-50 px-4 py-16 text-zinc-950">
       <div className="mx-auto flex w-full max-w-5xl flex-col gap-8">
         <div className="flex flex-col gap-4 rounded-3xl border border-zinc-200 bg-white p-6 shadow-sm">
-          <div className="flex flex-wrap items-center justify-between gap-4">
+          <div className="flex flex-wrap items-center justify-between gap-4 mb-2">
             <div className="space-y-2">
               <p className="text-sm font-medium uppercase tracking-[0.2em] text-zinc-500">
                 Project
@@ -50,63 +56,41 @@ export default async function ProjectPage({ params }: ProjectPageProps) {
               <h1 className="text-3xl font-semibold tracking-tight">{project.name}</h1>
             </div>
 
-            <Link
-              href="/dashboard"
-              className="inline-flex items-center justify-center rounded-2xl border border-zinc-300 bg-white px-4 py-2 text-sm font-medium text-zinc-800 transition hover:border-zinc-400 hover:bg-zinc-50"
-            >
-              Back to dashboard
-            </Link>
+            <UIButton asChild theme="base" variant="outlined" size="sm">
+              <Link href="/dashboard">
+                <FiArrowLeft aria-hidden className="h-4 w-4" />
+                <span>Back to dashboard</span>
+              </Link>
+            </UIButton>
           </div>
 
           <div className="flex flex-wrap items-center gap-3">
             <form action={publicationAction}>
-              <button
+              <UIButton
                 type="submit"
-                className={
-                  project.status === "published"
-                    ? "inline-flex items-center justify-center rounded-2xl border border-zinc-300 bg-white px-4 py-2 text-sm font-medium text-zinc-800 transition hover:border-zinc-400 hover:bg-zinc-50"
-                    : "inline-flex items-center justify-center rounded-2xl bg-zinc-950 px-4 py-2 text-sm font-medium text-white transition hover:bg-zinc-800"
-                }
+                theme={project.status === "published" ? "danger" : "primary"}
+                variant={project.status === "published" ? "outlined" : "contained"}
+                size="sm"
               >
                 {project.status === "published" ? "Unpublish" : "Publish"}
-              </button>
+              </UIButton>
             </form>
+
+            <ProjectThemeForm
+              initialThemeKey={project.themeKey}
+              options={THEME_OPTIONS}
+              action={themeAction}
+            />
+            <ProjectRenameForm initialName={project.name} action={nameAction} />
 
             <OpenPreviewButton projectId={project.id} />
 
-            <form action={themeAction} className="flex items-center gap-2">
-              <label className="sr-only" htmlFor="themeKey">
-                Theme
-              </label>
-              <select
-                id="themeKey"
-                name="themeKey"
-                defaultValue={project.themeKey}
-                className="rounded-2xl border border-zinc-300 bg-white px-3 py-2 text-sm font-medium text-zinc-800"
-              >
-                {THEME_OPTIONS.map((theme) => (
-                  <option key={theme.key} value={theme.key}>
-                    {theme.label}
-                  </option>
-                ))}
-              </select>
-              <button
-                type="submit"
-                className="inline-flex items-center justify-center rounded-2xl border border-zinc-300 bg-white px-4 py-2 text-sm font-medium text-zinc-800 transition hover:border-zinc-400 hover:bg-zinc-50"
-              >
-                Apply theme
-              </button>
-            </form>
-
             {project.status === "published" ? (
-              <Link
-                href={`/p/${project.slug}`}
-                target="_blank"
-                rel="noreferrer"
-                className="inline-flex items-center justify-center rounded-2xl border border-emerald-300 bg-emerald-50 px-4 py-2 text-sm font-medium text-emerald-800 transition hover:border-emerald-400 hover:bg-emerald-100"
-              >
-                Open public page
-              </Link>
+              <UIButton asChild theme="primary" variant="outlined" size="sm">
+                <Link href={`/p/${project.slug}`} target="_blank" rel="noreferrer">
+                  Open public page
+                </Link>
+              </UIButton>
             ) : null}
           </div>
 

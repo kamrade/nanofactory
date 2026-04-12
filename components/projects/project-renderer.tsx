@@ -62,43 +62,56 @@ export function ProjectRenderer({
   const resolvedThemeKey = isThemeKey(themeKey) ? themeKey : DEFAULT_THEME_KEY;
   const theme = getThemeClasses(resolvedThemeKey);
   const assetMap = buildAssetMap(assets);
+  const containerClass = "container mx-auto w-full px-4 sm:px-6 lg:px-8";
 
   return (
     <main
       data-theme={resolvedThemeKey}
       data-mode={mode}
-      className={`min-h-screen px-4 py-16 ${theme.page}`}
+      className={`min-h-screen py-16 ${theme.page}`}
     >
-      <div className="mx-auto flex w-full max-w-5xl flex-col gap-8">
+      <div className="flex w-full flex-col gap-8">
         {showPublishedBadge || showProjectMeta ? (
-          <header className={theme.heroCard}>
-            {showPublishedBadge ? (
-              <p className={`text-sm font-medium uppercase tracking-[0.2em] ${theme.kicker}`}>
-                Published with Nanofactory
-              </p>
-            ) : null}
-            {showProjectMeta ? (
-              <div className="mt-3 flex flex-wrap items-center justify-between gap-3">
-                <p className={`text-sm ${theme.muted}`}>Project: {name}</p>
-                <ProjectModeSwitcher />
-              </div>
-            ) : null}
+          <header className={containerClass}>
+            <div className={theme.heroCard}>
+              {showPublishedBadge ? (
+                <p className={`text-sm font-medium uppercase tracking-[0.2em] ${theme.kicker}`}>
+                  Published with Nanofactory
+                </p>
+              ) : null}
+              {showProjectMeta ? (
+                <div className="mt-3 flex flex-wrap items-center justify-between gap-3">
+                  <p className={`text-sm ${theme.muted}`}>Project: {name}</p>
+                  <ProjectModeSwitcher />
+                </div>
+              ) : null}
+            </div>
           </header>
         ) : null}
 
         {content.blocks.length === 0 ? (
-          <section className={theme.sectionCard}>
-            <h1 className="text-3xl font-semibold tracking-tight">{name}</h1>
-            <p className={`mt-3 text-base leading-7 ${theme.muted}`}>
-              This page has been published, but it does not contain any blocks yet.
-            </p>
+          <section className={containerClass}>
+            <div className={theme.sectionCard}>
+              <h1 className="text-3xl font-semibold tracking-tight">{name}</h1>
+              <p className={`mt-3 text-base leading-7 ${theme.muted}`}>
+                This page has been published, but it does not contain any blocks yet.
+              </p>
+            </div>
           </section>
         ) : (
-          content.blocks.map((block) => (
-            <section key={block.id} className={theme.sectionCard}>
-              {renderBlock(block, assetMap, theme)}
-            </section>
-          ))
+          content.blocks.map((block) =>
+            block.fullBleed ? (
+              <section key={block.id} className="w-full px-4 sm:px-6">
+                {renderBlock(block, assetMap, theme)}
+              </section>
+            ) : (
+              <section key={block.id} className={containerClass}>
+                <div className={theme.sectionCard}>
+                  {renderBlock(block, assetMap, theme)}
+                </div>
+              </section>
+            )
+          )
         )}
       </div>
     </main>

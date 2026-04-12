@@ -57,6 +57,22 @@ function createFeaturesCardsContent(): PageContent {
   };
 }
 
+function createFullBleedCtaContent(): PageContent {
+  return {
+    blocks: [
+      {
+        id: "cta-full-1",
+        type: "cta",
+        fullBleed: true,
+        props: {
+          title: "Go full width",
+          buttonText: "Try now",
+        },
+      },
+    ],
+  };
+}
+
 function createAsset(id: string): ProjectAssetRecord {
   const timestamp = new Date("2026-03-29T12:00:00.000Z");
 
@@ -195,5 +211,22 @@ describe("ProjectRenderer", () => {
     expect(html).not.toContain("Mode:");
     expect(html).not.toContain("Light");
     expect(html).not.toContain("Dark");
+  });
+
+  it("renders full-bleed blocks without the container wrapper card", () => {
+    const html = renderToStaticMarkup(
+      ProjectRenderer({
+        name: "Full Bleed Project",
+        themeKey: "sunwash",
+        content: createFullBleedCtaContent(),
+        assets: [],
+        showPublishedBadge: false,
+        showProjectMeta: false,
+      })
+    );
+
+    expect(html).toContain("Go full width");
+    expect(html).toContain('class="w-full"');
+    expect(html).not.toContain("rounded-[2rem]");
   });
 });

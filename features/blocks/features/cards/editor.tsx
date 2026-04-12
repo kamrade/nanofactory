@@ -1,6 +1,7 @@
 "use client";
 
 import type { BlockEditorProps } from "../../shared/types";
+import { UIButton } from "@/components/ui/button";
 
 function readSectionTitle(props: Record<string, unknown>) {
   return typeof props.sectionTitle === "string" ? props.sectionTitle : "";
@@ -64,13 +65,13 @@ export function FeaturesCardsEditor({ block, onChange }: BlockEditorProps) {
             </p>
           </div>
 
-          <button
+          <UIButton
             type="button"
             onClick={handleAddItem}
             className="inline-flex items-center justify-center rounded-2xl border border-zinc-300 bg-white px-3 py-2 text-sm font-medium text-zinc-800 transition hover:border-zinc-400 hover:bg-zinc-50"
           >
             Add card
-          </button>
+          </UIButton>
         </div>
 
         {items.length === 0 ? (
@@ -86,13 +87,13 @@ export function FeaturesCardsEditor({ block, onChange }: BlockEditorProps) {
               >
                 <div className="flex flex-wrap items-center justify-between gap-3">
                   <p className="text-sm font-medium text-zinc-900">Card {index + 1}</p>
-                  <button
+                  <UIButton
                     type="button"
                     onClick={() => handleRemoveItem(index)}
                     className="inline-flex items-center justify-center rounded-2xl border border-red-200 bg-red-50 px-3 py-2 text-sm font-medium text-red-700 transition hover:border-red-300 hover:bg-red-100"
                   >
                     Remove
-                  </button>
+                  </UIButton>
                 </div>
 
                 <label className="grid gap-1.5 text-sm">

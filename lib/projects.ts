@@ -284,6 +284,38 @@ export async function updateProjectThemeForUser(
   return project ?? null;
 }
 
+export async function updateProjectNameForUser(
+  projectId: string,
+  userId: string,
+  name: string
+) {
+  if (!isUuid(projectId)) {
+    return null;
+  }
+
+  const trimmedName = name.trim();
+  if (trimmedName.length === 0) {
+    return null;
+  }
+
+  const now = new Date();
+  const [project] = await db
+    .update(projects)
+    .set({
+      name: trimmedName,
+      updatedAt: now,
+    })
+    .where(and(eq(projects.id, projectId), eq(projects.userId, userId)))
+    .returning({
+      id: projects.id,
+      slug: projects.slug,
+      name: projects.name,
+      updatedAt: projects.updatedAt,
+    });
+
+  return project ?? null;
+}
+
 export async function createProjectForUser(userId: string, input: CreateProjectInput) {
   const name = input.name.trim();
 

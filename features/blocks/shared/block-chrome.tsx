@@ -1,6 +1,7 @@
 "use client";
 
 import type { ReactNode } from "react";
+import { UIButton } from "@/components/ui/button";
 
 type BlockChromeProps = {
   index: number;
@@ -32,13 +33,13 @@ export function BlockChrome({
 
         <div className="flex flex-wrap items-center gap-2">
           {actions}
-          <button
+          <UIButton
             type="button"
             onClick={onDelete}
             className="inline-flex items-center justify-center rounded-2xl border border-red-200 bg-red-50 px-3 py-2 text-sm font-medium text-red-700 transition hover:border-red-300 hover:bg-red-100"
           >
             Delete
-          </button>
+          </UIButton>
         </div>
       </div>
 
