@@ -21,11 +21,20 @@ export function getSelectedThemeKeyFromDocument(
   return value ? value : null;
 }
 
+export function getSelectedModeFromDocument(
+  doc: Pick<Document, "querySelector"> = document
+) {
+  const modeField = doc.querySelector<HTMLInputElement>('[name="previewMode"]');
+  const value = modeField?.value?.trim();
+  return value === "dark" || value === "light" ? value : null;
+}
+
 export function buildPreviewUrl(
   basePath: string,
   options?: {
     draftToken?: string;
     selectedThemeKey?: string | null;
+    selectedMode?: "light" | "dark" | null;
   }
 ) {
   const params = new URLSearchParams();
@@ -36,6 +45,10 @@ export function buildPreviewUrl(
 
   if (options?.selectedThemeKey) {
     params.set("theme", options.selectedThemeKey);
+  }
+
+  if (options?.selectedMode) {
+    params.set("mode", options.selectedMode);
   }
 
   const query = params.toString();
@@ -53,11 +66,13 @@ export function OpenPreviewButton({ projectId }: { projectId: string }) {
 
   function handleOpenPreview() {
     const selectedThemeKey = getSelectedThemeKeyFromDocument();
+    const selectedMode = getSelectedModeFromDocument();
 
     if (!content) {
       openPreviewUrl(
         buildPreviewUrl(`/projects/${projectId}/preview`, {
           selectedThemeKey,
+          selectedMode,
         })
       );
       return;
@@ -81,6 +96,7 @@ export function OpenPreviewButton({ projectId }: { projectId: string }) {
           buildPreviewUrl(`/projects/${projectId}/preview`, {
             draftToken: result.token,
             selectedThemeKey,
+            selectedMode,
           })
         );
       } catch (error) {
@@ -97,7 +113,7 @@ export function OpenPreviewButton({ projectId }: { projectId: string }) {
         onClick={handleOpenPreview}
         disabled={isPending}
         theme="base"
-        variant="outlined"
+        variant="contained"
         size="sm"
       >
         {isPending ? "Preparing preview..." : "Open preview"}

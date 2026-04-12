@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { usePathname, useRouter, useSearchParams } from "next/navigation";
 import { FiArchive, FiArrowRight, FiCopy, FiEdit2, FiMoreVertical, FiPlus, FiSearch, FiSettings, FiTrash2 } from "react-icons/fi";
 
@@ -65,6 +65,7 @@ export function ShowcaseClient({
   const [passwordValue, setPasswordValue] = useState("");
   const [selectValue, setSelectValue] = useState("react");
   const [selectSearchValue, setSelectSearchValue] = useState("typescript");
+  const [selectLongValue, setSelectLongValue] = useState("item-18");
   const [autocompleteValue, setAutocompleteValue] = useState("");
   const [autocompleteSelection, setAutocompleteSelection] = useState("none");
   const [multiSelectValue, setMultiSelectValue] = useState<string[]>(["react", "typescript"]);
@@ -83,6 +84,18 @@ export function ShowcaseClient({
   const [switcherValues, setSwitcherValues] = useState({
     enabled: true,
   });
+  const longListOptions = useMemo(
+    () =>
+      Array.from({ length: 40 }, (_, index) => {
+        const id = index + 1;
+        return {
+          value: `item-${id}`,
+          label: `Long list item ${id}`,
+          textValue: `long list item ${id}`,
+        };
+      }),
+    []
+  );
   const showcaseQuery = `theme=${themeKey}&mode=${mode}`;
 
   useEffect(() => {
@@ -567,8 +580,20 @@ export function ShowcaseClient({
                   />
                 </div>
 
+                <div className="max-w-xl">
+                  <UISelect
+                    size={uiSize}
+                    value={selectLongValue}
+                    onValueChange={setSelectLongValue}
+                    placeholder="Long list example"
+                    searchable
+                    searchPlaceholder="Search 40 options..."
+                    options={longListOptions}
+                  />
+                </div>
+
                 <p className="text-sm text-text-muted">
-                  Selected: {selectValue} · Search select: {selectSearchValue}
+                  Selected: {selectValue} · Search select: {selectSearchValue} · Long list: {selectLongValue}
                 </p>
               </div>
             </UICard>
@@ -617,6 +642,17 @@ export function ShowcaseClient({
                       { value: "tailwind", label: "Tailwind CSS" },
                       { value: "drizzle", label: "Drizzle ORM", disabled: true },
                     ]}
+                  />
+                </div>
+
+                <div className="max-w-xl">
+                  <UIMultiSelect
+                    ariaLabel="Long list multi select"
+                    searchable
+                    clearable
+                    searchPlaceholder="Search 40 options..."
+                    size={uiSize}
+                    options={longListOptions}
                   />
                 </div>
 

@@ -57,8 +57,7 @@ test("adds a block, saves content, and reloads the editor state", async ({ page 
 
   await page.waitForURL(/\/projects\/.+/);
   await page.getByRole("button", { name: "Add block" }).click();
-  await page.getByRole("button", { name: "Hero Choose variant" }).click();
-  await page.getByRole("button", { name: "Split image" }).click();
+  await page.getByRole("menuitem", { name: /Split image/i }).click();
   await page.getByLabel("Title", { exact: true }).fill("Saved Hero Title");
   await page.getByRole("textbox", { name: "Subtitle" }).fill(
     "Saved hero subtitle from Playwright."
@@ -117,8 +116,7 @@ test("applies selected theme in preview before save and persists after apply", a
   await page.getByRole("button", { name: "Create project" }).click();
 
   await page.waitForURL(/\/projects\/.+/);
-  await page.getByRole("combobox", { name: "Theme" }).click();
-  await page.getByRole("option", { name: "Nightfall" }).click();
+  await page.getByRole("radio", { name: "Nightfall" }).click();
   await expect(page.getByText("Theme: sunwash").first()).toBeVisible();
 
   const previewPopupBeforeSavePromise = page.waitForEvent("popup");

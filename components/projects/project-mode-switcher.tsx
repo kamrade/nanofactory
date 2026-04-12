@@ -3,7 +3,7 @@
 import { useRef, useState } from "react";
 import { UISegmentedControl } from "@/components/ui/segmented-control";
 
-type ThemeMode = "light" | "dark";
+export type ThemeMode = "light" | "dark";
 
 function isThemeMode(value: string | null | undefined): value is ThemeMode {
   return value === "light" || value === "dark";
@@ -25,10 +25,31 @@ export function applyModeToRoot(node: ClosestCapableNode | null | undefined, mod
   node?.closest("main[data-theme]")?.setAttribute("data-mode", mode);
 }
 
-export function ProjectModeSwitcher() {
+type ProjectModeSwitcherProps = {
+  initialMode?: ThemeMode;
+  inputName?: string;
+  syncSearchParam?: string;
+};
+
+function syncModeToUrl(paramName: string, mode: ThemeMode) {
+  if (typeof window === "undefined") {
+    return;
+  }
+
+  const url = new URL(window.location.href);
+  url.searchParams.set(paramName, mode);
+  window.history.replaceState(null, "", `${url.pathname}${url.search}${url.hash}`);
+}
+
+export function ProjectModeSwitcher({
+  initialMode,
+  inputName,
+  syncSearchParam,
+}: ProjectModeSwitcherProps = {}) {
   const containerRef = useRef<HTMLDivElement>(null);
   const [mode, setMode] = useState<ThemeMode>(() =>
-    typeof document === "undefined"
+    initialMode ??
+    (typeof document === "undefined"
       ? "light"
       : readModeFromRoot({
           closest: (selector) =>
@@ -36,12 +57,15 @@ export function ProjectModeSwitcher() {
               setAttribute: (name: string, value: string) => void;
               getAttribute: (name: string) => string | null;
             } | null,
-        })
+        }))
   );
 
   function applyMode(nextMode: ThemeMode) {
     setMode(nextMode);
     applyModeToRoot(containerRef.current, nextMode);
+    if (syncSearchParam) {
+      syncModeToUrl(syncSearchParam, nextMode);
+    }
   }
 
   return (
@@ -56,6 +80,7 @@ export function ProjectModeSwitcher() {
           { value: "dark", label: "Dark" },
         ]}
       />
+      {inputName ? <input type="hidden" name={inputName} value={mode} /> : null}
     </div>
   );
 }

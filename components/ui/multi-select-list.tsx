@@ -103,14 +103,14 @@ export function UIMultiSelectList({
     size === "sm"
       ? {
           list: "rounded-lg",
-          option: "min-h-7 rounded-md px-2 py-1.5 text-sm",
+          option: "min-h-7 rounded-md px-2 py-1 text-sm",
           check: "h-4 w-4 rounded-md",
           icon: "h-2.5 w-2.5",
           search: "h-7 rounded-lg px-2 text-sm",
         }
       : {
           list: "rounded-xl",
-          option: "min-h-10 rounded-lg px-3 py-2 text-sm",
+          option: "min-h-10 rounded-lg px-3 py-2.5 text-sm",
           check: "h-5 w-5 rounded-lg",
           icon: "h-3 w-3",
           search: "h-10 rounded-xl px-3 text-sm",
@@ -234,7 +234,7 @@ export function UIMultiSelectList({
         tabIndex={0}
         onKeyDown={handleKeyDown}
         className={cx(
-          "flex w-full flex-col gap-0.5 border bg-surface p-1 outline-none",
+          "flex max-h-[min(24rem,calc(100vh-2rem))] w-full flex-col gap-0.5 overflow-y-auto bg-surface p-1 outline-none",
           "focus:ring-2 focus:ring-focus/50 focus:ring-offset-0 focus:ring-offset-bg",
           sizeClasses.list,
           disabled && "cursor-not-allowed opacity-60",

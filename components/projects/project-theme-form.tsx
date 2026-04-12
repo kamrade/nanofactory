@@ -1,9 +1,9 @@
 "use client";
 
-import { useState } from "react";
+import { useRef, useState } from "react";
 
 import { UIButton } from "@/components/ui/button";
-import { UISelect } from "@/components/ui/select";
+import { UISegmentedControl } from "@/components/ui/segmented-control";
 
 type ThemeOption = {
   key: string;
@@ -22,21 +22,30 @@ export function ProjectThemeForm({
   action,
 }: ProjectThemeFormProps) {
   const [themeKey, setThemeKey] = useState(initialThemeKey);
+  const containerRef = useRef<HTMLDivElement | null>(null);
+
+  function applyTheme(nextThemeKey: string) {
+    setThemeKey(nextThemeKey);
+    containerRef.current
+      ?.closest("main[data-theme]")
+      ?.setAttribute("data-theme", nextThemeKey);
+  }
 
   return (
     <form action={action} className="flex items-center gap-2">
-      <UISelect
+      <div ref={containerRef}>
+        <UISegmentedControl
         ariaLabel="Theme"
+        size="sm"
         value={themeKey}
-        onValueChange={setThemeKey}
+        onValueChange={applyTheme}
         options={options.map((theme) => ({
           value: theme.key,
           label: theme.label,
-          textValue: theme.label,
         }))}
-        size="sm"
-        name="themeKey"
       />
+      </div>
+      <input type="hidden" name="themeKey" value={themeKey} />
       <UIButton type="submit" theme="base" variant="outlined" size="sm">
         Apply theme
       </UIButton>

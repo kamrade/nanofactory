@@ -136,7 +136,7 @@ export function UISelect({
           clear: "h-5 w-5",
           text: "text-sm",
           listPadding: "p-1",
-          option: "px-2 py-1.5 text-sm",
+          option: "min-h-7 rounded-md px-2 py-1 text-sm",
           searchInput: "h-7 text-sm",
         }
       : {
@@ -145,7 +145,7 @@ export function UISelect({
           clear: "h-6 w-6",
           text: "text-sm",
           listPadding: "p-1",
-          option: "px-3 py-2 text-sm",
+          option: "min-h-10 rounded-lg px-3 py-2.5 text-sm",
           searchInput: "h-8 text-sm",
         };
 
@@ -476,7 +476,7 @@ export function UISelect({
           role="listbox"
           aria-label={ariaLabel}
           className={cx(
-            "flex min-w-44 flex-col gap-[2px] rounded-xl border border-neutral-line bg-surface shadow-[0_10px_30px_rgba(0,0,0,0.12)]",
+            "flex min-w-44 max-h-[min(24rem,calc(100vh-2rem))] flex-col gap-[2px] overflow-y-auto rounded-xl border border-neutral-line bg-surface shadow-[0_10px_30px_rgba(0,0,0,0.12)]",
             sizeClasses.listPadding
           )}
           onKeyDown={(event) => {
@@ -603,7 +603,7 @@ export function UISelect({
                   closeDropdown();
                 }}
                 className={cx(
-                  "flex w-full items-center rounded-lg text-left transition outline-none",
+                  "flex w-full items-center text-left transition outline-none",
                   sizeClasses.option,
                   "focus:ring-2 focus:ring-focus/50 focus:ring-offset-0 focus:ring-offset-surface",
                   option.disabled

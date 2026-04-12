@@ -1,6 +1,6 @@
 "use client";
 
-import { useActionState, useEffect, useMemo, useRef, useState } from "react";
+import { useActionState, useEffect, useMemo, useState } from "react";
 
 import type { PageContent } from "@/db/schema";
 import type { ProjectAssetRecord } from "@/lib/assets";
@@ -29,6 +29,7 @@ import { BlockChrome } from "@/features/blocks/shared/block-chrome";
 import type { BlockVariantDefinition } from "@/features/blocks/shared/types";
 import type { PageBlock } from "@/features/blocks/shared/content";
 import { UIButton } from "@/components/ui/button";
+import { UIMenu, UIMenuItem, UIMenuLabel } from "@/components/ui/menu";
 
 type EditorProject = {
   id: string;
@@ -68,10 +69,6 @@ function SaveStatus({ state }: { state: SaveEditorState }) {
 
 export function ProjectEditor({ project, assets }: ProjectEditorProps) {
   const [content, setContent] = useState<PageContent>(project.contentJson);
-  const [isAddBlockMenuOpen, setIsAddBlockMenuOpen] = useState(false);
-  const [selectedAddBlockType, setSelectedAddBlockType] = useState<SupportedBlockType | null>(
-    null
-  );
   const [pendingVariantSwitch, setPendingVariantSwitch] = useState<PendingVariantSwitch | null>(
     null
   );
@@ -80,7 +77,6 @@ export function ProjectEditor({ project, assets }: ProjectEditorProps) {
     status: "idle",
     message: "",
   };
-  const addBlockMenuRef = useRef<HTMLDivElement>(null);
   const saveAction = saveProjectContentAction.bind(null, project.id);
   const [saveState, formAction, isPending] = useActionState(
     saveAction,
@@ -89,42 +85,18 @@ export function ProjectEditor({ project, assets }: ProjectEditorProps) {
 
   const serializedContent = useMemo(() => JSON.stringify(content), [content]);
   const blockTypes = useMemo(() => getBlockTypes(), []);
-  const selectedBlockVariants = useMemo(
-    () => (selectedAddBlockType ? getBlockVariants(selectedAddBlockType) : []),
-    [selectedAddBlockType]
+  const addBlockGroups = useMemo(
+    () =>
+      blockTypes.map((blockType) => ({
+        ...blockType,
+        variants: getBlockVariants(blockType.type),
+      })),
+    [blockTypes]
   );
 
   useEffect(() => {
     setPreviewDraftContent(content);
   }, [content]);
-
-  useEffect(() => {
-    if (!isAddBlockMenuOpen) {
-      return;
-    }
-
-    function handlePointerDown(event: MouseEvent) {
-      if (!addBlockMenuRef.current?.contains(event.target as Node)) {
-        setIsAddBlockMenuOpen(false);
-        setSelectedAddBlockType(null);
-      }
-    }
-
-    function handleEscape(event: KeyboardEvent) {
-      if (event.key === "Escape") {
-        setIsAddBlockMenuOpen(false);
-        setSelectedAddBlockType(null);
-      }
-    }
-
-    document.addEventListener("mousedown", handlePointerDown);
-    document.addEventListener("keydown", handleEscape);
-
-    return () => {
-      document.removeEventListener("mousedown", handlePointerDown);
-      document.removeEventListener("keydown", handleEscape);
-    };
-  }, [isAddBlockMenuOpen]);
 
   useEffect(() => {
     if (!lastVariantUndo) {
@@ -142,8 +114,6 @@ export function ProjectEditor({ project, assets }: ProjectEditorProps) {
     setContent((currentContent) => ({
       blocks: [...currentContent.blocks, createPageBlock(type, variant)],
     }));
-    setIsAddBlockMenuOpen(false);
-    setSelectedAddBlockType(null);
   }
 
   function handleDeleteBlock(blockId: string) {
@@ -249,75 +219,43 @@ export function ProjectEditor({ project, assets }: ProjectEditorProps) {
       <section className="space-y-6">
         <div className="flex flex-wrap items-center justify-between gap-4">
           <div>
-            <h2 className="text-lg font-semibold text-zinc-950">Page blocks</h2>
-            <p className="mt-1 text-sm leading-6 text-zinc-600">
-              Edit the same `content_json` structure that will later feed the public renderer.
-            </p>
+            <h2 className="text-lg font-semibold text-text-main">Page blocks</h2>
           </div>
 
           <div className="flex flex-wrap items-center gap-3">
-            <div ref={addBlockMenuRef} className="relative">
-              <UIButton
-                type="button"
-                onClick={() => setIsAddBlockMenuOpen((current) => !current)}
-                aria-expanded={isAddBlockMenuOpen}
-                aria-haspopup="menu"
-                className="inline-flex items-center justify-center rounded-2xl border border-zinc-300 bg-white px-4 py-2.5 text-sm font-medium text-zinc-800 transition hover:border-zinc-400 hover:bg-zinc-50"
-              >
-                Add block
-              </UIButton>
-
-              {isAddBlockMenuOpen ? (
-                <div
-                  role="menu"
-                  className="absolute right-0 top-full z-10 mt-2 grid min-w-72 gap-2 rounded-2xl border border-zinc-200 bg-white p-2 shadow-lg"
+            <UIMenu
+              ariaLabel="Add block"
+              placement="bottom-start"
+              size="sm"
+              trigger={
+                <UIButton
+                  type="button"
+                  theme="base"
+                  variant="contained"
+                  size="sm"
                 >
-                  {selectedAddBlockType ? (
-                    <>
-                      <UIButton
-                        type="button"
-                        onClick={() => setSelectedAddBlockType(null)}
-                        className="inline-flex items-center rounded-2xl px-4 py-2 text-left text-sm font-medium text-zinc-500 transition hover:bg-zinc-50 hover:text-zinc-900"
-                      >
-                        Back
-                      </UIButton>
-
-                      {selectedBlockVariants.map((definition) => (
-                        <UIButton
-                          key={`${definition.type}:${definition.variant}`}
-                          type="button"
-                          onClick={() =>
-                            handleAddBlock(definition.type, definition.variant)
-                          }
-                          className="grid gap-1 rounded-2xl px-4 py-3 text-left transition hover:bg-zinc-50"
-                        >
-                          <span className="text-sm font-medium text-zinc-900">
-                            {definition.label}
-                          </span>
-                          {definition.description ? (
-                            <span className="text-xs leading-5 text-zinc-500">
-                              {definition.description}
-                            </span>
-                          ) : null}
-                        </UIButton>
-                      ))}
-                    </>
-                  ) : (
-                    blockTypes.map((blockType) => (
-                      <UIButton
-                        key={blockType.type}
-                        type="button"
-                        onClick={() => setSelectedAddBlockType(blockType.type)}
-                        className="inline-flex items-center justify-between rounded-2xl px-4 py-3 text-left text-sm font-medium text-zinc-900 transition hover:bg-zinc-50"
-                      >
-                        <span>{blockType.label}</span>
-                        <span className="text-zinc-500">Choose variant</span>
-                      </UIButton>
-                    ))
-                  )}
+                  Add block
+                </UIButton>
+              }
+            >
+              {addBlockGroups.map((group) => (
+                <div key={group.type} className="grid gap-[2px]">
+                  <UIMenuLabel>{group.label}</UIMenuLabel>
+                  {group.variants.map((definition) => (
+                    <UIMenuItem
+                      key={`${definition.type}:${definition.variant}`}
+                      onSelect={() => handleAddBlock(definition.type, definition.variant)}
+                      className="grid gap-0.5"
+                    >
+                      <span className="text-sm font-medium text-text-main">{definition.label}</span>
+                      {definition.description ? (
+                        <span className="text-xs leading-5 text-text-muted">{definition.description}</span>
+                      ) : null}
+                    </UIMenuItem>
+                  ))}
                 </div>
-              ) : null}
-            </div>
+              ))}
+            </UIMenu>
 
             <form action={formAction} className="flex items-center gap-3">
             <input type="hidden" name="content" value={serializedContent} />
@@ -325,7 +263,8 @@ export function ProjectEditor({ project, assets }: ProjectEditorProps) {
             <UIButton
               type="submit"
               disabled={isPending}
-              className="inline-flex items-center justify-center rounded-2xl bg-zinc-950 px-4 py-2.5 text-sm font-medium text-white transition hover:bg-zinc-800 disabled:cursor-not-allowed disabled:bg-zinc-400"
+              theme="primary" variant="contained"
+              size="sm"
             >
               {isPending ? "Saving..." : "Save"}
             </UIButton>
@@ -468,12 +407,12 @@ export function ProjectEditor({ project, assets }: ProjectEditorProps) {
         </div>
       </section>
 
-      <section className="rounded-3xl border border-zinc-200 bg-white p-6 shadow-sm">
+      <section className="rounded-3xl border border-line bg-surface p-6 shadow-sm">
         <div className="space-y-3">
-          <h3 className="text-sm font-semibold uppercase tracking-[0.18em] text-zinc-500">
+          <h3 className="text-sm font-semibold uppercase tracking-[0.18em] text-text-placeholder">
             Content shape
           </h3>
-          <pre className="overflow-x-auto whitespace-pre-wrap break-words rounded-2xl bg-zinc-950 p-4 text-xs leading-6 text-zinc-100">
+          <pre className="overflow-x-auto whitespace-pre-wrap break-words rounded-2xl border border-line bg-surface-alt p-4 text-xs leading-6 text-text-main">
             {serializedContent}
           </pre>
         </div>

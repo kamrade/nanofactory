@@ -16,6 +16,7 @@ type ProjectPreviewPageProps = {
   searchParams?: Promise<{
     draft?: string;
     theme?: string;
+    mode?: string;
   }>;
 };
 
@@ -57,6 +58,7 @@ export async function ProjectPreviewPageWithDependencies(
   const resolvedSearchParams = searchParams ? await searchParams : {};
   const draftToken = resolvedSearchParams.draft;
   const requestedThemeKey = resolvedSearchParams.theme;
+  const requestedMode = resolvedSearchParams.mode;
   const draft = draftToken ? dependencies.getPreviewDraft(draftToken) : null;
   const hasValidDraft =
     !!draft &&
@@ -67,6 +69,7 @@ export async function ProjectPreviewPageWithDependencies(
     requestedThemeKey && isThemeKey(requestedThemeKey)
       ? requestedThemeKey
       : project.themeKey;
+  const resolvedMode = requestedMode === "dark" ? "dark" : "light";
   const hasThemeOverride = !!requestedThemeKey && resolvedThemeKey !== project.themeKey;
   const bannerTitle = hasValidDraft ? "Draft preview" : "Saved preview";
   const bannerDescription = hasValidDraft
@@ -77,6 +80,7 @@ export async function ProjectPreviewPageWithDependencies(
   const bannerThemeNote = hasThemeOverride
     ? `Theme preview: ${resolvedThemeKey}.`
     : `Theme: ${project.themeKey}.`;
+  const bannerModeNote = `Mode: ${resolvedMode}.`;
 
   return (
     <div>
@@ -88,6 +92,7 @@ export async function ProjectPreviewPageWithDependencies(
             </span>
             <span>{bannerDescription}</span>
             <span>{bannerThemeNote}</span>
+            <span>{bannerModeNote}</span>
           </div>
           <Link
             href={`/projects/${project.id}`}
@@ -101,6 +106,7 @@ export async function ProjectPreviewPageWithDependencies(
       <ProjectRenderer
         name={project.name}
         themeKey={resolvedThemeKey}
+        mode={resolvedMode}
         content={dependencies.normalizePageContent(content)}
         assets={assets}
       />

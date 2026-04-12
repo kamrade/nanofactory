@@ -96,11 +96,11 @@ export function UIMenuItem({
   const sizeClasses =
     resolvedSize === "sm"
       ? {
-          item: "rounded-md px-2 py-1.5 text-sm",
+          item: "min-h-7 rounded-md px-2 py-1 text-sm",
           icon: "mr-1.5 h-3.5 w-3.5",
         }
       : {
-          item: "rounded-lg px-3 py-2 text-sm",
+          item: "min-h-10 rounded-lg px-3 py-2.5 text-sm",
           icon: "mr-2 h-4 w-4",
         };
 
@@ -337,7 +337,7 @@ export function UIMenu(allProps: UIMenuProps) {
           aria-label={ariaLabel}
           onKeyDown={handleManualKeyDown}
           className={cx(
-            "flex min-w-44 flex-col gap-[2px] rounded-xl border border-line bg-surface p-1 shadow-[0_10px_30px_rgba(0,0,0,0.12)]",
+            "flex min-w-44 max-h-[min(24rem,calc(100vh-2rem))] flex-col gap-[2px] overflow-y-auto rounded-xl border border-line bg-surface p-1 shadow-[0_10px_30px_rgba(0,0,0,0.12)]",
             className
           )}
         >
