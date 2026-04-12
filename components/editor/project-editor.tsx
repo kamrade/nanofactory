@@ -13,6 +13,8 @@ import {
   type SupportedBlockType,
 } from "@/lib/editor/blocks";
 
+import { UIDivider } from "@/components/ui/divider";
+
 import {
   type SaveEditorState,
   saveProjectContentAction,
@@ -407,9 +409,11 @@ export function ProjectEditor({ project, assets }: ProjectEditorProps) {
         </div>
       </section>
 
-      <section className="rounded-3xl border border-line bg-surface p-6 shadow-sm">
+      <UIDivider spacing="md" stripped />
+
+      <section className="py-6">
         <div className="space-y-3">
-          <h3 className="text-sm font-semibold uppercase tracking-[0.18em] text-text-placeholder">
+          <h3 className="ext-lg font-semibold text-text-main">
             Content shape
           </h3>
           <pre className="overflow-x-auto whitespace-pre-wrap break-words rounded-2xl border border-line bg-surface-alt p-4 text-xs leading-6 text-text-main">

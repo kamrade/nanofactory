@@ -82,7 +82,7 @@ export function ProjectAssetsPanel({
   }
 
   return (
-    <section className="rounded-3xl border border-line bg-surface p-6 shadow-sm">
+    <section data-testid="ProjectAssetsPanel" className="py-6">
       <div className="space-y-2">
         <h2 className="text-lg font-semibold text-text-main">Project assets</h2>
         <p className="text-sm leading-6 text-text-muted">
@@ -107,7 +107,7 @@ export function ProjectAssetsPanel({
         </label>
 
         {message ? (
-          <p className="rounded-2xl border border-primary-line bg-primary-100 px-4 py-3 text-sm text-text-main">
+          <p className="rounded-2xl border border-primary-line bg-primary-100 px-4 py-3 text-sm text-text-inverted-main">
             {message}
           </p>
         ) : null}
@@ -145,11 +145,11 @@ export function ProjectAssetsPanel({
                   <h3 className="text-base font-semibold text-text-main">
                     {asset.originalFilename}
                   </h3>
-                  <p className="text-sm text-text-muted">Type: {asset.mimeType}</p>
+                  <p className="text-sm text-text-main">Type: {asset.mimeType}</p>
                   <p className="text-sm text-text-muted">
                     Size: {formatFileSize(asset.sizeBytes)}
                   </p>
-                  <p className="break-all text-sm text-text-muted">
+                  <p className="break-all text-sm text-text-main">
                     Storage key: {asset.storageKey}
                   </p>
                 </div>
