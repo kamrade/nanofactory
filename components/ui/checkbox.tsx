@@ -32,7 +32,7 @@ export function UICheckbox({
       <span
         className={cx(
           "inline-flex shrink-0 items-center justify-center border transition",
-          "peer-focus-visible:ring-2 peer-focus-visible:ring-focus peer-focus-visible:ring-offset-2 peer-focus-visible:ring-offset-bg",
+          "peer-focus-visible:ring-2 peer-focus-visible:ring-focus peer-focus-visible:ring-offset-0 peer-focus-visible:ring-offset-bg",
           "h-5 w-5 rounded-lg",
           "border-neutral-line bg-surface text-transparent peer-checked:border-transparent peer-checked:bg-primary-100 peer-checked:text-text-inverted-main"
         )}

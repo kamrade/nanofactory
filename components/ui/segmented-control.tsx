@@ -78,8 +78,8 @@ export function UISegmentedControl<T extends string>({
             }}
             className={cx(
               "inline-flex min-h-8 items-center justify-center rounded-lg px-3 text-sm font-medium transition outline-none",
-              "focus:ring-2 focus:ring-focus/50 focus:ring-offset-2 focus:ring-offset-bg",
-              "focus-visible:ring-2 focus-visible:ring-focus/50 focus-visible:ring-offset-2 focus-visible:ring-offset-bg",
+              "focus:ring-2 focus:ring-focus/50 focus:ring-offset-0 focus:ring-offset-bg",
+              "focus-visible:ring-2 focus-visible:ring-focus/50 focus-visible:ring-offset-0 focus-visible:ring-offset-bg",
               option.disabled && "cursor-not-allowed opacity-50",
               active
                 ? "border border-transparent bg-surface-alt text-text-main"

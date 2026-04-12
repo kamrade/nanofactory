@@ -156,7 +156,7 @@ export function UIMenuList({
       aria-label={ariaLabel}
       onKeyDown={handleKeyDown}
       className={cx(
-        "min-w-44 rounded-xl border border-line bg-surface p-1",
+        "flex min-w-44 flex-col gap-0.5 rounded-xl border border-line bg-surface p-1",
         className
       )}
     >
@@ -178,8 +178,8 @@ export function UIMenuList({
           onClick={() => handleSelect(item)}
           className={cx(
             "flex w-full items-center rounded-lg px-3 py-2 text-left text-sm transition outline-none",
-            "focus:ring-2 focus:ring-focus/50 focus:ring-offset-2 focus:ring-offset-surface",
-            "focus-visible:ring-2 focus-visible:ring-focus/50 focus-visible:ring-offset-2 focus-visible:ring-offset-surface",
+            "focus:ring-2 focus:ring-focus/50 focus:ring-offset-0 focus:ring-offset-surface",
+            "focus-visible:ring-2 focus-visible:ring-focus/50 focus-visible:ring-offset-0 focus-visible:ring-offset-surface",
             item.disabled
               ? "cursor-not-allowed text-text-placeholder opacity-60"
               : item.tone === "danger"

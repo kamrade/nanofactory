@@ -47,6 +47,7 @@ describe("UISelect", () => {
     );
 
     expect(html).toContain("border-danger-line");
+    expect(html).toContain("bg-danger-100");
   });
 
   it("renders clear button slot when clearable is enabled", () => {

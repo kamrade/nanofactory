@@ -142,7 +142,7 @@ export const UITextInput = forwardRef<HTMLInputElement, UITextInputProps>(functi
           "flex w-full items-center border transition",
           sizeClasses.container,
           sizeClasses.gap,
-          "focus-within:ring-2 focus-within:ring-focus/50 focus-within:ring-offset-2 focus-within:ring-offset-bg",
+          "focus-within:ring-2 focus-within:ring-focus/50 focus-within:ring-offset-0 focus-within:ring-offset-bg",
           disabled && "cursor-not-allowed opacity-60",
           isInvalid
             ? "border-danger-line bg-danger-100"

@@ -307,7 +307,7 @@ export function UISelect({
             }
             className={cx(
               "flex w-full items-center border outline-none transition",
-              "focus:ring-2 focus:ring-focus/50 focus:ring-offset-2 focus:ring-offset-bg",
+              "focus:ring-2 focus:ring-focus/50 focus:ring-offset-0 focus:ring-offset-bg",
               "focus:outline-none focus-visible:outline-none",
               sizeClasses.container,
               sizeClasses.text,
@@ -476,7 +476,7 @@ export function UISelect({
           role="listbox"
           aria-label={ariaLabel}
           className={cx(
-            "min-w-44 rounded-xl border border-line bg-surface shadow-[0_10px_30px_rgba(0,0,0,0.12)]",
+            "flex min-w-44 flex-col gap-0.5 rounded-xl border border-line bg-surface shadow-[0_10px_30px_rgba(0,0,0,0.12)]",
             sizeClasses.listPadding
           )}
           onKeyDown={(event) => {
@@ -549,7 +549,7 @@ export function UISelect({
                 placeholder={searchPlaceholder}
                 className={cx(
                   "w-full rounded-lg border border-line bg-surface px-2 text-text-main outline-none placeholder:text-text-placeholder",
-                  "focus:ring-2 focus:ring-focus/50 focus:ring-offset-2 focus:ring-offset-surface",
+                  "focus:ring-2 focus:ring-focus/50 focus:ring-offset-0 focus:ring-offset-surface",
                   sizeClasses.searchInput
                 )}
                 onKeyDown={(event) => {
@@ -605,7 +605,7 @@ export function UISelect({
                 className={cx(
                   "flex w-full items-center rounded-lg text-left transition outline-none",
                   sizeClasses.option,
-                  "focus:ring-2 focus:ring-focus/50 focus:ring-offset-2 focus:ring-offset-surface",
+                  "focus:ring-2 focus:ring-focus/50 focus:ring-offset-0 focus:ring-offset-surface",
                   option.disabled
                     ? "cursor-not-allowed text-text-placeholder opacity-60"
                     : selected

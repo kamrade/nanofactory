@@ -16,6 +16,9 @@ import { UISwitcher } from "@/components/ui/switcher";
 import { UITabs } from "@/components/ui/tabs";
 import { UITextInput } from "@/components/ui/text-input";
 import { UISelect } from "@/components/ui/select";
+import { UIMultiSelect } from "@/components/ui/multi-select";
+import { UIMultiSelectList } from "@/components/ui/multi-select-list";
+import { UIAutocomplete } from "@/components/ui/autocomplete";
 import type { PageContent } from "@/db/schema";
 import { DEFAULT_THEME_KEY, THEME_OPTIONS, type ThemeKey } from "@/lib/themes";
 
@@ -51,6 +54,12 @@ export function ShowcaseClient({
   const [passwordValue, setPasswordValue] = useState("");
   const [selectValue, setSelectValue] = useState("react");
   const [selectSearchValue, setSelectSearchValue] = useState("typescript");
+  const [autocompleteSize, setAutocompleteSize] = useState<"sm" | "lg">("sm");
+  const [autocompleteValue, setAutocompleteValue] = useState("");
+  const [autocompleteSelection, setAutocompleteSelection] = useState("none");
+  const [multiSelectSize, setMultiSelectSize] = useState<"sm" | "lg">("sm");
+  const [multiSelectValue, setMultiSelectValue] = useState<string[]>(["react", "typescript"]);
+  const [multiSelectDropdownValue, setMultiSelectDropdownValue] = useState<string[]>(["nextjs"]);
   const [keyboardEventLog, setKeyboardEventLog] = useState("none");
   const [menuAction, setMenuAction] = useState("none");
   const [manualMenuAction, setManualMenuAction] = useState("none");
@@ -348,7 +357,7 @@ export function ShowcaseClient({
                 <div className="grid gap-3">
                   <p className="text-sm font-medium text-text-muted">Inline Menu List (without Dropdown)</p>
                   <div className="max-w-56">
-                    <div className="min-w-44 rounded-xl border border-line bg-surface p-1" role="menu" aria-label="Inline card actions">
+                    <div className="flex min-w-44 flex-col gap-0.5 rounded-xl border border-line bg-surface p-1" role="menu" aria-label="Inline card actions">
                       <UIMenuLabel>Actions</UIMenuLabel>
                       <UIMenuItem icon={<FiEdit2 aria-hidden className="h-4 w-4" />} closeOnSelect={false} onSelect={() => setInlineMenuAction("edit")}>
                         Edit
@@ -506,6 +515,124 @@ export function ShowcaseClient({
 
                 <p className="text-sm text-text-muted">
                   Selected: {selectValue} · Search select: {selectSearchValue}
+                </p>
+              </div>
+            </UICard>
+
+            <UICard title="UIKit · MultiSelect List">
+              <div className="grid gap-4">
+                <div className="flex flex-wrap items-center gap-3">
+                  <UISegmentedControl
+                    ariaLabel="Multi select list size"
+                    value={multiSelectSize}
+                    onValueChange={setMultiSelectSize}
+                    options={[
+                      { value: "sm", label: "Small" },
+                      { value: "lg", label: "Large" },
+                    ]}
+                  />
+                </div>
+
+                <div className="max-w-xl">
+                  <UIMultiSelectList
+                    ariaLabel="Frameworks and tools"
+                    searchable
+                    searchPlaceholder="Search options..."
+                    size={multiSelectSize}
+                    value={multiSelectValue}
+                    onValueChange={setMultiSelectValue}
+                    options={[
+                      { value: "react", label: "React" },
+                      { value: "nextjs", label: "Next.js", textValue: "next js" },
+                      { value: "typescript", label: "TypeScript" },
+                      { value: "tailwind", label: "Tailwind CSS" },
+                      { value: "drizzle", label: "Drizzle ORM", disabled: true },
+                    ]}
+                  />
+                </div>
+
+                <p className="text-sm text-text-muted">
+                  Selected: {multiSelectValue.length > 0 ? multiSelectValue.join(", ") : "none"}
+                </p>
+              </div>
+            </UICard>
+
+            <UICard title="UIKit · MultiSelect (Dropdown)">
+              <div className="grid gap-4">
+                <div className="max-w-xl">
+                  <UIMultiSelect
+                    ariaLabel="Frameworks and tools dropdown"
+                    searchable
+                    clearable
+                    searchPlaceholder="Search options..."
+                    size={multiSelectSize}
+                    value={multiSelectDropdownValue}
+                    onValueChange={setMultiSelectDropdownValue}
+                    options={[
+                      { value: "react", label: "React" },
+                      { value: "nextjs", label: "Next.js", textValue: "next js" },
+                      { value: "typescript", label: "TypeScript" },
+                      { value: "tailwind", label: "Tailwind CSS" },
+                      { value: "drizzle", label: "Drizzle ORM", disabled: true },
+                    ]}
+                  />
+                </div>
+
+                <p className="text-sm text-text-muted">
+                  Selected: {multiSelectDropdownValue.length > 0 ? multiSelectDropdownValue.join(", ") : "none"}
+                </p>
+              </div>
+            </UICard>
+
+            <UICard title="UIKit · Autocomplete">
+              <div className="grid gap-4">
+                <div className="flex flex-wrap items-center gap-3">
+                  <UISegmentedControl
+                    ariaLabel="Autocomplete size"
+                    value={autocompleteSize}
+                    onValueChange={setAutocompleteSize}
+                    options={[
+                      { value: "sm", label: "Small" },
+                      { value: "lg", label: "Large" },
+                    ]}
+                  />
+                </div>
+
+                <div className="max-w-xl">
+                  <UIAutocomplete
+                    ariaLabel="Framework autocomplete"
+                    size={autocompleteSize}
+                    value={autocompleteValue}
+                    onValueChange={setAutocompleteValue}
+                    onSelect={(item) => setAutocompleteSelection(item.value)}
+                    placeholder="Type to filter frameworks..."
+                    clearable
+                    items={[
+                      { value: "react", label: "React" },
+                      { value: "nextjs", label: "Next.js", textValue: "next js" },
+                      { value: "svelte", label: "Svelte" },
+                      { value: "vue", label: "Vue" },
+                      { value: "solid", label: "Solid", disabled: true },
+                    ]}
+                  />
+                </div>
+
+                <div className="max-w-xl">
+                  <UIAutocomplete
+                    ariaLabel="Autocomplete invalid"
+                    size={autocompleteSize}
+                    placeholder="Invalid state"
+                    invalid
+                    validationState="error"
+                    items={[
+                      { value: "typescript", label: "TypeScript" },
+                      { value: "javascript", label: "JavaScript" },
+                    ]}
+                  />
+                </div>
+
+                <p className="text-sm text-text-muted">
+                  Input: {autocompleteValue || "empty"} · Last selected: {autocompleteSelection}
                 </p>
               </div>
             </UICard>

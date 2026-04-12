@@ -10,7 +10,7 @@ export function FeaturesCardsRender({ block, theme }: BlockRenderProps) {
   return (
     <section className="space-y-6">
       <div className="space-y-2">
-        <p className="text-sm font-medium uppercase tracking-[0.18em] text-zinc-500">
+        <p className={`text-sm font-medium uppercase tracking-[0.18em] ${theme.kicker}`}>
           Features
         </p>
         <h2 className="text-2xl font-semibold tracking-tight">{sectionTitle}</h2>
@@ -20,9 +20,9 @@ export function FeaturesCardsRender({ block, theme }: BlockRenderProps) {
         {items.map((item) => (
           <article
             key={`${block.id}-${item}`}
-            className="rounded-3xl border border-zinc-200 bg-zinc-50 p-5 shadow-sm"
+            className="rounded-3xl border border-line bg-surface-alt p-5 shadow-sm"
           >
-            <p className="text-base font-medium text-zinc-900">{item}</p>
+            <p className="text-base font-medium text-text-main">{item}</p>
             <p className={`mt-3 text-sm leading-6 ${theme.muted}`}>
               Keep the value proposition concise and scannable across the section.
             </p>

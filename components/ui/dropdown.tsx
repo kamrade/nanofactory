@@ -37,6 +37,7 @@ export type UIDropdownProps = {
   placement?: Placement;
   offsetPx?: number;
   hasPopup?: "menu" | "listbox";
+  disableClick?: boolean;
   ariaLabel?: string;
   className?: string;
   children: ReactNode;
@@ -53,6 +54,7 @@ export function UIDropdown({
   placement = "bottom-end",
   offsetPx = 8,
   hasPopup = "menu",
+  disableClick = false,
   ariaLabel = "Dropdown",
   className,
   children,
@@ -67,7 +69,7 @@ export function UIDropdown({
     middleware: [offset(offsetPx), flip({ padding: 8 }), shift({ padding: 8 })],
   });
 
-  const click = useClick(context, { event: "mousedown" });
+  const click = useClick(context, { event: "mousedown", enabled: !disableClick });
   const dismiss = useDismiss(context);
 
   const { getReferenceProps, getFloatingProps } = useInteractions([click, dismiss]);

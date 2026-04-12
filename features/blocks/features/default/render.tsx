@@ -1,6 +1,6 @@
 import type { BlockRenderProps } from "../../shared/types";
 
-export function FeaturesDefaultRender({ block }: BlockRenderProps) {
+export function FeaturesDefaultRender({ block, theme }: BlockRenderProps) {
   const sectionTitle =
     typeof block.props.sectionTitle === "string" ? block.props.sectionTitle : "";
   const items = Array.isArray(block.props.items)
@@ -14,7 +14,7 @@ export function FeaturesDefaultRender({ block }: BlockRenderProps) {
         {items.map((item) => (
           <li
             key={`${block.id}-${item}`}
-            className="rounded-2xl border border-zinc-200 bg-zinc-50 px-4 py-3 text-sm leading-6 text-zinc-700"
+            className={`rounded-2xl border border-line bg-surface-alt px-4 py-3 text-sm leading-6 ${theme.muted}`}
           >
             {item}
           </li>

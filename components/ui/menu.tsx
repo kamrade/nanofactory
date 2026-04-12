@@ -119,8 +119,8 @@ export function UIMenuItem({
       onClick={handleClick}
       className={cx(
         "flex w-full items-center rounded-lg px-3 py-2 text-left text-sm transition outline-none",
-        "focus:ring-2 focus:ring-focus/50 focus:ring-offset-2 focus:ring-offset-surface",
-        "focus-visible:ring-2 focus-visible:ring-focus/50 focus-visible:ring-offset-2 focus-visible:ring-offset-surface",
+        "focus:ring-2 focus:ring-focus/50 focus:ring-offset-0 focus:ring-offset-surface",
+        "focus-visible:ring-2 focus-visible:ring-focus/50 focus-visible:ring-offset-0 focus-visible:ring-offset-surface",
         disabled
           ? "cursor-not-allowed text-text-placeholder opacity-60"
           : tone === "danger"
@@ -300,7 +300,7 @@ export function UIMenu(allProps: UIMenuProps) {
           aria-label={ariaLabel}
           onKeyDown={handleManualKeyDown}
           className={cx(
-            "min-w-44 rounded-xl border border-line bg-surface p-1 shadow-[0_10px_30px_rgba(0,0,0,0.12)]",
+            "flex min-w-44 flex-col gap-0.5 rounded-xl border border-line bg-surface p-1 shadow-[0_10px_30px_rgba(0,0,0,0.12)]",
             className
           )}
         >

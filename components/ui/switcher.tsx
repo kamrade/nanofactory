@@ -42,7 +42,7 @@ export function UISwitcher({
       <span
         className={cx(
           "inline-flex shrink-0 items-center rounded-full border p-[3px] transition",
-          "focus-visible:ring-2 focus-visible:ring-focus focus-visible:ring-offset-2 focus-visible:ring-offset-bg",
+          "focus-visible:ring-2 focus-visible:ring-focus focus-visible:ring-offset-0 focus-visible:ring-offset-bg",
           "h-[22px] w-[34px]",
           checked ? "border-transparent bg-primary-100" : "border-neutral-line bg-surface"
         )}
