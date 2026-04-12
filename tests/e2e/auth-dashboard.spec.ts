@@ -117,7 +117,8 @@ test("applies selected theme in preview before save and persists after apply", a
   await page.getByRole("button", { name: "Create project" }).click();
 
   await page.waitForURL(/\/projects\/.+/);
-  await page.locator('select[name="themeKey"]').selectOption("nightfall");
+  await page.getByRole("combobox", { name: "Theme" }).click();
+  await page.getByRole("option", { name: "Nightfall" }).click();
   await expect(page.getByText("Theme: sunwash").first()).toBeVisible();
 
   const previewPopupBeforeSavePromise = page.waitForEvent("popup");
@@ -159,10 +160,10 @@ test("switches preview mode between light and dark", async ({ page }) => {
   await previewPopup.waitForLoadState("domcontentloaded");
   await expect(previewPopup.locator('main[data-mode="light"]')).toBeVisible();
 
-  await previewPopup.getByRole("button", { name: "Dark" }).click();
+  await previewPopup.getByRole("radio", { name: "Dark" }).click();
   await expect(previewPopup.locator('main[data-mode="dark"]')).toBeVisible();
 
-  await previewPopup.getByRole("button", { name: "Light" }).click();
+  await previewPopup.getByRole("radio", { name: "Light" }).click();
   await expect(previewPopup.locator('main[data-mode="light"]')).toBeVisible();
   await previewPopup.close();
 });

@@ -16,7 +16,7 @@ function getDraftSnapshot() {
 export function getSelectedThemeKeyFromDocument(
   doc: Pick<Document, "querySelector"> = document
 ) {
-  const themeField = doc.querySelector<HTMLSelectElement>('select[name="themeKey"]');
+  const themeField = doc.querySelector<HTMLInputElement | HTMLSelectElement>('[name="themeKey"]');
   const value = themeField?.value?.trim();
   return value ? value : null;
 }
