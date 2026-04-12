@@ -306,16 +306,18 @@ export function UISelect({
                 : undefined
             }
             className={cx(
-              "flex w-full items-center border bg-surface outline-none transition",
+              "flex w-full items-center border outline-none transition",
               "focus:ring-2 focus:ring-focus/50 focus:ring-offset-2 focus:ring-offset-bg",
               "focus:outline-none focus-visible:outline-none",
               sizeClasses.container,
               sizeClasses.text,
               disabled && "cursor-not-allowed opacity-60",
-              readOnly && "bg-surface-alt",
-              isInvalid && "border-danger-line",
-              isSuccess && "border-primary-line",
-              !isInvalid && !isSuccess && "border-line",
+              isInvalid
+                ? "border-danger-line bg-danger-100"
+                : isSuccess
+                  ? "border-primary-line bg-surface"
+                  : "border-line bg-surface",
+              !isInvalid && readOnly && "bg-surface-alt",
               className
             )}
             onKeyDown={(event) => {

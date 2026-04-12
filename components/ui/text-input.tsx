@@ -139,15 +139,17 @@ export const UITextInput = forwardRef<HTMLInputElement, UITextInputProps>(functi
     <div className="w-full">
       <div
         className={cx(
-          "flex w-full items-center border bg-surface transition",
+          "flex w-full items-center border transition",
           sizeClasses.container,
           sizeClasses.gap,
           "focus-within:ring-2 focus-within:ring-focus/50 focus-within:ring-offset-2 focus-within:ring-offset-bg",
           disabled && "cursor-not-allowed opacity-60",
-          readOnly && "bg-surface-alt",
-          isInvalid && "border-danger-line",
-          isSuccess && "border-primary-line",
-          !isInvalid && !isSuccess && "border-line",
+          isInvalid
+            ? "border-danger-line bg-danger-100"
+            : isSuccess
+              ? "border-primary-line bg-surface"
+              : "border-line bg-surface",
+          !isInvalid && readOnly && "bg-surface-alt",
           className
         )}
       >

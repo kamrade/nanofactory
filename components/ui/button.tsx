@@ -28,7 +28,7 @@ const variantThemeClasses: Record<ButtonVariant, Record<ButtonTheme, string>> = 
     primary:
       "border border-transparent bg-transparent text-text-main hover:bg-primary-200 hover:text-text-inverted-main active:bg-primary-300",
     danger:
-      "border border-transparent bg-transparent text-text-danger hover:bg-danger-100 active:bg-danger-200",
+      "border border-transparent bg-transparent text-text-danger hover:text-text-inverted-danger active:text-text-inverted-danger hover:bg-danger-100 active:bg-danger-200",
   },
   contained: {
     base: "border border-transparent bg-neutral-100 text-text-main hover:bg-neutral-200 active:bg-neutral-300",
