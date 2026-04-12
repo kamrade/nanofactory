@@ -31,7 +31,9 @@ import { BlockChrome } from "@/features/blocks/shared/block-chrome";
 import type { BlockVariantDefinition } from "@/features/blocks/shared/types";
 import type { PageBlock } from "@/features/blocks/shared/content";
 import { UIButton } from "@/components/ui/button";
+import { UICheckbox } from "@/components/ui/checkbox";
 import { UIMenu, UIMenuItem, UIMenuLabel } from "@/components/ui/menu";
+import { UISelect } from "@/components/ui/select";
 
 type EditorProject = {
   id: string;
@@ -330,46 +332,39 @@ export function ProjectEditor({ project, assets }: ProjectEditorProps) {
                   key={block.id}
                   index={index}
                   title={formatDefinitionLabel(definition)}
-                  meta={`Type: ${definition.typeLabel} · Variant: ${definition.variant} · Layout: ${
-                    block.fullBleed ? "Full bleed" : "Contained"
-                  }`}
                   onDelete={() => handleDeleteBlock(block.id)}
                   actions={
-                    <div className="flex flex-wrap items-center gap-3">
+                    <div className="flex flex-wrap items-center gap-6">
                       {variantOptions.length > 1 ? (
-                        <label className="flex items-center gap-2 text-xs font-semibold uppercase tracking-[0.16em] text-zinc-400">
-                          <span>Variant</span>
-                          <select
+                        <div className="flex items-center gap-2">
+                          <UISelect
+                            ariaLabel="Variant"
+                            size="sm"
                             value={selectedVariant}
-                            onChange={(event) =>
+                            onValueChange={(value) =>
                               handleSelectVariant(
                                 block,
                                 definition,
-                                event.target.value as BlockVariant
+                                value as BlockVariant
                               )
                             }
-                            className="rounded-xl border border-zinc-200 bg-white px-2 py-1 text-xs font-medium text-zinc-700"
-                          >
-                            {variantOptions.map((option) => (
-                              <option key={`${option.type}:${option.variant}`} value={option.variant}>
-                                {option.label}
-                              </option>
-                            ))}
-                          </select>
-                        </label>
+                            options={variantOptions.map((option) => ({
+                              value: option.variant,
+                              label: option.label,
+                              textValue: option.label,
+                            }))}
+                            className="w-44"
+                          />
+                        </div>
                       ) : null}
 
-                      <label className="flex items-center gap-2 text-xs font-semibold uppercase tracking-[0.16em] text-zinc-400">
-                        <input
-                          type="checkbox"
-                          checked={Boolean(block.fullBleed)}
-                          onChange={(event) =>
-                            handleUpdateBlockFullBleed(block.id, event.target.checked)
-                          }
-                          className="h-4 w-4 rounded border-zinc-300 text-zinc-800 focus:ring-zinc-400"
-                        />
-                        <span>Full bleed</span>
-                      </label>
+                      <UICheckbox
+                        label="Full bleed"
+                        checked={Boolean(block.fullBleed)}
+                        onChange={(event) =>
+                          handleUpdateBlockFullBleed(block.id, event.target.checked)
+                        }
+                      />
                     </div>
                   }
                 >

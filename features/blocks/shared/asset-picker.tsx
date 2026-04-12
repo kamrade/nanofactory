@@ -41,14 +41,14 @@ export function AssetPicker({
   const selectedAsset = assets.find((asset) => asset.id === selectedAssetId) ?? null;
 
   return (
-    <div className="grid gap-3 rounded-2xl border border-zinc-200 bg-zinc-50 p-4">
+    <div className="grid gap-3">
       <div className="space-y-1">
-        <h4 className="text-sm font-semibold text-zinc-900">{title}</h4>
-        <p className="text-sm text-zinc-600">{description}</p>
+        <h4 className="text-lg font-semibold text-text-main">{title}</h4>
+        <p className="text-sm text-text-muted">{description}</p>
       </div>
 
       {assets.length === 0 ? (
-        <p className="text-sm text-zinc-500">{emptyMessage}</p>
+        <p className="text-sm text-text-muted">{emptyMessage}</p>
       ) : (
         <div
           className={
@@ -64,11 +64,11 @@ export function AssetPicker({
                 key={asset.id}
                 className={
                   isSelected
-                    ? "grid gap-3 rounded-2xl border border-emerald-300 bg-emerald-50 p-3"
-                    : "grid gap-3 rounded-2xl border border-zinc-200 bg-white p-3"
+                    ? "grid gap-3 rounded-2xl border border-focus bg-surface-alt p-3"
+                    : "grid gap-3 rounded-2xl border border-line bg-surface-alt p-3"
                 }
               >
-                <div className="overflow-hidden rounded-2xl border border-zinc-200 bg-zinc-100">
+                <div className="overflow-hidden rounded-2xl border border-line bg-surface-alt">
                   <Image
                     src={asset.publicUrl}
                     alt={asset.alt ?? asset.originalFilename}
@@ -81,20 +81,20 @@ export function AssetPicker({
 
                 <div className="flex flex-wrap items-start justify-between gap-3">
                   <div className="space-y-1">
-                    <p className="text-sm font-medium text-zinc-900">
+                    <p className="text-sm font-medium text-text-main">
                       {asset.originalFilename}
                     </p>
-                    <p className="text-xs text-zinc-500">{asset.mimeType}</p>
+                    <p className="text-xs text-text-muted">{asset.mimeType}</p>
                   </div>
 
+                </div>
+                <div>
                   <UIButton
                     type="button"
                     onClick={() => onSelect(asset.id)}
-                    className={
-                      isSelected
-                        ? "inline-flex items-center justify-center rounded-2xl bg-emerald-700 px-3 py-2 text-sm font-medium text-white transition hover:bg-emerald-800"
-                        : "inline-flex items-center justify-center rounded-2xl border border-zinc-300 bg-white px-3 py-2 text-sm font-medium text-zinc-800 transition hover:border-zinc-400 hover:bg-zinc-50"
-                    }
+                    theme={isSelected ? "primary" : "base"}
+                    variant={isSelected ? "contained" : "outlined"}
+                    size="sm"
                   >
                     {isSelected ? selectedLabel : selectLabel}
                   </UIButton>
@@ -106,9 +106,9 @@ export function AssetPicker({
       )}
 
       {selectedAsset ? (
-        <div className="grid gap-3 rounded-2xl border border-zinc-200 bg-white p-4">
-          <p className="text-sm font-medium text-zinc-900">{selectedStateTitle}</p>
-          <div className="overflow-hidden rounded-2xl border border-zinc-200 bg-zinc-100">
+        <div className="grid gap-3 rounded-2xl border border-line bg-surface-alt p-4">
+          <p className="text-sm font-medium text-text-main">{selectedStateTitle}</p>
+          <div className="overflow-hidden rounded-2xl border border-line bg-surface-">
             <Image
               src={selectedAsset.publicUrl}
               alt={selectedAsset.alt ?? selectedAsset.originalFilename}
@@ -118,12 +118,14 @@ export function AssetPicker({
               className={compact ? "h-48 w-full object-cover" : "h-56 w-full object-cover"}
             />
           </div>
-          <div className="flex flex-wrap items-center justify-between gap-3 text-sm text-zinc-600">
+          <div className="flex flex-wrap items-center justify-between gap-3 text-sm text-text-muted">
             <span>Asset ID: {selectedAsset.id}</span>
             <UIButton
               type="button"
               onClick={onClear}
-              className="inline-flex items-center justify-center rounded-2xl border border-zinc-300 bg-white px-3 py-2 text-sm font-medium text-zinc-800 transition hover:border-zinc-400 hover:bg-zinc-50"
+              theme="base"
+              variant="outlined"
+              size="sm"
             >
               {clearLabel}
             </UIButton>
