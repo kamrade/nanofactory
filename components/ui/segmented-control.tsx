@@ -10,6 +10,7 @@ export type UISegmentedControlProps<T extends string> = {
   value: T;
   options: UISegmentedControlOption<T>[];
   onValueChange?: (value: T) => void;
+  size?: "sm" | "lg";
   ariaLabel?: string;
   className?: string;
 };
@@ -22,9 +23,21 @@ export function UISegmentedControl<T extends string>({
   value,
   options,
   onValueChange,
+  size = "sm",
   ariaLabel = "Segmented control",
   className,
 }: UISegmentedControlProps<T>) {
+  const sizeClasses =
+    size === "sm"
+      ? {
+          group: "h-7 rounded-lg p-0.5",
+          item: "rounded-md px-2.5 text-sm",
+        }
+      : {
+          group: "h-10 rounded-xl p-0.5",
+          item: "rounded-lg px-3.5 text-sm",
+        };
+
   function moveSelection(direction: 1 | -1) {
     const currentIndex = options.findIndex((option) => option.value === value);
     if (currentIndex < 0) {
@@ -58,7 +71,11 @@ export function UISegmentedControl<T extends string>({
     <div
       role="radiogroup"
       aria-label={ariaLabel}
-      className={cx("inline-flex items-center gap-1 rounded-xl border border-line bg-surface p-1", className)}
+      className={cx(
+        "inline-flex items-center gap-1 border border-line bg-surface",
+        sizeClasses.group,
+        className
+      )}
       onKeyDown={handleKeyDown}
     >
       {options.map((option) => {
@@ -77,7 +94,8 @@ export function UISegmentedControl<T extends string>({
               }
             }}
             className={cx(
-              "inline-flex min-h-8 items-center justify-center rounded-lg px-3 text-sm font-medium transition outline-none",
+              "inline-flex h-full items-center justify-center font-medium transition outline-none",
+              sizeClasses.item,
               "focus:ring-2 focus:ring-focus/50 focus:ring-offset-0 focus:ring-offset-bg",
               "focus-visible:ring-2 focus-visible:ring-focus/50 focus-visible:ring-offset-0 focus-visible:ring-offset-bg",
               option.disabled && "cursor-not-allowed opacity-50",

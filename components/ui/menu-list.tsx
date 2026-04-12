@@ -17,6 +17,7 @@ export type UIMenuListProps = {
   onAction?: (id: string) => void;
   onRequestClose?: () => void;
   closeOnSelect?: boolean;
+  size?: "sm" | "lg";
   ariaLabel?: string;
   className?: string;
 };
@@ -34,6 +35,7 @@ export function UIMenuList({
   onAction,
   onRequestClose,
   closeOnSelect = true,
+  size = "lg",
   ariaLabel = "Menu",
   className,
 }: UIMenuListProps) {
@@ -41,6 +43,16 @@ export function UIMenuList({
   const itemRefs = useRef<Array<HTMLButtonElement | null>>([]);
   const typeaheadBuffer = useRef("");
   const typeaheadResetTimer = useRef<number | null>(null);
+  const sizeClasses =
+    size === "sm"
+      ? {
+          item: "rounded-md px-2 py-1.5 text-sm",
+          icon: "mr-1.5 h-3.5 w-3.5",
+        }
+      : {
+          item: "rounded-lg px-3 py-2 text-sm",
+          icon: "mr-2 h-4 w-4",
+        };
 
   function setAndFocus(index: number) {
     setActiveIndex(index);
@@ -156,7 +168,7 @@ export function UIMenuList({
       aria-label={ariaLabel}
       onKeyDown={handleKeyDown}
       className={cx(
-        "flex min-w-44 flex-col rounded-xl border border-line bg-surface p-1",
+        "flex min-w-44 flex-col gap-[2px] rounded-xl border border-line bg-surface p-1",
         className
       )}
     >
@@ -177,7 +189,8 @@ export function UIMenuList({
           }}
           onClick={() => handleSelect(item)}
           className={cx(
-            "flex w-full items-center rounded-lg px-3 py-2 text-left text-sm transition outline-none",
+            "flex w-full items-center text-left transition outline-none",
+            sizeClasses.item,
             "focus:ring-2 focus:ring-focus/50 focus:ring-offset-0 focus:ring-offset-surface",
             "focus-visible:ring-2 focus-visible:ring-focus/50 focus-visible:ring-offset-0 focus-visible:ring-offset-surface",
             item.disabled
@@ -187,7 +200,11 @@ export function UIMenuList({
                 : "text-text-main hover:bg-surface-alt active:bg-neutral-100"
           )}
         >
-          {item.icon ? <span className="mr-2 inline-flex h-4 w-4 shrink-0 items-center justify-center">{item.icon}</span> : null}
+          {item.icon ? (
+            <span className={cx("inline-flex shrink-0 items-center justify-center", sizeClasses.icon)}>
+              {item.icon}
+            </span>
+          ) : null}
           {item.label}
         </button>
       ))}

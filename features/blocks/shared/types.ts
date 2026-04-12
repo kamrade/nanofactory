@@ -14,6 +14,7 @@ export type BlockFieldDefinition = {
 export type BlockTheme = {
   muted: string;
   button: string;
+  kicker: string;
 };
 
 export type BlockRenderProps = {

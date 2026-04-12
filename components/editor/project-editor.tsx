@@ -246,7 +246,7 @@ export function ProjectEditor({ project, assets }: ProjectEditorProps) {
 
   return (
     <div className="grid gap-6">
-      <section className="rounded-3xl border border-zinc-200 bg-white p-6 shadow-sm">
+      <section className="space-y-6">
         <div className="flex flex-wrap items-center justify-between gap-4">
           <div>
             <h2 className="text-lg font-semibold text-zinc-950">Page blocks</h2>
@@ -333,7 +333,7 @@ export function ProjectEditor({ project, assets }: ProjectEditorProps) {
           </div>
         </div>
 
-        <div className="mt-6 grid gap-4">
+        <div className="grid gap-4">
           {lastVariantUndo ? (
             <div className="flex flex-wrap items-center justify-between gap-3 rounded-2xl border border-emerald-200 bg-emerald-50 px-4 py-3 text-sm text-emerald-800">
               <span>

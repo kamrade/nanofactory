@@ -1,7 +1,7 @@
 "use client";
 
 import { useRef, useState } from "react";
-import { UIButton } from "@/components/ui/button";
+import { UISegmentedControl } from "@/components/ui/segmented-control";
 
 type ThemeMode = "light" | "dark";
 
@@ -45,31 +45,17 @@ export function ProjectModeSwitcher() {
   }
 
   return (
-    <div ref={containerRef} className="inline-flex items-center gap-1 rounded-xl border border-line bg-surface p-1">
-      <UIButton
-        type="button"
-        onClick={() => applyMode("light")}
-        aria-pressed={mode === "light"}
-        className={
-          mode === "light"
-            ? "rounded-lg bg-primary-300 px-3 py-1 text-xs font-medium text-text-inverted-main"
-            : "rounded-lg px-3 py-1 text-xs font-medium text-text-muted hover:bg-surface-alt"
-        }
-      >
-        Light
-      </UIButton>
-      <UIButton
-        type="button"
-        onClick={() => applyMode("dark")}
-        aria-pressed={mode === "dark"}
-        className={
-          mode === "dark"
-            ? "rounded-lg bg-primary-300 px-3 py-1 text-xs font-medium text-text-inverted-main"
-            : "rounded-lg px-3 py-1 text-xs font-medium text-text-muted hover:bg-surface-alt"
-        }
-      >
-        Dark
-      </UIButton>
+    <div ref={containerRef}>
+      <UISegmentedControl
+        ariaLabel="Project mode"
+        size="sm"
+        value={mode}
+        onValueChange={applyMode}
+        options={[
+          { value: "light", label: "Light" },
+          { value: "dark", label: "Dark" },
+        ]}
+      />
     </div>
   );
 }

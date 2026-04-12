@@ -18,6 +18,7 @@ import { UIDropdown } from "@/components/ui/dropdown";
 import { UIMenuList, type UIMenuItem as UIMenuDataItem } from "@/components/ui/menu-list";
 
 export type { UIMenuDataItem };
+export type UIMenuSize = "sm" | "lg";
 
 function cx(...parts: Array<string | false | null | undefined>) {
   return parts.filter(Boolean).join(" ");
@@ -27,6 +28,7 @@ type UIMenuCommonProps = {
   trigger: ReactElement;
   placement?: Placement;
   offsetPx?: number;
+  size?: UIMenuSize;
   ariaLabel?: string;
   className?: string;
 };
@@ -55,12 +57,14 @@ type MenuContextValue = {
   requestClose: () => void;
   activeItemId: string | null;
   setActiveItemId: (id: string | null) => void;
+  size: UIMenuSize;
 };
 
 const MenuContext = createContext<MenuContextValue>({
   requestClose: () => undefined,
   activeItemId: null,
   setActiveItemId: () => undefined,
+  size: "lg",
 });
 
 type UIMenuItemButtonProps = {
@@ -68,6 +72,7 @@ type UIMenuItemButtonProps = {
   icon?: ReactNode;
   textValue?: string;
   tone?: "default" | "danger";
+  size?: UIMenuSize;
   disabled?: boolean;
   closeOnSelect?: boolean;
   className?: string;
@@ -79,13 +84,25 @@ export function UIMenuItem({
   icon,
   textValue,
   tone = "default",
+  size,
   disabled,
   closeOnSelect = true,
   className,
   onSelect,
 }: UIMenuItemButtonProps) {
   const id = useId();
-  const { requestClose, activeItemId, setActiveItemId } = useContext(MenuContext);
+  const { requestClose, activeItemId, setActiveItemId, size: contextSize } = useContext(MenuContext);
+  const resolvedSize = size ?? contextSize;
+  const sizeClasses =
+    resolvedSize === "sm"
+      ? {
+          item: "rounded-md px-2 py-1.5 text-sm",
+          icon: "mr-1.5 h-3.5 w-3.5",
+        }
+      : {
+          item: "rounded-lg px-3 py-2 text-sm",
+          icon: "mr-2 h-4 w-4",
+        };
 
   function handleClick(event: MouseEvent<HTMLButtonElement>) {
     if (disabled) {
@@ -118,7 +135,8 @@ export function UIMenuItem({
       }}
       onClick={handleClick}
       className={cx(
-        "flex w-full items-center rounded-lg px-3 py-2 text-left text-sm transition outline-none",
+        "flex w-full items-center text-left transition outline-none",
+        sizeClasses.item,
         "focus:ring-2 focus:ring-focus/50 focus:ring-offset-0 focus:ring-offset-surface",
         "focus-visible:ring-2 focus-visible:ring-focus/50 focus-visible:ring-offset-0 focus-visible:ring-offset-surface",
         disabled
@@ -129,7 +147,11 @@ export function UIMenuItem({
         className
       )}
     >
-      {icon ? <span className="mr-2 inline-flex h-4 w-4 shrink-0 items-center justify-center">{icon}</span> : null}
+      {icon ? (
+        <span className={cx("inline-flex shrink-0 items-center justify-center", sizeClasses.icon)}>
+          {icon}
+        </span>
+      ) : null}
       {children}
     </button>
   );
@@ -139,11 +161,23 @@ export function UIMenuSeparator({ className }: { className?: string }) {
   return <div role="separator" className={cx("my-1 h-px bg-line", className)} />;
 }
 
-export function UIMenuLabel({ children, className }: { children: ReactNode; className?: string }) {
+export function UIMenuLabel({
+  children,
+  size,
+  className,
+}: {
+  children: ReactNode;
+  size?: UIMenuSize;
+  className?: string;
+}) {
+  const { size: contextSize } = useContext(MenuContext);
+  const resolvedSize = size ?? contextSize;
   return (
     <div
       className={cx(
-        "px-3 py-1 text-sm font-medium text-text-muted",
+        resolvedSize === "sm"
+          ? "px-2 py-1 text-sm font-medium text-text-muted"
+          : "px-3 py-1 text-sm font-medium text-text-muted",
         className
       )}
     >
@@ -157,6 +191,7 @@ export function UIMenu(allProps: UIMenuProps) {
     trigger,
     placement = "bottom-end",
     offsetPx = 8,
+    size = "lg",
     ariaLabel = "Menu",
     className,
   } = allProps;
@@ -281,6 +316,7 @@ export function UIMenu(allProps: UIMenuProps) {
         onAction={allProps.onAction}
         onRequestClose={requestClose}
         closeOnSelect={allProps.closeOnSelect}
+        size={size}
         ariaLabel={ariaLabel}
         className={cx("shadow-[0_10px_30px_rgba(0,0,0,0.12)]", className)}
       />
@@ -292,6 +328,7 @@ export function UIMenu(allProps: UIMenuProps) {
           requestClose,
           activeItemId: manualActiveItemId,
           setActiveItemId: setManualActiveItemId,
+          size,
         }}
       >
         <div

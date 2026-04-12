@@ -21,7 +21,8 @@ import { createPortal } from "react-dom";
 type UIDialogContextValue = {
   open: boolean;
   setOpen: (nextOpen: boolean) => void;
-  triggerRef: React.RefObject<HTMLElement | null>;
+  triggerElement: HTMLElement | null;
+  setTriggerElement: (element: HTMLElement | null) => void;
   contentRef: React.RefObject<HTMLDivElement | null>;
   titleId: string;
   descriptionId: string;
@@ -66,7 +67,7 @@ export function UIDialog({
   const [uncontrolledOpen, setUncontrolledOpen] = useState(defaultOpen);
   const [hasTitle, setHasTitle] = useState(false);
   const [hasDescription, setHasDescription] = useState(false);
-  const triggerRef = useRef<HTMLElement | null>(null);
+  const [triggerElement, setTriggerElement] = useState<HTMLElement | null>(null);
   const contentRef = useRef<HTMLDivElement | null>(null);
   const titleId = useId();
   const descriptionId = useId();
@@ -85,7 +86,8 @@ export function UIDialog({
   const contextValue: UIDialogContextValue = {
     open: currentOpen,
     setOpen,
-    triggerRef,
+    triggerElement,
+    setTriggerElement,
     contentRef,
     titleId,
     descriptionId,
@@ -111,18 +113,24 @@ export function UIDialogTrigger({
 }: {
   children: ReactElement;
 }) {
-  const { open, setOpen, triggerRef } = useDialogContext();
+  const { open, setOpen, setTriggerElement } = useDialogContext();
 
   if (!isValidElement(children)) {
     return null;
   }
 
-  return cloneElement(children, {
-    ref: triggerRef,
+  const child = children as ReactElement<{
+    onClick?: (event: ReactMouseEvent<HTMLElement>) => void;
+    "aria-haspopup"?: "dialog";
+    "aria-expanded"?: boolean;
+  }>;
+
+  return cloneElement(child, {
     "aria-haspopup": "dialog",
     "aria-expanded": open,
     onClick: (event: ReactMouseEvent<HTMLElement>) => {
-      children.props.onClick?.(event);
+      setTriggerElement(event.currentTarget);
+      child.props.onClick?.(event);
       if (event.defaultPrevented) {
         return;
       }
@@ -148,7 +156,7 @@ export function UIDialogContent({
   const {
     open,
     setOpen,
-    triggerRef,
+    triggerElement,
     contentRef,
     titleId,
     descriptionId,
@@ -162,7 +170,6 @@ export function UIDialogContent({
     }
 
     const previousActive = document.activeElement as HTMLElement | null;
-    const triggerElement = triggerRef.current;
     const bodyOverflow = document.body.style.overflow;
     document.body.style.overflow = "hidden";
 
@@ -184,7 +191,7 @@ export function UIDialogContent({
         previousActive?.focus();
       }
     };
-  }, [contentRef, open, triggerRef]);
+  }, [contentRef, open, triggerElement]);
 
   if (!open) {
     return null;
@@ -275,9 +282,13 @@ export function UIDialogClose({
     return null;
   }
 
-  return cloneElement(children, {
+  const child = children as ReactElement<{
+    onClick?: (event: ReactMouseEvent<HTMLElement>) => void;
+  }>;
+
+  return cloneElement(child, {
     onClick: (event: ReactMouseEvent<HTMLElement>) => {
-      children.props.onClick?.(event);
+      child.props.onClick?.(event);
       if (!event.defaultPrevented) {
         setOpen(false);
       }

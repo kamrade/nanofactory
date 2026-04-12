@@ -226,7 +226,7 @@ describe("ProjectRenderer", () => {
     );
 
     expect(html).toContain("Go full width");
-    expect(html).toContain('class="w-full"');
+    expect(html).toContain('class="w-full px-4 sm:px-6"');
     expect(html).not.toContain("rounded-[2rem]");
   });
 });

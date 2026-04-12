@@ -147,15 +147,19 @@ export function ShowcaseClient({
             ) : null}
           </div>
         </div>
-
-        <UITabs
-          ariaLabel="Showcase tabs"
-          items={[
-            { label: "UIKit", href: `/showcase/uikit?${showcaseQuery}`, active: activeTab === "uikit" },
-            { label: "Sections", href: `/showcase/sections?${showcaseQuery}`, active: activeTab === "sections" },
-          ]}
-        />
       </UIStickyHeader>
+
+      <div className="px-4 pt-4">
+        <div className="mx-auto w-full max-w-5xl">
+          <UITabs
+            ariaLabel="Showcase tabs"
+            items={[
+              { label: "UIKit", href: `/showcase/uikit?${showcaseQuery}`, active: activeTab === "uikit" },
+              { label: "Sections", href: `/showcase/sections?${showcaseQuery}`, active: activeTab === "sections" },
+            ]}
+          />
+        </div>
+      </div>
 
       {activeTab === "uikit" ? (
         <section className="bg-bg px-4 py-8 text-text-main">
@@ -321,16 +325,33 @@ export function ShowcaseClient({
             </UICard>
 
             <UICard title="UIKit · Segmented Control">
-              <div className="flex flex-wrap items-center gap-4">
-                <UISegmentedControl
-                  ariaLabel="Mode"
-                  value={segmentedValue}
-                  onValueChange={setSegmentedValue}
-                  options={[
-                    { value: "light", label: "Light" },
-                    { value: "dark", label: "Dark" },
-                  ]}
-                />
+              <div className="grid gap-4">
+                <div className="flex flex-wrap items-center gap-4">
+                  <p className="w-10 text-sm text-text-muted">sm</p>
+                  <UISegmentedControl
+                    ariaLabel="Mode small"
+                    size="sm"
+                    value={segmentedValue}
+                    onValueChange={setSegmentedValue}
+                    options={[
+                      { value: "light", label: "Light" },
+                      { value: "dark", label: "Dark" },
+                    ]}
+                  />
+                </div>
+                <div className="flex flex-wrap items-center gap-4">
+                  <p className="w-10 text-sm text-text-muted">lg</p>
+                  <UISegmentedControl
+                    ariaLabel="Mode large"
+                    size="lg"
+                    value={segmentedValue}
+                    onValueChange={setSegmentedValue}
+                    options={[
+                      { value: "light", label: "Light" },
+                      { value: "dark", label: "Dark" },
+                    ]}
+                  />
+                </div>
                 <p className="text-sm text-text-muted">Selected: {segmentedValue}</p>
               </div>
             </UICard>
@@ -341,6 +362,7 @@ export function ShowcaseClient({
                   <UIMenu
                     ariaLabel="Card actions"
                     placement="bottom-start"
+                    size={uiSize}
                     onAction={setMenuAction}
                     items={[
                       { id: "edit", label: "Edit", textValue: "Edit", icon: <FiEdit2 aria-hidden className="h-4 w-4" /> },
@@ -377,6 +399,7 @@ export function ShowcaseClient({
                   <UIMenu
                     ariaLabel="Card actions manual"
                     placement="bottom-start"
+                    size={uiSize}
                     trigger={
                       <UIButton aria-label="Open manual menu" theme="base" variant="outlined" size={uiSize} iconButton>
                         <FiMoreVertical aria-hidden className="h-4 w-4" />
@@ -411,20 +434,21 @@ export function ShowcaseClient({
                 <div className="grid gap-3">
                   <p className="text-sm font-medium text-text-muted">Inline Menu List (without Dropdown)</p>
                   <div className="max-w-56">
-                    <div className="flex min-w-44 flex-col gap-1 rounded-xl border border-line bg-surface p-1" role="menu" aria-label="Inline card actions">
-                      <UIMenuLabel>Actions</UIMenuLabel>
-                      <UIMenuItem icon={<FiEdit2 aria-hidden className="h-4 w-4" />} closeOnSelect={false} onSelect={() => setInlineMenuAction("edit")}>
+                    <div className="flex min-w-44 flex-col gap-[2px] rounded-xl border border-line bg-surface p-1" role="menu" aria-label="Inline card actions">
+                      <UIMenuLabel size={uiSize}>Actions</UIMenuLabel>
+                      <UIMenuItem size={uiSize} icon={<FiEdit2 aria-hidden className="h-4 w-4" />} closeOnSelect={false} onSelect={() => setInlineMenuAction("edit")}>
                         Edit
                       </UIMenuItem>
-                      <UIMenuItem icon={<FiCopy aria-hidden className="h-4 w-4" />} closeOnSelect={false} onSelect={() => setInlineMenuAction("duplicate")}>
+                      <UIMenuItem size={uiSize} icon={<FiCopy aria-hidden className="h-4 w-4" />} closeOnSelect={false} onSelect={() => setInlineMenuAction("duplicate")}>
                         Duplicate
                       </UIMenuItem>
                       <UIMenuSeparator />
-                      <UIMenuLabel>Danger Zone</UIMenuLabel>
-                      <UIMenuItem icon={<FiArchive aria-hidden className="h-4 w-4" />} closeOnSelect={false} onSelect={() => setInlineMenuAction("archive")}>
+                      <UIMenuLabel size={uiSize}>Danger Zone</UIMenuLabel>
+                      <UIMenuItem size={uiSize} icon={<FiArchive aria-hidden className="h-4 w-4" />} closeOnSelect={false} onSelect={() => setInlineMenuAction("archive")}>
                         Archive
                       </UIMenuItem>
                       <UIMenuItem
+                        size={uiSize}
                         tone="danger"
                         icon={<FiTrash2 aria-hidden className="h-4 w-4" />}
                         closeOnSelect={false}
