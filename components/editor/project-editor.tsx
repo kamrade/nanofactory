@@ -4,6 +4,7 @@ import { useActionState, useEffect, useMemo, useState } from "react";
 
 import type { PageContent } from "@/db/schema";
 import type { ProjectAssetRecord } from "@/lib/assets";
+import { buildAssetMap } from "@/lib/assets/resolution";
 import {
   type BlockVariant,
   createPageBlock,
@@ -27,13 +28,22 @@ import {
   undoVariantSwitchInContent,
 } from "@/components/editor/project-editor-variants";
 import { setPreviewDraftContent } from "@/components/editor/preview-draft-store";
-import { BlockChrome } from "@/features/blocks/shared/block-chrome";
 import type { BlockVariantDefinition } from "@/features/blocks/shared/types";
 import type { PageBlock } from "@/features/blocks/shared/content";
+import { useToast } from "@/hooks/use-toast";
 import { UIButton } from "@/components/ui/button";
 import { UICheckbox } from "@/components/ui/checkbox";
 import { UIMenu, UIMenuItem, UIMenuLabel } from "@/components/ui/menu";
 import { UISelect } from "@/components/ui/select";
+import {
+  UISheet,
+  UISheetClose,
+  UISheetContent,
+  UISheetDescription,
+  UISheetFooter,
+  UISheetHeader,
+  UISheetTitle,
+} from "@/components/ui/sheet";
 
 type EditorProject = {
   id: string;
@@ -49,33 +59,20 @@ type ProjectEditorProps = {
   assets: ProjectAssetRecord[];
 };
 
-function formatDefinitionLabel(definition: { typeLabel: string; label: string; variant: string }) {
+function formatDefinitionLabel(definition: {
+  typeLabel: string;
+  label: string;
+  variant: string;
+}) {
   return definition.typeLabel;
 }
 
-function SaveStatus({ state }: { state: SaveEditorState }) {
-  if (state.status === "idle" || !state.message) {
-    return null;
-  }
-
-  return (
-    <p
-      className={
-        state.status === "success"
-          ? "text-sm font-medium text-emerald-700"
-          : "text-sm font-medium text-red-700"
-      }
-    >
-      {state.message}
-    </p>
-  );
-}
-
 export function ProjectEditor({ project, assets }: ProjectEditorProps) {
+  const { showToast } = useToast();
   const [content, setContent] = useState<PageContent>(project.contentJson);
-  const [pendingVariantSwitch, setPendingVariantSwitch] = useState<PendingVariantSwitch | null>(
-    null
-  );
+  const [activeEditorBlockId, setActiveEditorBlockId] = useState<string | null>(null);
+  const [pendingVariantSwitch, setPendingVariantSwitch] =
+    useState<PendingVariantSwitch | null>(null);
   const [lastVariantUndo, setLastVariantUndo] = useState<VariantUndo | null>(null);
   const initialSaveEditorState: SaveEditorState = {
     status: "idle",
@@ -88,6 +85,7 @@ export function ProjectEditor({ project, assets }: ProjectEditorProps) {
   );
 
   const serializedContent = useMemo(() => JSON.stringify(content), [content]);
+  const assetMap = useMemo(() => buildAssetMap(assets), [assets]);
   const blockTypes = useMemo(() => getBlockTypes(), []);
   const addBlockGroups = useMemo(
     () =>
@@ -101,6 +99,16 @@ export function ProjectEditor({ project, assets }: ProjectEditorProps) {
   useEffect(() => {
     setPreviewDraftContent(content);
   }, [content]);
+
+  useEffect(() => {
+    if (saveState.status === "idle" || !saveState.message) {
+      return;
+    }
+    showToast({
+      tone: saveState.status === "success" ? "default" : "error",
+      title: saveState.message,
+    });
+  }, [saveState.message, saveState.status, showToast]);
 
   useEffect(() => {
     if (!lastVariantUndo) {
@@ -124,6 +132,7 @@ export function ProjectEditor({ project, assets }: ProjectEditorProps) {
     setContent((currentContent) => ({
       blocks: currentContent.blocks.filter((block) => block.id !== blockId),
     }));
+    setActiveEditorBlockId((current) => (current === blockId ? null : current));
     setPendingVariantSwitch((current) => (current?.blockId === blockId ? null : current));
     setLastVariantUndo((current) => (current?.blockId === blockId ? null : current));
   }
@@ -176,7 +185,11 @@ export function ProjectEditor({ project, assets }: ProjectEditorProps) {
     setPendingVariantSwitch(null);
   }
 
-  function handleSelectVariant(block: PageBlock, definition: BlockVariantDefinition, nextVariant: BlockVariant) {
+  function handleSelectVariant(
+    block: PageBlock,
+    definition: BlockVariantDefinition,
+    nextVariant: BlockVariant
+  ) {
     const pendingSwitch = createPendingVariantSwitch(
       block,
       definition,
@@ -218,6 +231,51 @@ export function ProjectEditor({ project, assets }: ProjectEditorProps) {
     setLastVariantUndo(null);
   }
 
+  function renderBlockPreview(block: PageBlock) {
+    const definition = getBlockDefinition(block.type, block.variant);
+    if (!definition) {
+      return null;
+    }
+
+    const BlockRenderer = definition.Renderer;
+
+    return (
+      <BlockRenderer
+        block={block}
+        assetMap={assetMap}
+        theme={{
+          muted: "text-text-muted",
+          button:
+            "inline-flex items-center justify-center rounded-2xl border border-transparent bg-primary-300 px-5 py-3 text-sm font-medium text-text-inverted-main transition hover:bg-primary-200 active:bg-primary-100",
+          kicker: "text-text-placeholder",
+        }}
+      />
+    );
+  }
+
+  const activeEditorBlock = useMemo(
+    () => content.blocks.find((block) => block.id === activeEditorBlockId) ?? null,
+    [activeEditorBlockId, content.blocks]
+  );
+  const activeEditorDefinition = useMemo(
+    () =>
+      activeEditorBlock
+        ? getBlockDefinition(activeEditorBlock.type, activeEditorBlock.variant)
+        : null,
+    [activeEditorBlock]
+  );
+  const activeVariantOptions = useMemo(
+    () => (activeEditorDefinition ? getBlockVariants(activeEditorDefinition.type) : []),
+    [activeEditorDefinition]
+  );
+  const activePendingSwitch =
+    pendingVariantSwitch && pendingVariantSwitch.blockId === activeEditorBlock?.id
+      ? pendingVariantSwitch
+      : null;
+  const activeVariant = activePendingSwitch
+    ? activePendingSwitch.nextVariant
+    : activeEditorDefinition?.variant;
+
   return (
     <div className="grid gap-6">
       <section className="space-y-6">
@@ -232,12 +290,7 @@ export function ProjectEditor({ project, assets }: ProjectEditorProps) {
               placement="bottom-start"
               size="sm"
               trigger={
-                <UIButton
-                  type="button"
-                  theme="base"
-                  variant="contained"
-                  size="sm"
-                >
+                <UIButton type="button" theme="base" variant="contained" size="sm">
                   Add block
                 </UIButton>
               }
@@ -251,9 +304,13 @@ export function ProjectEditor({ project, assets }: ProjectEditorProps) {
                       onSelect={() => handleAddBlock(definition.type, definition.variant)}
                       className="grid gap-0.5"
                     >
-                      <span className="text-sm font-medium text-text-main">{definition.label}</span>
+                      <span className="text-sm font-medium text-text-main">
+                        {definition.label}
+                      </span>
                       {definition.description ? (
-                        <span className="text-xs leading-5 text-text-muted">{definition.description}</span>
+                        <span className="text-xs leading-5 text-text-muted">
+                          {definition.description}
+                        </span>
                       ) : null}
                     </UIMenuItem>
                   ))}
@@ -262,16 +319,16 @@ export function ProjectEditor({ project, assets }: ProjectEditorProps) {
             </UIMenu>
 
             <form action={formAction} className="flex items-center gap-3">
-            <input type="hidden" name="content" value={serializedContent} />
-            <SaveStatus state={saveState} />
-            <UIButton
-              type="submit"
-              disabled={isPending}
-              theme="primary" variant="contained"
-              size="sm"
-            >
-              {isPending ? "Saving..." : "Save"}
-            </UIButton>
+              <input type="hidden" name="content" value={serializedContent} />
+              <UIButton
+                type="submit"
+                disabled={isPending}
+                theme="primary"
+                variant="contained"
+                size="sm"
+              >
+                {isPending ? "Saving..." : "Save"}
+              </UIButton>
             </form>
           </div>
         </div>
@@ -317,100 +374,149 @@ export function ProjectEditor({ project, assets }: ProjectEditorProps) {
                 return null;
               }
 
-              const BlockEditor = definition.Editor;
-              const variantOptions = getBlockVariants(definition.type);
-              const activePending =
-                pendingVariantSwitch && pendingVariantSwitch.blockId === block.id
-                  ? pendingVariantSwitch
-                  : null;
-              const selectedVariant = activePending
-                ? activePending.nextVariant
-                : definition.variant;
-
               return (
-                <BlockChrome
+                <div
                   key={block.id}
-                  index={index}
-                  title={formatDefinitionLabel(definition)}
-                  onDelete={() => handleDeleteBlock(block.id)}
-                  actions={
-                    <div className="flex flex-wrap items-center gap-6">
-                      {variantOptions.length > 1 ? (
-                        <div className="flex items-center gap-2">
-                          <UISelect
-                            ariaLabel="Variant"
-                            size="sm"
-                            value={selectedVariant}
-                            onValueChange={(value) =>
-                              handleSelectVariant(
-                                block,
-                                definition,
-                                value as BlockVariant
-                              )
-                            }
-                            options={variantOptions.map((option) => ({
-                              value: option.variant,
-                              label: option.label,
-                              textValue: option.label,
-                            }))}
-                            className="w-44"
-                          />
-                        </div>
-                      ) : null}
-
-                      <UICheckbox
-                        label="Full bleed"
-                        checked={Boolean(block.fullBleed)}
-                        onChange={(event) =>
-                          handleUpdateBlockFullBleed(block.id, event.target.checked)
-                        }
-                      />
-                    </div>
-                  }
+                  role="button"
+                  tabIndex={0}
+                  aria-label={`Edit block ${index + 1}: ${formatDefinitionLabel(definition)}`}
+                  onClick={() => setActiveEditorBlockId(block.id)}
+                  onKeyDown={(event) => {
+                    if (event.key === "Enter" || event.key === " ") {
+                      event.preventDefault();
+                      setActiveEditorBlockId(block.id);
+                    }
+                  }}
+                  className="cursor-pointer rounded-[2rem] transition focus:outline-none focus-visible:ring-2 focus-visible:ring-focus/50"
                 >
-                  {activePending ? (
-                    <div className="rounded-2xl border border-amber-200 bg-amber-50 px-4 py-3 text-sm text-amber-900">
-                      <p className="font-medium">
-                        Switching variant will remove: {activePending.lostLabels.join(", ")}.
-                      </p>
-                      <div className="mt-3 flex flex-wrap gap-2">
-                        <UIButton
-                          type="button"
-                          onClick={handleConfirmVariantSwitch}
-                          className="inline-flex items-center justify-center rounded-2xl border border-amber-300 bg-amber-100 px-3 py-1.5 text-sm font-medium text-amber-900 transition hover:border-amber-400 hover:bg-amber-200"
-                        >
-                          Switch variant
-                        </UIButton>
-                        <UIButton
-                          type="button"
-                          onClick={handleCancelVariantSwitch}
-                          className="inline-flex items-center justify-center rounded-2xl border border-amber-200 bg-white px-3 py-1.5 text-sm font-medium text-amber-900 transition hover:border-amber-300 hover:bg-amber-100"
-                        >
-                          Cancel
-                        </UIButton>
-                      </div>
-                    </div>
-                  ) : null}
-                  <BlockEditor
-                    block={block}
-                    assets={assets}
-                    definition={definition}
-                    onChange={(nextProps) => handleUpdateBlockProps(block.id, nextProps)}
-                  />
-                </BlockChrome>
+                  {block.fullBleed ? (
+                    <section className="w-full px-4 sm:px-6">{renderBlockPreview(block)}</section>
+                  ) : (
+                    <section className="rounded-[2rem] border border-neutral-line bg-surface px-6 py-8 shadow-sm sm:px-8 sm:py-10">
+                      {renderBlockPreview(block)}
+                    </section>
+                  )}
+                </div>
               );
             })
           )}
         </div>
       </section>
 
+      <UISheet
+        open={Boolean(activeEditorBlock && activeEditorDefinition)}
+        onOpenChange={(nextOpen) => {
+          if (!nextOpen) {
+            setActiveEditorBlockId(null);
+            setPendingVariantSwitch(null);
+          }
+        }}
+      >
+        <UISheetContent side="right" ariaLabel="Block editor" className="p-5 sm:p-6">
+          {activeEditorBlock && activeEditorDefinition ? (
+            <>
+              <UISheetHeader>
+                <UISheetTitle>{formatDefinitionLabel(activeEditorDefinition)}</UISheetTitle>
+                <UISheetDescription>
+                  Edit block content and settings. Changes are applied immediately.
+                </UISheetDescription>
+              </UISheetHeader>
+
+              <div className="mt-6 grid gap-5">
+                <div className="grid gap-4 rounded-2xl border border-neutral-line bg-surface-alt p-4">
+                  {activeVariantOptions.length > 1 ? (
+                    <div className="grid gap-1.5">
+                      <p className="text-sm font-medium text-text-main">Variant</p>
+                      <UISelect
+                        ariaLabel="Variant"
+                        size="sm"
+                        value={activeVariant}
+                        onValueChange={(value) =>
+                          handleSelectVariant(
+                            activeEditorBlock,
+                            activeEditorDefinition,
+                            value as BlockVariant
+                          )
+                        }
+                        options={activeVariantOptions.map((option) => ({
+                          value: option.variant,
+                          label: option.label,
+                          textValue: option.label,
+                        }))}
+                      />
+                    </div>
+                  ) : null}
+
+                  <UICheckbox
+                    label="Full bleed"
+                    checked={Boolean(activeEditorBlock.fullBleed)}
+                    onChange={(event) =>
+                      handleUpdateBlockFullBleed(activeEditorBlock.id, event.target.checked)
+                    }
+                  />
+                </div>
+
+                {activePendingSwitch ? (
+                  <div className="rounded-2xl border border-amber-200 bg-amber-50 px-4 py-3 text-sm text-amber-900">
+                    <p className="font-medium">
+                      Switching variant will remove: {activePendingSwitch.lostLabels.join(", ")}.
+                    </p>
+                    <div className="mt-3 flex flex-wrap gap-2">
+                      <UIButton
+                        type="button"
+                        onClick={handleConfirmVariantSwitch}
+                        className="inline-flex items-center justify-center rounded-2xl border border-amber-300 bg-amber-100 px-3 py-1.5 text-sm font-medium text-amber-900 transition hover:border-amber-400 hover:bg-amber-200"
+                      >
+                        Switch variant
+                      </UIButton>
+                      <UIButton
+                        type="button"
+                        onClick={handleCancelVariantSwitch}
+                        className="inline-flex items-center justify-center rounded-2xl border border-amber-200 bg-white px-3 py-1.5 text-sm font-medium text-amber-900 transition hover:border-amber-300 hover:bg-amber-100"
+                      >
+                        Cancel
+                      </UIButton>
+                    </div>
+                  </div>
+                ) : null}
+
+                <activeEditorDefinition.Editor
+                  block={activeEditorBlock}
+                  assets={assets}
+                  definition={activeEditorDefinition}
+                  onChange={(nextProps) =>
+                    handleUpdateBlockProps(activeEditorBlock.id, nextProps)
+                  }
+                />
+              </div>
+
+              <UISheetFooter className="justify-between border-t border-neutral-line pt-4">
+                <UIButton
+                  type="button"
+                  size="sm"
+                  theme="danger"
+                  variant="outlined"
+                  onClick={() => handleDeleteBlock(activeEditorBlock.id)}
+                >
+                  Delete block
+                </UIButton>
+
+                <UISheetClose>
+                  <UIButton type="button" size="sm" theme="base" variant="outlined">
+                    Close
+                  </UIButton>
+                </UISheetClose>
+              </UISheetFooter>
+            </>
+          ) : null}
+        </UISheetContent>
+      </UISheet>
+
       <UIDivider spacing="md" stripped />
 
       <section className="py-6">
         <div className="space-y-3">
-          <h3 className="ext-lg font-semibold text-text-main">
-            Content shape
-          </h3>
+          <h3 className="ext-lg font-semibold text-text-main">Content shape</h3>
           <pre className="overflow-x-auto whitespace-pre-wrap break-words rounded-2xl border border-line bg-surface-alt p-4 text-xs leading-6 text-text-main">
             {serializedContent}
           </pre>
