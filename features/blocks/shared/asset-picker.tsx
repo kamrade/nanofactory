@@ -68,7 +68,7 @@ export function AssetPicker({
                     : "grid gap-3 rounded-2xl border border-line bg-surface-alt p-3"
                 }
               >
-                <div className="overflow-hidden rounded-2xl border border-line bg-surface-alt">
+                <div className="w-full overflow-hidden rounded-2xl border border-line bg-surface-alt">
                   <Image
                     src={asset.publicUrl}
                     alt={asset.alt ?? asset.originalFilename}
@@ -80,11 +80,11 @@ export function AssetPicker({
                 </div>
 
                 <div className="flex flex-wrap items-start justify-between gap-3">
-                  <div className="space-y-1">
-                    <p className="text-sm font-medium text-text-main">
+                  <div className="min-w-0 space-y-1">
+                    <p className="break-all text-sm font-medium text-text-main">
                       {asset.originalFilename}
                     </p>
-                    <p className="text-xs text-text-muted">{asset.mimeType}</p>
+                    <p className="break-all text-xs text-text-muted">{asset.mimeType}</p>
                   </div>
 
                 </div>
@@ -108,7 +108,7 @@ export function AssetPicker({
       {selectedAsset ? (
         <div className="grid gap-3 rounded-2xl border border-line bg-surface-alt p-4">
           <p className="text-sm font-medium text-text-main">{selectedStateTitle}</p>
-          <div className="overflow-hidden rounded-2xl border border-line bg-surface-">
+          <div className="w-full overflow-hidden rounded-2xl border border-line bg-surface">
             <Image
               src={selectedAsset.publicUrl}
               alt={selectedAsset.alt ?? selectedAsset.originalFilename}

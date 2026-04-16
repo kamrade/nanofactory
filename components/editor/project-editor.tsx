@@ -278,11 +278,14 @@ export function ProjectEditor({ project, assets }: ProjectEditorProps) {
 
   return (
     <div className="grid gap-6">
-      <section className="space-y-6">
+      <section data-testid="ProjectEditorContent" className="space-y-6">
         <div className="flex flex-wrap items-center justify-between gap-4">
+          
           <div>
             <h2 className="text-lg font-semibold text-text-main">Page blocks</h2>
           </div>
+
+          <UIDivider spacing="none" />
 
           <div className="flex flex-wrap items-center gap-3">
             <UIMenu
@@ -376,6 +379,7 @@ export function ProjectEditor({ project, assets }: ProjectEditorProps) {
 
               return (
                 <div
+                  data-testid="Variant"
                   key={block.id}
                   role="button"
                   tabIndex={0}
@@ -387,12 +391,12 @@ export function ProjectEditor({ project, assets }: ProjectEditorProps) {
                       setActiveEditorBlockId(block.id);
                     }
                   }}
-                  className="cursor-pointer rounded-[2rem] transition focus:outline-none focus-visible:ring-2 focus-visible:ring-focus/50"
+                  className="cursor-pointer hover:ring-2 hover:ring-blue-500 ring-offset-2 transition focus:outline-none focus-visible:ring-2 focus-visible:ring-focus/50"
                 >
                   {block.fullBleed ? (
                     <section className="w-full px-4 sm:px-6">{renderBlockPreview(block)}</section>
                   ) : (
-                    <section className="rounded-[2rem] border border-neutral-line bg-surface px-6 py-8 shadow-sm sm:px-8 sm:py-10">
+                    <section className="rounded-4xl border border-neutral-line bg-surface px-6 py-8 shadow-sm sm:px-8 sm:py-10">
                       {renderBlockPreview(block)}
                     </section>
                   )}
@@ -401,6 +405,7 @@ export function ProjectEditor({ project, assets }: ProjectEditorProps) {
             })
           )}
         </div>
+
       </section>
 
       <UISheet
@@ -412,7 +417,12 @@ export function ProjectEditor({ project, assets }: ProjectEditorProps) {
           }
         }}
       >
-        <UISheetContent side="right" ariaLabel="Block editor" className="p-5 sm:p-6">
+        <UISheetContent
+          side="right"
+          ariaLabel="Block editor"
+          closeOnOverlayClick
+          className="p-5 sm:p-6"
+        >
           {activeEditorBlock && activeEditorDefinition ? (
             <>
               <UISheetHeader>

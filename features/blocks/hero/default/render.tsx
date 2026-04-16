@@ -18,8 +18,10 @@ export function HeroDefaultRender({ block, assetMap, theme }: BlockRenderProps) 
         <p className="text-text-placeholder text-sm font-medium uppercase tracking-[0.22em]">
           Hero
         </p>
-        <h1 className="text-4xl font-semibold tracking-tight sm:text-5xl">{title}</h1>
-        <p className={`max-w-3xl text-base leading-7 ${theme.muted}`}>{subtitle}</p>
+        <h1 className="break-words text-4xl font-semibold tracking-tight sm:text-5xl">{title}</h1>
+        <p className={`max-w-3xl break-words text-base leading-7 ${theme.muted}`}>
+          {subtitle}
+        </p>
         <div>
           <span className={theme.button}>{buttonText}</span>
         </div>

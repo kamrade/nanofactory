@@ -7,7 +7,7 @@ export function CtaDefaultRender({ block, theme }: BlockRenderProps) {
 
   return (
     <section className="space-y-5 text-center">
-      <h2 className="text-3xl font-semibold tracking-tight">{title}</h2>
+      <h2 className="break-words text-3xl font-semibold tracking-tight">{title}</h2>
       <div>
         <span className={theme.button}>{buttonText}</span>
       </div>

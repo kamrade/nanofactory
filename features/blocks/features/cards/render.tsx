@@ -22,8 +22,8 @@ export function FeaturesCardsRender({ block, theme }: BlockRenderProps) {
             key={`${block.id}-${item}`}
             className="rounded-3xl border border-line bg-surface-alt p-5 shadow-sm"
           >
-            <p className="text-base font-medium text-text-main">{item}</p>
-            <p className={`mt-3 text-sm leading-6 ${theme.muted}`}>
+            <p className="break-words text-base font-medium text-text-main">{item}</p>
+            <p className={`mt-3 break-words text-sm leading-6 ${theme.muted}`}>
               Keep the value proposition concise and scannable across the section.
             </p>
           </article>

@@ -181,11 +181,6 @@ export function UISheetContent({
         "fixed inset-0 z-50",
         open ? "pointer-events-auto" : "pointer-events-none"
       )}
-      onMouseDown={(event) => {
-        if (closeOnOverlayClick && event.target === event.currentTarget) {
-          setOpen(false);
-        }
-      }}
       onKeyDown={(event) => {
         if (closeOnEscape && event.key === "Escape") {
           event.preventDefault();
@@ -198,6 +193,11 @@ export function UISheetContent({
           "absolute inset-0 bg-black/35 transition-opacity duration-200 ease-out",
           open ? "opacity-100" : "opacity-0"
         )}
+        onMouseDown={() => {
+          if (closeOnOverlayClick) {
+            setOpen(false);
+          }
+        }}
       />
       <div
         className={cx(
