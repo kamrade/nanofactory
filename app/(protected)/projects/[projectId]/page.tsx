@@ -14,6 +14,7 @@ import { requireCurrentUser } from "@/lib/auth/current-user";
 import { normalizePageContent } from "@/lib/editor/content";
 import { getProjectByIdForUser } from "@/lib/projects";
 import { THEME_OPTIONS } from "@/lib/themes";
+import { formatUiDateTime } from "@/lib/ui-date-time";
 import { UIButton } from "@/components/ui/button";
 import {
   publishProjectAction,
@@ -55,9 +56,9 @@ export default async function ProjectPage({ params, searchParams }: ProjectPageP
     <main
       data-theme={project.themeKey}
       data-mode={initialMode}
-      className="min-h-screen bg-bg px-4 py-16 text-text-main"
+      className="min-h-screen bg-bg px-4 py-4 text-text-main"
     >
-      <div className="mx-auto flex w-full max-w-5xl flex-col gap-8">
+      <div className="mx-auto flex w-full flex-col gap-8">
         <div data-testid="ProjectHeader" className="flex flex-col gap-4 rounded-3xl border border-line bg-surface p-6 shadow-sm">
           
 
@@ -103,12 +104,12 @@ export default async function ProjectPage({ params, searchParams }: ProjectPageP
             <p>Theme: {project.themeKey}</p>
             <p>Schema version: {project.schemaVersion}</p>
             <p>
-              Published at: {project.publishedAt ? project.publishedAt.toISOString() : "Not published"}
+              Published at: {project.publishedAt ? formatUiDateTime(project.publishedAt) : "Not published"}
             </p>
           </div>
 
 
-          <UIDivider spacing="md" stripped />
+          <UIDivider spacing="sm" />
 
 
           <div className="flex flex-wrap items-center gap-3">

@@ -280,13 +280,6 @@ export function ProjectEditor({ project, assets }: ProjectEditorProps) {
     <div className="grid gap-6">
       <section data-testid="ProjectEditorContent" className="space-y-6">
         <div className="flex flex-wrap items-center justify-between gap-4">
-          
-          <div>
-            <h2 className="text-lg font-semibold text-text-main">Page blocks</h2>
-          </div>
-
-          <UIDivider spacing="none" />
-
           <div className="flex flex-wrap items-center gap-3">
             <UIMenu
               ariaLabel="Add block"
@@ -394,7 +387,7 @@ export function ProjectEditor({ project, assets }: ProjectEditorProps) {
                   className="cursor-pointer hover:ring-2 hover:ring-blue-500 ring-offset-2 transition focus:outline-none focus-visible:ring-2 focus-visible:ring-focus/50"
                 >
                   {block.fullBleed ? (
-                    <section className="w-full px-4 sm:px-6">{renderBlockPreview(block)}</section>
+                    <div data-testid="RenderredBlockInEditor">{renderBlockPreview(block)}</div>
                   ) : (
                     <section className="rounded-4xl border border-neutral-line bg-surface px-6 py-8 shadow-sm sm:px-8 sm:py-10">
                       {renderBlockPreview(block)}

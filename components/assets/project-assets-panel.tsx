@@ -2,6 +2,7 @@
 
 import { FormEvent, useRef, useState } from "react";
 import { UIButton } from "@/components/ui/button";
+import { formatUiDateTime } from "@/lib/ui-date-time";
 
 type AssetListItem = {
   id: string;
@@ -151,6 +152,12 @@ export function ProjectAssetsPanel({
                   </p>
                   <p className="break-all text-sm text-text-placeholder">
                     Storage key: {asset.storageKey}
+                  </p>
+                  <p className="text-sm text-text-placeholder">
+                    Created: {formatUiDateTime(asset.createdAt)}
+                  </p>
+                  <p className="text-sm text-text-placeholder">
+                    Updated: {formatUiDateTime(asset.updatedAt)}
                   </p>
                 </div>
 

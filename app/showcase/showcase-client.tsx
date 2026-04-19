@@ -45,6 +45,7 @@ import { UIConfirmDialog } from "@/components/ui/confirm-dialog";
 import type { PageContent } from "@/db/schema";
 import { useToast } from "@/hooks/use-toast";
 import { DEFAULT_THEME_KEY, THEME_OPTIONS, type ThemeKey } from "@/lib/themes";
+import { formatUiDateTime } from "@/lib/ui-date-time";
 
 type ShowcaseTab = "uikit" | "sections";
 type ShowcaseMode = "light" | "dark";
@@ -923,7 +924,7 @@ export function ShowcaseClient({
                       setIsProfileSaving(true);
                       await new Promise((resolve) => setTimeout(resolve, 500));
                       setIsProfileSaving(false);
-                      setProfileSavedAt(new Date().toLocaleTimeString());
+                      setProfileSavedAt(formatUiDateTime(new Date()));
                     }}
                   >
                     <div className="grid gap-3">

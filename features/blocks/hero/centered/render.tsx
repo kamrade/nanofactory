@@ -13,7 +13,7 @@ export function HeroCenteredRender({ block, assetMap, theme }: BlockRenderProps)
   const heroImageAsset = resolveAssetById(block.props.imageAssetId, assetMap);
 
   return (
-    <section className="mx-auto flex max-w-3xl flex-col items-center gap-6 text-center">
+    <section className="mx-auto flex max-w-3xl flex-col items-center gap-6 text-center py-12">
       {heroImageAsset ? (
         <div className="overflow-hidden rounded-[1.75rem] border border-line bg-surface-alt shadow-sm">
           <Image
