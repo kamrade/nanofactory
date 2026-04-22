@@ -20,9 +20,11 @@ const allowedMimeTypes = {
 } as const;
 
 type AllowedMimeType = keyof typeof allowedMimeTypes;
+export type AssetKind = "image";
 
 type CreateAssetInput = {
   projectId: string;
+  kind: AssetKind;
   storageKey: string;
   originalFilename: string;
   mimeType: string;
@@ -32,9 +34,21 @@ type CreateAssetInput = {
   alt?: string | null;
 };
 
-export type ProjectAssetRecord = Awaited<
-  ReturnType<typeof getAssetsByProjectIdForUser>
->[number];
+export type ProjectAssetRecord = {
+  id: string;
+  projectId: string;
+  kind: AssetKind;
+  storageKey: string;
+  originalFilename: string;
+  mimeType: string;
+  sizeBytes: number;
+  width: number | null;
+  height: number | null;
+  alt: string | null;
+  createdAt: Date;
+  updatedAt: Date;
+  publicUrl: string;
+};
 
 export class AssetUploadError extends Error {
   status: number;
@@ -124,11 +138,14 @@ async function ensureProjectOwner(projectId: string, userId: string) {
   return project;
 }
 
-export async function createAssetForProject(input: CreateAssetInput) {
+export async function createAssetForProject(
+  input: CreateAssetInput
+): Promise<ProjectAssetRecord> {
   const [asset] = await db
     .insert(assets)
     .values({
       projectId: input.projectId,
+      kind: input.kind,
       storageKey: input.storageKey,
       originalFilename: input.originalFilename,
       mimeType: input.mimeType,
@@ -140,6 +157,7 @@ export async function createAssetForProject(input: CreateAssetInput) {
     .returning({
       id: assets.id,
       projectId: assets.projectId,
+      kind: assets.kind,
       storageKey: assets.storageKey,
       originalFilename: assets.originalFilename,
       mimeType: assets.mimeType,
@@ -153,11 +171,15 @@ export async function createAssetForProject(input: CreateAssetInput) {
 
   return {
     ...asset,
+    kind: "image" as const,
     publicUrl: buildPublicAssetUrl(asset.storageKey),
   };
 }
 
-export async function getAssetsByProjectIdForUser(projectId: string, userId: string) {
+export async function getAssetsByProjectIdForUser(
+  projectId: string,
+  userId: string
+): Promise<ProjectAssetRecord[]> {
   if (!isUuid(projectId)) {
     return [];
   }
@@ -166,6 +188,7 @@ export async function getAssetsByProjectIdForUser(projectId: string, userId: str
     .select({
       id: assets.id,
       projectId: assets.projectId,
+      kind: assets.kind,
       storageKey: assets.storageKey,
       originalFilename: assets.originalFilename,
       mimeType: assets.mimeType,
@@ -183,11 +206,12 @@ export async function getAssetsByProjectIdForUser(projectId: string, userId: str
 
   return rows.map((asset) => ({
     ...asset,
+    kind: "image" as const,
     publicUrl: buildPublicAssetUrl(asset.storageKey),
   }));
 }
 
-export async function getAssetsByProjectId(projectId: string) {
+export async function getAssetsByProjectId(projectId: string): Promise<ProjectAssetRecord[]> {
   if (!isUuid(projectId)) {
     return [];
   }
@@ -196,6 +220,7 @@ export async function getAssetsByProjectId(projectId: string) {
     .select({
       id: assets.id,
       projectId: assets.projectId,
+      kind: assets.kind,
       storageKey: assets.storageKey,
       originalFilename: assets.originalFilename,
       mimeType: assets.mimeType,
@@ -212,25 +237,28 @@ export async function getAssetsByProjectId(projectId: string) {
 
   return rows.map((asset) => ({
     ...asset,
+    kind: "image" as const,
     publicUrl: buildPublicAssetUrl(asset.storageKey),
   }));
 }
 
-export async function validateHeroAssetReferencesForProject(
+export async function validateAssetReferencesForProject(
   projectId: string,
   userId: string,
   content: {
     blocks: Array<{
       id: string;
       type: string;
+      backgroundSceneId?: string;
       props: Record<string, unknown>;
     }>;
   }
 ) {
-  const referencedAssetIds = content.blocks
+  const heroAssetIds = content.blocks
     .filter((block) => block.type === "hero")
     .map((block) => block.props.imageAssetId)
     .filter((assetId): assetId is string => typeof assetId === "string" && assetId.trim().length > 0);
+  const referencedAssetIds = [...heroAssetIds];
 
   if (referencedAssetIds.length === 0) {
     return;
@@ -239,13 +267,29 @@ export async function validateHeroAssetReferencesForProject(
   await ensureProjectOwner(projectId, userId);
 
   const projectAssets = await getAssetsByProjectIdForUser(projectId, userId);
-  const allowedAssetIds = new Set(projectAssets.map((asset) => asset.id));
+  const assetsById = new Map(projectAssets.map((asset) => [asset.id, asset] as const));
 
   for (const assetId of referencedAssetIds) {
-    if (!allowedAssetIds.has(assetId)) {
+    if (!assetsById.has(assetId)) {
       throw new AssetUploadError("Selected asset does not belong to this project.", 400);
     }
   }
+}
+
+// Backward-compatible alias for existing tests/integration points.
+export async function validateHeroAssetReferencesForProject(
+  projectId: string,
+  userId: string,
+  content: {
+    blocks: Array<{
+      id: string;
+      type: string;
+      backgroundSceneId?: string;
+      props: Record<string, unknown>;
+    }>;
+  }
+) {
+  return validateAssetReferencesForProject(projectId, userId, content);
 }
 
 export async function uploadAssetForProject(input: {
@@ -272,6 +316,7 @@ export async function uploadAssetForProject(input: {
   try {
     return await createAssetForProject({
       projectId: input.projectId,
+      kind: "image",
       storageKey,
       originalFilename: validatedFile.originalFilename,
       mimeType: validatedFile.mimeType,

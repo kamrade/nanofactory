@@ -1,6 +1,6 @@
 import type { PageBlock, PageContent } from "@/db/schema";
 
-import { isPlainObject } from "@/features/blocks/shared/base";
+import { isPlainObject, readOptionalString } from "@/features/blocks/shared/base";
 import { getBlockDefinition } from "@/lib/editor/blocks";
 
 type ValidationSuccess = {
@@ -20,7 +20,7 @@ function normalizeBlock(input: unknown): PageBlock | null {
     return null;
   }
 
-  const { id, type, variant, props, fullBleed } = input;
+  const { id, type, variant, props, fullBleed, backgroundSceneId } = input;
 
   if (typeof id !== "string" || id.trim().length === 0) {
     return null;
@@ -41,6 +41,7 @@ function normalizeBlock(input: unknown): PageBlock | null {
     type: definition.type,
     variant: definition.variant,
     fullBleed: typeof fullBleed === "boolean" ? fullBleed : false,
+    backgroundSceneId: readOptionalString(backgroundSceneId),
     props: definition.normalizeProps(props),
   };
 }

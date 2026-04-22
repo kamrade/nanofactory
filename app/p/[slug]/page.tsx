@@ -2,6 +2,7 @@ import { notFound } from "next/navigation";
 
 import { ProjectRenderer } from "@/components/projects/project-renderer";
 import { getAssetsByProjectId } from "@/lib/assets";
+import { getBackgroundScenesByProjectId } from "@/lib/background-scenes";
 import { normalizePageContent } from "@/lib/editor/content";
 import { getPublishedProjectBySlug } from "@/lib/projects";
 
@@ -20,6 +21,7 @@ export default async function PublicProjectPage({ params }: PublicProjectPagePro
   }
 
   const assets = await getAssetsByProjectId(project.id);
+  const backgroundScenes = await getBackgroundScenesByProjectId(project.id);
 
   return (
     <ProjectRenderer
@@ -27,6 +29,7 @@ export default async function PublicProjectPage({ params }: PublicProjectPagePro
       themeKey={project.themeKey}
       content={normalizePageContent(project.contentJson)}
       assets={assets}
+      backgroundScenes={backgroundScenes}
     />
   );
 }

@@ -17,10 +17,6 @@ type PostAssetDependencies = {
   uploadAssetForProject: typeof uploadAssetForProject;
 };
 
-const postAssetDependencies: PostAssetDependencies = {
-  uploadAssetForProject,
-};
-
 type GetAssetsDependencies = {
   getServerAuthSession: typeof getServerAuthSession;
   getAssetsByProjectIdForUser: typeof getAssetsByProjectIdForUser;

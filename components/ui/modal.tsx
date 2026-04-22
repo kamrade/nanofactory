@@ -24,6 +24,7 @@ export type UIModalProps = {
   title: ReactNode;
   description?: ReactNode;
   size?: UIModalSize;
+  fullWidth?: boolean;
   children: ReactNode;
   footer?: ReactNode;
 };
@@ -43,13 +44,18 @@ export function UIModal({
   title,
   description,
   size = "md",
+  fullWidth = false,
   children,
   footer,
 }: UIModalProps) {
   return (
     <UIDialog open={open} defaultOpen={defaultOpen} onOpenChange={onOpenChange}>
       <UIDialogTrigger>{trigger}</UIDialogTrigger>
-      <UIDialogContent className={sizeClasses[size]}>
+      <UIDialogContent
+        className={
+          fullWidth ? "max-w-none w-[calc(100vw-2rem)]" : sizeClasses[size]
+        }
+      >
         <UIDialogHeader>
           <UIDialogTitle>{title}</UIDialogTitle>
           {description ? <UIDialogDescription>{description}</UIDialogDescription> : null}
@@ -71,6 +77,7 @@ export type UIModalFormProps = {
   title: ReactNode;
   description?: ReactNode;
   size?: UIModalSize;
+  fullWidth?: boolean;
   children: ReactNode;
   submitLabel?: string;
   cancelLabel?: string;
@@ -88,6 +95,7 @@ export function UIModalForm({
   title,
   description,
   size = "md",
+  fullWidth = false,
   children,
   submitLabel = "Save",
   cancelLabel = "Cancel",
@@ -99,7 +107,11 @@ export function UIModalForm({
   return (
     <UIDialog open={open} defaultOpen={defaultOpen} onOpenChange={onOpenChange}>
       <UIDialogTrigger>{trigger}</UIDialogTrigger>
-      <UIDialogContent className={sizeClasses[size]}>
+      <UIDialogContent
+        className={
+          fullWidth ? "max-w-none w-[calc(100vw-2rem)]" : sizeClasses[size]
+        }
+      >
         <form
           action={action}
           onSubmit={(event) => {

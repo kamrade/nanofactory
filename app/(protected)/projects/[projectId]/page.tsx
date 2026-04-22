@@ -2,15 +2,15 @@ import Link from "next/link";
 import { notFound } from "next/navigation";
 import { FiArrowLeft } from "react-icons/fi";
 
-import { ProjectAssetsPanel } from "@/components/assets/project-assets-panel";
-import { ProjectEditor } from "@/components/editor/project-editor";
 import { OpenPreviewButton } from "@/components/editor/open-preview-button";
 import { ProjectModeSwitcher } from "@/components/projects/project-mode-switcher";
 import { ProjectRenameForm } from "@/components/projects/project-rename-form";
+import { ProjectWorkspace } from "@/components/projects/project-workspace";
 import { ProjectThemeForm } from "@/components/projects/project-theme-form";
 import { UIDivider } from "@/components/ui/divider";
 import { getAssetsByProjectIdForUser } from "@/lib/assets";
 import { requireCurrentUser } from "@/lib/auth/current-user";
+import { getBackgroundScenesByProjectIdForUser } from "@/lib/background-scenes";
 import { normalizePageContent } from "@/lib/editor/content";
 import { getProjectByIdForUser } from "@/lib/projects";
 import { THEME_OPTIONS } from "@/lib/themes";
@@ -39,6 +39,10 @@ export default async function ProjectPage({ params, searchParams }: ProjectPageP
   const initialMode = resolvedSearchParams.mode === "dark" ? "dark" : "light";
   const project = await getProjectByIdForUser(projectId, currentUser.id);
   const projectAssets = await getAssetsByProjectIdForUser(projectId, currentUser.id);
+  const backgroundScenes = await getBackgroundScenesByProjectIdForUser(
+    projectId,
+    currentUser.id
+  );
 
   if (!project) {
     notFound();
@@ -138,7 +142,7 @@ export default async function ProjectPage({ params, searchParams }: ProjectPageP
 
         </div>
 
-        <ProjectEditor
+        <ProjectWorkspace
           project={{
             id: project.id,
             name: project.name,
@@ -147,16 +151,8 @@ export default async function ProjectPage({ params, searchParams }: ProjectPageP
             status: project.status,
             contentJson: normalizedContent,
           }}
-          assets={projectAssets}
-        />
-
-        <ProjectAssetsPanel
-          projectId={project.id}
-          initialAssets={projectAssets.map((asset) => ({
-            ...asset,
-            createdAt: asset.createdAt.toISOString(),
-            updatedAt: asset.updatedAt.toISOString(),
-          }))}
+          initialAssets={projectAssets}
+          initialBackgroundScenes={backgroundScenes}
         />
       </div>
     </main>

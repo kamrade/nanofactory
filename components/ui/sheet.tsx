@@ -128,6 +128,7 @@ type UISheetContentProps = HTMLAttributes<HTMLDivElement> & {
   side?: UISheetSide;
   closeOnOverlayClick?: boolean;
   closeOnEscape?: boolean;
+  modal?: boolean;
   ariaLabel?: string;
 };
 
@@ -137,6 +138,7 @@ export function UISheetContent({
   children,
   closeOnOverlayClick = true,
   closeOnEscape = true,
+  modal = true,
   ariaLabel,
   ...props
 }: UISheetContentProps) {
@@ -158,7 +160,9 @@ export function UISheetContent({
 
     const previousActive = document.activeElement as HTMLElement | null;
     const bodyOverflow = document.body.style.overflow;
-    document.body.style.overflow = "hidden";
+    if (modal) {
+      document.body.style.overflow = "hidden";
+    }
 
     const frame = window.requestAnimationFrame(() => {
       panelRef.current?.focus();
@@ -166,20 +170,22 @@ export function UISheetContent({
 
     return () => {
       window.cancelAnimationFrame(frame);
-      document.body.style.overflow = bodyOverflow;
+      if (modal) {
+        document.body.style.overflow = bodyOverflow;
+      }
       if (triggerElement) {
         triggerElement.focus();
       } else {
         previousActive?.focus();
       }
     };
-  }, [open, triggerElement]);
+  }, [modal, open, triggerElement]);
 
   const panel = (
     <div
       className={cx(
         "fixed inset-0 z-50",
-        open ? "pointer-events-auto" : "pointer-events-none"
+        open ? (modal ? "pointer-events-auto" : "pointer-events-none") : "pointer-events-none"
       )}
       onKeyDown={(event) => {
         if (closeOnEscape && event.key === "Escape") {
@@ -191,6 +197,7 @@ export function UISheetContent({
       <div
         className={cx(
           "absolute inset-0 bg-black/35 transition-opacity duration-200 ease-out",
+          modal ? "pointer-events-auto" : "pointer-events-none",
           open ? "opacity-100" : "opacity-0"
         )}
         onMouseDown={() => {
@@ -201,7 +208,7 @@ export function UISheetContent({
       />
       <div
         className={cx(
-          "absolute top-0 h-full w-full max-w-md transform-gpu border border-line bg-surface shadow-[0_16px_48px_rgba(0,0,0,0.2)] outline-none will-change-transform [contain:layout_paint] transition-transform duration-200 ease-out",
+          "pointer-events-auto absolute top-0 h-full w-full max-w-md transform-gpu border border-line bg-surface shadow-[0_16px_48px_rgba(0,0,0,0.2)] outline-none will-change-transform [contain:layout_paint] transition-transform duration-200 ease-out",
           side === "right" ? "right-0" : "left-0",
           side === "right"
             ? open
@@ -216,7 +223,7 @@ export function UISheetContent({
         <div
           ref={panelRef}
           role="dialog"
-          aria-modal="true"
+          aria-modal={modal ? "true" : undefined}
           aria-label={ariaLabel}
           aria-labelledby={ariaLabel ? undefined : hasTitle ? titleId : undefined}
           aria-describedby={hasDescription ? descriptionId : undefined}

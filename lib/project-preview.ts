@@ -1,6 +1,14 @@
 import "server-only";
 
-import { AssetUploadError, validateHeroAssetReferencesForProject } from "@/lib/assets";
+import {
+  AssetUploadError,
+  validateAssetReferencesForProject,
+  validateHeroAssetReferencesForProject,
+} from "@/lib/assets";
+import {
+  BackgroundSceneError,
+  validateBackgroundSceneReferencesForProject,
+} from "@/lib/background-scenes";
 import { parsePageContentJson } from "@/lib/editor/content";
 import { createPreviewDraft } from "@/lib/preview-drafts";
 import { getProjectByIdForUser } from "@/lib/projects";
@@ -11,13 +19,16 @@ export type PreviewDraftState =
 
 type PreviewDraftDependencies = {
   getProjectByIdForUser: typeof getProjectByIdForUser;
-  validateHeroAssetReferencesForProject: typeof validateHeroAssetReferencesForProject;
+  validateAssetReferencesForProject?: typeof validateAssetReferencesForProject;
+  validateHeroAssetReferencesForProject?: typeof validateHeroAssetReferencesForProject;
+  validateBackgroundSceneReferencesForProject?: typeof validateBackgroundSceneReferencesForProject;
   createPreviewDraft: typeof createPreviewDraft;
 };
 
 const defaultDependencies: PreviewDraftDependencies = {
   getProjectByIdForUser,
-  validateHeroAssetReferencesForProject,
+  validateAssetReferencesForProject,
+  validateBackgroundSceneReferencesForProject,
   createPreviewDraft,
 };
 
@@ -53,13 +64,27 @@ export async function createProjectPreviewDraftForUserWithDependencies(
   }
 
   try {
-    await dependencies.validateHeroAssetReferencesForProject(
+    const validateReferences =
+      dependencies.validateAssetReferencesForProject ??
+      dependencies.validateHeroAssetReferencesForProject;
+
+    if (!validateReferences) {
+      throw new Error("Missing asset validation dependency.");
+    }
+
+    await validateReferences(
+      projectId,
+      userId,
+      parsedContent.data
+    );
+
+    await dependencies.validateBackgroundSceneReferencesForProject?.(
       projectId,
       userId,
       parsedContent.data
     );
   } catch (error) {
-    if (error instanceof AssetUploadError) {
+    if (error instanceof AssetUploadError || error instanceof BackgroundSceneError) {
       return {
         status: "error",
         message: error.message,

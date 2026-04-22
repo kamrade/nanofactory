@@ -96,6 +96,7 @@ describe("project content persistence", () => {
 
     const localAsset = await createAssetForProject({
       projectId: project.id,
+      kind: "image",
       storageKey: `projects/${project.id}/assets/local.webp`,
       originalFilename: "local.webp",
       mimeType: "image/webp",
@@ -107,6 +108,7 @@ describe("project content persistence", () => {
 
     const foreignAsset = await createAssetForProject({
       projectId: foreignProject.id,
+      kind: "image",
       storageKey: `projects/${foreignProject.id}/assets/foreign.webp`,
       originalFilename: "foreign.webp",
       mimeType: "image/webp",

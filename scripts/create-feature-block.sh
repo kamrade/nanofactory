@@ -2,8 +2,8 @@
 set -euo pipefail
 
 if [[ $# -ne 1 ]]; then
-  echo "Usage: ./create-feature-block <block-name>"
-  echo "Example: ./create-feature-block testimonials"
+  echo "Usage: bash scripts/create-feature-block.sh <block-name>"
+  echo "Example: bash scripts/create-feature-block.sh testimonials"
   exit 1
 fi
 

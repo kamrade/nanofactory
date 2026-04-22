@@ -105,8 +105,52 @@ Available seed/test helpers:
 
 ```bash
 npm run db:seed:test-user
+npm run user:create -- --email user@example.com --password 'StrongPass123!' --name 'User Name'
 npm run test:db:setup
 npm run test:db:reset
+```
+
+Feature scaffolding scripts:
+
+```bash
+npm run feature:create-block -- <block-name>
+npm run feature:create-variant -- <block-name> <variant-name>
+npm run feature:delete-block -- <block-name>
+```
+
+Examples:
+
+```bash
+npm run feature:create-block -- hero
+npm run feature:create-variant -- hero centered
+npm run feature:delete-block -- hero
+```
+
+What they do:
+
+- `feature:create-block` creates `features/blocks/<block>/default/*` and updates:
+  - `features/blocks/shared/content.ts`
+  - `features/blocks/shared/registry.ts`
+- `feature:create-variant` creates `features/blocks/<block>/<variant>/*` and updates:
+  - `features/blocks/<block>/index.ts`
+  - `features/blocks/shared/content.ts`
+- `feature:delete-block` removes `features/blocks/<block>` and updates:
+  - `features/blocks/shared/content.ts`
+  - `features/blocks/shared/registry.ts`
+  - asks for confirmation by default, use `--yes` to skip prompt:
+    `npm run feature:delete-block -- --yes <block-name>`
+
+Create user notes:
+
+- use `user:create` when you need a new account and there is no sign-up page
+- `--email` and `--password` are required, `--name` is optional
+- command fails if user with the same email already exists
+- by default it reads `.env`, you can override with `DOTENV_CONFIG_PATH`
+
+Example with custom env file:
+
+```bash
+DOTENV_CONFIG_PATH=.env.local npm run user:create -- --email user@example.com --password 'StrongPass123!' --name 'User Name'
 ```
 
 Seed policy:

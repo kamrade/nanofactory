@@ -15,6 +15,20 @@
       "when": 1775856809406,
       "tag": "0001_graceful_puppet_master",
       "breakpoints": true
+    },
+    {
+      "idx": 2,
+      "version": "7",
+      "when": 1776764211966,
+      "tag": "0002_colorful_molten_man",
+      "breakpoints": true
+    },
+    {
+      "idx": 3,
+      "version": "7",
+      "when": 1776776272273,
+      "tag": "0003_mighty_nicolaos",
+      "breakpoints": true
     }
   ]
 }

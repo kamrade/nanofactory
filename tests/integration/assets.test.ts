@@ -36,6 +36,7 @@ describe("asset metadata queries", () => {
 
     await createAssetForProject({
       projectId: project.id,
+      kind: "image",
       storageKey: `projects/${project.id}/assets/test-image.webp`,
       originalFilename: "test-image.webp",
       mimeType: "image/webp",
@@ -73,6 +74,7 @@ describe("asset metadata queries", () => {
 
     const localAsset = await createAssetForProject({
       projectId: project.id,
+      kind: "image",
       storageKey: `projects/${project.id}/assets/local.webp`,
       originalFilename: "local.webp",
       mimeType: "image/webp",
@@ -84,6 +86,7 @@ describe("asset metadata queries", () => {
 
     await createAssetForProject({
       projectId: otherProject.id,
+      kind: "image",
       storageKey: `projects/${otherProject.id}/assets/foreign.webp`,
       originalFilename: "foreign.webp",
       mimeType: "image/webp",

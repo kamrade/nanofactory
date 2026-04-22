@@ -1,8 +1,10 @@
 import type { PageContent } from "@/db/schema";
 import type { ProjectAssetRecord } from "@/lib/assets";
 import { buildAssetMap } from "@/lib/assets/resolution";
+import type { BackgroundSceneRecord } from "@/lib/background-scenes/types";
 import { ProjectModeSwitcher } from "@/components/projects/project-mode-switcher";
 import { DEFAULT_THEME_KEY, isThemeKey } from "@/lib/themes";
+import { SectionShell } from "@/components/projects/section-shell";
 
 import { getBlockDefinition } from "@/lib/editor/blocks";
 
@@ -12,6 +14,7 @@ type RenderedProject = {
   mode?: "light" | "dark";
   content: PageContent;
   assets: ProjectAssetRecord[];
+  backgroundScenes?: BackgroundSceneRecord[];
   showPublishedBadge?: boolean;
   showProjectMeta?: boolean;
 };
@@ -37,6 +40,7 @@ function getThemeClasses(themeKey: string) {
 function renderBlock(
   block: PageContent["blocks"][number],
   assetMap: Map<string, ProjectAssetRecord>,
+  sceneMap: Map<string, BackgroundSceneRecord>,
   theme: ReturnType<typeof getThemeClasses>
 ) {
   const definition = getBlockDefinition(block.type, block.variant);
@@ -46,8 +50,21 @@ function renderBlock(
   }
 
   const Renderer = definition.Renderer;
+  const backgroundScene =
+    typeof block.backgroundSceneId === "string"
+      ? sceneMap.get(block.backgroundSceneId)?.sceneJson ?? null
+      : null;
 
-  return <Renderer block={block} assetMap={assetMap} theme={theme} />;
+  return (
+    <SectionShell
+      block={block}
+      containerClassName="container mx-auto w-full px-4 sm:px-6 lg:px-8"
+      cardClassName={theme.sectionCard}
+      backgroundScene={backgroundScene}
+    >
+      <Renderer block={block} assetMap={assetMap} theme={theme} />
+    </SectionShell>
+  );
 }
 
 export function ProjectRenderer({
@@ -56,12 +73,14 @@ export function ProjectRenderer({
   mode = "light",
   content,
   assets,
+  backgroundScenes = [],
   showPublishedBadge = true,
   showProjectMeta = true,
 }: RenderedProject) {
   const resolvedThemeKey = isThemeKey(themeKey) ? themeKey : DEFAULT_THEME_KEY;
   const theme = getThemeClasses(resolvedThemeKey);
   const assetMap = buildAssetMap(assets);
+  const sceneMap = new Map(backgroundScenes.map((scene) => [scene.id, scene] as const));
   const containerClass = "container mx-auto w-full px-4 sm:px-6 lg:px-8";
 
   return (
@@ -99,19 +118,9 @@ export function ProjectRenderer({
             </div>
           </section>
         ) : (
-          content.blocks.map((block) =>
-            block.fullBleed ? (
-              <section key={block.id} className="w-full px-4 sm:px-6">
-                {renderBlock(block, assetMap, theme)}
-              </section>
-            ) : (
-              <section key={block.id} className={containerClass}>
-                <div className={theme.sectionCard}>
-                  {renderBlock(block, assetMap, theme)}
-                </div>
-              </section>
-            )
-          )
+          content.blocks.map((block) => (
+            <div key={block.id}>{renderBlock(block, assetMap, sceneMap, theme)}</div>
+          ))
         )}
       </div>
     </main>

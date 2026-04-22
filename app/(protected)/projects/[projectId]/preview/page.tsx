@@ -4,6 +4,7 @@ import { notFound } from "next/navigation";
 import { ProjectRenderer } from "@/components/projects/project-renderer";
 import { getAssetsByProjectIdForUser } from "@/lib/assets";
 import { requireCurrentUser } from "@/lib/auth/current-user";
+import { getBackgroundScenesByProjectIdForUser } from "@/lib/background-scenes";
 import { normalizePageContent } from "@/lib/editor/content";
 import { getPreviewDraft } from "@/lib/preview-drafts";
 import { getProjectByIdForUser } from "@/lib/projects";
@@ -24,6 +25,7 @@ type ProjectPreviewDependencies = {
   requireCurrentUser: typeof requireCurrentUser;
   getProjectByIdForUser: typeof getProjectByIdForUser;
   getAssetsByProjectIdForUser: typeof getAssetsByProjectIdForUser;
+  getBackgroundScenesByProjectIdForUser?: typeof getBackgroundScenesByProjectIdForUser;
   getPreviewDraft: typeof getPreviewDraft;
   normalizePageContent: typeof normalizePageContent;
 };
@@ -32,6 +34,7 @@ const projectPreviewDependencies: ProjectPreviewDependencies = {
   requireCurrentUser,
   getProjectByIdForUser,
   getAssetsByProjectIdForUser,
+  getBackgroundScenesByProjectIdForUser,
   getPreviewDraft,
   normalizePageContent,
 };
@@ -55,6 +58,9 @@ export async function ProjectPreviewPageWithDependencies(
     project.id,
     currentUser.id
   );
+  const backgroundScenes = dependencies.getBackgroundScenesByProjectIdForUser
+    ? await dependencies.getBackgroundScenesByProjectIdForUser(project.id, currentUser.id)
+    : [];
   const resolvedSearchParams = searchParams ? await searchParams : {};
   const draftToken = resolvedSearchParams.draft;
   const requestedThemeKey = resolvedSearchParams.theme;
@@ -109,6 +115,7 @@ export async function ProjectPreviewPageWithDependencies(
         mode={resolvedMode}
         content={dependencies.normalizePageContent(content)}
         assets={assets}
+        backgroundScenes={backgroundScenes}
       />
     </div>
   );

@@ -95,6 +95,7 @@ describe("project publication", () => {
 
     const heroAsset = await createAssetForProject({
       projectId: project.id,
+      kind: "image",
       storageKey: `projects/${project.id}/assets/public-hero.webp`,
       originalFilename: "public-hero.webp",
       mimeType: "image/webp",

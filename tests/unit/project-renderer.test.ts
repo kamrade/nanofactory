@@ -4,6 +4,7 @@ import { describe, expect, it } from "vitest";
 import { ProjectRenderer } from "../../components/projects/project-renderer";
 import type { PageContent } from "../../db/schema";
 import type { ProjectAssetRecord } from "../../lib/assets";
+import type { BackgroundSceneRecord } from "../../lib/background-scenes/types";
 import { DEFAULT_THEME_KEY } from "../../lib/themes";
 
 function createHeroContent(imageAssetId?: string): PageContent {
@@ -73,12 +74,29 @@ function createFullBleedCtaContent(): PageContent {
   };
 }
 
+function createBackgroundSceneContent(sceneId: string): PageContent {
+  return {
+    blocks: [
+      {
+        id: "cta-scene-1",
+        type: "cta",
+        backgroundSceneId: sceneId,
+        props: {
+          title: "Styled by scene",
+          buttonText: "Inspect",
+        },
+      },
+    ],
+  };
+}
+
 function createAsset(id: string): ProjectAssetRecord {
   const timestamp = new Date("2026-03-29T12:00:00.000Z");
 
   return {
     id,
     projectId: "550e8400-e29b-41d4-a716-446655440000",
+    kind: "image",
     storageKey: `projects/550e8400-e29b-41d4-a716-446655440000/assets/${id}.webp`,
     originalFilename: `${id}.webp`,
     mimeType: "image/webp",
@@ -89,6 +107,43 @@ function createAsset(id: string): ProjectAssetRecord {
     createdAt: timestamp,
     updatedAt: timestamp,
     publicUrl: `https://assets.olala.beauty/projects/550e8400-e29b-41d4-a716-446655440000/assets/${id}.webp`,
+  };
+}
+
+function createScene(id: string): BackgroundSceneRecord {
+  const timestamp = new Date("2026-03-29T12:00:00.000Z");
+
+  return {
+    id,
+    projectId: "550e8400-e29b-41d4-a716-446655440000",
+    name: "Stripes 45°",
+    sceneJson: {
+      version: 1,
+      id: "bg_001",
+      name: "Untitled Background",
+      canvas: {
+        backgroundColor: "#111111",
+        width: 1200,
+        height: 630,
+      },
+      layers: [
+        {
+          id: "layer_001",
+          type: "stripes",
+          name: "Stripes 45°",
+          visible: true,
+          opacity: 0.35,
+          config: {
+            stripeColor: "#ffffff",
+            stripeWidth: 12,
+            gapWidth: 12,
+            angle: 45,
+          },
+        },
+      ],
+    },
+    createdAt: timestamp,
+    updatedAt: timestamp,
   };
 }
 
@@ -228,5 +283,24 @@ describe("ProjectRenderer", () => {
     expect(html).toContain("Go full width");
     expect(html).toContain('class="w-full px-4 sm:px-6"');
     expect(html).not.toContain("rounded-[2rem]");
+  });
+
+  it("renders a block background from background scene config using CSS gradients", () => {
+    const scene = createScene("scene-1");
+    const html = renderToStaticMarkup(
+      ProjectRenderer({
+        name: "Scene Project",
+        themeKey: "sunwash",
+        content: createBackgroundSceneContent(scene.id),
+        assets: [],
+        backgroundScenes: [scene],
+        showPublishedBadge: false,
+        showProjectMeta: false,
+      })
+    );
+
+    expect(html).toContain("repeating-linear-gradient(45deg");
+    expect(html).toContain("rgba(255, 255, 255, 0.35)");
+    expect(html).toContain("background-color:#111111");
   });
 });

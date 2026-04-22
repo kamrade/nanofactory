@@ -2,8 +2,8 @@
 set -euo pipefail
 
 if [[ $# -ne 2 ]]; then
-  echo "Usage: ./create-feature-variant <block-name> <variant-name>"
-  echo "Example: ./create-feature-variant hero split"
+  echo "Usage: bash scripts/create-feature-variant.sh <block-name> <variant-name>"
+  echo "Example: bash scripts/create-feature-variant.sh hero split"
   exit 1
 fi
 
@@ -220,7 +220,7 @@ variant_match = variant_type_re.search(content_text)
 if not variant_match:
     raise SystemExit(
         f"Failed to find {variant_type_name} in features/blocks/shared/content.ts. "
-        "Create the block type first with ./create-feature-block."
+        "Create the block type first with bash scripts/create-feature-block.sh."
     )
 
 variant_union = variant_match.group(1)

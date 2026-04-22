@@ -9,8 +9,8 @@ if [[ "${1:-}" == "--yes" ]]; then
 fi
 
 if [[ $# -ne 1 ]]; then
-  echo "Usage: ./delete-feature-block [--yes] <block-name>"
-  echo "Example: ./delete-feature-block testimonials"
+  echo "Usage: bash scripts/delete-feature-block.sh [--yes] <block-name>"
+  echo "Example: bash scripts/delete-feature-block.sh testimonials"
   exit 1
 fi
 

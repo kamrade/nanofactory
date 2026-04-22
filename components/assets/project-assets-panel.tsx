@@ -3,25 +3,19 @@
 import { FormEvent, useRef, useState } from "react";
 import { UIButton } from "@/components/ui/button";
 import { formatUiDateTime } from "@/lib/ui-date-time";
-
-type AssetListItem = {
-  id: string;
-  projectId: string;
-  storageKey: string;
-  originalFilename: string;
-  mimeType: string;
-  sizeBytes: number;
-  width: number | null;
-  height: number | null;
-  alt: string | null;
-  publicUrl: string;
-  createdAt: string;
-  updatedAt: string;
-};
+import { BackgroundEditor } from "@/components/assets/background-editor";
+import type {
+  ProjectAssetListItem,
+  ProjectBackgroundSceneListItem,
+} from "@/components/assets/types";
+import { buildBackgroundSceneStyle } from "@/lib/background-scenes/css";
 
 type ProjectAssetsPanelProps = {
   projectId: string;
-  initialAssets: AssetListItem[];
+  initialAssets: ProjectAssetListItem[];
+  initialBackgroundScenes: ProjectBackgroundSceneListItem[];
+  onAssetUploaded?: (asset: ProjectAssetListItem) => void;
+  onBackgroundSceneCreated?: (scene: ProjectBackgroundSceneListItem) => void;
 };
 
 function formatFileSize(sizeBytes: number) {
@@ -39,8 +33,12 @@ function formatFileSize(sizeBytes: number) {
 export function ProjectAssetsPanel({
   projectId,
   initialAssets,
+  initialBackgroundScenes,
+  onAssetUploaded,
+  onBackgroundSceneCreated,
 }: ProjectAssetsPanelProps) {
   const [assets, setAssets] = useState(initialAssets);
+  const [backgroundScenes, setBackgroundScenes] = useState(initialBackgroundScenes);
   const [message, setMessage] = useState<string | null>(null);
   const [error, setError] = useState<string | null>(null);
   const [isUploading, setIsUploading] = useState(false);
@@ -66,7 +64,7 @@ export function ProjectAssetsPanel({
       body: formData,
     });
     const payload = (await response.json()) as {
-      asset?: AssetListItem;
+      asset?: ProjectAssetListItem;
       error?: string;
     };
 
@@ -78,6 +76,7 @@ export function ProjectAssetsPanel({
     }
 
     setAssets((currentAssets) => [payload.asset!, ...currentAssets]);
+    onAssetUploaded?.(payload.asset);
     setMessage(`Uploaded ${payload.asset.originalFilename}.`);
     formRef.current?.reset();
   }
@@ -87,50 +86,105 @@ export function ProjectAssetsPanel({
       <div className="space-y-2">
         <h2 className="text-lg font-semibold text-text-main">Project assets</h2>
         <p className="text-sm leading-6 text-text-muted">
-          Technical upload panel for project-scoped assets. Allowed formats: JPEG,
-          PNG, WEBP. Max size: 10 MB.
+          Upload image files and manage reusable background scenes here.
+          Background scenes are stored as JSON configs and can be attached to any block.
+          Image upload formats: JPEG, PNG, WEBP. Max size: 10 MB.
         </p>
       </div>
 
-      <form
-        ref={formRef}
-        onSubmit={handleSubmit}
-        className="mt-5 grid gap-4 rounded-2xl border border-line bg-surface-alt p-4"
-      >
-        <label className="grid gap-1.5 text-sm">
-          <span className="font-medium text-text-main">Upload image</span>
-          <input
-            name="file"
-            type="file"
-            accept="image/jpeg,image/png,image/webp"
-            className="rounded-2xl border border-line bg-surface px-4 py-3 text-sm text-text-main outline-none transition focus:ring-2 focus:ring-focus/50"
-          />
-        </label>
+      <div className="mt-5 grid gap-4">
+        <BackgroundEditor
+          projectId={projectId}
+          onSceneCreated={(scene) => {
+            setBackgroundScenes((current) => [scene, ...current]);
+            onBackgroundSceneCreated?.(scene);
+            setMessage(`Saved background scene "${scene.name}".`);
+            setError(null);
+          }}
+        />
 
-        {message ? (
-          <p className="rounded-2xl border border-primary-line bg-primary-100 px-4 py-3 text-sm text-text-inverted-main">
-            {message}
-          </p>
-        ) : null}
-
-        {error ? (
-          <p className="rounded-2xl border border-danger-line bg-danger-100 px-4 py-3 text-sm text-danger">
-            {error}
-          </p>
-        ) : null}
-
-        <UIButton
-          type="submit"
-          disabled={isUploading}
-          theme="primary"
-          variant="contained"
-          size="sm"
+        <form
+          ref={formRef}
+          onSubmit={handleSubmit}
+          className="grid gap-4 rounded-2xl border border-line bg-surface-alt p-4"
         >
-          {isUploading ? "Uploading..." : "Upload asset"}
-        </UIButton>
-      </form>
+          <label className="grid gap-1.5 text-sm">
+            <span className="font-medium text-text-main">Upload image</span>
+            <input
+              name="file"
+              type="file"
+              accept="image/jpeg,image/png,image/webp"
+              className="rounded-2xl border border-line bg-surface px-4 py-3 text-sm text-text-main outline-none transition focus:ring-2 focus:ring-focus/50"
+            />
+          </label>
+
+          {message ? (
+            <p className="rounded-2xl border border-primary-line bg-primary-100 px-4 py-3 text-sm text-text-inverted-main">
+              {message}
+            </p>
+          ) : null}
+
+          {error ? (
+            <p className="rounded-2xl border border-danger-line bg-danger-100 px-4 py-3 text-sm text-danger">
+              {error}
+            </p>
+          ) : null}
+
+          <UIButton
+            type="submit"
+            disabled={isUploading}
+            theme="primary"
+            variant="contained"
+            size="sm"
+          >
+            {isUploading ? "Uploading..." : "Upload asset"}
+          </UIButton>
+        </form>
+      </div>
 
       <div className="mt-6 grid gap-4">
+        <h3 className="text-base font-semibold text-text-main">Background scenes</h3>
+        {backgroundScenes.length === 0 ? (
+          <p className="rounded-2xl border border-dashed border-line px-4 py-8 text-sm text-text-placeholder">
+            No background scenes yet.
+          </p>
+        ) : (
+          backgroundScenes.map((scene) => (
+            <article
+              key={scene.id}
+              className="rounded-2xl border border-line bg-surface p-4"
+            >
+              <div className="grid gap-4 md:grid-cols-[220px_minmax(0,1fr)]">
+                <div className="overflow-hidden rounded-2xl border border-line bg-surface-alt">
+                  <div
+                    className="aspect-[1200/630] w-full"
+                    style={buildBackgroundSceneStyle(scene.sceneJson)}
+                  />
+                </div>
+                <div className="space-y-1">
+                  <h3 className="text-base font-semibold text-text-main">{scene.name}</h3>
+                  <p className="text-sm text-text-placeholder">Scene ID: {scene.id}</p>
+                  <p className="text-sm text-text-placeholder">
+                    Layers: {scene.sceneJson.layers.length}
+                  </p>
+                  <p className="text-sm text-text-placeholder">
+                    Canvas: {scene.sceneJson.canvas.width} x {scene.sceneJson.canvas.height}
+                  </p>
+                  <p className="text-sm text-text-placeholder">
+                    Created: {formatUiDateTime(scene.createdAt)}
+                  </p>
+                  <p className="text-sm text-text-placeholder">
+                    Updated: {formatUiDateTime(scene.updatedAt)}
+                  </p>
+                </div>
+              </div>
+            </article>
+          ))
+        )}
+      </div>
+
+      <div className="mt-6 grid gap-4">
+        <h3 className="text-base font-semibold text-text-main">Image assets</h3>
         {assets.length === 0 ? (
           <p className="rounded-2xl border border-dashed border-line px-4 py-8 text-sm text-text-placeholder">
             No assets uploaded yet.
@@ -146,6 +200,7 @@ export function ProjectAssetsPanel({
                   <h3 className="text-base font-semibold text-text-main">
                     {asset.originalFilename}
                   </h3>
+                  <p className="text-sm text-text-placeholder">Kind: {asset.kind}</p>
                   <p className="text-sm text-text-placeholder">Type: {asset.mimeType}</p>
                   <p className="text-sm text-text-placeholder">
                     Size: {formatFileSize(asset.sizeBytes)}

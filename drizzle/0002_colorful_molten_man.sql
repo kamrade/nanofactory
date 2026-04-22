@@ -1,0 +1,1 @@
+ALTER TABLE "assets" ADD COLUMN "kind" text DEFAULT 'image' NOT NULL;

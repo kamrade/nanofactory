@@ -13,6 +13,7 @@ import type {
   PageBlock as BlockContentPageBlock,
   PageContent as BlockContentPageContent,
 } from "@/features/blocks/shared/content";
+import type { BackgroundScene } from "@/lib/background-scenes/types";
 
 export type PageBlock = BlockContentPageBlock;
 export type PageContent = BlockContentPageContent;
@@ -66,6 +67,7 @@ export const assets = pgTable("assets", {
   projectId: uuid("project_id")
     .references(() => projects.id, { onDelete: "cascade" })
     .notNull(),
+  kind: text("kind").default("image").notNull(),
   storageKey: text("storage_key").notNull(),
   originalFilename: text("original_filename").notNull(),
   mimeType: text("mime_type").notNull(),
@@ -73,6 +75,17 @@ export const assets = pgTable("assets", {
   width: integer("width"),
   height: integer("height"),
   alt: text("alt"),
+  createdAt: timestamp("created_at", { withTimezone: true }).defaultNow().notNull(),
+  updatedAt: timestamp("updated_at", { withTimezone: true }).defaultNow().notNull(),
+});
+
+export const backgroundScenes = pgTable("background_scenes", {
+  id: uuid("id").primaryKey().defaultRandom(),
+  projectId: uuid("project_id")
+    .references(() => projects.id, { onDelete: "cascade" })
+    .notNull(),
+  name: text("name").notNull(),
+  sceneJson: jsonb("scene_json").$type<BackgroundScene>().notNull(),
   createdAt: timestamp("created_at", { withTimezone: true }).defaultNow().notNull(),
   updatedAt: timestamp("updated_at", { withTimezone: true }).defaultNow().notNull(),
 });
@@ -92,6 +105,7 @@ export const projectsRelations = relations(projects, ({ one, many }) => ({
     references: [projectContents.projectId],
   }),
   assets: many(assets),
+  backgroundScenes: many(backgroundScenes),
 }));
 
 export const projectContentsRelations = relations(projectContents, ({ one }) => ({
@@ -104,6 +118,13 @@ export const projectContentsRelations = relations(projectContents, ({ one }) => 
 export const assetsRelations = relations(assets, ({ one }) => ({
   project: one(projects, {
     fields: [assets.projectId],
+    references: [projects.id],
+  }),
+}));
+
+export const backgroundScenesRelations = relations(backgroundScenes, ({ one }) => ({
+  project: one(projects, {
+    fields: [backgroundScenes.projectId],
     references: [projects.id],
   }),
 }));

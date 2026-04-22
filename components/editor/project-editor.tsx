@@ -30,11 +30,14 @@ import {
 import { setPreviewDraftContent } from "@/components/editor/preview-draft-store";
 import type { BlockVariantDefinition } from "@/features/blocks/shared/types";
 import type { PageBlock } from "@/features/blocks/shared/content";
+import { ScenePicker } from "@/features/blocks/shared/scene-picker";
 import { useToast } from "@/hooks/use-toast";
+import type { BackgroundSceneRecord } from "@/lib/background-scenes/types";
 import { UIButton } from "@/components/ui/button";
 import { UICheckbox } from "@/components/ui/checkbox";
 import { UIMenu, UIMenuItem, UIMenuLabel } from "@/components/ui/menu";
 import { UISelect } from "@/components/ui/select";
+import { SectionShell } from "@/components/projects/section-shell";
 import {
   UISheet,
   UISheetClose,
@@ -57,6 +60,7 @@ type EditorProject = {
 type ProjectEditorProps = {
   project: EditorProject;
   assets: ProjectAssetRecord[];
+  backgroundScenes?: BackgroundSceneRecord[];
 };
 
 function formatDefinitionLabel(definition: {
@@ -67,10 +71,16 @@ function formatDefinitionLabel(definition: {
   return definition.typeLabel;
 }
 
-export function ProjectEditor({ project, assets }: ProjectEditorProps) {
+export function ProjectEditor({
+  project,
+  assets,
+  backgroundScenes = [],
+}: ProjectEditorProps) {
   const { showToast } = useToast();
   const [content, setContent] = useState<PageContent>(project.contentJson);
-  const [activeEditorBlockId, setActiveEditorBlockId] = useState<string | null>(null);
+  const [activeEditorBlockId, setActiveEditorBlockId] = useState<string | null>(
+    project.contentJson.blocks[0]?.id ?? null
+  );
   const [pendingVariantSwitch, setPendingVariantSwitch] =
     useState<PendingVariantSwitch | null>(null);
   const [lastVariantUndo, setLastVariantUndo] = useState<VariantUndo | null>(null);
@@ -86,6 +96,10 @@ export function ProjectEditor({ project, assets }: ProjectEditorProps) {
 
   const serializedContent = useMemo(() => JSON.stringify(content), [content]);
   const assetMap = useMemo(() => buildAssetMap(assets), [assets]);
+  const sceneMap = useMemo(
+    () => new Map(backgroundScenes.map((scene) => [scene.id, scene] as const)),
+    [backgroundScenes]
+  );
   const blockTypes = useMemo(() => getBlockTypes(), []);
   const addBlockGroups = useMemo(
     () =>
@@ -123,9 +137,12 @@ export function ProjectEditor({ project, assets }: ProjectEditorProps) {
   }, [lastVariantUndo]);
 
   function handleAddBlock(type: SupportedBlockType, variant: BlockVariant = "default") {
+    const nextBlock = createPageBlock(type, variant);
     setContent((currentContent) => ({
-      blocks: [...currentContent.blocks, createPageBlock(type, variant)],
+      blocks: [...currentContent.blocks, nextBlock],
     }));
+    setActiveEditorBlockId(nextBlock.id);
+    setPendingVariantSwitch(null);
   }
 
   function handleDeleteBlock(blockId: string) {
@@ -162,6 +179,24 @@ export function ProjectEditor({ project, assets }: ProjectEditorProps) {
         return {
           ...block,
           fullBleed: nextFullBleed,
+        };
+      }),
+    }));
+  }
+
+  function handleUpdateBlockBackgroundScene(blockId: string, nextSceneId?: string) {
+    setContent((currentContent) => ({
+      blocks: currentContent.blocks.map((block) => {
+        if (block.id !== blockId) {
+          return block;
+        }
+
+        return {
+          ...block,
+          backgroundSceneId:
+            typeof nextSceneId === "string" && nextSceneId.trim().length > 0
+              ? nextSceneId
+              : undefined,
         };
       }),
     }));
@@ -238,18 +273,30 @@ export function ProjectEditor({ project, assets }: ProjectEditorProps) {
     }
 
     const BlockRenderer = definition.Renderer;
+    const backgroundScene =
+      typeof block.backgroundSceneId === "string"
+        ? sceneMap.get(block.backgroundSceneId)?.sceneJson ?? null
+        : null;
 
     return (
-      <BlockRenderer
+      <SectionShell
         block={block}
-        assetMap={assetMap}
-        theme={{
-          muted: "text-text-muted",
-          button:
-            "inline-flex items-center justify-center rounded-2xl border border-transparent bg-primary-300 px-5 py-3 text-sm font-medium text-text-inverted-main transition hover:bg-primary-200 active:bg-primary-100",
-          kicker: "text-text-placeholder",
-        }}
-      />
+        containerClassName="w-full"
+        fullBleedClassName="w-full"
+        cardClassName="rounded-4xl border border-neutral-line bg-surface px-6 py-8 shadow-sm sm:px-8 sm:py-10"
+        backgroundScene={backgroundScene}
+      >
+        <BlockRenderer
+          block={block}
+          assetMap={assetMap}
+          theme={{
+            muted: "text-text-muted",
+            button:
+              "inline-flex items-center justify-center rounded-2xl border border-transparent bg-primary-300 px-5 py-3 text-sm font-medium text-text-inverted-main transition hover:bg-primary-200 active:bg-primary-100",
+            kicker: "text-text-placeholder",
+          }}
+        />
+      </SectionShell>
     );
   }
 
@@ -386,13 +433,7 @@ export function ProjectEditor({ project, assets }: ProjectEditorProps) {
                   }}
                   className="cursor-pointer hover:ring-2 hover:ring-blue-500 ring-offset-2 transition focus:outline-none focus-visible:ring-2 focus-visible:ring-focus/50"
                 >
-                  {block.fullBleed ? (
-                    <div data-testid="RenderredBlockInEditor">{renderBlockPreview(block)}</div>
-                  ) : (
-                    <section className="rounded-4xl border border-neutral-line bg-surface px-6 py-8 shadow-sm sm:px-8 sm:py-10">
-                      {renderBlockPreview(block)}
-                    </section>
-                  )}
+                  <div data-testid="RenderredBlockInEditor">{renderBlockPreview(block)}</div>
                 </div>
               );
             })
@@ -414,6 +455,7 @@ export function ProjectEditor({ project, assets }: ProjectEditorProps) {
           side="right"
           ariaLabel="Block editor"
           closeOnOverlayClick
+          modal={false}
           className="p-5 sm:p-6"
         >
           {activeEditorBlock && activeEditorDefinition ? (
@@ -456,6 +498,20 @@ export function ProjectEditor({ project, assets }: ProjectEditorProps) {
                     onChange={(event) =>
                       handleUpdateBlockFullBleed(activeEditorBlock.id, event.target.checked)
                     }
+                  />
+
+                  <ScenePicker
+                    scenes={backgroundScenes}
+                    selectedSceneId={activeEditorBlock.backgroundSceneId}
+                    onSelect={(sceneId) =>
+                      handleUpdateBlockBackgroundScene(activeEditorBlock.id, sceneId)
+                    }
+                    onClear={() =>
+                      handleUpdateBlockBackgroundScene(activeEditorBlock.id, undefined)
+                    }
+                    title="Background scene"
+                    description="Attach a reusable background scene to this block shell."
+                    emptyMessage="Create a scene in Background Editor first, then select it here."
                   />
                 </div>
 
