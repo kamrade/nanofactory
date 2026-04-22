@@ -1,8 +1,8 @@
 import { beforeEach, describe, expect, it, vi } from "vitest";
 
-import { AssetUploadError } from "../../lib/assets";
-import { createPreviewDraft, getPreviewDraft } from "../../lib/preview-drafts";
-import { createProjectPreviewDraftForUserWithDependencies } from "../../lib/project-preview";
+import { AssetUploadError } from "../../src/lib/assets";
+import { createPreviewDraft, getPreviewDraft } from "../../src/lib/preview-drafts";
+import { createProjectPreviewDraftForUserWithDependencies } from "../../src/lib/project-preview";
 
 function resetDraftStore() {
   // eslint-disable-next-line @typescript-eslint/no-explicit-any

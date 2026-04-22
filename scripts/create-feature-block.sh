@@ -57,7 +57,7 @@ BLOCK_PASCAL="$(to_pascal "$BLOCK_SLUG")"
 BLOCK_CAMEL="$(to_camel "$BLOCK_SLUG")"
 BLOCK_LABEL="$(to_label "$BLOCK_SLUG")"
 
-BLOCK_DIR="features/blocks/${BLOCK_SLUG}"
+BLOCK_DIR="src/features/blocks/${BLOCK_SLUG}"
 DEFAULT_DIR="${BLOCK_DIR}/default"
 INDEX_FILE="${BLOCK_DIR}/index.ts"
 EDITOR_FILE="${DEFAULT_DIR}/editor.tsx"
@@ -166,8 +166,8 @@ slug = sys.argv[1]
 pascal = sys.argv[2]
 camel = sys.argv[3]
 
-content_path = Path("features/blocks/shared/content.ts")
-registry_path = Path("features/blocks/shared/registry.ts")
+content_path = Path("src/features/blocks/shared/content.ts")
+registry_path = Path("src/features/blocks/shared/registry.ts")
 
 content = content_path.read_text()
 
@@ -234,9 +234,9 @@ echo "  - ${DEFINITION_FILE}"
 echo "  - ${INDEX_FILE}"
 echo ""
 echo "Updated:"
-echo "  - features/blocks/shared/content.ts"
-echo "  - features/blocks/shared/registry.ts"
+echo "  - src/features/blocks/shared/content.ts"
+echo "  - src/features/blocks/shared/registry.ts"
 echo ""
 echo "Next:"
-echo "  1) npm run lint -- features/blocks/${BLOCK_SLUG} features/blocks/shared/content.ts features/blocks/shared/registry.ts"
+echo "  1) npm run lint -- src/features/blocks/${BLOCK_SLUG} src/features/blocks/shared/content.ts src/features/blocks/shared/registry.ts"
 echo "  2) Open editor and add '${BLOCK_LABEL}' block via Add block"

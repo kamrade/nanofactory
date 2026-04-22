@@ -27,12 +27,14 @@ async function main() {
       .values({
         id: TEST_USER.id,
         email: TEST_USER.email,
+        role: "admin",
         displayName: TEST_USER.displayName,
         passwordHash,
       })
       .onConflictDoUpdate({
         target: users.email,
         set: {
+          role: "admin",
           displayName: TEST_USER.displayName,
           passwordHash,
         },

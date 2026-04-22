@@ -1,16 +1,16 @@
 import { renderToStaticMarkup } from "react-dom/server";
 import { afterAll, beforeEach, describe, expect, it } from "vitest";
 
-import { ProjectRenderer } from "../../components/projects/project-renderer";
-import { createAssetForProject, getAssetsByProjectId } from "../../lib/assets";
-import { normalizePageContent } from "../../lib/editor/content";
+import { ProjectRenderer } from "../../src/components/projects/project-renderer";
+import { createAssetForProject, getAssetsByProjectId } from "../../src/lib/assets";
+import { normalizePageContent } from "../../src/lib/editor/content";
 import {
   getProjectByIdForUser,
   getPublishedProjectBySlug,
   publishProjectForUser,
   saveProjectContentForUser,
   unpublishProjectForUser,
-} from "../../lib/projects";
+} from "../../src/lib/projects";
 import {
   closeTestDatabase,
   getSeededTestUser,

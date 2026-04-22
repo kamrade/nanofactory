@@ -3,7 +3,8 @@ import { defineConfig } from "vitest/config";
 export default defineConfig({
   resolve: {
     alias: {
-      "@": ".",
+      "@/db": "./db",
+      "@": "./src",
       "server-only": "./tests/helpers/server-only.ts",
     },
   },

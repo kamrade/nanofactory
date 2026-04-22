@@ -65,13 +65,13 @@ BLOCK_LABEL="$(to_label "$BLOCK_SLUG")"
 VARIANT_PASCAL="$(to_pascal "$VARIANT_SLUG")"
 VARIANT_LABEL="$(to_label "$VARIANT_SLUG")"
 
-BLOCK_DIR="features/blocks/${BLOCK_SLUG}"
+BLOCK_DIR="src/features/blocks/${BLOCK_SLUG}"
 INDEX_FILE="${BLOCK_DIR}/index.ts"
 VARIANT_DIR="${BLOCK_DIR}/${VARIANT_SLUG}"
 EDITOR_FILE="${VARIANT_DIR}/editor.tsx"
 RENDER_FILE="${VARIANT_DIR}/render.tsx"
 DEFINITION_FILE="${VARIANT_DIR}/definition.ts"
-CONTENT_FILE="features/blocks/shared/content.ts"
+CONTENT_FILE="src/features/blocks/shared/content.ts"
 
 if [[ ! -d "$BLOCK_DIR" ]]; then
   echo "Error: block '${BLOCK_SLUG}' does not exist at ${BLOCK_DIR}"
@@ -181,8 +181,8 @@ block_pascal = sys.argv[3]
 block_camel = sys.argv[4]
 variant_pascal = sys.argv[5]
 
-index_path = Path(f"features/blocks/{block_slug}/index.ts")
-content_path = Path("features/blocks/shared/content.ts")
+index_path = Path(f"src/features/blocks/{block_slug}/index.ts")
+content_path = Path("src/features/blocks/shared/content.ts")
 
 definition_var = f"{block_camel}{variant_pascal}Definition"
 import_line = f'import {{ {definition_var} }} from "./{variant_slug}/definition";'
@@ -219,8 +219,8 @@ variant_type_re = re.compile(
 variant_match = variant_type_re.search(content_text)
 if not variant_match:
     raise SystemExit(
-        f"Failed to find {variant_type_name} in features/blocks/shared/content.ts. "
-        "Create the block type first with bash scripts/create-feature-block.sh."
+        f"Failed to find {variant_type_name} in src/features/blocks/shared/content.ts. "
+        "Create the block type first with npm run feature:create-block -- <block-name>."
     )
 
 variant_union = variant_match.group(1)

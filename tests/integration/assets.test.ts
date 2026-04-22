@@ -4,7 +4,7 @@ import {
   createAssetForProject,
   getAssetsByProjectId,
   getAssetsByProjectIdForUser,
-} from "../../lib/assets";
+} from "../../src/lib/assets";
 import {
   closeTestDatabase,
   getSeededTestUser,

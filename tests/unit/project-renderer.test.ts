@@ -1,11 +1,11 @@
 import { renderToStaticMarkup } from "react-dom/server";
 import { describe, expect, it } from "vitest";
 
-import { ProjectRenderer } from "../../components/projects/project-renderer";
+import { ProjectRenderer } from "../../src/components/projects/project-renderer";
 import type { PageContent } from "../../db/schema";
-import type { ProjectAssetRecord } from "../../lib/assets";
-import type { BackgroundSceneRecord } from "../../lib/background-scenes/types";
-import { DEFAULT_THEME_KEY } from "../../lib/themes";
+import type { ProjectAssetRecord } from "../../src/lib/assets";
+import type { BackgroundSceneRecord } from "../../src/lib/background-scenes/types";
+import { DEFAULT_THEME_KEY } from "../../src/lib/themes";
 
 function createHeroContent(imageAssetId?: string): PageContent {
   return {

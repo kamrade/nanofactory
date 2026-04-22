@@ -1,6 +1,6 @@
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 
-import { createPreviewDraft, getPreviewDraft } from "../../lib/preview-drafts";
+import { createPreviewDraft, getPreviewDraft } from "../../src/lib/preview-drafts";
 
 function resetDraftStore() {
   // eslint-disable-next-line @typescript-eslint/no-explicit-any

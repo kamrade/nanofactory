@@ -3,8 +3,8 @@ import { afterAll, beforeEach, describe, expect, it } from "vitest";
 import {
   createAssetForProject,
   validateHeroAssetReferencesForProject,
-} from "../../lib/assets";
-import { saveProjectContentForUser, getProjectByIdForUser } from "../../lib/projects";
+} from "../../src/lib/assets";
+import { saveProjectContentForUser, getProjectByIdForUser } from "../../src/lib/projects";
 import {
   closeTestDatabase,
   getSeededTestUser,

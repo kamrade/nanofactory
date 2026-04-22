@@ -1,6 +1,6 @@
 import { describe, expect, it } from "vitest";
 
-import { parsePageContentJson, validatePageContent } from "../../lib/editor/content";
+import { parsePageContentJson, validatePageContent } from "../../src/lib/editor/content";
 
 describe("page content validation", () => {
   it("accepts supported block types and normalizes props", () => {

@@ -1,6 +1,6 @@
 import { describe, expect, it } from "vitest";
 
-import { AssetUploadError, validateAssetFile } from "../../lib/assets";
+import { AssetUploadError, validateAssetFile } from "../../src/lib/assets";
 
 describe("asset upload validation", () => {
   it("rejects unsupported mime types", () => {

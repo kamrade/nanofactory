@@ -5,7 +5,7 @@ describe("storage helpers", () => {
     const randomUuidSpy = vi.spyOn(globalThis.crypto, "randomUUID").mockReturnValue(
       "123e4567-e89b-12d3-a456-426614174000"
     );
-    const { buildStorageKey } = await import("../../lib/storage/keys");
+    const { buildStorageKey } = await import("../../src/lib/storage/keys");
 
     expect(
       buildStorageKey({
@@ -35,7 +35,7 @@ describe("storage helpers", () => {
     process.env.R2_PUBLIC_BASE_URL = "https://assets.example.com/";
 
     vi.resetModules();
-    const { buildPublicAssetUrl } = await import("../../lib/storage/urls");
+    const { buildPublicAssetUrl } = await import("../../src/lib/storage/urls");
 
     expect(
       buildPublicAssetUrl(

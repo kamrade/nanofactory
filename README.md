@@ -27,9 +27,12 @@ Public pages are served by slug at `/p/[slug]`.
 
 ## Project Structure
 
-- `app/` - routes, pages, route handlers, server actions
-- `components/` - UI components for auth, editor, assets, rendering
-- `lib/` - domain logic for projects, assets, editor content, auth, storage
+- `src/app/` - routes, pages, route handlers, server actions
+- `src/components/` - UI components for auth, editor, assets, rendering
+- `src/lib/` - domain logic for projects, assets, editor content, auth, storage
+- `src/features/` - block features and shared block tooling
+- `src/hooks/` - reusable React hooks
+- `src/types/` - app-level shared TypeScript types and augmentations
 - `db/` - schema, database connection, seeds
 - `drizzle/` - generated SQL migrations
 - `tests/` - unit, integration, and e2e tests
@@ -128,15 +131,15 @@ npm run feature:delete-block -- hero
 
 What they do:
 
-- `feature:create-block` creates `features/blocks/<block>/default/*` and updates:
-  - `features/blocks/shared/content.ts`
-  - `features/blocks/shared/registry.ts`
-- `feature:create-variant` creates `features/blocks/<block>/<variant>/*` and updates:
-  - `features/blocks/<block>/index.ts`
-  - `features/blocks/shared/content.ts`
-- `feature:delete-block` removes `features/blocks/<block>` and updates:
-  - `features/blocks/shared/content.ts`
-  - `features/blocks/shared/registry.ts`
+- `feature:create-block` creates `src/features/blocks/<block>/default/*` and updates:
+  - `src/features/blocks/shared/content.ts`
+  - `src/features/blocks/shared/registry.ts`
+- `feature:create-variant` creates `src/features/blocks/<block>/<variant>/*` and updates:
+  - `src/features/blocks/<block>/index.ts`
+  - `src/features/blocks/shared/content.ts`
+- `feature:delete-block` removes `src/features/blocks/<block>` and updates:
+  - `src/features/blocks/shared/content.ts`
+  - `src/features/blocks/shared/registry.ts`
   - asks for confirmation by default, use `--yes` to skip prompt:
     `npm run feature:delete-block -- --yes <block-name>`
 
@@ -197,9 +200,9 @@ Authentication is implemented with NextAuth credentials flow.
 
 Key files:
 
-- `auth.ts`
-- `app/api/auth/[...nextauth]/route.ts`
-- `types/next-auth.d.ts`
+- `src/auth.ts`
+- `src/app/api/auth/[...nextauth]/route.ts`
+- `src/types/next-auth.d.ts`
 
 ## Assets
 
@@ -213,9 +216,9 @@ Current rules:
 
 Key files:
 
-- `lib/assets.ts`
-- `lib/storage/*`
-- `app/api/projects/[projectId]/assets/route.ts`
+- `src/lib/assets.ts`
+- `src/lib/storage/*`
+- `src/app/api/projects/[projectId]/assets/route.ts`
 
 ## Notes
 

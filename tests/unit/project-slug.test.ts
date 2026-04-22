@@ -3,7 +3,7 @@ import { describe, expect, it } from "vitest";
 import {
   buildProjectSlugCandidate,
   slugifyProjectName,
-} from "../../lib/projects/slug";
+} from "../../src/lib/projects/slug";
 
 describe("project slug helpers", () => {
   it("slugifies a regular project name", () => {

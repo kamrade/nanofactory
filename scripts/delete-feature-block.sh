@@ -48,9 +48,9 @@ to_camel() {
 BLOCK_PASCAL="$(to_pascal "$BLOCK_SLUG")"
 BLOCK_CAMEL="$(to_camel "$BLOCK_SLUG")"
 
-BLOCK_DIR="features/blocks/${BLOCK_SLUG}"
-CONTENT_FILE="features/blocks/shared/content.ts"
-REGISTRY_FILE="features/blocks/shared/registry.ts"
+BLOCK_DIR="src/features/blocks/${BLOCK_SLUG}"
+CONTENT_FILE="src/features/blocks/shared/content.ts"
+REGISTRY_FILE="src/features/blocks/shared/registry.ts"
 
 if [[ ! -d "$BLOCK_DIR" ]]; then
   echo "Error: block '${BLOCK_SLUG}' does not exist at ${BLOCK_DIR}"
@@ -88,8 +88,8 @@ slug = sys.argv[1]
 pascal = sys.argv[2]
 camel = sys.argv[3]
 
-content_path = Path("features/blocks/shared/content.ts")
-registry_path = Path("features/blocks/shared/registry.ts")
+content_path = Path("src/features/blocks/shared/content.ts")
+registry_path = Path("src/features/blocks/shared/registry.ts")
 
 def remove_union_member(union_text: str, member: str) -> str:
     parts = [p.strip() for p in union_text.split("|")]

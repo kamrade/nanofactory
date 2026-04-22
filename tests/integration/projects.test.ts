@@ -5,7 +5,7 @@ import {
   getProjectByIdForUser,
   getProjectsByUserId,
   updateProjectThemeForUser,
-} from "../../lib/projects";
+} from "../../src/lib/projects";
 import {
   closeTestDatabase,
   getSeededTestUser,
