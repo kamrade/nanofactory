@@ -250,7 +250,7 @@ export function BackgroundEditor({
 
   if (inline) {
     return (
-      <section className="grid gap-4 rounded-2xl border border-line bg-surface-alt p-4">
+      <section data-testid="BackgroundEditor" className="grid gap-4 rounded-2xl border border-line bg-surface-alt p-4">
         <div className="flex flex-wrap items-center justify-between gap-3">
           <div className="space-y-1">
             <h3 className="text-base font-semibold text-text-main">

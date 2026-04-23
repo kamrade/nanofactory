@@ -66,24 +66,7 @@ export function BackgroundLibraryManager({ initialScenes }: BackgroundLibraryMan
   return (
     <section className="grid gap-5 py-6">
       <div className="rounded-2xl border border-line bg-surface-alt p-4">
-        <div className="flex flex-wrap items-start justify-between gap-4">
-          <div className="space-y-2">
-            <h2 className="text-lg font-semibold text-text-main">Background library</h2>
-            <p className="max-w-2xl text-sm leading-6 text-text-muted">
-              Create and manage reusable background scenes for all projects.
-            </p>
-          </div>
-
-          <UIButton
-            type="button"
-            theme="base"
-            variant="outlined"
-            size="sm"
-            onClick={() => setActiveSceneId(null)}
-          >
-            New scene
-          </UIButton>
-        </div>
+        <a href="/dashboard">Dashboard</a>
       </div>
 
       {message ? (
@@ -97,7 +80,7 @@ export function BackgroundLibraryManager({ initialScenes }: BackgroundLibraryMan
         </p>
       ) : null}
 
-      <div className="grid gap-5 lg:grid-cols-[minmax(0,1.6fr)_minmax(0,1fr)]">
+      
         <BackgroundEditor
           inline
           apiBasePath="/api/background-library-scenes"
@@ -120,61 +103,64 @@ export function BackgroundLibraryManager({ initialScenes }: BackgroundLibraryMan
           }}
         />
 
-        <div className="grid h-fit gap-4">
+      
+
+      <div className="grid h-fit gap-4">
           <h3 className="text-base font-semibold text-text-main">Catalog</h3>
-          {sortedScenes.length === 0 ? (
-            <p className="rounded-2xl border border-dashed border-line px-4 py-8 text-sm text-text-placeholder">
-              No scenes in library yet.
-            </p>
-          ) : (
-            sortedScenes.map((scene) => (
-              <article key={scene.id} className="rounded-2xl border border-line bg-surface p-4">
-                <div className="grid gap-4">
-                  <div className="overflow-hidden rounded-2xl border border-line bg-surface-alt">
-                    <div
-                      className="aspect-[1200/630] w-full"
-                      style={buildBackgroundSceneStyle(scene.sceneJson)}
-                    />
-                  </div>
+          <div className="grid grid-cols-12 gap-4">
+            {sortedScenes.length === 0 ? (
+              <p className="rounded-2xl border border-dashed border-line px-4 py-8 text-sm text-text-placeholder">
+                No scenes in library yet.
+              </p>
+            ) : (
+              sortedScenes.map((scene) => (
+                <article key={scene.id} className="col-span-4 rounded-2xl border border-line bg-surface p-4">
+                  <div className="grid gap-4">
+                    <div className="overflow-hidden rounded-2xl border border-line bg-surface-alt">
+                      <div
+                        className="aspect-[1200/630] w-full"
+                        style={buildBackgroundSceneStyle(scene.sceneJson)}
+                      />
+                    </div>
 
-                  <div className="space-y-1">
-                    <h4 className="text-base font-semibold text-text-main">{scene.name}</h4>
-                    <p className="text-sm text-text-placeholder">Scene ID: {scene.id}</p>
-                    <p className="text-sm text-text-placeholder">
-                      Layers: {scene.sceneJson.layers.length}
-                    </p>
-                    <p className="text-sm text-text-placeholder">
-                      Updated: {formatUiDateTime(scene.updatedAt)}
-                    </p>
-                  </div>
+                    <div className="space-y-1">
+                      <h4 className="text-base font-semibold text-text-main">{scene.name}</h4>
+                      <p className="text-sm text-text-placeholder">Scene ID: {scene.id}</p>
+                      <p className="text-sm text-text-placeholder">
+                        Layers: {scene.sceneJson.layers.length}
+                      </p>
+                      <p className="text-sm text-text-placeholder">
+                        Updated: {formatUiDateTime(scene.updatedAt)}
+                      </p>
+                    </div>
 
-                  <div className="flex flex-wrap items-center gap-2">
-                    <UIButton
-                      type="button"
-                      theme="base"
-                      variant={activeSceneId === scene.id ? "contained" : "outlined"}
-                      size="sm"
-                      onClick={() => setActiveSceneId(scene.id)}
-                    >
-                      {activeSceneId === scene.id ? "Editing" : "Edit in editor"}
-                    </UIButton>
+                    <div className="flex flex-wrap items-center gap-2">
+                      <UIButton
+                        type="button"
+                        theme="base"
+                        variant={activeSceneId === scene.id ? "contained" : "outlined"}
+                        size="sm"
+                        onClick={() => setActiveSceneId(scene.id)}
+                      >
+                        {activeSceneId === scene.id ? "Editing" : "Edit in editor"}
+                      </UIButton>
 
-                    <UIButton
-                      type="button"
-                      theme="danger"
-                      variant="outlined"
-                      size="sm"
-                      disabled={deletingSceneId === scene.id}
-                      onClick={() => handleDeleteScene(scene)}
-                    >
-                      {deletingSceneId === scene.id ? "Deleting..." : "Delete"}
-                    </UIButton>
+                      <UIButton
+                        type="button"
+                        theme="danger"
+                        variant="outlined"
+                        size="sm"
+                        disabled={deletingSceneId === scene.id}
+                        onClick={() => handleDeleteScene(scene)}
+                      >
+                        {deletingSceneId === scene.id ? "Deleting..." : "Delete"}
+                      </UIButton>
+                    </div>
                   </div>
-                </div>
-              </article>
-            ))
-          )}
-        </div>
+                </article>
+              ))
+            )}
+          </div>
       </div>
     </section>
   );
