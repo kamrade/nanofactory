@@ -66,7 +66,7 @@ export function UIStickyHeader({
       )}
       {...props}
     >
-      <div className={cx("mx-auto flex w-full max-w-5xl flex-col gap-3 px-4 py-4", contentClassName)}>
+      <div className={cx("mx-auto flex container flex-col gap-3 px-4 py-4", contentClassName)}>
         {children}
       </div>
     </header>

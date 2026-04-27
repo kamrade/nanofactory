@@ -108,7 +108,7 @@ Available seed/test helpers:
 
 ```bash
 npm run db:seed:test-user
-npm run user:create -- --email user@example.com --password 'StrongPass123!' --name 'User Name'
+npm run user:create -- --email user@example.com --password 'StrongPass123!' --name 'User Name' --role user
 npm run test:db:setup
 npm run test:db:reset
 ```
@@ -146,14 +146,16 @@ What they do:
 Create user notes:
 
 - use `user:create` when you need a new account and there is no sign-up page
-- `--email` and `--password` are required, `--name` is optional
+- `--email` and `--password` are required
+- `--name` is optional
+- `--role` is optional (`user` or `admin`), default is `user`
 - command fails if user with the same email already exists
 - by default it reads `.env`, you can override with `DOTENV_CONFIG_PATH`
 
 Example with custom env file:
 
 ```bash
-DOTENV_CONFIG_PATH=.env.local npm run user:create -- --email user@example.com --password 'StrongPass123!' --name 'User Name'
+DOTENV_CONFIG_PATH=.env.local npm run user:create -- --email user@example.com --password 'StrongPass123!' --name 'User Name' --role admin
 ```
 
 Seed policy:

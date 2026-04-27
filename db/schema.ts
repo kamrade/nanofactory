@@ -81,17 +81,6 @@ export const assets = pgTable("assets", {
   updatedAt: timestamp("updated_at", { withTimezone: true }).defaultNow().notNull(),
 });
 
-export const backgroundScenes = pgTable("background_scenes", {
-  id: uuid("id").primaryKey().defaultRandom(),
-  projectId: uuid("project_id")
-    .references(() => projects.id, { onDelete: "cascade" })
-    .notNull(),
-  name: text("name").notNull(),
-  sceneJson: jsonb("scene_json").$type<BackgroundScene>().notNull(),
-  createdAt: timestamp("created_at", { withTimezone: true }).defaultNow().notNull(),
-  updatedAt: timestamp("updated_at", { withTimezone: true }).defaultNow().notNull(),
-});
-
 export const backgroundSceneLibrary = pgTable("background_scene_library", {
   id: uuid("id").primaryKey().defaultRandom(),
   name: text("name").notNull(),
@@ -122,7 +111,6 @@ export const projectsRelations = relations(projects, ({ one, many }) => ({
     references: [projectContents.projectId],
   }),
   assets: many(assets),
-  backgroundScenes: many(backgroundScenes),
   libraryScenes: many(backgroundSceneLibrary),
 }));
 
@@ -136,13 +124,6 @@ export const projectContentsRelations = relations(projectContents, ({ one }) => 
 export const assetsRelations = relations(assets, ({ one }) => ({
   project: one(projects, {
     fields: [assets.projectId],
-    references: [projects.id],
-  }),
-}));
-
-export const backgroundScenesRelations = relations(backgroundScenes, ({ one }) => ({
-  project: one(projects, {
-    fields: [backgroundScenes.projectId],
     references: [projects.id],
   }),
 }));

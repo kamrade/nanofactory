@@ -197,7 +197,7 @@ export function UISheetContent({
       <div
         className={cx(
           "absolute inset-0 bg-black/35 transition-opacity duration-200 ease-out",
-          modal ? "pointer-events-auto" : "pointer-events-none",
+          modal && open ? "pointer-events-auto" : "pointer-events-none",
           open ? "opacity-100" : "opacity-0"
         )}
         onMouseDown={() => {
@@ -208,7 +208,8 @@ export function UISheetContent({
       />
       <div
         className={cx(
-          "pointer-events-auto absolute top-0 h-full w-full max-w-md transform-gpu border border-line bg-surface shadow-[0_16px_48px_rgba(0,0,0,0.2)] outline-none will-change-transform [contain:layout_paint] transition-transform duration-200 ease-out",
+          "absolute top-0 h-full w-full max-w-md transform-gpu border border-line bg-surface shadow-[0_16px_48px_rgba(0,0,0,0.2)] outline-none will-change-transform [contain:layout_paint] transition-transform duration-200 ease-out",
+          open ? "pointer-events-auto" : "pointer-events-none",
           side === "right" ? "right-0" : "left-0",
           side === "right"
             ? open

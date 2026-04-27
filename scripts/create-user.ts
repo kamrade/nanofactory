@@ -12,7 +12,10 @@ type CliArgs = {
   email: string;
   password: string;
   displayName: string | null;
+  role: "user" | "admin";
 };
+
+const ALLOWED_ROLES = ["user", "admin"] as const;
 
 function printUsage() {
   console.log(
@@ -20,12 +23,13 @@ function printUsage() {
       "Create a user in the database.",
       "",
       "Usage:",
-      "  npm run user:create -- --email user@example.com --password 'StrongPass123!' [--name 'User Name']",
+      "  npm run user:create -- --email user@example.com --password 'StrongPass123!' [--name 'User Name'] [--role user|admin]",
       "",
       "Flags:",
       "  --email      Required user email",
       "  --password   Required plain password (will be hashed with bcrypt)",
       "  --name       Optional display name",
+      "  --role       Optional role: user | admin (default: user)",
       "  --help       Show this help",
       "",
       "Optional env:",
@@ -53,6 +57,7 @@ function parseArgs(argv: string[]): CliArgs {
   const password = getValue("--password") ?? "";
   const displayNameRaw = getValue("--name");
   const displayName = displayNameRaw?.trim() ? displayNameRaw.trim() : null;
+  const roleRaw = getValue("--role")?.trim().toLowerCase() ?? "user";
 
   if (!email) {
     throw new Error("Missing required --email");
@@ -62,10 +67,17 @@ function parseArgs(argv: string[]): CliArgs {
     throw new Error("Missing required --password");
   }
 
+  if (!ALLOWED_ROLES.includes(roleRaw as (typeof ALLOWED_ROLES)[number])) {
+    throw new Error(
+      `Invalid --role "${roleRaw}". Allowed values: ${ALLOWED_ROLES.join(", ")}`
+    );
+  }
+
   return {
     email,
     password,
     displayName,
+    role: roleRaw as (typeof ALLOWED_ROLES)[number],
   };
 }
 
@@ -101,17 +113,21 @@ async function main() {
         email: args.email,
         passwordHash,
         displayName: args.displayName,
+        role: args.role,
       })
       .returning({
         id: users.id,
         email: users.email,
+        role: users.role,
       });
 
     if (!createdUser) {
       throw new Error("Failed to create user");
     }
 
-    console.log(`Created user ${createdUser.email} (${createdUser.id})`);
+    console.log(
+      `Created user ${createdUser.email} (${createdUser.id}) with role ${createdUser.role}`
+    );
   } finally {
     await pool.end();
   }

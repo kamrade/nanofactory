@@ -36,6 +36,13 @@
       "when": 1776845039328,
       "tag": "0004_elite_wallow",
       "breakpoints": true
+    },
+    {
+      "idx": 5,
+      "version": "7",
+      "when": 1777302362536,
+      "tag": "0005_first_dakota_north",
+      "breakpoints": true
     }
   ]
 }

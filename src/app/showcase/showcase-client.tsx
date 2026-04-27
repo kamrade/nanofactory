@@ -1,9 +1,9 @@
 "use client";
 
 import { useEffect, useMemo, useState } from "react";
-import { usePathname, useRouter, useSearchParams } from "next/navigation";
 import { FiArchive, FiArrowRight, FiCopy, FiEdit2, FiMoreVertical, FiPlus, FiSearch, FiSettings, FiTrash2 } from "react-icons/fi";
 
+import { AppStickyHeader } from "@/components/navigation/app-sticky-header";
 import { ProjectRenderer } from "@/components/projects/project-renderer";
 import { UIButton } from "@/components/ui/button";
 import { UIBadge } from "@/components/ui/badge";
@@ -12,7 +12,6 @@ import { UICheckbox } from "@/components/ui/checkbox";
 import { UIDivider } from "@/components/ui/divider";
 import { UIMenu, UIMenuItem, UIMenuLabel, UIMenuSeparator } from "@/components/ui/menu";
 import { UISegmentedControl } from "@/components/ui/segmented-control";
-import { UIStickyHeader } from "@/components/ui/sticky-header";
 import { UISwitcher } from "@/components/ui/switcher";
 import { UITabs } from "@/components/ui/tabs";
 import { UITextInput } from "@/components/ui/text-input";
@@ -45,6 +44,7 @@ import { UIConfirmDialog } from "@/components/ui/confirm-dialog";
 import type { PageContent } from "@/db/schema";
 import { useToast } from "@/hooks/use-toast";
 import { DEFAULT_THEME_KEY, THEME_OPTIONS, type ThemeKey } from "@/lib/themes";
+import { UI_COOKIE_MAX_AGE, UI_MODE_COOKIE, UI_THEME_COOKIE } from "@/lib/ui-preferences";
 import { formatUiDateTime } from "@/lib/ui-date-time";
 
 type ShowcaseTab = "uikit" | "sections";
@@ -53,6 +53,7 @@ type ShowcaseMode = "light" | "dark";
 type ShowcaseClientProps = {
   content: PageContent;
   activeTab: ShowcaseTab;
+  isAdmin?: boolean;
   initialThemeKey?: ThemeKey;
   initialMode?: ShowcaseMode;
 };
@@ -60,13 +61,11 @@ type ShowcaseClientProps = {
 export function ShowcaseClient({
   content,
   activeTab,
+  isAdmin = false,
   initialThemeKey = DEFAULT_THEME_KEY,
   initialMode = "light",
 }: ShowcaseClientProps) {
   const { showToast, clearToasts } = useToast();
-  const router = useRouter();
-  const pathname = usePathname();
-  const searchParams = useSearchParams();
   const [themeKey, setThemeKey] = useState<ThemeKey>(initialThemeKey);
   const [mode, setMode] = useState<ShowcaseMode>(initialMode);
   const [uiSize, setUiSize] = useState<"sm" | "lg">("sm");
@@ -109,28 +108,20 @@ export function ShowcaseClient({
       }),
     []
   );
-  const showcaseQuery = `theme=${themeKey}&mode=${mode}`;
-
   useEffect(() => {
-    const currentTheme = searchParams.get("theme");
-    const currentMode = searchParams.get("mode");
-
-    if (currentTheme === themeKey && currentMode === mode) {
-      return;
-    }
-
-    const nextParams = new URLSearchParams(searchParams.toString());
-    nextParams.set("theme", themeKey);
-    nextParams.set("mode", mode);
-    router.replace(`${pathname}?${nextParams.toString()}`, { scroll: false });
-  }, [mode, pathname, router, searchParams, themeKey]);
+    document.documentElement.setAttribute("data-theme", themeKey);
+    document.documentElement.setAttribute("data-mode", mode);
+    document.cookie = `${UI_THEME_COOKIE}=${themeKey}; path=/; max-age=${UI_COOKIE_MAX_AGE}; samesite=lax`;
+    document.cookie = `${UI_MODE_COOKIE}=${mode}; path=/; max-age=${UI_COOKIE_MAX_AGE}; samesite=lax`;
+  }, [mode, themeKey]);
 
   return (
     <div data-theme={themeKey} data-mode={mode} className="bg-bg text-text-main">
-      <UIStickyHeader revealOnScrollUp>
-        <div className="flex flex-wrap items-center justify-between gap-3">
-          <p className="text-sm font-medium">Showcase controls</p>
-          <div className="flex flex-wrap items-center gap-2">
+      <AppStickyHeader
+        isAdmin={isAdmin}
+        revealOnScrollUp
+        controls={
+          <>
             <div className="flex items-center gap-2 text-sm font-medium text-text-muted">
               <span>Theme</span>
               <UISegmentedControl
@@ -171,25 +162,25 @@ export function ShowcaseClient({
                 />
               </div>
             ) : null}
-          </div>
-        </div>
-      </UIStickyHeader>
+          </>
+        }
+      />
 
-      <div className="px-4 pt-4">
-        <div className="mx-auto w-full max-w-5xl">
+      <div className="pt-4">
+        <div className="mx-auto container px-4">
           <UITabs
             ariaLabel="Showcase tabs"
             items={[
-              { label: "UIKit", href: `/showcase/uikit?${showcaseQuery}`, active: activeTab === "uikit" },
-              { label: "Sections", href: `/showcase/sections?${showcaseQuery}`, active: activeTab === "sections" },
+              { label: "UIKit", href: "/showcase/uikit", active: activeTab === "uikit" },
+              { label: "Sections", href: "/showcase/sections", active: activeTab === "sections" },
             ]}
           />
         </div>
       </div>
 
       {activeTab === "uikit" ? (
-        <section className="bg-bg px-4 py-8 text-text-main">
-          <div className="mx-auto grid w-full max-w-5xl gap-8">
+        <section className="bg-bg py-8 text-text-main">
+          <div className="mx-auto grid container px-4 gap-8">
             <UICard title="Typography · Headings">
               <div className="grid gap-3">
                 <div>

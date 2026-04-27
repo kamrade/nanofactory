@@ -58,7 +58,7 @@ function renderBlock(
   return (
     <SectionShell
       block={block}
-      containerClassName="container mx-auto w-full px-4 sm:px-6 lg:px-8"
+      containerClassName="container mx-auto px-4"
       cardClassName={theme.sectionCard}
       backgroundScene={backgroundScene}
     >
@@ -81,7 +81,7 @@ export function ProjectRenderer({
   const theme = getThemeClasses(resolvedThemeKey);
   const assetMap = buildAssetMap(assets);
   const sceneMap = new Map(backgroundScenes.map((scene) => [scene.id, scene] as const));
-  const containerClass = "container mx-auto w-full px-4 sm:px-6 lg:px-8";
+  const containerClass = "container mx-auto px-4";
 
   return (
     <main
@@ -109,7 +109,7 @@ export function ProjectRenderer({
         ) : null}
 
         {content.blocks.length === 0 ? (
-          <section className={containerClass}>
+          <section data-testid="ProjectRenderBlock" className={containerClass}>
             <div className={theme.sectionCard}>
               <h1 className="text-3xl font-semibold tracking-tight">{name}</h1>
               <p className={`mt-3 text-base leading-7 ${theme.muted}`}>
