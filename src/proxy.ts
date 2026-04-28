@@ -12,7 +12,7 @@ const DOMAIN_TO_PROJECT: Record<string, string> = {
   'www.olala.beauty': 'my-website-01',
 }
 
-export function middleware(req: NextRequest) {
+export function proxy(req: NextRequest) {
   const url = req.nextUrl.clone()
 
   const hostHeader = req.headers.get('host')
