@@ -8,8 +8,8 @@ const PLATFORM_HOSTS: string[] = []
 // ]
 
 const DOMAIN_TO_PROJECT: Record<string, string> = {
-  'olala.beauty': '6bccd961-1a60-45f2-a980-aa6566553d17',
-  'www.olala.beauty': '6bccd961-1a60-45f2-a980-aa6566553d17',
+  'olala.beauty': 'my-website-01',
+  'www.olala.beauty': 'my-website-01',
 }
 
 export function middleware(req: NextRequest) {
