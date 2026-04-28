@@ -78,9 +78,7 @@ export function ProjectEditor({
 }: ProjectEditorProps) {
   const { showToast } = useToast();
   const [content, setContent] = useState<PageContent>(project.contentJson);
-  const [activeEditorBlockId, setActiveEditorBlockId] = useState<string | null>(
-    project.contentJson.blocks[0]?.id ?? null
-  );
+  const [activeEditorBlockId, setActiveEditorBlockId] = useState<string | null>(null);
   const [pendingVariantSwitch, setPendingVariantSwitch] =
     useState<PendingVariantSwitch | null>(null);
   const [lastVariantUndo, setLastVariantUndo] = useState<VariantUndo | null>(null);

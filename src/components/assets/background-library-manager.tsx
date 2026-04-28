@@ -65,9 +65,6 @@ export function BackgroundLibraryManager({ initialScenes }: BackgroundLibraryMan
 
   return (
     <section className="grid gap-5 py-6">
-      <div className="rounded-2xl border border-line bg-surface-alt p-4">
-        <a href="/dashboard">Dashboard</a>
-      </div>
 
       {message ? (
         <p className="rounded-2xl border border-primary-line bg-primary-100 px-4 py-3 text-sm text-text-inverted-main">

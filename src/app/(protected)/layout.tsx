@@ -23,6 +23,7 @@ export default async function ProtectedLayout({
     <>
       <AppStickyHeader
         isAdmin={session.user.role === "admin"}
+        revealOnScrollUp
         initialThemeKey={themeKey}
         initialMode={mode}
       />

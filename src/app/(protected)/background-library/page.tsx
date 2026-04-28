@@ -37,8 +37,8 @@ export default async function BackgroundLibraryPage() {
   const initialScenes = scenes.map(toListItem);
 
   return (
-    <main className="min-h-screen bg-bg px-4 py-6 text-text-main">
-      <div className="mx-auto flex w-full max-w-7xl flex-col gap-6">
+    <main className="min-h-screen bg-bg py-6 text-text-main">
+      <div className="mx-auto flex container px-4 flex-col gap-6">
         <BackgroundLibraryManager initialScenes={initialScenes} />
       </div>
     </main>
