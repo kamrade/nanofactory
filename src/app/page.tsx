@@ -31,7 +31,7 @@ export default async function HomePage() {
       <div className="mx-auto flex w-full max-w-3xl flex-col gap-6">
         <h1 className="text-4xl font-semibold tracking-tight">Nanofactory</h1>
         <p className="max-w-2xl text-base leading-7 text-zinc-600">
-          Create a complete web page in just 15 minutes.
+          Create a complete web page in just 20 minutes.
         </p>
         <div
           className={
