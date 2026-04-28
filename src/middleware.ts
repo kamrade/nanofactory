@@ -2,10 +2,10 @@
 
 import { NextRequest, NextResponse } from 'next/server'
 
-const PLATFORM_HOSTS = [
-  'olala.beauty',
-  'www.olala.beauty',
-]
+const PLATFORM_HOSTS: string[] = []
+//   'olala.beauty',
+//   'www.olala.beauty',
+// ]
 
 const DOMAIN_TO_PROJECT: Record<string, string> = {
   'olala.beauty': '6bccd961-1a60-45f2-a980-aa6566553d17',
