@@ -2,10 +2,7 @@
 
 import { NextRequest, NextResponse } from 'next/server'
 
-const PLATFORM_HOSTS: string[] = []
-//   'olala.beauty',
-//   'www.olala.beauty',
-// ]
+const PLATFORM_HOSTS: string[] = [ 'app.olala.beauty' ]
 
 const DOMAIN_TO_PROJECT: Record<string, string> = {
   'olala.beauty': 'my-website-01',
@@ -15,7 +12,7 @@ const DOMAIN_TO_PROJECT: Record<string, string> = {
 export function proxy(req: NextRequest) {
   const url = req.nextUrl.clone()
 
-  const hostHeader = req.headers.get('host')
+  const hostHeader = req.headers.get('host') || ''
   const hostname = hostHeader?.split(':')[0]?.toLowerCase()
 
   if (!hostname) {
