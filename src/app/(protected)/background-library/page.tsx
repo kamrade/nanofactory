@@ -1,10 +1,17 @@
 import { redirect } from "next/navigation";
+import { cookies } from "next/headers";
 
 import { BackgroundLibraryManager } from "@/components/assets/background-library-manager";
 import type { BackgroundSceneListItem } from "@/components/assets/types";
 import { requireCurrentUser } from "@/lib/auth/current-user";
 import { requireAdminByUserId, RoleGuardError } from "@/lib/auth/roles";
 import { getBackgroundSceneLibrary } from "@/lib/background-scene-library";
+import {
+  UI_MODE_COOKIE,
+  UI_THEME_COOKIE,
+  resolveModePreference,
+  resolveThemePreference,
+} from "@/lib/ui-preferences";
 
 function toListItem(
   scene: Awaited<ReturnType<typeof getBackgroundSceneLibrary>>[number]
@@ -35,11 +42,18 @@ export default async function BackgroundLibraryPage() {
 
   const scenes = await getBackgroundSceneLibrary();
   const initialScenes = scenes.map(toListItem);
+  const cookieStore = await cookies();
+  const themeKey = resolveThemePreference(cookieStore.get(UI_THEME_COOKIE)?.value);
+  const mode = resolveModePreference(cookieStore.get(UI_MODE_COOKIE)?.value);
 
   return (
     <main className="min-h-screen bg-bg py-6 text-text-main">
       <div className="mx-auto flex container px-4 flex-col gap-6">
-        <BackgroundLibraryManager initialScenes={initialScenes} />
+        <BackgroundLibraryManager
+          initialScenes={initialScenes}
+          themeKey={themeKey}
+          mode={mode}
+        />
       </div>
     </main>
   );

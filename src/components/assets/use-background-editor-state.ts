@@ -1,8 +1,9 @@
 "use client";
 
-import { useEffect, useMemo, useState } from "react";
+import { useCallback, useMemo, useState } from "react";
 
 import {
+  type BackgroundDefaultsPalette,
   createDefaultBackgroundScene,
   createDefaultDotsLayer,
   createDefaultGlowLayer,
@@ -10,6 +11,7 @@ import {
   createDefaultGridLayer,
   createDefaultNoiseLayer,
   createDefaultStripesLayer,
+  getBackgroundDefaultsPalette,
 } from "@/components/assets/background-scene-defaults";
 import {
   createLayerByType,
@@ -19,9 +21,17 @@ import {
   type EffectType,
 } from "@/components/assets/background-editor-shared";
 import type { BackgroundScene, BackgroundSceneLayer } from "@/lib/background-scenes/types";
+import type { ThemeKey } from "@/lib/themes";
+import type { UiMode } from "@/lib/ui-preferences";
+
+type BackgroundDefaultsInput = {
+  themeKey: ThemeKey;
+  mode: UiMode;
+};
 
 type UseBackgroundEditorStateResult = {
   scene: BackgroundScene;
+  colorChoices: BackgroundDefaultsPalette["colorChoices"];
   selectedLayerId: string;
   selectedLayer: BackgroundSceneLayer | null;
   prettyJson: string;
@@ -38,14 +48,26 @@ type UseBackgroundEditorStateResult = {
   ) => void;
   resetScene: () => void;
   replaceScene: (nextScene: BackgroundScene) => void;
+  syncScenePalette: (
+    previousColorChoices?: BackgroundDefaultsPalette["colorChoices"]
+  ) => void;
   resetSelectedLayer: () => void;
 };
 
 export function useBackgroundEditorState(
-  initialScene?: BackgroundScene
+  initialScene: BackgroundScene | undefined,
+  defaultsInput: BackgroundDefaultsInput
 ): UseBackgroundEditorStateResult {
+  const defaultsPalette = useMemo(
+    () =>
+      getBackgroundDefaultsPalette({
+        themeKey: defaultsInput.themeKey,
+        mode: defaultsInput.mode,
+      }),
+    [defaultsInput.themeKey, defaultsInput.mode]
+  );
   const [scene, setScene] = useState<BackgroundScene>(
-    () => initialScene ?? createDefaultBackgroundScene()
+    () => initialScene ?? createDefaultBackgroundScene(defaultsInput)
   );
   const [selectedLayerId, setSelectedLayerId] = useState<string>(scene.layers[0]?.id ?? "");
 
@@ -58,12 +80,6 @@ export function useBackgroundEditorState(
     () => (selectedLayer ? getLayerCssSnippet(selectedLayer) : ""),
     [selectedLayer]
   );
-
-  useEffect(() => {
-    if (!selectedLayer && scene.layers.length > 0) {
-      setSelectedLayerId(scene.layers[0].id);
-    }
-  }, [scene.layers, selectedLayer]);
 
   function updateSceneName(name: string) {
     setScene((current) => ({ ...current, name }));
@@ -80,7 +96,7 @@ export function useBackgroundEditorState(
   }
 
   function addEffect(type: EffectType) {
-    const layer = createLayerByType(type);
+    const layer = createLayerByType(type, defaultsPalette);
     setScene((current) => ({
       ...current,
       layers: [...current.layers, layer],
@@ -142,7 +158,7 @@ export function useBackgroundEditorState(
   }
 
   function resetScene() {
-    const next = initialScene ?? createDefaultBackgroundScene();
+    const next = initialScene ?? createDefaultBackgroundScene(defaultsInput);
     setScene(next);
     setSelectedLayerId(next.layers[0]?.id ?? "");
   }
@@ -152,6 +168,111 @@ export function useBackgroundEditorState(
     setSelectedLayerId(nextScene.layers[0]?.id ?? "");
   }
 
+  const syncScenePalette = useCallback((
+    previousColorChoices?: BackgroundDefaultsPalette["colorChoices"]
+  ) => {
+    function mapByToken(
+      currentValue: string,
+      fallbackValue: string
+    ) {
+      if (!previousColorChoices || previousColorChoices.length === 0) {
+        return fallbackValue;
+      }
+
+      const previousMatch = previousColorChoices.find(
+        (option) => option.value === currentValue
+      );
+
+      if (!previousMatch) {
+        return fallbackValue;
+      }
+
+      const nextMatch = defaultsPalette.colorChoices.find(
+        (option) => option.token === previousMatch.token
+      );
+
+      return nextMatch?.value ?? fallbackValue;
+    }
+
+    setScene((current) => ({
+      ...current,
+      canvas: {
+        ...current.canvas,
+        backgroundColor: mapByToken(
+          current.canvas.backgroundColor,
+          defaultsPalette.canvasBackgroundColor
+        ),
+      },
+      layers: current.layers.map((layer) => {
+        if (layer.type === "stripes") {
+          return {
+            ...layer,
+            config: {
+              ...layer.config,
+              stripeColor: mapByToken(
+                layer.config.stripeColor,
+                defaultsPalette.layerForegroundColor
+              ),
+            },
+          };
+        }
+        if (layer.type === "dots") {
+          return {
+            ...layer,
+            config: {
+              ...layer.config,
+              dotColor: mapByToken(
+                layer.config.dotColor,
+                defaultsPalette.layerForegroundColor
+              ),
+            },
+          };
+        }
+        if (layer.type === "grid") {
+          return {
+            ...layer,
+            config: {
+              ...layer.config,
+              lineColor: mapByToken(
+                layer.config.lineColor,
+                defaultsPalette.layerForegroundColor
+              ),
+            },
+          };
+        }
+        if (layer.type === "gradient") {
+          return {
+            ...layer,
+            config: {
+              ...layer.config,
+              colorA: mapByToken(layer.config.colorA, defaultsPalette.gradientA),
+              colorB: mapByToken(layer.config.colorB, defaultsPalette.gradientB),
+            },
+          };
+        }
+        if (layer.type === "glow") {
+          return {
+            ...layer,
+            config: {
+              ...layer.config,
+              glowColor: mapByToken(
+                layer.config.glowColor,
+                defaultsPalette.layerForegroundColor
+              ),
+            },
+          };
+        }
+        return layer;
+      }),
+    }));
+  }, [
+    defaultsPalette.canvasBackgroundColor,
+    defaultsPalette.layerForegroundColor,
+    defaultsPalette.gradientA,
+    defaultsPalette.gradientB,
+    defaultsPalette.colorChoices,
+  ]);
+
   function resetSelectedLayer() {
     if (!selectedLayer) {
       return;
@@ -159,23 +280,23 @@ export function useBackgroundEditorState(
 
     updateSelectedLayer((layer) => {
       if (layer.type === "stripes") {
-        const defaults = createDefaultStripesLayer();
+        const defaults = createDefaultStripesLayer(defaultsPalette);
         return { ...layer, visible: true, opacity: defaults.opacity, config: defaults.config };
       }
       if (layer.type === "dots") {
-        const defaults = createDefaultDotsLayer();
+        const defaults = createDefaultDotsLayer(defaultsPalette);
         return { ...layer, visible: true, opacity: defaults.opacity, config: defaults.config };
       }
       if (layer.type === "grid") {
-        const defaults = createDefaultGridLayer();
+        const defaults = createDefaultGridLayer(defaultsPalette);
         return { ...layer, visible: true, opacity: defaults.opacity, config: defaults.config };
       }
       if (layer.type === "gradient") {
-        const defaults = createDefaultGradientLayer();
+        const defaults = createDefaultGradientLayer(defaultsPalette);
         return { ...layer, visible: true, opacity: defaults.opacity, config: defaults.config };
       }
       if (layer.type === "glow") {
-        const defaults = createDefaultGlowLayer();
+        const defaults = createDefaultGlowLayer(defaultsPalette);
         return { ...layer, visible: true, opacity: defaults.opacity, config: defaults.config };
       }
 
@@ -186,6 +307,7 @@ export function useBackgroundEditorState(
 
   return {
     scene,
+    colorChoices: defaultsPalette.colorChoices,
     selectedLayerId,
     selectedLayer,
     prettyJson,
@@ -200,6 +322,7 @@ export function useBackgroundEditorState(
     updateSelectedLayer,
     resetScene,
     replaceScene,
+    syncScenePalette,
     resetSelectedLayer,
   };
 }

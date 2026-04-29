@@ -67,6 +67,7 @@ test("adds a block, saves content, and reloads the editor state", async ({ page 
 
   await expect(page.getByText("Project content saved.")).toBeVisible();
   await page.reload();
+  await page.getByTestId("Variant").first().click();
 
   await expect(page.getByLabel("Title", { exact: true })).toHaveValue("Saved Hero Title");
   await expect(page.getByRole("textbox", { name: "Subtitle" })).toHaveValue(

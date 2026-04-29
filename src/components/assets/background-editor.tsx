@@ -1,6 +1,6 @@
 "use client";
 
-import { type ReactElement, useEffect, useMemo, useState } from "react";
+import { type ReactElement, useEffect, useMemo, useRef, useState } from "react";
 
 import { BackgroundEditorInspector } from "@/components/assets/background-editor-inspector";
 import { BackgroundEditorLayersPanel } from "@/components/assets/background-editor-layers-panel";
@@ -11,12 +11,16 @@ import { UIButton } from "@/components/ui/button";
 import { UIModal } from "@/components/ui/modal";
 import { buildBackgroundSceneStyle } from "@/lib/background-scenes/css";
 import type { BackgroundScene } from "@/lib/background-scenes/types";
+import { isThemeKey, type ThemeKey } from "@/lib/themes";
+import { resolveThemePreference, resolveModePreference, type UiMode } from "@/lib/ui-preferences";
 
 type BackgroundEditorProps = {
   apiBasePath: string;
   initialScene?: BackgroundSceneListItem | null;
   trigger?: ReactElement;
   inline?: boolean;
+  initialThemeKey?: ThemeKey;
+  initialMode?: UiMode;
   onSceneSaved: (
     scene: BackgroundSceneListItem,
     mode: "create" | "update"
@@ -42,11 +46,34 @@ function normalizeScenePayload(scene: BackgroundSceneListItem): BackgroundSceneL
   };
 }
 
+function readThemeModeFromDom(
+  fallbackThemeKey: ThemeKey,
+  fallbackMode: UiMode
+): { themeKey: ThemeKey; mode: UiMode } {
+  if (typeof document === "undefined") {
+    return {
+      themeKey: fallbackThemeKey,
+      mode: fallbackMode,
+    };
+  }
+
+  const root = document.documentElement;
+  const rawTheme = root.getAttribute("data-theme");
+  const rawMode = root.getAttribute("data-mode");
+
+  return {
+    themeKey: isThemeKey(rawTheme ?? "") ? rawTheme : fallbackThemeKey,
+    mode: rawMode === "dark" || rawMode === "light" ? rawMode : fallbackMode,
+  };
+}
+
 export function BackgroundEditor({
   apiBasePath,
   initialScene = null,
   trigger,
   inline = false,
+  initialThemeKey,
+  initialMode,
   onSceneSaved,
 }: BackgroundEditorProps) {
   const [open, setOpen] = useState(false);
@@ -55,11 +82,40 @@ export function BackgroundEditor({
   const [message, setMessage] = useState<string | null>(null);
   const [error, setError] = useState<string | null>(null);
 
-  const mode = initialScene ? "update" : "create";
+  const fallbackThemeKey = resolveThemePreference(initialThemeKey);
+  const fallbackMode = resolveModePreference(initialMode);
+  const [{ themeKey, mode }, setThemeMode] = useState(() =>
+    readThemeModeFromDom(fallbackThemeKey, fallbackMode)
+  );
+  const editorMode = initialScene ? "update" : "create";
   const initialEditorScene = useMemo(() => toEditorScene(initialScene), [initialScene]);
+
+  useEffect(() => {
+    const applyCurrentThemeMode = () => {
+      setThemeMode(readThemeModeFromDom(fallbackThemeKey, fallbackMode));
+    };
+
+    applyCurrentThemeMode();
+
+    if (typeof document === "undefined") {
+      return;
+    }
+
+    const observer = new MutationObserver(() => {
+      applyCurrentThemeMode();
+    });
+
+    observer.observe(document.documentElement, {
+      attributes: true,
+      attributeFilter: ["data-theme", "data-mode"],
+    });
+
+    return () => observer.disconnect();
+  }, [fallbackThemeKey, fallbackMode]);
 
   const {
     scene,
+    colorChoices,
     selectedLayerId,
     selectedLayer,
     prettyJson,
@@ -74,8 +130,22 @@ export function BackgroundEditor({
     updateSelectedLayer,
     resetScene,
     replaceScene,
+    syncScenePalette,
     resetSelectedLayer,
-  } = useBackgroundEditorState(initialEditorScene);
+  } = useBackgroundEditorState(initialEditorScene, {
+    themeKey,
+    mode,
+  });
+  const previousColorChoicesRef = useRef(colorChoices);
+
+  useEffect(() => {
+    if (!inline && !open) {
+      return;
+    }
+
+    syncScenePalette(previousColorChoicesRef.current);
+    previousColorChoicesRef.current = colorChoices;
+  }, [themeKey, mode, inline, open, syncScenePalette, colorChoices]);
 
   useEffect(() => {
     if (!inline && !open) {
@@ -104,7 +174,7 @@ export function BackgroundEditor({
     setError(null);
 
     try {
-      const isUpdate = mode === "update" && initialScene?.id;
+      const isUpdate = editorMode === "update" && initialScene?.id;
       const endpoint = isUpdate ? `${apiBasePath}/${initialScene.id}` : apiBasePath;
       const method = isUpdate ? "PATCH" : "POST";
       const response = await fetch(endpoint, {
@@ -128,9 +198,9 @@ export function BackgroundEditor({
       }
 
       const normalized = normalizeScenePayload(payload.scene);
-      onSceneSaved(normalized, mode);
+      onSceneSaved(normalized, editorMode);
       setMessage(
-        mode === "create"
+        editorMode === "create"
           ? `Saved scene "${normalized.name}".`
           : `Updated scene "${normalized.name}".`
       );
@@ -220,12 +290,13 @@ export function BackgroundEditor({
 
           <div className="grid h-fit gap-2 rounded-2xl border border-line bg-surface p-4">
             <h4 className="text-sm font-semibold text-text-main">Preview</h4>
-            <div className="overflow-hidden rounded-[1.5rem] border border-line bg-black/20">
+            <div className="overflow-hidden rounded-[1.5rem] border border-line bg-surface-alt">
               <div className="aspect-[1200/630] w-full" style={buildBackgroundSceneStyle(scene)} />
             </div>
           </div>
 
           <BackgroundEditorInspector
+            colorChoices={colorChoices}
             canvasBackgroundColor={scene.canvas.backgroundColor}
             onCanvasBackgroundColorChange={updateCanvasColor}
             selectedLayer={selectedLayer}
@@ -236,12 +307,12 @@ export function BackgroundEditor({
         </div>
 
         {message ? (
-          <p className="rounded-2xl border border-primary-line bg-primary-100 px-4 py-3 text-sm text-text-inverted-main">
+          <p className="rounded-2xl border border-primary-line bg-primary-100 px-4 py-3 text-sm text-text-main">
             {message}
           </p>
         ) : null}
         {error ? (
-          <p className="rounded-2xl border border-danger-line bg-danger-100 px-4 py-3 text-sm text-danger">
+          <p className="rounded-2xl border border-danger-line bg-danger-100 px-4 py-3 text-sm text-text-danger">
             {error}
           </p>
         ) : null}
@@ -254,7 +325,7 @@ export function BackgroundEditor({
         <div className="flex flex-wrap items-center justify-between gap-3">
           <div className="space-y-1">
             <h3 className="text-base font-semibold text-text-main">
-              {mode === "create" ? "Create background scene" : "Edit background scene"}
+              {editorMode === "create" ? "Create background scene" : "Edit background scene"}
             </h3>
             <p className="text-sm text-text-muted">
               Compose layers, preview live, export JSON, then save to the global catalog.
@@ -270,7 +341,7 @@ export function BackgroundEditor({
           >
             {isSaving
               ? "Saving..."
-              : mode === "create"
+              : editorMode === "create"
                 ? "Save scene"
                 : "Save changes"}
           </UIButton>
@@ -286,7 +357,7 @@ export function BackgroundEditor({
       onOpenChange={setOpen}
       size="xl"
       fullWidth
-      title={mode === "create" ? "Create background scene" : "Edit background scene"}
+      title={editorMode === "create" ? "Create background scene" : "Edit background scene"}
       description="Compose layers, preview live, export JSON, then save to the global catalog."
       trigger={trigger ?? <span />}
       footer={
@@ -302,7 +373,7 @@ export function BackgroundEditor({
           >
             {isSaving
               ? "Saving..."
-              : mode === "create"
+              : editorMode === "create"
                 ? "Save scene"
                 : "Save changes"}
           </UIButton>

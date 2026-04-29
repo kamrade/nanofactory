@@ -1,4 +1,5 @@
 import type { PageContent } from "@/db/schema";
+import { remapSceneToPalette } from "@/components/assets/background-scene-defaults";
 import type { ProjectAssetRecord } from "@/lib/assets";
 import { buildAssetMap } from "@/lib/assets/resolution";
 import type { BackgroundSceneRecord } from "@/lib/background-scenes/types";
@@ -80,7 +81,14 @@ export function ProjectRenderer({
   const resolvedThemeKey = isThemeKey(themeKey) ? themeKey : DEFAULT_THEME_KEY;
   const theme = getThemeClasses(resolvedThemeKey);
   const assetMap = buildAssetMap(assets);
-  const sceneMap = new Map(backgroundScenes.map((scene) => [scene.id, scene] as const));
+  const paletteAdjustedScenes = backgroundScenes.map((scene) => ({
+    ...scene,
+    sceneJson: remapSceneToPalette(scene.sceneJson, {
+      themeKey: resolvedThemeKey,
+      mode,
+    }),
+  }));
+  const sceneMap = new Map(paletteAdjustedScenes.map((scene) => [scene.id, scene] as const));
   const containerClass = "container mx-auto px-4";
 
   return (

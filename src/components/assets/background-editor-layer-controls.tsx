@@ -1,11 +1,14 @@
 "use client";
 
+import type { BackgroundDefaultsPalette } from "@/components/assets/background-scene-defaults";
 import { UIButton } from "@/components/ui/button";
-import { clamp, normalizeHex } from "@/components/assets/background-editor-shared";
+import { clamp } from "@/components/assets/background-editor-shared";
+import { UISelect } from "@/components/ui/select";
 import type { BackgroundSceneLayer } from "@/lib/background-scenes/types";
 
 type LayerTypeControlsProps = {
   layer: BackgroundSceneLayer;
+  colorChoices: BackgroundDefaultsPalette["colorChoices"];
   onUpdateSelectedLayer: (
     updater: (layer: BackgroundSceneLayer) => BackgroundSceneLayer
   ) => void;
@@ -13,55 +16,54 @@ type LayerTypeControlsProps = {
 
 export function LayerTypeControls({
   layer,
+  colorChoices,
   onUpdateSelectedLayer,
 }: LayerTypeControlsProps) {
+  function buildColorOptions(currentColor?: string) {
+    const hasCurrent = currentColor
+      ? colorChoices.some((option) => option.value === currentColor)
+      : true;
+    const values =
+      currentColor && !hasCurrent
+        ? [{ token: "Custom", value: currentColor }, ...colorChoices]
+        : colorChoices;
+
+    return values.map((option) => ({
+      value: option.value,
+      textValue: option.value,
+      label: (
+        <span className="inline-flex items-center gap-2">
+          <span
+            className="h-3.5 w-3.5 rounded-full border border-line"
+            style={{ backgroundColor: option.value }}
+          />
+          <span>{option.token} ({option.value})</span>
+        </span>
+      ),
+    }));
+  }
+
   if (layer.type === "stripes") {
     return (
       <>
         <label className="grid gap-1.5 text-sm">
           <span className="font-medium text-text-main">Stripe color</span>
-          <div className="flex items-center gap-2">
-            <input
-              type="color"
-              value={layer.config.stripeColor}
-              onChange={(event) =>
-                onUpdateSelectedLayer((candidate) => {
-                  if (candidate.type !== "stripes") {
-                    return candidate;
-                  }
-
-                  return {
-                    ...candidate,
-                    config: {
-                      ...candidate.config,
-                      stripeColor: normalizeHex(event.target.value, candidate.config.stripeColor),
-                    },
-                  };
-                })
-              }
-              className="h-9 w-11 rounded border border-line bg-transparent p-1"
-            />
-            <input
-              type="text"
-              value={layer.config.stripeColor}
-              onChange={(event) =>
-                onUpdateSelectedLayer((candidate) => {
-                  if (candidate.type !== "stripes") {
-                    return candidate;
-                  }
-
-                  return {
-                    ...candidate,
-                    config: {
-                      ...candidate.config,
-                      stripeColor: normalizeHex(event.target.value, candidate.config.stripeColor),
-                    },
-                  };
-                })
-              }
-              className="w-full rounded-xl border border-line bg-surface px-3 py-2 text-sm text-text-main outline-none transition focus:ring-2 focus:ring-focus/50"
-            />
-          </div>
+          <UISelect
+            ariaLabel="Stripe color"
+            size="sm"
+            value={layer.config.stripeColor}
+            options={buildColorOptions(layer.config.stripeColor)}
+            onValueChange={(nextColor) =>
+              onUpdateSelectedLayer((candidate) =>
+                candidate.type !== "stripes"
+                  ? candidate
+                  : {
+                      ...candidate,
+                      config: { ...candidate.config, stripeColor: nextColor },
+                    }
+              )
+            }
+          />
         </label>
 
         <label className="grid gap-1.5 text-sm">
@@ -89,7 +91,7 @@ export function LayerTypeControls({
                   };
                 })
               }
-              className="w-full accent-primary-300"
+              className="w-full accent-primary-300 outline-none focus-visible:ring-2 focus-visible:ring-focus/40 focus-visible:rounded-lg"
             />
             <input
               type="number"
@@ -141,7 +143,7 @@ export function LayerTypeControls({
                   };
                 })
               }
-              className="w-full accent-primary-300"
+              className="w-full accent-primary-300 outline-none focus-visible:ring-2 focus-visible:ring-focus/40 focus-visible:rounded-lg"
             />
             <input
               type="number"
@@ -191,7 +193,7 @@ export function LayerTypeControls({
                   };
                 })
               }
-              className="w-full accent-primary-300"
+              className="w-full accent-primary-300 outline-none focus-visible:ring-2 focus-visible:ring-focus/40 focus-visible:rounded-lg"
             />
             <input
               type="number"
@@ -254,48 +256,22 @@ export function LayerTypeControls({
       <>
         <label className="grid gap-1.5 text-sm">
           <span className="font-medium text-text-main">Dot color</span>
-          <div className="flex items-center gap-2">
-            <input
-              type="color"
-              value={layer.config.dotColor}
-              onChange={(event) =>
-                onUpdateSelectedLayer((candidate) => {
-                  if (candidate.type !== "dots") {
-                    return candidate;
-                  }
-
-                  return {
-                    ...candidate,
-                    config: {
-                      ...candidate.config,
-                      dotColor: normalizeHex(event.target.value, candidate.config.dotColor),
-                    },
-                  };
-                })
-              }
-              className="h-9 w-11 rounded border border-line bg-transparent p-1"
-            />
-            <input
-              type="text"
-              value={layer.config.dotColor}
-              onChange={(event) =>
-                onUpdateSelectedLayer((candidate) => {
-                  if (candidate.type !== "dots") {
-                    return candidate;
-                  }
-
-                  return {
-                    ...candidate,
-                    config: {
-                      ...candidate.config,
-                      dotColor: normalizeHex(event.target.value, candidate.config.dotColor),
-                    },
-                  };
-                })
-              }
-              className="w-full rounded-xl border border-line bg-surface px-3 py-2 text-sm text-text-main outline-none transition focus:ring-2 focus:ring-focus/50"
-            />
-          </div>
+          <UISelect
+            ariaLabel="Dot color"
+            size="sm"
+            value={layer.config.dotColor}
+            options={buildColorOptions(layer.config.dotColor)}
+            onValueChange={(nextColor) =>
+              onUpdateSelectedLayer((candidate) =>
+                candidate.type !== "dots"
+                  ? candidate
+                  : {
+                      ...candidate,
+                      config: { ...candidate.config, dotColor: nextColor },
+                    }
+              )
+            }
+          />
         </label>
         <label className="grid gap-1.5 text-sm">
           <span className="font-medium text-text-main">Dot size: {layer.config.dotSize}</span>
@@ -316,7 +292,7 @@ export function LayerTypeControls({
                 };
               })
             }
-            className="w-full accent-primary-300"
+            className="w-full accent-primary-300 outline-none focus-visible:ring-2 focus-visible:ring-focus/40 focus-visible:rounded-lg"
           />
         </label>
         <label className="grid gap-1.5 text-sm">
@@ -338,7 +314,7 @@ export function LayerTypeControls({
                 };
               })
             }
-            className="w-full accent-primary-300"
+            className="w-full accent-primary-300 outline-none focus-visible:ring-2 focus-visible:ring-focus/40 focus-visible:rounded-lg"
           />
         </label>
       </>
@@ -350,48 +326,22 @@ export function LayerTypeControls({
       <>
         <label className="grid gap-1.5 text-sm">
           <span className="font-medium text-text-main">Line color</span>
-          <div className="flex items-center gap-2">
-            <input
-              type="color"
-              value={layer.config.lineColor}
-              onChange={(event) =>
-                onUpdateSelectedLayer((candidate) => {
-                  if (candidate.type !== "grid") {
-                    return candidate;
-                  }
-
-                  return {
-                    ...candidate,
-                    config: {
-                      ...candidate.config,
-                      lineColor: normalizeHex(event.target.value, candidate.config.lineColor),
-                    },
-                  };
-                })
-              }
-              className="h-9 w-11 rounded border border-line bg-transparent p-1"
-            />
-            <input
-              type="text"
-              value={layer.config.lineColor}
-              onChange={(event) =>
-                onUpdateSelectedLayer((candidate) => {
-                  if (candidate.type !== "grid") {
-                    return candidate;
-                  }
-
-                  return {
-                    ...candidate,
-                    config: {
-                      ...candidate.config,
-                      lineColor: normalizeHex(event.target.value, candidate.config.lineColor),
-                    },
-                  };
-                })
-              }
-              className="w-full rounded-xl border border-line bg-surface px-3 py-2 text-sm text-text-main outline-none transition focus:ring-2 focus:ring-focus/50"
-            />
-          </div>
+          <UISelect
+            ariaLabel="Line color"
+            size="sm"
+            value={layer.config.lineColor}
+            options={buildColorOptions(layer.config.lineColor)}
+            onValueChange={(nextColor) =>
+              onUpdateSelectedLayer((candidate) =>
+                candidate.type !== "grid"
+                  ? candidate
+                  : {
+                      ...candidate,
+                      config: { ...candidate.config, lineColor: nextColor },
+                    }
+              )
+            }
+          />
         </label>
         <label className="grid gap-1.5 text-sm">
           <span className="font-medium text-text-main">Line width: {layer.config.lineWidth}</span>
@@ -415,7 +365,7 @@ export function LayerTypeControls({
                 };
               })
             }
-            className="w-full accent-primary-300"
+            className="w-full accent-primary-300 outline-none focus-visible:ring-2 focus-visible:ring-focus/40 focus-visible:rounded-lg"
           />
         </label>
         <label className="grid gap-1.5 text-sm">
@@ -440,7 +390,7 @@ export function LayerTypeControls({
                 };
               })
             }
-            className="w-full accent-primary-300"
+            className="w-full accent-primary-300 outline-none focus-visible:ring-2 focus-visible:ring-focus/40 focus-visible:rounded-lg"
           />
         </label>
       </>
@@ -452,48 +402,40 @@ export function LayerTypeControls({
       <>
         <label className="grid gap-1.5 text-sm">
           <span className="font-medium text-text-main">Color A</span>
-          <input
-            type="color"
+          <UISelect
+            ariaLabel="Gradient color A"
+            size="sm"
             value={layer.config.colorA}
-            onChange={(event) =>
-              onUpdateSelectedLayer((candidate) => {
-                if (candidate.type !== "gradient") {
-                  return candidate;
-                }
-
-                return {
-                  ...candidate,
-                  config: {
-                    ...candidate.config,
-                    colorA: normalizeHex(event.target.value, candidate.config.colorA),
-                  },
-                };
-              })
+            options={buildColorOptions(layer.config.colorA)}
+            onValueChange={(nextColor) =>
+              onUpdateSelectedLayer((candidate) =>
+                candidate.type !== "gradient"
+                  ? candidate
+                  : {
+                      ...candidate,
+                      config: { ...candidate.config, colorA: nextColor },
+                    }
+              )
             }
-            className="h-9 w-11 rounded border border-line bg-transparent p-1"
           />
         </label>
         <label className="grid gap-1.5 text-sm">
           <span className="font-medium text-text-main">Color B</span>
-          <input
-            type="color"
+          <UISelect
+            ariaLabel="Gradient color B"
+            size="sm"
             value={layer.config.colorB}
-            onChange={(event) =>
-              onUpdateSelectedLayer((candidate) => {
-                if (candidate.type !== "gradient") {
-                  return candidate;
-                }
-
-                return {
-                  ...candidate,
-                  config: {
-                    ...candidate.config,
-                    colorB: normalizeHex(event.target.value, candidate.config.colorB),
-                  },
-                };
-              })
+            options={buildColorOptions(layer.config.colorB)}
+            onValueChange={(nextColor) =>
+              onUpdateSelectedLayer((candidate) =>
+                candidate.type !== "gradient"
+                  ? candidate
+                  : {
+                      ...candidate,
+                      config: { ...candidate.config, colorB: nextColor },
+                    }
+              )
             }
-            className="h-9 w-11 rounded border border-line bg-transparent p-1"
           />
         </label>
         <label className="grid gap-1.5 text-sm">
@@ -519,7 +461,7 @@ export function LayerTypeControls({
                   };
                 })
               }
-              className="w-full accent-primary-300"
+              className="w-full accent-primary-300 outline-none focus-visible:ring-2 focus-visible:ring-focus/40 focus-visible:rounded-lg"
             />
             <input
               type="number"
@@ -582,25 +524,21 @@ export function LayerTypeControls({
       <>
         <label className="grid gap-1.5 text-sm">
           <span className="font-medium text-text-main">Glow color</span>
-          <input
-            type="color"
+          <UISelect
+            ariaLabel="Glow color"
+            size="sm"
             value={layer.config.glowColor}
-            onChange={(event) =>
-              onUpdateSelectedLayer((candidate) => {
-                if (candidate.type !== "glow") {
-                  return candidate;
-                }
-
-                return {
-                  ...candidate,
-                  config: {
-                    ...candidate.config,
-                    glowColor: normalizeHex(event.target.value, candidate.config.glowColor),
-                  },
-                };
-              })
+            options={buildColorOptions(layer.config.glowColor)}
+            onValueChange={(nextColor) =>
+              onUpdateSelectedLayer((candidate) =>
+                candidate.type !== "glow"
+                  ? candidate
+                  : {
+                      ...candidate,
+                      config: { ...candidate.config, glowColor: nextColor },
+                    }
+              )
             }
-            className="h-9 w-11 rounded border border-line bg-transparent p-1"
           />
         </label>
         <label className="grid gap-1.5 text-sm">
@@ -622,7 +560,7 @@ export function LayerTypeControls({
                 };
               })
             }
-            className="w-full accent-primary-300"
+            className="w-full accent-primary-300 outline-none focus-visible:ring-2 focus-visible:ring-focus/40 focus-visible:rounded-lg"
           />
         </label>
         <label className="grid gap-1.5 text-sm">
@@ -644,7 +582,7 @@ export function LayerTypeControls({
                 };
               })
             }
-            className="w-full accent-primary-300"
+            className="w-full accent-primary-300 outline-none focus-visible:ring-2 focus-visible:ring-focus/40 focus-visible:rounded-lg"
           />
         </label>
         <label className="grid gap-1.5 text-sm">
@@ -669,7 +607,7 @@ export function LayerTypeControls({
                 };
               })
             }
-            className="w-full accent-primary-300"
+            className="w-full accent-primary-300 outline-none focus-visible:ring-2 focus-visible:ring-focus/40 focus-visible:rounded-lg"
           />
         </label>
       </>
@@ -700,7 +638,7 @@ export function LayerTypeControls({
               };
             })
           }
-          className="w-full accent-primary-300"
+          className="w-full accent-primary-300 outline-none focus-visible:ring-2 focus-visible:ring-focus/40 focus-visible:rounded-lg"
         />
       </label>
       <label className="grid gap-1.5 text-sm">
@@ -722,7 +660,7 @@ export function LayerTypeControls({
               };
             })
           }
-          className="w-full accent-primary-300"
+          className="w-full accent-primary-300 outline-none focus-visible:ring-2 focus-visible:ring-focus/40 focus-visible:rounded-lg"
         />
       </label>
     </>

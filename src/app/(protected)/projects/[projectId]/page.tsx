@@ -151,6 +151,7 @@ export default async function ProjectPage({ params, searchParams }: ProjectPageP
             status: project.status,
             contentJson: normalizedContent,
           }}
+          initialMode={initialMode}
           initialAssets={projectAssets}
           initialBackgroundScenes={backgroundScenes}
         />

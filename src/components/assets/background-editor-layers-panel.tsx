@@ -1,6 +1,7 @@
 "use client";
 
 import { UIButton } from "@/components/ui/button";
+import { UICheckbox } from "@/components/ui/checkbox";
 import type { EffectType } from "@/components/assets/background-editor-shared";
 import { effectOptions } from "@/components/assets/background-editor-shared";
 import type { BackgroundSceneLayer } from "@/lib/background-scenes/types";
@@ -52,26 +53,24 @@ export function BackgroundEditorLayersPanel({
               key={layer.id}
               className={
                 selected
-                  ? "grid gap-2 rounded-xl border border-focus bg-surface-alt p-3"
-                  : "grid gap-2 rounded-xl border border-line bg-surface-alt p-3"
+                  ? "grid gap-2 rounded-xl border border-focus bg-surface p-3 ring-2 ring-focus/20"
+                  : "grid gap-2 rounded-xl border border-line bg-surface-alt p-3 transition hover:border-text-placeholder hover:bg-surface"
               }
             >
               <button
                 type="button"
-                className="text-left text-sm font-medium text-text-main"
+                className="rounded-lg text-left text-sm font-medium text-text-main outline-none transition focus-visible:ring-2 focus-visible:ring-focus/50"
                 onClick={() => onLayerSelect(layer.id)}
               >
                 {layer.name}
               </button>
               <div className="flex flex-wrap items-center justify-between gap-2">
-                <label className="inline-flex items-center gap-2 text-xs text-text-muted">
-                  <input
-                    type="checkbox"
-                    checked={layer.visible}
-                    onChange={() => onToggleVisibility(layer.id)}
-                  />
-                  Visible
-                </label>
+                <UICheckbox
+                  checked={layer.visible}
+                  onChange={() => onToggleVisibility(layer.id)}
+                  label="Visible"
+                  className="text-xs text-text-muted"
+                />
                 <div className="flex items-center gap-1">
                   <UIButton
                     type="button"

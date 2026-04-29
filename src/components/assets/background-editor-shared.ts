@@ -1,6 +1,7 @@
 "use client";
 
 import {
+  type BackgroundDefaultsPalette,
   createDefaultDotsLayer,
   createDefaultGlowLayer,
   createDefaultGradientLayer,
@@ -40,28 +41,28 @@ export function downloadJson(filename: string, json: string) {
   URL.revokeObjectURL(url);
 }
 
-export function createLayerByType(type: EffectType) {
+export function createLayerByType(type: EffectType, palette: BackgroundDefaultsPalette) {
   if (type === "dots") {
-    return createDefaultDotsLayer();
+    return createDefaultDotsLayer(palette);
   }
 
   if (type === "grid") {
-    return createDefaultGridLayer();
+    return createDefaultGridLayer(palette);
   }
 
   if (type === "gradient") {
-    return createDefaultGradientLayer();
+    return createDefaultGradientLayer(palette);
   }
 
   if (type === "glow") {
-    return createDefaultGlowLayer();
+    return createDefaultGlowLayer(palette);
   }
 
   if (type === "noise") {
     return createDefaultNoiseLayer();
   }
 
-  return createDefaultStripesLayer();
+  return createDefaultStripesLayer(palette);
 }
 
 export function createLayerId() {

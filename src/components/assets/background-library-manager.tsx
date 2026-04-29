@@ -1,23 +1,65 @@
 "use client";
 
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 
 import { BackgroundEditor } from "@/components/assets/background-editor";
+import { remapSceneToPalette } from "@/components/assets/background-scene-defaults";
 import type { BackgroundSceneListItem } from "@/components/assets/types";
 import { UIButton } from "@/components/ui/button";
 import { buildBackgroundSceneStyle } from "@/lib/background-scenes/css";
 import { formatUiDateTime } from "@/lib/ui-date-time";
+import { isThemeKey, type ThemeKey } from "@/lib/themes";
+import { resolveModePreference, resolveThemePreference, type UiMode } from "@/lib/ui-preferences";
 
 type BackgroundLibraryManagerProps = {
   initialScenes: BackgroundSceneListItem[];
+  themeKey: ThemeKey;
+  mode: UiMode;
 };
 
-export function BackgroundLibraryManager({ initialScenes }: BackgroundLibraryManagerProps) {
+export function BackgroundLibraryManager({
+  initialScenes,
+  themeKey,
+  mode,
+}: BackgroundLibraryManagerProps) {
   const [scenes, setScenes] = useState(initialScenes);
   const [activeSceneId, setActiveSceneId] = useState<string | null>(null);
   const [message, setMessage] = useState<string | null>(null);
   const [error, setError] = useState<string | null>(null);
   const [deletingSceneId, setDeletingSceneId] = useState<string | null>(null);
+  const fallbackTheme = resolveThemePreference(themeKey);
+  const fallbackMode = resolveModePreference(mode);
+  const [activeThemeMode, setActiveThemeMode] = useState<{
+    themeKey: ThemeKey;
+    mode: UiMode;
+  }>({
+    themeKey: fallbackTheme,
+    mode: fallbackMode,
+  });
+
+  useEffect(() => {
+    const readThemeMode = () => {
+      const root = document.documentElement;
+      const rawTheme = root.getAttribute("data-theme");
+      const rawMode = root.getAttribute("data-mode");
+      setActiveThemeMode({
+        themeKey: isThemeKey(rawTheme ?? "") ? rawTheme : fallbackTheme,
+        mode: rawMode === "dark" || rawMode === "light" ? rawMode : fallbackMode,
+      });
+    };
+
+    readThemeMode();
+
+    const observer = new MutationObserver(() => {
+      readThemeMode();
+    });
+    observer.observe(document.documentElement, {
+      attributes: true,
+      attributeFilter: ["data-theme", "data-mode"],
+    });
+
+    return () => observer.disconnect();
+  }, [fallbackTheme, fallbackMode]);
 
   const sortedScenes = useMemo(
     () =>
@@ -27,9 +69,17 @@ export function BackgroundLibraryManager({ initialScenes }: BackgroundLibraryMan
       ),
     [scenes]
   );
+  const paletteAdjustedScenes = useMemo(
+    () =>
+      sortedScenes.map((scene) => ({
+        ...scene,
+        sceneJson: remapSceneToPalette(scene.sceneJson, activeThemeMode),
+      })),
+    [sortedScenes, activeThemeMode]
+  );
   const activeScene = useMemo(
-    () => sortedScenes.find((scene) => scene.id === activeSceneId) ?? null,
-    [activeSceneId, sortedScenes]
+    () => paletteAdjustedScenes.find((scene) => scene.id === activeSceneId) ?? null,
+    [activeSceneId, paletteAdjustedScenes]
   );
 
   async function handleDeleteScene(scene: BackgroundSceneListItem) {
@@ -67,12 +117,12 @@ export function BackgroundLibraryManager({ initialScenes }: BackgroundLibraryMan
     <section className="grid gap-5 py-6">
 
       {message ? (
-        <p className="rounded-2xl border border-primary-line bg-primary-100 px-4 py-3 text-sm text-text-inverted-main">
+        <p className="rounded-2xl border border-primary-line bg-primary-100 px-4 py-3 text-sm text-text-main">
           {message}
         </p>
       ) : null}
       {error ? (
-        <p className="rounded-2xl border border-danger-line bg-danger-100 px-4 py-3 text-sm text-danger">
+        <p className="rounded-2xl border border-danger-line bg-danger-100 px-4 py-3 text-sm text-text-danger">
           {error}
         </p>
       ) : null}
@@ -82,6 +132,8 @@ export function BackgroundLibraryManager({ initialScenes }: BackgroundLibraryMan
           inline
           apiBasePath="/api/background-library-scenes"
           initialScene={activeScene}
+          initialThemeKey={themeKey}
+          initialMode={mode}
           onSceneSaved={(scene, mode) => {
             setScenes((current) => {
               if (mode === "create") {
@@ -110,8 +162,11 @@ export function BackgroundLibraryManager({ initialScenes }: BackgroundLibraryMan
                 No scenes in library yet.
               </p>
             ) : (
-              sortedScenes.map((scene) => (
-                <article key={scene.id} className="col-span-4 rounded-2xl border border-line bg-surface p-4">
+              paletteAdjustedScenes.map((scene) => (
+                <article
+                  key={scene.id}
+                  className="col-span-4 rounded-2xl border border-line bg-surface p-4 transition hover:border-text-placeholder"
+                >
                   <div className="grid gap-4">
                     <div className="overflow-hidden rounded-2xl border border-line bg-surface-alt">
                       <div
