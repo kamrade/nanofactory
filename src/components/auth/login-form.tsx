@@ -14,6 +14,23 @@ export function LoginForm() {
   const [error, setError] = useState<string | null>(null);
   const [isSubmitting, setIsSubmitting] = useState(false);
 
+  function toLocalPath(urlOrPath: string, fallback: string) {
+    if (!urlOrPath) {
+      return fallback;
+    }
+
+    if (urlOrPath.startsWith("/")) {
+      return urlOrPath;
+    }
+
+    try {
+      const parsed = new URL(urlOrPath);
+      return `${parsed.pathname}${parsed.search}${parsed.hash}` || fallback;
+    } catch {
+      return fallback;
+    }
+  }
+
   async function handleSubmit(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
     setIsSubmitting(true);
@@ -34,7 +51,9 @@ export function LoginForm() {
       return;
     }
 
-    router.push(result.url ?? callbackUrl);
+    const localCallbackPath = toLocalPath(callbackUrl, "/dashboard");
+    const nextPath = toLocalPath(result.url ?? localCallbackPath, localCallbackPath);
+    router.push(nextPath);
     router.refresh();
   }
 
