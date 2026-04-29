@@ -82,6 +82,8 @@ export function AppStickyHeader({
   initialMode,
 }: AppStickyHeaderProps) {
   const pathname = usePathname();
+  const isProjectPreview = /^\/projects\/[^/]+\/preview$/.test(pathname);
+  const isProjectSettingsPage = /^\/projects\/[^/]+$/.test(pathname);
   const isDashboard = pathname === "/dashboard" || pathname.startsWith("/projects/");
   const isShowcase = pathname.startsWith("/showcase");
   const isBgLab = pathname.startsWith("/background-library");
@@ -114,6 +116,10 @@ export function AppStickyHeader({
   function handleModeChange(value: UiMode) {
     setMode(value);
     applyUiPreference(themeKey, value);
+  }
+
+  if (isProjectPreview || isProjectSettingsPage) {
+    return null;
   }
 
   return (

@@ -9,9 +9,10 @@ import type { BackgroundSceneListItem } from "@/components/assets/types";
 import { useBackgroundEditorState } from "@/components/assets/use-background-editor-state";
 import { UIButton } from "@/components/ui/button";
 import { UIModal } from "@/components/ui/modal";
+import { useThemeModeFromDom } from "@/hooks/use-theme-mode-from-dom";
 import { buildBackgroundSceneStyle } from "@/lib/background-scenes/css";
 import type { BackgroundScene } from "@/lib/background-scenes/types";
-import { isThemeKey, type ThemeKey } from "@/lib/themes";
+import type { ThemeKey } from "@/lib/themes";
 import { resolveThemePreference, resolveModePreference, type UiMode } from "@/lib/ui-preferences";
 
 type BackgroundEditorProps = {
@@ -46,27 +47,6 @@ function normalizeScenePayload(scene: BackgroundSceneListItem): BackgroundSceneL
   };
 }
 
-function readThemeModeFromDom(
-  fallbackThemeKey: ThemeKey,
-  fallbackMode: UiMode
-): { themeKey: ThemeKey; mode: UiMode } {
-  if (typeof document === "undefined") {
-    return {
-      themeKey: fallbackThemeKey,
-      mode: fallbackMode,
-    };
-  }
-
-  const root = document.documentElement;
-  const rawTheme = root.getAttribute("data-theme");
-  const rawMode = root.getAttribute("data-mode");
-
-  return {
-    themeKey: isThemeKey(rawTheme ?? "") ? rawTheme : fallbackThemeKey,
-    mode: rawMode === "dark" || rawMode === "light" ? rawMode : fallbackMode,
-  };
-}
-
 export function BackgroundEditor({
   apiBasePath,
   initialScene = null,
@@ -84,34 +64,13 @@ export function BackgroundEditor({
 
   const fallbackThemeKey = resolveThemePreference(initialThemeKey);
   const fallbackMode = resolveModePreference(initialMode);
-  const [{ themeKey, mode }, setThemeMode] = useState(() =>
-    readThemeModeFromDom(fallbackThemeKey, fallbackMode)
-  );
+  const { themeKey, mode } = useThemeModeFromDom({
+    rootSelector: "html[data-theme][data-mode]",
+    fallbackThemeKey,
+    fallbackMode,
+  });
   const editorMode = initialScene ? "update" : "create";
   const initialEditorScene = useMemo(() => toEditorScene(initialScene), [initialScene]);
-
-  useEffect(() => {
-    const applyCurrentThemeMode = () => {
-      setThemeMode(readThemeModeFromDom(fallbackThemeKey, fallbackMode));
-    };
-
-    applyCurrentThemeMode();
-
-    if (typeof document === "undefined") {
-      return;
-    }
-
-    const observer = new MutationObserver(() => {
-      applyCurrentThemeMode();
-    });
-
-    observer.observe(document.documentElement, {
-      attributes: true,
-      attributeFilter: ["data-theme", "data-mode"],
-    });
-
-    return () => observer.disconnect();
-  }, [fallbackThemeKey, fallbackMode]);
 
   const {
     scene,

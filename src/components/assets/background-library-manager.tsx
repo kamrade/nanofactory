@@ -1,14 +1,15 @@
 "use client";
 
-import { useEffect, useMemo, useState } from "react";
+import { useMemo, useState } from "react";
 
 import { BackgroundEditor } from "@/components/assets/background-editor";
 import { remapSceneToPalette } from "@/components/assets/background-scene-defaults";
 import type { BackgroundSceneListItem } from "@/components/assets/types";
 import { UIButton } from "@/components/ui/button";
+import { useThemeModeFromDom } from "@/hooks/use-theme-mode-from-dom";
 import { buildBackgroundSceneStyle } from "@/lib/background-scenes/css";
 import { formatUiDateTime } from "@/lib/ui-date-time";
-import { isThemeKey, type ThemeKey } from "@/lib/themes";
+import type { ThemeKey } from "@/lib/themes";
 import { resolveModePreference, resolveThemePreference, type UiMode } from "@/lib/ui-preferences";
 
 type BackgroundLibraryManagerProps = {
@@ -29,37 +30,11 @@ export function BackgroundLibraryManager({
   const [deletingSceneId, setDeletingSceneId] = useState<string | null>(null);
   const fallbackTheme = resolveThemePreference(themeKey);
   const fallbackMode = resolveModePreference(mode);
-  const [activeThemeMode, setActiveThemeMode] = useState<{
-    themeKey: ThemeKey;
-    mode: UiMode;
-  }>({
-    themeKey: fallbackTheme,
-    mode: fallbackMode,
+  const activeThemeMode = useThemeModeFromDom({
+    rootSelector: "html[data-theme][data-mode]",
+    fallbackThemeKey: fallbackTheme,
+    fallbackMode,
   });
-
-  useEffect(() => {
-    const readThemeMode = () => {
-      const root = document.documentElement;
-      const rawTheme = root.getAttribute("data-theme");
-      const rawMode = root.getAttribute("data-mode");
-      setActiveThemeMode({
-        themeKey: isThemeKey(rawTheme ?? "") ? rawTheme : fallbackTheme,
-        mode: rawMode === "dark" || rawMode === "light" ? rawMode : fallbackMode,
-      });
-    };
-
-    readThemeMode();
-
-    const observer = new MutationObserver(() => {
-      readThemeMode();
-    });
-    observer.observe(document.documentElement, {
-      attributes: true,
-      attributeFilter: ["data-theme", "data-mode"],
-    });
-
-    return () => observer.disconnect();
-  }, [fallbackTheme, fallbackMode]);
 
   const sortedScenes = useMemo(
     () =>

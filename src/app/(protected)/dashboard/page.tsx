@@ -6,6 +6,7 @@ import { getProjectsByUserId } from "@/lib/projects";
 
 import { createProjectAction } from "./actions";
 import { UIButton } from "@/components/ui/button";
+import { UIModalForm } from "@/components/ui/modal";
 
 export default async function DashboardPage() {
   const currentUser = await requireCurrentUser();
@@ -30,58 +31,6 @@ export default async function DashboardPage() {
         </div>
 
         <section className="rounded-3xl border border-line bg-surface p-6 shadow-sm">
-          <div className="flex flex-wrap items-center gap-3">
-            <Link
-              href="/showcase/uikit"
-              className="inline-flex items-center justify-center rounded-2xl border border-line bg-surface-alt px-4 py-2 text-sm font-medium text-text-main transition hover:border-text-placeholder hover:bg-neutral-100"
-            >
-              Showcase
-            </Link>
-            {currentUser.role === "admin" ? (
-              <Link
-                href="/background-library"
-                className="inline-flex items-center justify-center rounded-2xl border border-line bg-surface-alt px-4 py-2 text-sm font-medium text-text-main transition hover:border-text-placeholder hover:bg-neutral-100"
-              >
-                BG Lab
-              </Link>
-            ) : null}
-          </div>
-        </section>
-
-        <div className="grid gap-6 lg:grid-cols-[0.95fr_1.05fr]">
-          <section className="rounded-3xl border border-line bg-surface p-6 shadow-sm">
-            <div className="space-y-2">
-              <h2 className="text-lg font-semibold text-text-main">Create project</h2>
-              <p className="text-sm leading-6 text-text-muted">
-                Start a new draft project in your workspace.
-              </p>
-            </div>
-
-            <form action={createProjectAction} className="mt-5 grid gap-4">
-              <div className="grid gap-1.5">
-                <label htmlFor="name" className="text-sm font-medium text-text-main">
-                  Project name
-                </label>
-                <input
-                  id="name"
-                  name="name"
-                  type="text"
-                  required
-                  placeholder="My new landing page"
-                  className="rounded-2xl border border-line bg-surface-alt px-4 py-3 text-sm text-text-main outline-none transition focus:border-text-placeholder"
-                />
-              </div>
-
-              <UIButton
-                type="submit"
-                className="inline-flex items-center justify-center rounded-2xl px-4 py-3 text-sm font-medium"
-              >
-                Create project
-              </UIButton>
-            </form>
-          </section>
-
-          <section className="rounded-3xl border border-line bg-surface p-6 shadow-sm">
             <div className="flex items-center justify-between gap-4">
               <div>
                 <h2 className="text-lg font-semibold text-text-main">Your projects</h2>
@@ -89,15 +38,42 @@ export default async function DashboardPage() {
                   Only projects owned by your account are shown here.
                 </p>
               </div>
-              <p className="text-sm font-medium text-text-placeholder">
-                {userProjects.length} total
-              </p>
+              <div className="flex items-center gap-3">
+                <p className="text-sm font-medium text-text-placeholder">
+                  {userProjects.length} total
+                </p>
+                <UIModalForm
+                  trigger={
+                    <UIButton type="button" theme="primary" variant="contained" size="sm">
+                      Create project
+                    </UIButton>
+                  }
+                  title="Create project"
+                  description="Start a new draft project in your workspace."
+                  action={createProjectAction}
+                  submitLabel="Create project"
+                >
+                  <div className="grid gap-1.5">
+                    <label htmlFor="name" className="text-sm font-medium text-text-main">
+                      Project name
+                    </label>
+                    <input
+                      id="name"
+                      name="name"
+                      type="text"
+                      required
+                      placeholder="My new landing page"
+                      className="rounded-2xl border border-line bg-surface-alt px-4 py-3 text-sm text-text-main outline-none transition focus:border-text-placeholder"
+                    />
+                  </div>
+                </UIModalForm>
+              </div>
             </div>
 
             <div className="mt-5 grid gap-4">
               {userProjects.length === 0 ? (
                 <p className="rounded-2xl border border-dashed border-line px-4 py-8 text-sm text-text-placeholder">
-                  No projects yet. Create your first one from the form on the left.
+                  No projects yet. Create your first one from the button above.
                 </p>
               ) : (
                 userProjects.map((project) => (
@@ -133,8 +109,7 @@ export default async function DashboardPage() {
                 ))
               )}
             </div>
-          </section>
-        </div>
+        </section>
       </div>
     </main>
   );

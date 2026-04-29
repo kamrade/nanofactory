@@ -300,7 +300,7 @@ describe("ProjectRenderer", () => {
     );
 
     expect(html).toContain("repeating-linear-gradient(45deg");
-    expect(html).toContain("rgba(255, 255, 255, 0.35)");
-    expect(html).toContain("background-color:#111111");
+    expect(html).toContain("rgba(107, 74, 34, 0.35)");
+    expect(html).toContain("background-color:#f6ead9");
   });
 });

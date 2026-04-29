@@ -116,6 +116,8 @@ export async function ProjectPreviewPageWithDependencies(
         content={dependencies.normalizePageContent(content)}
         assets={assets}
         backgroundScenes={backgroundScenes}
+        showPublishedBadge={false}
+        showProjectMeta
       />
     </div>
   );
