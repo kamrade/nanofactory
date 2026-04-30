@@ -334,3 +334,39 @@ export async function uploadAssetForProject(input: {
     throw error;
   }
 }
+
+export async function deleteAssetForProject(input: {
+  projectId: string;
+  userId: string;
+  assetId: string;
+}) {
+  await ensureProjectOwner(input.projectId, input.userId);
+
+  if (!isUuid(input.assetId)) {
+    throw new AssetUploadError("Asset not found.", 404);
+  }
+
+  const [asset] = await db
+    .select({
+      id: assets.id,
+      storageKey: assets.storageKey,
+      projectId: assets.projectId,
+    })
+    .from(assets)
+    .where(and(eq(assets.id, input.assetId), eq(assets.projectId, input.projectId)))
+    .limit(1);
+
+  if (!asset) {
+    throw new AssetUploadError("Asset not found.", 404);
+  }
+
+  await db.delete(assets).where(eq(assets.id, asset.id));
+
+  try {
+    await deleteObject(asset.storageKey);
+  } catch (error) {
+    console.error("Failed to delete asset object from storage", error);
+  }
+
+  return asset;
+}

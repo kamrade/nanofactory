@@ -50,6 +50,37 @@ function getFocusableElements(container: HTMLElement | null) {
   ).filter((element) => !element.hasAttribute("disabled") && element.tabIndex !== -1);
 }
 
+const DIALOG_OPEN_COUNT_ATTR = "data-ui-dialog-open-count";
+const DIALOG_PREV_OVERFLOW_ATTR = "data-ui-dialog-prev-overflow";
+
+function lockBodyScroll() {
+  const body = document.body;
+  const currentCount = Number(body.getAttribute(DIALOG_OPEN_COUNT_ATTR) ?? "0");
+
+  if (currentCount === 0) {
+    body.setAttribute(DIALOG_PREV_OVERFLOW_ATTR, body.style.overflow);
+    body.style.overflow = "hidden";
+  }
+
+  body.setAttribute(DIALOG_OPEN_COUNT_ATTR, String(currentCount + 1));
+}
+
+function unlockBodyScroll() {
+  const body = document.body;
+  const currentCount = Number(body.getAttribute(DIALOG_OPEN_COUNT_ATTR) ?? "0");
+  const nextCount = Math.max(0, currentCount - 1);
+
+  if (nextCount === 0) {
+    const previousOverflow = body.getAttribute(DIALOG_PREV_OVERFLOW_ATTR) ?? "";
+    body.style.overflow = previousOverflow;
+    body.removeAttribute(DIALOG_OPEN_COUNT_ATTR);
+    body.removeAttribute(DIALOG_PREV_OVERFLOW_ATTR);
+    return;
+  }
+
+  body.setAttribute(DIALOG_OPEN_COUNT_ATTR, String(nextCount));
+}
+
 type UIDialogProps = {
   open?: boolean;
   defaultOpen?: boolean;
@@ -170,8 +201,7 @@ export function UIDialogContent({
     }
 
     const previousActive = document.activeElement as HTMLElement | null;
-    const bodyOverflow = document.body.style.overflow;
-    document.body.style.overflow = "hidden";
+    lockBodyScroll();
 
     const frame = window.requestAnimationFrame(() => {
       const focusables = getFocusableElements(contentRef.current);
@@ -184,7 +214,7 @@ export function UIDialogContent({
 
     return () => {
       window.cancelAnimationFrame(frame);
-      document.body.style.overflow = bodyOverflow;
+      unlockBodyScroll();
       if (triggerElement) {
         triggerElement.focus();
       } else {
@@ -300,7 +330,7 @@ export function UIDialogHeader({
   className,
   ...props
 }: HTMLAttributes<HTMLDivElement>) {
-  return <div className={cx("grid gap-1.5", className)} {...props} />;
+  return <div className={cx("grid gap-1", className)} {...props} />;
 }
 
 export function UIDialogTitle({

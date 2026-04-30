@@ -1,3 +1,9 @@
+const PROJECT_SLUG_PATTERN = /^[A-Za-z0-9-]+$/;
+
+export function isValidProjectSlug(slug: string) {
+  return PROJECT_SLUG_PATTERN.test(slug);
+}
+
 export function slugifyProjectName(name: string) {
   const baseSlug = name
     .toLowerCase()

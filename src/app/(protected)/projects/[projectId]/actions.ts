@@ -27,6 +27,7 @@ import {
   updateProjectNameForUser,
   updateProjectThemeForUser,
 } from "@/lib/projects";
+import { isValidProjectSlug } from "@/lib/projects/slug";
 import { isThemeKey } from "@/lib/themes";
 
 export type SaveEditorState = {
@@ -293,7 +294,7 @@ export async function updateProjectThemeActionWithDependencies(
   );
 
   if (!updatedProject) {
-    dependencies.redirect("/dashboard");
+    dependencies.redirect(`/projects/${projectId}`);
   }
 
   dependencies.revalidatePath(`/projects/${projectId}`);
@@ -309,15 +310,17 @@ export async function updateProjectNameActionWithDependencies(
 ) {
   const currentUser = await dependencies.requireCurrentUser();
   const name = String(formData.get("name") ?? "").trim();
+  const slug = String(formData.get("slug") ?? "").trim();
 
-  if (name.length === 0) {
+  if (name.length === 0 || slug.length === 0 || !isValidProjectSlug(slug)) {
     dependencies.redirect(`/projects/${projectId}`);
   }
 
   const updatedProject = await dependencies.updateProjectNameForUser(
     projectId,
     currentUser.id,
-    name
+    name,
+    slug
   );
 
   if (!updatedProject) {

@@ -98,7 +98,11 @@ export default async function ProjectPage({ params, searchParams }: ProjectPageP
               />
             </div>
             
-            <ProjectRenameForm initialName={project.name} action={nameAction} />
+            <ProjectRenameForm
+              initialName={project.name}
+              initialSlug={project.slug}
+              action={nameAction}
+            />
           </div>
 
 

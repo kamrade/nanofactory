@@ -5,8 +5,8 @@ import { NextRequest, NextResponse } from 'next/server'
 const PLATFORM_HOSTS: string[] = [ 'app.olala.beauty' ]
 
 const DOMAIN_TO_PROJECT: Record<string, string> = {
-  'olala.beauty': 'my-website-01',
-  'www.olala.beauty': 'my-website-01',
+  'olala.beauty': 'project-n4',
+  'www.olala.beauty': 'project-n4',
 }
 
 export function proxy(req: NextRequest) {

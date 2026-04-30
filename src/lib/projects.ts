@@ -4,7 +4,11 @@ import { and, desc, eq } from "drizzle-orm";
 
 import { db } from "@/db";
 import { projectContents, projects, type PageContent } from "@/db/schema";
-import { buildProjectSlugCandidate, slugifyProjectName } from "@/lib/projects/slug";
+import {
+  buildProjectSlugCandidate,
+  isValidProjectSlug,
+  slugifyProjectName,
+} from "@/lib/projects/slug";
 import { DEFAULT_THEME_KEY, type ThemeKey } from "@/lib/themes";
 
 type CreateProjectInput = {
@@ -287,14 +291,33 @@ export async function updateProjectThemeForUser(
 export async function updateProjectNameForUser(
   projectId: string,
   userId: string,
-  name: string
+  name: string,
+  slug: string
 ) {
   if (!isUuid(projectId)) {
     return null;
   }
 
   const trimmedName = name.trim();
+  const trimmedSlug = slug.trim();
+
   if (trimmedName.length === 0) {
+    return null;
+  }
+
+  if (!isValidProjectSlug(trimmedSlug)) {
+    return null;
+  }
+
+  const normalizedSlug = trimmedSlug.toLowerCase();
+
+  const [existingProject] = await db
+    .select({ id: projects.id })
+    .from(projects)
+    .where(eq(projects.slug, normalizedSlug))
+    .limit(1);
+
+  if (existingProject && existingProject.id !== projectId) {
     return null;
   }
 
@@ -303,6 +326,7 @@ export async function updateProjectNameForUser(
     .update(projects)
     .set({
       name: trimmedName,
+      slug: normalizedSlug,
       updatedAt: now,
     })
     .where(and(eq(projects.id, projectId), eq(projects.userId, userId)))

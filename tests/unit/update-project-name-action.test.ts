@@ -36,6 +36,7 @@ describe("updateProjectNameActionWithDependencies", () => {
 
     const formData = new FormData();
     formData.set("name", "Renamed project");
+    formData.set("slug", "renamed-project");
 
     await expect(
       updateProjectNameActionWithDependencies("project-1", formData, dependencies)
@@ -44,7 +45,8 @@ describe("updateProjectNameActionWithDependencies", () => {
     expect(mocks.updateProjectNameForUser).toHaveBeenCalledWith(
       "project-1",
       "user-1",
-      "Renamed project"
+      "Renamed project",
+      "renamed-project"
     );
     expect(mocks.revalidatePath).toHaveBeenCalledWith("/projects/project-1");
     expect(mocks.revalidatePath).toHaveBeenCalledWith("/dashboard");
@@ -57,6 +59,7 @@ describe("updateProjectNameActionWithDependencies", () => {
 
     const formData = new FormData();
     formData.set("name", "   ");
+    formData.set("slug", "any-slug");
 
     await expect(
       updateProjectNameActionWithDependencies("project-1", formData, dependencies)
@@ -67,4 +70,3 @@ describe("updateProjectNameActionWithDependencies", () => {
     expect(mocks.redirect).toHaveBeenCalledWith("/projects/project-1");
   });
 });
-

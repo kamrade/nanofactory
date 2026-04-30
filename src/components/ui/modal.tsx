@@ -60,7 +60,7 @@ export function UIModal({
           <UIDialogTitle>{title}</UIDialogTitle>
           {description ? <UIDialogDescription>{description}</UIDialogDescription> : null}
         </UIDialogHeader>
-        <div className="mt-4 max-h-[calc(100vh-16rem)] overflow-y-auto overflow-x-visible px-1">
+        <div className="mt-4 max-h-[calc(100vh-16rem)] overflow-y-auto overflow-x-visible p-1">
           {children}
         </div>
         {footer ? <UIDialogFooter>{footer}</UIDialogFooter> : null}
@@ -125,16 +125,16 @@ export function UIModalForm({
             <UIDialogTitle>{title}</UIDialogTitle>
             {description ? <UIDialogDescription>{description}</UIDialogDescription> : null}
           </UIDialogHeader>
-          <div className="mt-4 max-h-[calc(100vh-16rem)] overflow-y-auto overflow-x-visible px-1">
+          <div className="mt-4 max-h-[calc(100vh-16rem)] overflow-y-auto overflow-x-visible p-1">
             {children}
           </div>
           <UIDialogFooter>
             <UIDialogClose>
-              <UIButton theme="base" variant="outlined" size="sm">
+              <UIButton theme="base" variant="outlined" size="lg">
                 {cancelLabel}
               </UIButton>
             </UIDialogClose>
-            <UIButton type="submit" theme={submitTheme} variant="contained" size="sm" disabled={submitting}>
+            <UIButton type="submit" theme={submitTheme} variant="contained" size="lg" disabled={submitting}>
               {submitting ? "Saving..." : submitLabel}
             </UIButton>
           </UIDialogFooter>

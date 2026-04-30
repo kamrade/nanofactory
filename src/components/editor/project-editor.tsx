@@ -33,6 +33,7 @@ import type { PageBlock } from "@/features/blocks/shared/content";
 import { ScenePicker } from "@/features/blocks/shared/scene-picker";
 import { useToast } from "@/hooks/use-toast";
 import type { BackgroundSceneRecord } from "@/lib/background-scenes/types";
+import type { UiMode } from "@/lib/ui-preferences";
 import { UIButton } from "@/components/ui/button";
 import { UICheckbox } from "@/components/ui/checkbox";
 import { UIMenu, UIMenuItem, UIMenuLabel } from "@/components/ui/menu";
@@ -60,6 +61,7 @@ type EditorProject = {
 type ProjectEditorProps = {
   project: EditorProject;
   assets: ProjectAssetRecord[];
+  initialMode: UiMode;
   backgroundScenes?: BackgroundSceneRecord[];
 };
 
@@ -74,6 +76,7 @@ function formatDefinitionLabel(definition: {
 export function ProjectEditor({
   project,
   assets,
+  initialMode,
   backgroundScenes = [],
 }: ProjectEditorProps) {
   const { showToast } = useToast();
@@ -283,6 +286,8 @@ export function ProjectEditor({
         fullBleedClassName="w-full"
         cardClassName="rounded-4xl border border-neutral-line bg-surface px-6 py-8 shadow-sm sm:px-8 sm:py-10"
         backgroundScene={backgroundScene}
+        fallbackThemeKey={project.themeKey === "nightfall" ? "nightfall" : "sunwash"}
+        fallbackMode={initialMode}
       >
         <BlockRenderer
           block={block}
@@ -429,7 +434,7 @@ export function ProjectEditor({
                       setActiveEditorBlockId(block.id);
                     }
                   }}
-                  className="cursor-pointer hover:ring-2 hover:ring-blue-500 ring-offset-2 transition focus:outline-none focus-visible:ring-2 focus-visible:ring-focus/50"
+                  className="cursor-pointer transition focus:outline-none"
                 >
                   <div data-testid="RenderredBlockInEditor">{renderBlockPreview(block)}</div>
                 </div>
@@ -459,6 +464,13 @@ export function ProjectEditor({
           {activeEditorBlock && activeEditorDefinition ? (
             <>
               <UISheetHeader>
+                <UISheetClose>
+                  <div className="mb-3">
+                    <UIButton type="button" size="sm" theme="base" variant="outlined">
+                      Close
+                    </UIButton>
+                  </div>
+                </UISheetClose>
                 <UISheetTitle>{formatDefinitionLabel(activeEditorDefinition)}</UISheetTitle>
                 <UISheetDescription>
                   Edit block content and settings. Changes are applied immediately.
@@ -557,12 +569,6 @@ export function ProjectEditor({
                 >
                   Delete block
                 </UIButton>
-
-                <UISheetClose>
-                  <UIButton type="button" size="sm" theme="base" variant="outlined">
-                    Close
-                  </UIButton>
-                </UISheetClose>
               </UISheetFooter>
             </>
           ) : null}

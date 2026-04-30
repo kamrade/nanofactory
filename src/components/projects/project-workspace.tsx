@@ -80,6 +80,7 @@ export function ProjectWorkspace({
       <ProjectEditor
         project={project}
         assets={assets}
+        initialMode={initialMode}
         backgroundScenes={backgroundScenes}
       />
 
@@ -96,6 +97,9 @@ export function ProjectWorkspace({
             },
             ...current,
           ]);
+        }}
+        onAssetDeleted={(assetId) => {
+          setAssets((current) => current.filter((asset) => asset.id !== assetId));
         }}
       />
     </>

@@ -1,4 +1,4 @@
-import { expect, test } from "@playwright/test";
+import { expect, test, type Page } from "@playwright/test";
 
 import {
   resetTestDatabase,
@@ -14,6 +14,14 @@ test.beforeEach(async () => {
   await resetTestDatabase();
   seedTestUser();
 });
+
+async function createProjectFromDashboard(page: Page, name: string) {
+  await page.goto("/dashboard");
+  await page.getByRole("button", { name: "Create project" }).click();
+  const dialog = page.getByRole("dialog");
+  await dialog.getByLabel("Project name").fill(name);
+  await dialog.getByRole("button", { name: "Create project" }).click();
+}
 
 test("redirects guests from dashboard to login", async ({ page }) => {
   await page.context().clearCookies();
@@ -41,9 +49,7 @@ test("logs in and redirects an authenticated user away from login", async ({ pag
 });
 
 test("creates a project from dashboard and opens it", async ({ page }) => {
-  await page.goto("/dashboard");
-  await page.getByLabel("Project name").fill("Playwright Project");
-  await page.getByRole("button", { name: "Create project" }).click();
+  await createProjectFromDashboard(page, "Playwright Project");
 
   await page.waitForURL(/\/projects\/.+/);
   await expect(page.getByRole("heading", { name: "Playwright Project" })).toBeVisible();
@@ -51,9 +57,7 @@ test("creates a project from dashboard and opens it", async ({ page }) => {
 });
 
 test("adds a block, saves content, and reloads the editor state", async ({ page }) => {
-  await page.goto("/dashboard");
-  await page.getByLabel("Project name").fill("Editor Save Project");
-  await page.getByRole("button", { name: "Create project" }).click();
+  await createProjectFromDashboard(page, "Editor Save Project");
 
   await page.waitForURL(/\/projects\/.+/);
   await page.getByRole("button", { name: "Add block" }).click();
@@ -77,9 +81,7 @@ test("adds a block, saves content, and reloads the editor state", async ({ page 
 });
 
 test("publishes and unpublishes a project through the editor", async ({ page }) => {
-  await page.goto("/dashboard");
-  await page.getByLabel("Project name").fill("Public Flow Project");
-  await page.getByRole("button", { name: "Create project" }).click();
+  await createProjectFromDashboard(page, "Public Flow Project");
 
   await page.waitForURL(/\/projects\/.+/);
   await expect(page.getByText("Status: draft").first()).toBeVisible();
@@ -112,9 +114,7 @@ test("publishes and unpublishes a project through the editor", async ({ page }) 
 test("applies selected theme in preview before save and persists after apply", async ({
   page,
 }) => {
-  await page.goto("/dashboard");
-  await page.getByLabel("Project name").fill("Theme Preview Project");
-  await page.getByRole("button", { name: "Create project" }).click();
+  await createProjectFromDashboard(page, "Theme Preview Project");
 
   await page.waitForURL(/\/projects\/.+/);
   await page.getByRole("radio", { name: "Nightfall" }).click();
@@ -146,9 +146,7 @@ test("applies selected theme in preview before save and persists after apply", a
 });
 
 test("switches preview mode between light and dark", async ({ page }) => {
-  await page.goto("/dashboard");
-  await page.getByLabel("Project name").fill("Mode Switch Project");
-  await page.getByRole("button", { name: "Create project" }).click();
+  await createProjectFromDashboard(page, "Mode Switch Project");
 
   await page.waitForURL(/\/projects\/.+/);
 

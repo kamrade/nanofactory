@@ -42,7 +42,9 @@ function renderBlock(
   block: PageContent["blocks"][number],
   assetMap: Map<string, ProjectAssetRecord>,
   sceneMap: Map<string, BackgroundSceneRecord>,
-  theme: ReturnType<typeof getThemeClasses>
+  theme: ReturnType<typeof getThemeClasses>,
+  fallbackThemeKey: "sunwash" | "nightfall",
+  fallbackMode: "light" | "dark"
 ) {
   const definition = getBlockDefinition(block.type, block.variant);
 
@@ -62,6 +64,8 @@ function renderBlock(
       containerClassName="container mx-auto px-4"
       cardClassName={theme.sectionCard}
       backgroundScene={backgroundScene}
+      fallbackThemeKey={fallbackThemeKey}
+      fallbackMode={fallbackMode}
     >
       <Renderer block={block} assetMap={assetMap} theme={theme} />
     </SectionShell>
@@ -109,7 +113,7 @@ export function ProjectRenderer({
               {showProjectMeta ? (
                 <div className="mt-3 flex flex-wrap items-center justify-between gap-3">
                   <p className={`text-sm ${theme.muted}`}>Project: {name}</p>
-                  <ProjectModeSwitcher />
+                  <ProjectModeSwitcher initialMode={mode} />
                 </div>
               ) : null}
             </div>
@@ -127,7 +131,16 @@ export function ProjectRenderer({
           </section>
         ) : (
           content.blocks.map((block) => (
-            <div key={block.id}>{renderBlock(block, assetMap, sceneMap, theme)}</div>
+            <div key={block.id}>
+              {renderBlock(
+                block,
+                assetMap,
+                sceneMap,
+                theme,
+                resolvedThemeKey,
+                mode
+              )}
+            </div>
           ))
         )}
       </div>

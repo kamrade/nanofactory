@@ -6,14 +6,24 @@ import { remapSceneToPalette } from "@/components/assets/background-scene-defaul
 import { useThemeModeFromDom } from "@/hooks/use-theme-mode-from-dom";
 import { buildBackgroundSceneStyle } from "@/lib/background-scenes/css";
 import type { BackgroundScene } from "@/lib/background-scenes/types";
+import type { ThemeKey } from "@/lib/themes";
+import type { UiMode } from "@/lib/ui-preferences";
 
 type BackgroundRendererProps = {
   scene: BackgroundScene;
+  fallbackThemeKey?: ThemeKey;
+  fallbackMode?: UiMode;
 };
 
-export function BackgroundRenderer({ scene }: BackgroundRendererProps) {
+export function BackgroundRenderer({
+  scene,
+  fallbackThemeKey,
+  fallbackMode,
+}: BackgroundRendererProps) {
   const activeThemeMode = useThemeModeFromDom({
     rootSelector: "main[data-theme][data-mode]",
+    fallbackThemeKey,
+    fallbackMode,
   });
 
   const themedScene = useMemo(
