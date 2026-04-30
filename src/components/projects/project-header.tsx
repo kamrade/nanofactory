@@ -1,7 +1,14 @@
+"use client";
+
+import { useEffect, useState } from "react";
 import Link from "next/link";
 import { FiArrowLeft } from "react-icons/fi";
 
 import { OpenPreviewButton } from "@/components/editor/open-preview-button";
+import {
+  getPreviewDraftContent,
+  subscribePreviewDraft,
+} from "@/components/editor/preview-draft-store";
 import { ProjectModeSwitcher, type ThemeMode } from "@/components/projects/project-mode-switcher";
 import { ProjectRenameForm } from "@/components/projects/project-rename-form";
 import { ProjectThemeForm } from "@/components/projects/project-theme-form";
@@ -35,6 +42,7 @@ type ProjectHeaderProps = {
   publicationAction: () => void | Promise<void>;
   themeAction: (formData: FormData) => void | Promise<void>;
   nameAction: (formData: FormData) => void | Promise<void>;
+  contentShape: string;
 };
 
 export function ProjectHeader({
@@ -43,8 +51,24 @@ export function ProjectHeader({
   publicationAction,
   themeAction,
   nameAction,
+  contentShape,
 }: ProjectHeaderProps) {
   const resolvedThemeKey = resolveThemePreference(project.themeKey);
+  const [liveContentShape, setLiveContentShape] = useState(contentShape);
+
+  useEffect(() => {
+    setLiveContentShape(contentShape);
+  }, [contentShape, project.id]);
+
+  useEffect(() => {
+    return subscribePreviewDraft(() => {
+      const nextDraft = getPreviewDraftContent();
+      if (!nextDraft) {
+        return;
+      }
+      setLiveContentShape(JSON.stringify(nextDraft, null, 2));
+    });
+  }, []);
 
   return (
     <div
@@ -100,15 +124,23 @@ export function ProjectHeader({
                 Project metadata and publication details.
               </UISheetDescription>
             </UISheetHeader>
-            <div className="mt-6 grid gap-3 text-sm text-text-muted">
-              <p>Status: {project.status}</p>
-              <p>Slug: {project.slug}</p>
-              <p>Theme: {resolvedThemeKey}</p>
-              <p>Schema version: {project.schemaVersion}</p>
-              <p>
-                Published at:{" "}
-                {project.publishedAt ? formatUiDateTime(project.publishedAt) : "Not published"}
-              </p>
+            <div className="mt-6 grid gap-5 text-sm text-text-muted">
+              <div className="grid gap-3">
+                <p>Status: {project.status}</p>
+                <p>Slug: {project.slug}</p>
+                <p>Theme: {resolvedThemeKey}</p>
+                <p>Schema version: {project.schemaVersion}</p>
+                <p>
+                  Published at:{" "}
+                  {project.publishedAt ? formatUiDateTime(project.publishedAt) : "Not published"}
+                </p>
+              </div>
+              <div className="space-y-2">
+                <h3 className="text-base font-semibold text-text-main">Content shape</h3>
+                <pre className="max-h-[38vh] max-w-[60vw] overflow-auto whitespace-pre-wrap break-words rounded-2xl border border-line bg-surface-alt p-4 text-xs leading-6 text-text-main">
+                  {liveContentShape}
+                </pre>
+              </div>
             </div>
             <UISheetFooter>
               <UISheetClose>

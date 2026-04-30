@@ -67,6 +67,7 @@ export default async function ProjectPage({ params, searchParams }: ProjectPageP
           publicationAction={publicationAction}
           themeAction={themeAction}
           nameAction={nameAction}
+          contentShape={JSON.stringify(normalizedContent, null, 2)}
         />
 
         <ProjectWorkspace

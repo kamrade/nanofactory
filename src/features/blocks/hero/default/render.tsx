@@ -14,7 +14,8 @@ export function HeroDefaultRender({ block, assetMap, theme }: BlockRenderProps) 
 
   return (
     <section data-component-id="hero:default" className="grid gap-8 lg:grid-cols-[1.05fr_0.95fr] lg:items-center">
-      <div className="space-y-5">
+      
+      <div className="space-y-5 p-4 md:p-8 ">
         <p className="text-text-placeholder text-sm font-medium uppercase tracking-[0.22em]">
           Hero
         </p>
@@ -28,7 +29,7 @@ export function HeroDefaultRender({ block, assetMap, theme }: BlockRenderProps) 
       </div>
 
       {heroImageAsset ? (
-        <div className="overflow-hidden rounded-[1.75rem] border border-line bg-surface-alt shadow-sm">
+        <div className="overflow-hidden bg-surface-alt">
           <Image
             src={heroImageAsset.publicUrl}
             alt={heroImageAsset.alt ?? heroImageAsset.originalFilename}
