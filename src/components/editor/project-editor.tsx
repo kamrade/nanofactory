@@ -330,7 +330,8 @@ export function ProjectEditor({
     <div className="grid gap-6">
       <section data-testid="ProjectEditorContent" className="space-y-6">
         <div className="flex flex-wrap items-center justify-between gap-4">
-          <div className="flex flex-wrap items-center gap-3">
+          <div className="flex flex-wrap items-center gap-3 mx-4">
+          
             <UIMenu
               ariaLabel="Add block"
               placement="bottom-start"
@@ -575,9 +576,11 @@ export function ProjectEditor({
         </UISheetContent>
       </UISheet>
 
-      <UIDivider spacing="md" stripped />
+      <div className="mx-4">
+        <UIDivider spacing="md" stripped />
+      </div>
 
-      <section className="py-6">
+      <section className="py-6 mx-4">
         <div className="space-y-3">
           <h3 className="ext-lg font-semibold text-text-main">Content shape</h3>
           <pre className="overflow-x-auto whitespace-pre-wrap break-words rounded-2xl border border-line bg-surface-alt p-4 text-xs leading-6 text-text-main">

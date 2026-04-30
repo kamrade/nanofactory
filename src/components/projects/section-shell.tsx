@@ -46,7 +46,7 @@ export function SectionShell({
   block,
   containerClassName,
   cardClassName,
-  fullBleedClassName = "w-full px-4 sm:px-6",
+  fullBleedClassName = "w-full",
   backgroundScene,
   fallbackThemeKey,
   fallbackMode,
@@ -54,7 +54,7 @@ export function SectionShell({
 }: SectionShellProps) {
   if (block.fullBleed) {
     return (
-      <section className={fullBleedClassName}>
+      <section data-testid="SectionShellFullBleed" className={fullBleedClassName}>
         {renderInnerContent(
           undefined,
           backgroundScene,
@@ -67,7 +67,7 @@ export function SectionShell({
   }
 
   return (
-    <section className={containerClassName}>
+    <section data-testid="SectionShell" className={containerClassName}>
       {renderInnerContent(
         cardClassName,
         backgroundScene,
