@@ -1,10 +1,11 @@
-export type SupportedBlockType = "hero" | "features" | "cta";
+export type SupportedBlockType = "hero" | "features" | "cta" | "app-header";
 
 export type HeroVariant = "default" | "centered";
 export type FeaturesVariant = "default" | "cards";
 export type CtaVariant = "default";
+export type AppHeaderVariant = "default";
 
-export type BlockVariant = HeroVariant | FeaturesVariant | CtaVariant;
+export type BlockVariant = HeroVariant | FeaturesVariant | CtaVariant | AppHeaderVariant;
 
 export type PageBlock = {
   id: string;

@@ -4,8 +4,9 @@ import { heroDefinitions } from "../hero";
 import { createBlockId } from "./base";
 import type { BlockVariantDefinition } from "./types";
 import type { BlockVariant, PageBlock, SupportedBlockType } from "./content";
+import { appHeaderDefinitions } from "../app-header";
 
-const definitions = [...heroDefinitions, ...featuresDefinitions, ...ctaDefinitions];
+const definitions = [...heroDefinitions, ...featuresDefinitions, ...ctaDefinitions, ...appHeaderDefinitions];
 const blockTypeLabels = new Map<SupportedBlockType, string>(
   definitions.reduce<Array<[SupportedBlockType, string]>>((acc, definition) => {
     if (!acc.find(([type]) => type === definition.type)) {

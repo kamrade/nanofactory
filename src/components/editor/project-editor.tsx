@@ -153,6 +153,28 @@ export function ProjectEditor({
     setLastVariantUndo((current) => (current?.blockId === blockId ? null : current));
   }
 
+  function handleMoveBlock(blockId: string, nextIndex: number) {
+    setContent((currentContent) => {
+      const currentIndex = currentContent.blocks.findIndex((block) => block.id === blockId);
+      if (currentIndex < 0 || currentIndex === nextIndex) {
+        return currentContent;
+      }
+
+      const boundedIndex = Math.max(0, Math.min(nextIndex, currentContent.blocks.length - 1));
+      if (currentIndex === boundedIndex) {
+        return currentContent;
+      }
+
+      const nextBlocks = [...currentContent.blocks];
+      const [movedBlock] = nextBlocks.splice(currentIndex, 1);
+      nextBlocks.splice(boundedIndex, 0, movedBlock);
+
+      return {
+        blocks: nextBlocks,
+      };
+    });
+  }
+
   function handleUpdateBlockProps(blockId: string, nextProps: Record<string, unknown>) {
     setContent((currentContent) => ({
       blocks: currentContent.blocks.map((block) => {
@@ -323,6 +345,12 @@ export function ProjectEditor({
   const activeVariant = activePendingSwitch
     ? activePendingSwitch.nextVariant
     : activeEditorDefinition?.variant;
+  const activeEditorBlockIndex = activeEditorBlock
+    ? content.blocks.findIndex((block) => block.id === activeEditorBlock.id)
+    : -1;
+  const canMoveActiveBlockUp = activeEditorBlockIndex > 0;
+  const canMoveActiveBlockDown =
+    activeEditorBlockIndex >= 0 && activeEditorBlockIndex < content.blocks.length - 1;
 
   return (
     <div className="grid gap-6">
@@ -559,6 +587,54 @@ export function ProjectEditor({
               </div>
 
               <UISheetFooter className="justify-between border-t border-neutral-line pt-4">
+                <div className="flex flex-wrap items-center gap-2">
+                  <UIButton
+                    type="button"
+                    size="sm"
+                    theme="base"
+                    variant="outlined"
+                    disabled={!canMoveActiveBlockUp}
+                    onClick={() => handleMoveBlock(activeEditorBlock.id, 0)}
+                  >
+                    ⇡
+                  </UIButton>
+                  <UIButton
+                    type="button"
+                    size="sm"
+                    theme="base"
+                    variant="outlined"
+                    disabled={!canMoveActiveBlockUp}
+                    onClick={() =>
+                      handleMoveBlock(activeEditorBlock.id, activeEditorBlockIndex - 1)
+                    }
+                  >
+                    ↑
+                  </UIButton>
+                  <UIButton
+                    type="button"
+                    size="sm"
+                    theme="base"
+                    variant="outlined"
+                    disabled={!canMoveActiveBlockDown}
+                    onClick={() =>
+                      handleMoveBlock(activeEditorBlock.id, activeEditorBlockIndex + 1)
+                    }
+                  >
+                    ↓
+                  </UIButton>
+                  <UIButton
+                    type="button"
+                    size="sm"
+                    theme="base"
+                    variant="outlined"
+                    disabled={!canMoveActiveBlockDown}
+                    onClick={() =>
+                      handleMoveBlock(activeEditorBlock.id, content.blocks.length - 1)
+                    }
+                  >
+                    ⇣
+                  </UIButton>
+                </div>
                 <UIButton
                   type="button"
                   size="sm"
