@@ -58,13 +58,12 @@ function createFeaturesCardsContent(): PageContent {
   };
 }
 
-function createFullBleedCtaContent(): PageContent {
+function createCtaContent(): PageContent {
   return {
     blocks: [
       {
         id: "cta-full-1",
         type: "cta",
-        fullBleed: true,
         props: {
           title: "Go full width",
           buttonText: "Try now",
@@ -268,12 +267,12 @@ describe("ProjectRenderer", () => {
     expect(html).not.toContain("Dark");
   });
 
-  it("renders full-bleed blocks without the container wrapper card", () => {
+  it("renders cta blocks inside the standard section shell wrapper", () => {
     const html = renderToStaticMarkup(
       ProjectRenderer({
-        name: "Full Bleed Project",
+        name: "CTA Project",
         themeKey: "sunwash",
-        content: createFullBleedCtaContent(),
+        content: createCtaContent(),
         assets: [],
         showPublishedBadge: false,
         showProjectMeta: false,
@@ -281,8 +280,7 @@ describe("ProjectRenderer", () => {
     );
 
     expect(html).toContain("Go full width");
-    expect(html).toContain('class="w-full px-4 sm:px-6"');
-    expect(html).not.toContain("rounded-[2rem]");
+    expect(html).toContain('data-testid="SectionShell"');
   });
 
   it("renders a block background from background scene config using CSS gradients", () => {

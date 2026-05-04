@@ -2,6 +2,7 @@ import type { PageBlock, PageContent } from "@/db/schema";
 
 import { isPlainObject, readOptionalString } from "@/features/blocks/shared/base";
 import { getBlockDefinition } from "@/lib/editor/blocks";
+import { isValidAnchorId, normalizeAnchorId } from "@/lib/editor/anchor-id";
 
 type ValidationSuccess = {
   success: true;
@@ -20,7 +21,7 @@ function normalizeBlock(input: unknown): PageBlock | null {
     return null;
   }
 
-  const { id, type, variant, props, fullBleed, backgroundSceneId } = input;
+  const { id, type, variant, props, anchorId, backgroundSceneId } = input;
 
   if (typeof id !== "string" || id.trim().length === 0) {
     return null;
@@ -40,7 +41,7 @@ function normalizeBlock(input: unknown): PageBlock | null {
     id,
     type: definition.type,
     variant: definition.variant,
-    fullBleed: typeof fullBleed === "boolean" ? fullBleed : false,
+    anchorId: readOptionalString(anchorId),
     backgroundSceneId: readOptionalString(backgroundSceneId),
     props: definition.normalizeProps(props),
   };
@@ -62,6 +63,7 @@ export function validatePageContent(input: unknown): PageContentValidationResult
   }
 
   const blocks: PageBlock[] = [];
+  const seenAnchorIds = new Set<string>();
 
   for (const blockInput of input.blocks) {
     const block = normalizeBlock(blockInput);
@@ -71,6 +73,26 @@ export function validatePageContent(input: unknown): PageContentValidationResult
         success: false,
         error: "Each block must include a valid id, type, and props object.",
       };
+    }
+
+    if (block.anchorId) {
+      const normalizedAnchorId = normalizeAnchorId(block.anchorId);
+      if (!isValidAnchorId(normalizedAnchorId)) {
+        return {
+          success: false,
+          error: "Anchor id must contain only lowercase Latin letters, numbers, and hyphens, and start with a letter.",
+        };
+      }
+
+      if (seenAnchorIds.has(normalizedAnchorId)) {
+        return {
+          success: false,
+          error: "Anchor id values must be unique within the page.",
+        };
+      }
+
+      seenAnchorIds.add(normalizedAnchorId);
+      block.anchorId = normalizedAnchorId;
     }
 
     blocks.push(block);

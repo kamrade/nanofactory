@@ -51,7 +51,6 @@ describe("saveProjectContentForUserWithDependencies", () => {
             id: "hero-1",
             type: "hero",
             variant: "default",
-            fullBleed: false,
             props: {
               title: "Saved hero",
               subtitle:
@@ -72,7 +71,6 @@ describe("saveProjectContentForUserWithDependencies", () => {
             id: "hero-1",
             type: "hero",
             variant: "default",
-            fullBleed: false,
             props: {
               title: "Saved hero",
               subtitle:

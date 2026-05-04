@@ -9,8 +9,6 @@ import type { UiMode } from "@/lib/ui-preferences";
 type SectionShellProps = {
   block: PageBlock;
   containerClassName: string;
-  cardClassName?: string;
-  fullBleedClassName?: string;
   backgroundScene?: BackgroundScene | null;
   fallbackThemeKey?: ThemeKey;
   fallbackMode?: UiMode;
@@ -22,14 +20,18 @@ function cx(...parts: Array<string | false | null | undefined>) {
 }
 
 function renderInnerContent(
-  cardClassName: string | undefined,
   backgroundScene: BackgroundScene | null | undefined,
   fallbackThemeKey: ThemeKey | undefined,
   fallbackMode: UiMode | undefined,
   children: ReactNode
 ) {
   return (
-    <div className={cx("relative", backgroundScene ? "overflow-hidden" : undefined, cardClassName)}>
+    <div
+      className={cx(
+        "relative rounded-xl border border-line bg-surface",
+        backgroundScene ? "overflow-hidden" : undefined
+      )}
+    >
       {backgroundScene ? (
         <BackgroundRenderer
           scene={backgroundScene}
@@ -45,31 +47,23 @@ function renderInnerContent(
 export function SectionShell({
   block,
   containerClassName,
-  cardClassName,
-  fullBleedClassName = "w-full",
   backgroundScene,
   fallbackThemeKey,
   fallbackMode,
   children,
 }: SectionShellProps) {
-  if (block.fullBleed) {
-    return (
-      <section data-testid="SectionShellFullBleed" className={fullBleedClassName}>
-        {renderInnerContent(
-          undefined,
-          backgroundScene,
-          fallbackThemeKey,
-          fallbackMode,
-          children
-        )}
-      </section>
-    );
-  }
+  const sectionAnchorId =
+    typeof block.anchorId === "string" && block.anchorId.trim().length > 0
+      ? block.anchorId
+      : undefined;
 
   return (
-    <section data-testid="SectionShell" className={containerClassName}>
+    <section
+      id={sectionAnchorId}
+      data-testid="SectionShell"
+      className={cx("scroll-mt-24", containerClassName)}
+    >
       {renderInnerContent(
-        cardClassName,
         backgroundScene,
         fallbackThemeKey,
         fallbackMode,

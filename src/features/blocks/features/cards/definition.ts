@@ -1,4 +1,4 @@
-import { isPlainObject, readString, readStringList } from "../../shared/base";
+import { isPlainObject, readOptionalString, readString } from "../../shared/base";
 import type { BlockVariantDefinition } from "../../shared/types";
 import { FeaturesCardsEditor } from "./editor";
 import { FeaturesCardsRender } from "./render";
@@ -27,21 +27,80 @@ export const featuresCardsDefinition: BlockVariantDefinition = {
   createDefaultProps: () => ({
     sectionTitle: "What makes this workflow fast",
     items: [
-      "A tighter page structure with fewer moving parts",
-      "Clean ownership between content, layout, and assets",
-      "A publishing flow that stays easy to reason about",
+      {
+        title: "A tighter page structure with fewer moving parts",
+        content: "Ship quickly with a focused set of building blocks and less setup overhead.",
+      },
+      {
+        title: "Clean ownership between content, layout, and assets",
+        content: "Keep editing responsibilities clear so teams can collaborate without collisions.",
+      },
+      {
+        title: "A publishing flow that stays easy to reason about",
+        content: "Move from draft to live confidently with a predictable, testable workflow.",
+      },
     ],
   }),
   normalizeProps: (input) => {
     const props = isPlainObject(input) ? input : {};
+    const rawItems = Array.isArray(props.items) ? props.items : [];
+    const normalizedItems = rawItems
+      .map((item) => {
+        // Backward compatibility: old data stored items as string[] (title-only).
+        if (typeof item === "string") {
+          const title = readOptionalString(item);
+          if (!title) {
+            return null;
+          }
+          return {
+            title,
+            content: "",
+          };
+        }
+
+        if (!isPlainObject(item)) {
+          return null;
+        }
+
+        const title = readOptionalString(item.title);
+        const content = readOptionalString(item.content) ?? "";
+
+        if (!title) {
+          return null;
+        }
+
+        return {
+          title,
+          content,
+        };
+      })
+      .filter(
+        (item): item is { title: string; content: string } =>
+          item !== null
+      );
 
     return {
       sectionTitle: readString(props.sectionTitle, "What makes this workflow fast"),
-      items: readStringList(props.items, [
-        "A tighter page structure with fewer moving parts",
-        "Clean ownership between content, layout, and assets",
-        "A publishing flow that stays easy to reason about",
-      ]),
+      items:
+        normalizedItems.length > 0
+          ? normalizedItems
+          : [
+              {
+                title: "A tighter page structure with fewer moving parts",
+                content:
+                  "Ship quickly with a focused set of building blocks and less setup overhead.",
+              },
+              {
+                title: "Clean ownership between content, layout, and assets",
+                content:
+                  "Keep editing responsibilities clear so teams can collaborate without collisions.",
+              },
+              {
+                title: "A publishing flow that stays easy to reason about",
+                content:
+                  "Move from draft to live confidently with a predictable, testable workflow.",
+              },
+            ],
     };
   },
   Renderer: FeaturesCardsRender,

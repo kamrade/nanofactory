@@ -34,6 +34,7 @@ import type { PageBlock } from "@/features/blocks/shared/content";
 import type { BlockVariantDefinition } from "@/features/blocks/shared/types";
 import { useToast } from "@/hooks/use-toast";
 import type { BackgroundSceneRecord } from "@/lib/background-scenes/types";
+import { normalizeAnchorId } from "@/lib/editor/anchor-id";
 import type { UiMode } from "@/lib/ui-preferences";
 
 type EditorProject = {
@@ -64,7 +65,7 @@ type EditorAction =
   | { type: "delete_block"; blockId: string }
   | { type: "move_block"; blockId: string; nextIndex: number }
   | { type: "update_block_props"; blockId: string; nextProps: Record<string, unknown> }
-  | { type: "update_block_full_bleed"; blockId: string; nextFullBleed: boolean }
+  | { type: "update_block_anchor_id"; blockId: string; nextAnchorId?: string }
   | { type: "update_block_background_scene"; blockId: string; nextSceneId?: string }
   | { type: "select_variant"; block: PageBlock; definition: BlockVariantDefinition; nextVariant: BlockVariant }
   | { type: "confirm_variant_switch" }
@@ -165,12 +166,15 @@ function editorReducer(state: EditorState, action: EditorAction): EditorState {
         })),
       };
     }
-    case "update_block_full_bleed": {
+    case "update_block_anchor_id": {
       return {
         ...state,
         content: updateBlockById(state.content, action.blockId, (block) => ({
           ...block,
-          fullBleed: action.nextFullBleed,
+          anchorId:
+            typeof action.nextAnchorId === "string" && action.nextAnchorId.trim().length > 0
+              ? normalizeAnchorId(action.nextAnchorId)
+              : undefined,
         })),
       };
     }
@@ -345,8 +349,6 @@ export function ProjectEditor({
       <SectionShell
         block={block}
         containerClassName="mx-4"
-        fullBleedClassName="w-full mx-0 p-0"
-        cardClassName="rounded-4xl border border-neutral-line bg-surface px-6 py-8 shadow-sm sm:px-8 sm:py-10"
         backgroundScene={backgroundScene}
         fallbackThemeKey={project.themeKey === "nightfall" ? "nightfall" : "sunwash"}
         fallbackMode={initialMode}
@@ -354,6 +356,7 @@ export function ProjectEditor({
         <BlockRenderer
           block={block}
           assetMap={assetMap}
+          mode={initialMode}
           theme={{
             muted: "text-text-muted",
             button:
@@ -390,6 +393,28 @@ export function ProjectEditor({
   const activeEditorBlockIndex = activeEditorBlock
     ? state.content.blocks.findIndex((block) => block.id === activeEditorBlock.id)
     : -1;
+  const availableAnchors = useMemo(
+    () =>
+      state.content.blocks
+        .map((block, index) => {
+          if (typeof block.anchorId !== "string" || block.anchorId.trim().length === 0) {
+            return null;
+          }
+
+          return {
+            id: block.anchorId,
+            label: `${index + 1}. ${formatDefinitionLabel(
+              getBlockDefinition(block.type, block.variant) ?? {
+                typeLabel: block.type,
+                label: block.type,
+                variant: block.variant ?? "default",
+              }
+            )} (${block.anchorId})`,
+          };
+        })
+        .filter((item): item is { id: string; label: string } => item !== null),
+    [state.content.blocks]
+  );
 
   return (
     <div className="grid gap-6">
@@ -424,6 +449,7 @@ export function ProjectEditor({
         activeVariant={activeVariant}
         activePendingSwitch={activePendingSwitch}
         assets={assets}
+        availableAnchors={availableAnchors}
         backgroundScenes={backgroundScenes}
         activeEditorBlockIndex={activeEditorBlockIndex}
         totalBlocks={state.content.blocks.length}
@@ -436,9 +462,6 @@ export function ProjectEditor({
         onSelectVariant={(block, definition, nextVariant) =>
           dispatch({ type: "select_variant", block, definition, nextVariant })
         }
-        onToggleFullBleed={(blockId, nextFullBleed) =>
-          dispatch({ type: "update_block_full_bleed", blockId, nextFullBleed })
-        }
         onSelectScene={(blockId, nextSceneId) =>
           dispatch({ type: "update_block_background_scene", blockId, nextSceneId })
         }
@@ -447,10 +470,20 @@ export function ProjectEditor({
         onChangeProps={(blockId, nextProps) =>
           dispatch({ type: "update_block_props", blockId, nextProps })
         }
+        onChangeAnchorId={(blockId, nextAnchorId) =>
+          dispatch({ type: "update_block_anchor_id", blockId, nextAnchorId })
+        }
         onMoveBlock={(blockId, nextIndex) =>
           dispatch({ type: "move_block", blockId, nextIndex })
         }
         onDeleteBlock={(blockId) => dispatch({ type: "delete_block", blockId })}
+        allBlocks={state.content.blocks}
+        onAnchorIdRejected={(message) =>
+          showToast({
+            tone: "error",
+            title: message,
+          })
+        }
       />
     </div>
   );

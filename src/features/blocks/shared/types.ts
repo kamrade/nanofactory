@@ -21,11 +21,16 @@ export type BlockRenderProps = {
   block: PageBlock;
   assetMap: Map<string, ProjectAssetRecord>;
   theme: BlockTheme;
+  mode?: "light" | "dark";
 };
 
 export type BlockEditorProps = {
   block: PageBlock;
   assets: ProjectAssetRecord[];
+  availableAnchors?: Array<{
+    id: string;
+    label: string;
+  }>;
   definition: Pick<BlockVariantDefinition, "fields" | "supportsAssetSelection">;
   onChange: (nextProps: Record<string, unknown>) => void;
 };

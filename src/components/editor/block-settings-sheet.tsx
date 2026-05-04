@@ -1,5 +1,7 @@
 "use client";
 
+import { useEffect, useState } from "react";
+
 import type { BlockVariant } from "@/lib/editor/blocks";
 import type { PendingVariantSwitch } from "@/components/editor/project-editor-variants";
 import type { BlockVariantDefinition } from "@/features/blocks/shared/types";
@@ -7,9 +9,10 @@ import type { PageBlock } from "@/features/blocks/shared/content";
 import { ScenePicker } from "@/features/blocks/shared/scene-picker";
 import type { ProjectAssetRecord } from "@/lib/assets";
 import type { BackgroundSceneRecord } from "@/lib/background-scenes/types";
+import { isValidAnchorId, normalizeAnchorId } from "@/lib/editor/anchor-id";
 import { UIButton } from "@/components/ui/button";
-import { UICheckbox } from "@/components/ui/checkbox";
 import { UISelect } from "@/components/ui/select";
+import { UITextInput } from "@/components/ui/text-input";
 import {
   UISheet,
   UISheetClose,
@@ -28,6 +31,10 @@ type BlockSettingsSheetProps = {
   activeVariant?: BlockVariant;
   activePendingSwitch: PendingVariantSwitch | null;
   assets: ProjectAssetRecord[];
+  availableAnchors: Array<{
+    id: string;
+    label: string;
+  }>;
   backgroundScenes: BackgroundSceneRecord[];
   activeEditorBlockIndex: number;
   totalBlocks: number;
@@ -42,13 +49,15 @@ type BlockSettingsSheetProps = {
     definition: BlockVariantDefinition,
     nextVariant: BlockVariant
   ) => void;
-  onToggleFullBleed: (blockId: string, nextFullBleed: boolean) => void;
   onSelectScene: (blockId: string, sceneId?: string) => void;
   onConfirmVariantSwitch: () => void;
   onCancelVariantSwitch: () => void;
   onChangeProps: (blockId: string, nextProps: Record<string, unknown>) => void;
+  onChangeAnchorId: (blockId: string, nextAnchorId?: string) => void;
   onMoveBlock: (blockId: string, nextIndex: number) => void;
   onDeleteBlock: (blockId: string) => void;
+  allBlocks: PageBlock[];
+  onAnchorIdRejected?: (message: string) => void;
 };
 
 export function BlockSettingsSheet({
@@ -59,25 +68,101 @@ export function BlockSettingsSheet({
   activeVariant,
   activePendingSwitch,
   assets,
+  availableAnchors,
   backgroundScenes,
   activeEditorBlockIndex,
   totalBlocks,
   formatDefinitionLabel,
   onOpenChange,
   onSelectVariant,
-  onToggleFullBleed,
   onSelectScene,
   onConfirmVariantSwitch,
   onCancelVariantSwitch,
   onChangeProps,
+  onChangeAnchorId,
   onMoveBlock,
   onDeleteBlock,
+  allBlocks,
+  onAnchorIdRejected,
 }: BlockSettingsSheetProps) {
   const canMoveActiveBlockUp = activeEditorBlockIndex > 0;
   const canMoveActiveBlockDown = activeEditorBlockIndex >= 0 && activeEditorBlockIndex < totalBlocks - 1;
+  const [anchorDraft, setAnchorDraft] = useState("");
+  const [anchorError, setAnchorError] = useState<string | null>(null);
+
+  useEffect(() => {
+    setAnchorDraft(activeEditorBlock?.anchorId ?? "");
+    setAnchorError(null);
+  }, [activeEditorBlock?.id, activeEditorBlock?.anchorId]);
+
+  function handleAnchorBlur() {
+    if (!activeEditorBlock) {
+      return;
+    }
+
+    const normalizedAnchorId = normalizeAnchorId(anchorDraft);
+
+    if (normalizedAnchorId.length === 0) {
+      setAnchorError(null);
+      onChangeAnchorId(activeEditorBlock.id, undefined);
+      return;
+    }
+
+    if (!isValidAnchorId(normalizedAnchorId)) {
+      setAnchorError(
+        "Use lowercase Latin letters, numbers, and hyphens only. Must start with a letter."
+      );
+      return;
+    }
+
+    const hasDuplicate = allBlocks.some(
+      (block) =>
+        block.id !== activeEditorBlock.id &&
+        typeof block.anchorId === "string" &&
+        normalizeAnchorId(block.anchorId) === normalizedAnchorId
+    );
+
+    if (hasDuplicate) {
+      setAnchorError("This anchor id is already used by another block.");
+      return;
+    }
+
+    setAnchorError(null);
+    setAnchorDraft(normalizedAnchorId);
+    onChangeAnchorId(activeEditorBlock.id, normalizedAnchorId);
+  }
+
+  function isAnchorDraftInvalidForCurrentBlock() {
+    if (!activeEditorBlock) {
+      return false;
+    }
+
+    const normalizedAnchorId = normalizeAnchorId(anchorDraft);
+    if (normalizedAnchorId.length === 0) {
+      return false;
+    }
+
+    if (!isValidAnchorId(normalizedAnchorId)) {
+      return true;
+    }
+
+    return allBlocks.some(
+      (block) =>
+        block.id !== activeEditorBlock.id &&
+        typeof block.anchorId === "string" &&
+        normalizeAnchorId(block.anchorId) === normalizedAnchorId
+    );
+  }
+
+  function handleSheetOpenChange(nextOpen: boolean) {
+    if (!nextOpen && isAnchorDraftInvalidForCurrentBlock()) {
+      onAnchorIdRejected?.("Anchor id is invalid, value was not saved.");
+    }
+    onOpenChange(nextOpen);
+  }
 
   return (
-    <UISheet open={open} onOpenChange={onOpenChange}>
+    <UISheet open={open} onOpenChange={handleSheetOpenChange}>
       <UISheetContent
         side="right"
         ariaLabel="Block editor"
@@ -126,11 +211,22 @@ export function BlockSettingsSheet({
                   </div>
                 ) : null}
 
-                <UICheckbox
-                  label="Full bleed"
-                  checked={Boolean(activeEditorBlock.fullBleed)}
-                  onChange={(event) => onToggleFullBleed(activeEditorBlock.id, event.target.checked)}
-                />
+                <label className="grid gap-1.5 text-sm">
+                  <span className="font-medium text-text-main">Anchor id</span>
+                  <UITextInput
+                    size="sm"
+                    value={anchorDraft}
+                    onValueChange={setAnchorDraft}
+                    onBlur={handleAnchorBlur}
+                    placeholder="section-hero"
+                    invalid={Boolean(anchorError)}
+                    aria-label="Anchor id"
+                  />
+                  <span className={anchorError ? "text-xs text-danger" : "text-xs text-text-muted"}>
+                    {anchorError ??
+                      "Optional. If set, this block becomes linkable from header menu."}
+                  </span>
+                </label>
 
                 <ScenePicker
                   scenes={backgroundScenes}
@@ -170,6 +266,7 @@ export function BlockSettingsSheet({
               <activeEditorDefinition.Editor
                 block={activeEditorBlock}
                 assets={assets}
+                availableAnchors={availableAnchors}
                 definition={activeEditorDefinition}
                 onChange={(nextProps) => onChangeProps(activeEditorBlock.id, nextProps)}
               />

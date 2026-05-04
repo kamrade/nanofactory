@@ -107,12 +107,16 @@ describe("page content validation", () => {
       expect(result.data.blocks[0]?.variant).toBe("cards");
       expect(result.data.blocks[0]?.props).toMatchObject({
         sectionTitle: "Feature cards",
-        items: ["Speed", "Structure", "Control"],
+        items: [
+          { title: "Speed", content: "" },
+          { title: "Structure", content: "" },
+          { title: "Control", content: "" },
+        ],
       });
     }
   });
 
-  it("preserves fullBleed when provided on a block", () => {
+  it("ignores legacy fullBleed input on a block", () => {
     const result = validatePageContent({
       blocks: [
         {
@@ -130,7 +134,7 @@ describe("page content validation", () => {
     expect(result.success).toBe(true);
 
     if (result.success) {
-      expect(result.data.blocks[0]?.fullBleed).toBe(true);
+      expect(result.data.blocks[0]).not.toHaveProperty("fullBleed");
     }
   });
 

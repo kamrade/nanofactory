@@ -38,7 +38,7 @@ export function EditorToolbar({
           placement="bottom-start"
           size="sm"
           trigger={
-            <UIButton type="button" theme="base" variant="contained" size="sm">
+            <UIButton type="button" theme="base" variant="contained" size="lg">
               Add block
             </UIButton>
           }
@@ -71,7 +71,7 @@ export function EditorToolbar({
             disabled={isPending}
             theme="primary"
             variant="contained"
-            size="sm"
+            size="lg"
           >
             {isPending ? "Saving..." : "Save"}
           </UIButton>

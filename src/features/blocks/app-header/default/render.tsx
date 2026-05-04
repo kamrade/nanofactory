@@ -1,20 +1,250 @@
-import type { BlockRenderProps } from "../../shared/types";
+"use client";
 
-export function AppHeaderDefaultRender({ block, theme }: BlockRenderProps) {
-  const title = typeof block.props.title === "string" ? block.props.title : "";
-  const subtitle = typeof block.props.subtitle === "string" ? block.props.subtitle : "";
-  const buttonText =
-    typeof block.props.buttonText === "string" ? block.props.buttonText : "";
+import { useEffect, useRef, useState } from "react";
+import Image from "next/image";
+import {
+  FaFacebook,
+  FaInstagram,
+  FaLinkedin,
+  FaTelegram,
+  FaTiktok,
+  FaXTwitter,
+  FaYoutube,
+} from "react-icons/fa6";
+import { FiLink, FiMenu, FiX } from "react-icons/fi";
+import type { IconType } from "react-icons";
+
+import { resolveAssetById } from "@/lib/assets/resolution";
+import type { BlockRenderProps } from "../../shared/types";
+import type { SocialIconKey } from "./social-icons";
+import { readAppHeaderProps } from "./model";
+
+const SOCIAL_ICON_COMPONENTS: Record<SocialIconKey, IconType> = {
+  link: FiLink,
+  instagram: FaInstagram,
+  x: FaXTwitter,
+  linkedin: FaLinkedin,
+  youtube: FaYoutube,
+  facebook: FaFacebook,
+  telegram: FaTelegram,
+  tiktok: FaTiktok,
+};
+
+function renderSocialIcon(icon: SocialIconKey) {
+  const Icon = SOCIAL_ICON_COMPONENTS[icon] ?? FiLink;
+  return <Icon aria-hidden className="h-4 w-4" />;
+}
+
+function getResponsiveClasses(collapseBreakpoint: "sm" | "md" | "lg" | "xl") {
+  switch (collapseBreakpoint) {
+    case "sm":
+      return {
+        mobileOnly: "sm:hidden",
+        desktopOnly: "hidden sm:grid",
+      };
+    case "lg":
+      return {
+        mobileOnly: "lg:hidden",
+        desktopOnly: "hidden lg:grid",
+      };
+    case "xl":
+      return {
+        mobileOnly: "xl:hidden",
+        desktopOnly: "hidden xl:grid",
+      };
+    case "md":
+    default:
+      return {
+        mobileOnly: "md:hidden",
+        desktopOnly: "hidden md:grid",
+      };
+  }
+}
+
+export function AppHeaderDefaultRender({ block, assetMap, theme, mode = "light" }: BlockRenderProps) {
+  const sectionRef = useRef<HTMLElement>(null);
+  const [activeMode, setActiveMode] = useState<"light" | "dark">(mode);
+  const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
+  const {
+    title,
+    logoAssetId,
+    logoLightAssetId,
+    logoDarkAssetId,
+    collapseBreakpoint,
+    menuItems,
+    socialLinks,
+  } =
+    readAppHeaderProps(block.props);
+  const responsive = getResponsiveClasses(collapseBreakpoint);
+  const selectedLogoId =
+    activeMode === "dark" ? logoDarkAssetId ?? logoAssetId : logoLightAssetId ?? logoAssetId;
+  const logoAsset = resolveAssetById(selectedLogoId, assetMap);
+  const hasContent =
+    title.trim().length > 0 ||
+    Boolean(logoAsset) ||
+    menuItems.length > 0 ||
+    socialLinks.length > 0;
+
+  useEffect(() => {
+    const host = sectionRef.current?.closest("main[data-theme]");
+    if (!host) {
+      setActiveMode(mode);
+      return;
+    }
+
+    const syncMode = () => {
+      const nextMode = host.getAttribute("data-mode");
+      setActiveMode(nextMode === "dark" ? "dark" : "light");
+    };
+
+    syncMode();
+    const observer = new MutationObserver(syncMode);
+    observer.observe(host, {
+      attributes: true,
+      attributeFilter: ["data-mode"],
+    });
+
+    return () => observer.disconnect();
+  }, [mode]);
 
   return (
-    <section className="space-y-5">
-      <p className={`text-sm font-medium uppercase tracking-[0.18em] ${theme.kicker}`}>
-        App Header
-      </p>
-      <h2 className="text-3xl font-semibold tracking-tight">{title}</h2>
-      <p className={`max-w-2xl text-base leading-7 ${theme.muted}`}>{subtitle}</p>
-      <div>
-        <span className={theme.button}>{buttonText}</span>
+    <section ref={sectionRef} className="p-4 md:p-8 md:py-2">
+      {!hasContent ? (
+        <div
+          aria-hidden
+          className="h-10 w-full rounded-xl border border-dashed border-line bg-surface-alt"
+        />
+      ) : null}
+
+
+      <div className={`relative flex items-center justify-center ${responsive.mobileOnly}`}>
+        <button
+          type="button"
+          aria-label={isMobileMenuOpen ? "Close menu" : "Open menu"}
+          aria-expanded={isMobileMenuOpen}
+          className="absolute left-0 inline-flex h-9 w-9 items-center justify-center rounded-lg border border-line bg-surface-alt text-text-main transition hover:bg-surface"
+          onClick={() => setIsMobileMenuOpen((prev) => !prev)}
+        >
+          {isMobileMenuOpen ? <FiX aria-hidden className="h-5 w-5" /> : <FiMenu aria-hidden className="h-5 w-5" />}
+        </button>
+
+        <div className="flex min-w-0 items-center justify-center gap-3 px-12">
+          {logoAsset ? (
+            <Image
+              src={logoAsset.publicUrl}
+              alt={logoAsset.id}
+              width={120}
+              height={48}
+              unoptimized
+              className="h-10 w-auto object-contain"
+            />
+          ) : null}
+
+          {title.trim().length > 0 ? (
+            <h2 className="truncate text-xl font-semibold tracking-tight text-text-main">{title}</h2>
+          ) : null}
+        </div>
+      </div>
+
+      <div
+        aria-hidden={!isMobileMenuOpen}
+        className={`overflow-hidden transition-all duration-300 ease-out ${responsive.mobileOnly} ${
+          isMobileMenuOpen
+            ? "mt-4 max-h-[24rem] opacity-100 translate-y-0"
+            : "mt-0 max-h-0 opacity-0 -translate-y-1 pointer-events-none"
+        }`}
+      >
+        <div className="rounded-2xl border border-line bg-surface p-4">
+          <div className="grid gap-4">
+            {menuItems.length > 0 ? (
+              <nav aria-label="Mobile page sections">
+                <ul className="grid gap-2">
+                  {menuItems.map((item, index) => (
+                    <li key={`${item.anchorId}-${item.label}-mobile-${index}`}>
+                      <a
+                        href={`#${item.anchorId}`}
+                        className={`text-sm font-medium transition hover:underline ${theme.muted}`}
+                        onClick={() => setIsMobileMenuOpen(false)}
+                      >
+                        {item.label}
+                      </a>
+                    </li>
+                  ))}
+                </ul>
+              </nav>
+            ) : null}
+
+            {socialLinks.length > 0 ? (
+              <div className="flex flex-wrap items-center gap-3 border-t border-line pt-3">
+                {socialLinks.map((item, index) => (
+                  <a
+                    key={`${item.url}-${item.label}-mobile-${index}`}
+                    href={item.url}
+                    target="_blank"
+                    rel="noreferrer"
+                    className={`inline-flex items-center gap-1.5 text-sm font-medium transition hover:underline ${theme.muted}`}
+                  >
+                    {renderSocialIcon(item.icon)}
+                    {item.label}
+                  </a>
+                ))}
+              </div>
+            ) : null}
+          </div>
+        </div>
+      </div>
+
+      <div
+        className={`${responsive.desktopOnly} items-center gap-4 grid-cols-[minmax(0,1fr)_auto_minmax(0,1fr)]`}
+      >
+        <div className="flex items-center gap-3 md:justify-start">
+          {logoAsset ? (
+            <Image
+              src={logoAsset.publicUrl}
+              alt={logoAsset.id}
+              width={120}
+              height={48}
+              unoptimized
+              className="h-10 w-auto object-contain"
+            />
+          ) : null}
+
+          {title.trim().length > 0 ? (
+            <h2 className="text-xl font-semibold tracking-tight text-text-main">{title}</h2>
+          ) : null}
+        </div>
+
+        <nav aria-label="Page sections" className="flex items-center justify-center">
+          {menuItems.length > 0 ? (
+            <ul className="flex flex-wrap items-center justify-center gap-4">
+              {menuItems.map((item, index) => (
+                <li key={`${item.anchorId}-${item.label}-${index}`}>
+                  <a
+                    href={`#${item.anchorId}`}
+                    className={`text-sm font-medium transition hover:underline ${theme.muted}`}
+                  >
+                    {item.label}
+                  </a>
+                </li>
+              ))}
+            </ul>
+          ) : null}
+        </nav>
+
+        <div className="flex items-center justify-start gap-3 md:justify-end">
+          {socialLinks.map((item, index) => (
+            <a
+              key={`${item.url}-${item.label}-${index}`}
+              href={item.url}
+              target="_blank"
+              rel="noreferrer"
+              className={`inline-flex items-center gap-1.5 text-sm font-medium transition hover:underline ${theme.muted}`}
+            >
+              {renderSocialIcon(item.icon)}
+              {item.label}
+            </a>
+          ))}
+        </div>
       </div>
     </section>
   );

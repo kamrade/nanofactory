@@ -11,7 +11,7 @@ export type PageBlock = {
   id: string;
   type: SupportedBlockType;
   variant?: BlockVariant;
-  fullBleed?: boolean;
+  anchorId?: string;
   backgroundSceneId?: string;
   props: Record<string, unknown>;
 };

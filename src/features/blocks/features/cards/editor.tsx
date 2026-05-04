@@ -2,15 +2,50 @@
 
 import type { BlockEditorProps } from "../../shared/types";
 import { UIButton } from "@/components/ui/button";
+import { UITextInput } from "@/components/ui/text-input";
+
+type FeatureCardItem = {
+  title: string;
+  content: string;
+};
 
 function readSectionTitle(props: Record<string, unknown>) {
   return typeof props.sectionTitle === "string" ? props.sectionTitle : "";
 }
 
-function readItems(props: Record<string, unknown>) {
-  return Array.isArray(props.items)
-    ? props.items.map((item) => (typeof item === "string" ? item : ""))
-    : [];
+function readItems(props: Record<string, unknown>): FeatureCardItem[] {
+  if (!Array.isArray(props.items)) {
+    return [];
+  }
+
+  return props.items
+    .map((item) => {
+      if (typeof item === "string") {
+        return {
+          title: item,
+          content: "",
+        };
+      }
+
+      if (typeof item !== "object" || item === null) {
+        return null;
+      }
+
+      const title =
+        typeof (item as { title?: unknown }).title === "string"
+          ? (item as { title: string }).title
+          : "";
+      const content =
+        typeof (item as { content?: unknown }).content === "string"
+          ? (item as { content: string }).content
+          : "";
+
+      return {
+        title,
+        content,
+      };
+    })
+    .filter((item): item is FeatureCardItem => item !== null);
 }
 
 export function FeaturesCardsEditor({ block, onChange }: BlockEditorProps) {
@@ -24,19 +59,47 @@ export function FeaturesCardsEditor({ block, onChange }: BlockEditorProps) {
     });
   }
 
-  function updateItems(nextItems: string[]) {
+  function updateItems(nextItems: FeatureCardItem[]) {
     onChange({
       ...block.props,
       items: nextItems,
     });
   }
 
-  function handleUpdateItem(index: number, nextValue: string) {
-    updateItems(items.map((item, currentIndex) => (currentIndex === index ? nextValue : item)));
+  function handleUpdateItemTitle(index: number, nextValue: string) {
+    updateItems(
+      items.map((item, currentIndex) =>
+        currentIndex === index
+          ? {
+              ...item,
+              title: nextValue,
+            }
+          : item
+      )
+    );
+  }
+
+  function handleUpdateItemContent(index: number, nextValue: string) {
+    updateItems(
+      items.map((item, currentIndex) =>
+        currentIndex === index
+          ? {
+              ...item,
+              content: nextValue,
+            }
+          : item
+      )
+    );
   }
 
   function handleAddItem() {
-    updateItems([...items, ""]);
+    updateItems([
+      ...items,
+      {
+        title: "",
+        content: "",
+      },
+    ]);
   }
 
   function handleRemoveItem(index: number) {
@@ -47,12 +110,11 @@ export function FeaturesCardsEditor({ block, onChange }: BlockEditorProps) {
     <div className="grid gap-5">
       <label className="grid gap-1.5 text-sm">
         <span className="font-medium text-zinc-700">Section title</span>
-        <input
-          type="text"
+        <UITextInput
+          size="sm"
           value={sectionTitle}
           placeholder="Why teams choose Nanofactory"
-          onChange={(event) => updateSectionTitle(event.target.value)}
-          className="rounded-2xl border border-zinc-200 bg-white px-4 py-3 text-sm outline-none transition focus:border-zinc-400"
+          onValueChange={updateSectionTitle}
         />
       </label>
 
@@ -82,7 +144,7 @@ export function FeaturesCardsEditor({ block, onChange }: BlockEditorProps) {
           <div className="grid gap-3">
             {items.map((item, index) => (
               <article
-                key={`${block.id}-card-${index}`}
+                key={`${block.id}-card-${index}-${item.title}`}
                 className="grid gap-3 rounded-2xl border border-zinc-200 bg-white p-4"
               >
                 <div className="flex flex-wrap items-center justify-between gap-3">
@@ -98,11 +160,21 @@ export function FeaturesCardsEditor({ block, onChange }: BlockEditorProps) {
 
                 <label className="grid gap-1.5 text-sm">
                   <span className="font-medium text-zinc-700">Card title</span>
-                  <input
-                    type="text"
-                    value={item}
+                  <UITextInput
+                    size="sm"
+                    value={item.title}
                     placeholder={`Feature card ${index + 1}`}
-                    onChange={(event) => handleUpdateItem(index, event.target.value)}
+                    onValueChange={(value) => handleUpdateItemTitle(index, value)}
+                  />
+                </label>
+
+                <label className="grid gap-1.5 text-sm">
+                  <span className="font-medium text-zinc-700">Card content</span>
+                  <textarea
+                    value={item.content}
+                    rows={3}
+                    placeholder="Card supporting content"
+                    onChange={(event) => handleUpdateItemContent(index, event.target.value)}
                     className="rounded-2xl border border-zinc-200 bg-white px-4 py-3 text-sm outline-none transition focus:border-zinc-400"
                   />
                 </label>

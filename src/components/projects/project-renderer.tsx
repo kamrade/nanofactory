@@ -27,9 +27,7 @@ function getThemeClasses(themeKey: string) {
     default:
       return {
         page: "bg-bg text-text-main",
-        heroCard:
-          "rounded-[2rem] border border-line bg-surface-alt px-8 py-12 shadow-sm",
-        sectionCard: "rounded-[2rem] border border-line bg-surface px-8 py-10 shadow-sm",
+        heroCard: "",
         button:
           "inline-flex items-center justify-center rounded-2xl bg-primary-300 px-5 py-3 text-sm font-medium text-text-inverted-main transition hover:bg-primary-200",
         muted: "text-text-muted",
@@ -62,12 +60,11 @@ function renderBlock(
     <SectionShell
       block={block}
       containerClassName="container mx-auto px-4"
-      cardClassName={theme.sectionCard}
       backgroundScene={backgroundScene}
       fallbackThemeKey={fallbackThemeKey}
       fallbackMode={fallbackMode}
     >
-      <Renderer block={block} assetMap={assetMap} theme={theme} />
+      <Renderer block={block} assetMap={assetMap} theme={theme} mode={fallbackMode} />
     </SectionShell>
   );
 }
@@ -99,7 +96,7 @@ export function ProjectRenderer({
     <main
       data-theme={resolvedThemeKey}
       data-mode={mode}
-      className={`min-h-screen py-16 ${theme.page}`}
+      className={`min-h-screen py-8 ${theme.page}`}
     >
       <div className="flex w-full flex-col gap-8">
         {showPublishedBadge || showProjectMeta ? (
@@ -122,7 +119,7 @@ export function ProjectRenderer({
 
         {content.blocks.length === 0 ? (
           <section data-testid="ProjectRenderBlock" className={containerClass}>
-            <div className={theme.sectionCard}>
+            <div className="rounded-[2rem] border border-line bg-surface px-8 py-10 shadow-sm">
               <h1 className="text-3xl font-semibold tracking-tight">{name}</h1>
               <p className={`mt-3 text-base leading-7 ${theme.muted}`}>
                 This page has been published, but it does not contain any blocks yet.
