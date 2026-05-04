@@ -13,7 +13,6 @@ import { ProjectModeSwitcher, type ThemeMode } from "@/components/projects/proje
 import { ProjectRenameForm } from "@/components/projects/project-rename-form";
 import { ProjectThemeForm } from "@/components/projects/project-theme-form";
 import { UIButton } from "@/components/ui/button";
-import { UIDivider } from "@/components/ui/divider";
 import { UIStickyHeader } from "@/components/ui/sticky-header";
 import {
   UISheet,
@@ -128,15 +127,54 @@ export function ProjectHeader({
               </UISheetDescription>
             </UISheetHeader>
             <div className="mt-6 grid gap-5 text-sm text-text-muted">
-              <div className="grid gap-3">
-                <p>Status: {project.status}</p>
-                <p>Slug: {project.slug}</p>
-                <p>Theme: {resolvedThemeKey}</p>
-                <p>Schema version: {project.schemaVersion}</p>
-                <p>
-                  Published at:{" "}
-                  {project.publishedAt ? formatUiDateTime(project.publishedAt) : "Not published"}
-                </p>
+              <div className="overflow-hidden rounded-2xl border border-line bg-surface-alt">
+                <div className="grid grid-cols-[160px_minmax(0,1fr)] gap-3 border-b border-line px-4 py-3">
+                  <span className="font-medium text-text-main">status</span>
+                  <span>{project.status}</span>
+                </div>
+                <div className="grid grid-cols-[160px_minmax(0,1fr)] gap-3 border-b border-line px-4 py-3">
+                  <span className="font-medium text-text-main">slug</span>
+                  <span className="break-all">{project.slug}</span>
+                </div>
+                <div className="grid grid-cols-[160px_minmax(0,1fr)] gap-3 border-b border-line px-4 py-3">
+                  <span className="font-medium text-text-main">theme</span>
+                  <span>{resolvedThemeKey}</span>
+                </div>
+                <div className="grid grid-cols-[160px_minmax(0,1fr)] gap-3 border-b border-line px-4 py-3">
+                  <span className="font-medium text-text-main">schemaVersion</span>
+                  <span>{project.schemaVersion}</span>
+                </div>
+                <div className="grid grid-cols-[160px_minmax(0,1fr)] gap-3 px-4 py-3">
+                  <span className="font-medium text-text-main">publishedAt</span>
+                  <span>
+                    {project.publishedAt ? formatUiDateTime(project.publishedAt) : "Not published"}
+                  </span>
+                </div>
+              </div>
+              <div className="grid gap-3 rounded-2xl border border-line bg-surface-alt p-4">
+                <h3 className="text-base font-semibold text-text-main">Actions</h3>
+                <div className="flex flex-wrap items-center gap-3">
+                  <form action={publicationAction}>
+                    <UIButton
+                      type="submit"
+                      theme={project.status === "published" ? "danger" : "primary"}
+                      variant={project.status === "published" ? "outlined" : "contained"}
+                      size="sm"
+                    >
+                      {project.status === "published" ? "Unpublish" : "Publish"}
+                    </UIButton>
+                  </form>
+
+                  <OpenPreviewButton projectId={project.id} />
+
+                  {project.status === "published" ? (
+                    <UIButton asChild theme="base" variant="contained" size="sm">
+                      <Link href={`/p/${project.slug}`} target="_blank" rel="noreferrer">
+                        Open public page
+                      </Link>
+                    </UIButton>
+                  ) : null}
+                </div>
               </div>
               <div className="space-y-2">
                 <h3 className="text-base font-semibold text-text-main">Content shape</h3>
@@ -154,31 +192,6 @@ export function ProjectHeader({
             </UISheetFooter>
           </UISheetContent>
         </UISheet>
-      </div>
-
-      <UIDivider spacing="sm" />
-
-      <div className="flex flex-wrap items-center gap-3">
-        <form action={publicationAction}>
-          <UIButton
-            type="submit"
-            theme={project.status === "published" ? "danger" : "primary"}
-            variant={project.status === "published" ? "outlined" : "contained"}
-            size="sm"
-          >
-            {project.status === "published" ? "Unpublish" : "Publish"}
-          </UIButton>
-        </form>
-
-        <OpenPreviewButton projectId={project.id} />
-
-        {project.status === "published" ? (
-          <UIButton asChild theme="base" variant="contained" size="sm">
-            <Link href={`/p/${project.slug}`} target="_blank" rel="noreferrer">
-              Open public page
-            </Link>
-          </UIButton>
-        ) : null}
       </div>
     </UIStickyHeader>
   );

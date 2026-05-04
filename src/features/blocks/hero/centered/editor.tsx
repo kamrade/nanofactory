@@ -2,6 +2,7 @@
 
 import type { BlockEditorProps } from "../../shared/types";
 import { AssetPicker } from "../../shared/asset-picker";
+import { UISelect } from "@/components/ui/select";
 import { UITextInput } from "@/components/ui/text-input";
 
 function readStringProp(props: Record<string, unknown>, key: string) {
@@ -12,12 +13,17 @@ export function HeroCenteredEditor({
   block,
   assets,
   onChange,
+  availableAnchors = [],
 }: BlockEditorProps) {
   const title = readStringProp(block.props, "title");
   const subtitle = readStringProp(block.props, "subtitle");
   const buttonText = readStringProp(block.props, "buttonText");
+  const buttonAnchor = readStringProp(block.props, "buttonAnchor");
 
-  function updateField(key: "title" | "subtitle" | "buttonText", value: string) {
+  function updateField(
+    key: "title" | "subtitle" | "buttonText" | "buttonAnchor",
+    value: string
+  ) {
     onChange({
       ...block.props,
       [key]: value,
@@ -62,6 +68,23 @@ export function HeroCenteredEditor({
             value={buttonText}
             placeholder="See how it works"
             onValueChange={(value) => updateField("buttonText", value)}
+          />
+        </label>
+
+        <label className="grid gap-1.5 text-sm">
+          <span className="font-medium text-text-main">Button anchor</span>
+          <UISelect
+            ariaLabel="Hero button anchor"
+            size="sm"
+            value={buttonAnchor}
+            onValueChange={(value) => updateField("buttonAnchor", String(value))}
+            placeholder={availableAnchors.length === 0 ? "No anchors available" : "Select anchor"}
+            options={availableAnchors.map((anchor) => ({
+              value: anchor.id,
+              label: anchor.label,
+              textValue: anchor.label,
+            }))}
+            clearable
           />
         </label>
       </div>

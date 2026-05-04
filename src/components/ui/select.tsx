@@ -306,7 +306,7 @@ export function UISelect({
                 : undefined
             }
             className={cx(
-              "flex w-full items-center border outline-none transition",
+              "flex w-full items-center border text-text-main outline-none transition",
               "focus:ring-2 focus:ring-focus/50 focus:ring-offset-0 focus:ring-offset-bg",
               "focus:outline-none focus-visible:outline-none",
               sizeClasses.container,

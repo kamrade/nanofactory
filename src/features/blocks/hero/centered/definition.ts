@@ -36,6 +36,7 @@ export const heroCenteredDefinition: BlockVariantDefinition = {
     subtitle:
       "Lead with a focused headline, support it with one strong paragraph, and keep the call to action visible.",
     buttonText: "See how it works",
+    buttonAnchor: "",
     imageAssetId: undefined,
   }),
   normalizeProps: (input) => {
@@ -48,6 +49,7 @@ export const heroCenteredDefinition: BlockVariantDefinition = {
         "Lead with a focused headline, support it with one strong paragraph, and keep the call to action visible."
       ),
       buttonText: readString(props.buttonText, "See how it works"),
+      buttonAnchor: readString(props.buttonAnchor, ""),
       imageAssetId: readOptionalString(props.imageAssetId),
     };
   },

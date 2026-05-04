@@ -1,5 +1,6 @@
 import { isPlainObject, readOptionalString, readString } from "../../shared/base";
 import { isSocialIconKey, type SocialIconKey } from "./social-icons";
+import { isValidAnchorId, normalizeAnchorId } from "@/lib/editor/anchor-id";
 
 export type AppHeaderMenuItem = {
   label: string;
@@ -44,9 +45,10 @@ export function readAppHeaderMenuItems(input: unknown): AppHeaderMenuItem[] {
       }
 
       const label = readOptionalString(item.label);
-      const anchorId = readOptionalString(item.anchorId);
+      const rawAnchorId = readOptionalString(item.anchorId);
+      const anchorId = rawAnchorId ? normalizeAnchorId(rawAnchorId) : undefined;
 
-      if (!label || !anchorId) {
+      if (!label || !anchorId || !isValidAnchorId(anchorId)) {
         return null;
       }
 

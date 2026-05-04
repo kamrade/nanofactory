@@ -1,6 +1,6 @@
 import { readOptionalString, readString, isPlainObject } from "../../shared/base";
-import { GenericBlockEditor } from "../../shared/generic-editor";
 import type { BlockVariantDefinition } from "../../shared/types";
+import { HeroDefaultEditor } from "./editor";
 import { HeroDefaultRender } from "./render";
 
 export const heroDefaultDefinition: BlockVariantDefinition = {
@@ -30,12 +30,13 @@ export const heroDefaultDefinition: BlockVariantDefinition = {
       placeholder: "Get started",
     },
   ],
-  Editor: GenericBlockEditor,
+  Editor: HeroDefaultEditor,
   createDefaultProps: () => ({
     title: "Build a page that ships this afternoon",
     subtitle:
       "Write the core message, add a call to action, and publish a focused landing page without a long setup.",
     buttonText: "Start now",
+    buttonAnchor: "",
     imageAssetId: undefined,
   }),
   normalizeProps: (input) => {
@@ -48,6 +49,7 @@ export const heroDefaultDefinition: BlockVariantDefinition = {
         "Write the core message, add a call to action, and publish a focused landing page without a long setup."
       ),
       buttonText: readString(props.buttonText, "Start now"),
+      buttonAnchor: readString(props.buttonAnchor, ""),
       imageAssetId: readOptionalString(props.imageAssetId),
     };
   },

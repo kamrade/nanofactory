@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useRef, useState, type MouseEvent } from "react";
 import Image from "next/image";
 import {
   FaFacebook,
@@ -85,6 +85,23 @@ export function AppHeaderDefaultRender({ block, assetMap, theme, mode = "light" 
     menuItems.length > 0 ||
     socialLinks.length > 0;
 
+  function handleAnchorClick(event: MouseEvent<HTMLAnchorElement>, anchorId: string) {
+    if (typeof document === "undefined") {
+      return;
+    }
+
+    const target = document.getElementById(anchorId);
+    if (!target) {
+      return;
+    }
+
+    event.preventDefault();
+    target.scrollIntoView({ behavior: "smooth", block: "start" });
+    if (typeof window !== "undefined") {
+      window.history.replaceState(null, "", `#${anchorId}`);
+    }
+  }
+
   useEffect(() => {
     const host = sectionRef.current?.closest("main[data-theme]");
     if (!host) {
@@ -164,7 +181,10 @@ export function AppHeaderDefaultRender({ block, assetMap, theme, mode = "light" 
                       <a
                         href={`#${item.anchorId}`}
                         className={`text-sm font-medium transition hover:underline ${theme.muted}`}
-                        onClick={() => setIsMobileMenuOpen(false)}
+                        onClick={(event) => {
+                          handleAnchorClick(event, item.anchorId);
+                          setIsMobileMenuOpen(false);
+                        }}
                       >
                         {item.label}
                       </a>
@@ -222,6 +242,7 @@ export function AppHeaderDefaultRender({ block, assetMap, theme, mode = "light" 
                   <a
                     href={`#${item.anchorId}`}
                     className={`text-sm font-medium transition hover:underline ${theme.muted}`}
+                    onClick={(event) => handleAnchorClick(event, item.anchorId)}
                   >
                     {item.label}
                   </a>

@@ -237,7 +237,10 @@ export function UIDialogContent({
     const sourceElement =
       triggerElement ??
       (document.activeElement instanceof HTMLElement ? document.activeElement : null);
-    const scope = sourceElement?.closest("[data-theme]") as HTMLElement | null;
+    const scope =
+      (sourceElement?.closest("[data-theme][data-mode]") as HTMLElement | null) ??
+      document.querySelector<HTMLElement>("main[data-theme][data-mode]") ??
+      document.querySelector<HTMLElement>("[data-theme][data-mode]");
 
     if (!scope) {
       setThemeAttrs({});

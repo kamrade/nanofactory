@@ -12,6 +12,8 @@ export function HeroCenteredRender({ block, assetMap, theme }: BlockRenderProps)
     typeof block.props.subtitle === "string" ? block.props.subtitle : "";
   const buttonText =
     typeof block.props.buttonText === "string" ? block.props.buttonText : "";
+  const buttonAnchor =
+    typeof block.props.buttonAnchor === "string" ? block.props.buttonAnchor : "";
   const heroImageAsset = resolveAssetById(block.props.imageAssetId, assetMap);
 
   return (
@@ -44,9 +46,17 @@ export function HeroCenteredRender({ block, assetMap, theme }: BlockRenderProps)
           <p className={`mx-auto max-w-2xl break-words text-base leading-7 ${theme.muted}`}>
             {subtitle}
           </p>
-          <div>
-            <span className={theme.button}>{buttonText}</span>
-          </div>
+          {buttonAnchor.trim().length > 0 ? (
+            <div>
+              <a href={`#${buttonAnchor}`} className={theme.button}>
+                {buttonText}
+              </a>
+            </div>
+          ) : (
+            <div>
+              <span className={theme.button}>{buttonText}</span>
+            </div>
+          )}
         </div>
       </div>
     </section>

@@ -51,14 +51,14 @@ export function GenericBlockEditor({
 
         return (
           <label key={field.key} className="grid gap-1.5 text-sm">
-            <span className="font-medium text-zinc-700">{field.label}</span>
+            <span className="font-medium text-text-main">{field.label}</span>
             {field.kind === "textarea" || field.kind === "string-list" ? (
               <textarea
                 value={value}
                 rows={field.kind === "string-list" ? 5 : 4}
                 placeholder={field.placeholder}
                 onChange={(event) => handleUpdateField(field, event.target.value)}
-                className="rounded-2xl border border-zinc-200 bg-white px-4 py-3 text-sm outline-none transition focus:border-zinc-400"
+                className="rounded-2xl border border-line bg-surface px-4 py-3 text-sm text-text-main outline-none transition focus:ring-2 focus:ring-focus/50"
               />
             ) : (
               <input
@@ -66,11 +66,11 @@ export function GenericBlockEditor({
                 value={value}
                 placeholder={field.placeholder}
                 onChange={(event) => handleUpdateField(field, event.target.value)}
-                className="rounded-2xl border border-zinc-200 bg-white px-4 py-3 text-sm outline-none transition focus:border-zinc-400"
+                className="rounded-2xl border border-line bg-surface px-4 py-3 text-sm text-text-main outline-none transition focus:ring-2 focus:ring-focus/50"
               />
             )}
             {field.kind === "string-list" ? (
-              <span className="text-xs text-zinc-500">Enter one list item per line.</span>
+              <span className="text-xs text-text-muted">Enter one list item per line.</span>
             ) : null}
           </label>
         );
