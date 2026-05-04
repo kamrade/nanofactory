@@ -18,6 +18,11 @@ import {
 } from "react";
 import { createPortal } from "react-dom";
 
+type ThemeAttrs = {
+  theme?: string;
+  mode?: string;
+};
+
 type UIDialogContextValue = {
   open: boolean;
   setOpen: (nextOpen: boolean) => void;
@@ -194,6 +199,7 @@ export function UIDialogContent({
     hasTitle,
     hasDescription,
   } = useDialogContext();
+  const [themeAttrs, setThemeAttrs] = useState<ThemeAttrs>({});
 
   useEffect(() => {
     if (!open) {
@@ -223,12 +229,45 @@ export function UIDialogContent({
     };
   }, [contentRef, open, triggerElement]);
 
+  useEffect(() => {
+    if (!open) {
+      return;
+    }
+
+    const sourceElement =
+      triggerElement ??
+      (document.activeElement instanceof HTMLElement ? document.activeElement : null);
+    const scope = sourceElement?.closest("[data-theme]") as HTMLElement | null;
+
+    if (!scope) {
+      setThemeAttrs({});
+      return;
+    }
+
+    const syncThemeAttrs = () => {
+      setThemeAttrs({
+        theme: scope.dataset.theme,
+        mode: scope.dataset.mode,
+      });
+    };
+
+    syncThemeAttrs();
+
+    const observer = new MutationObserver(syncThemeAttrs);
+    observer.observe(scope, {
+      attributes: true,
+      attributeFilter: ["data-theme", "data-mode"],
+    });
+
+    return () => observer.disconnect();
+  }, [open, triggerElement]);
+
   if (!open) {
     return null;
   }
 
   const layer = (
-    <div className="fixed inset-0 z-50">
+    <div className="fixed inset-0 z-50" data-theme={themeAttrs.theme} data-mode={themeAttrs.mode}>
       <div
         className="absolute inset-0 bg-black/35"
       />

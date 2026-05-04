@@ -17,6 +17,11 @@ import {
 } from "react";
 import { createPortal } from "react-dom";
 
+type ThemeAttrs = {
+  theme?: string;
+  mode?: string;
+};
+
 type UISheetSide = "left" | "right";
 
 type UISheetContextValue = {
@@ -152,6 +157,7 @@ export function UISheetContent({
     hasDescription,
   } = useSheetContext();
   const panelRef = useRef<HTMLDivElement | null>(null);
+  const [themeAttrs, setThemeAttrs] = useState<ThemeAttrs>({});
 
   useEffect(() => {
     if (!open) {
@@ -181,12 +187,47 @@ export function UISheetContent({
     };
   }, [modal, open, triggerElement]);
 
+  useEffect(() => {
+    if (!open) {
+      return;
+    }
+
+    const sourceElement =
+      triggerElement ??
+      (document.activeElement instanceof HTMLElement ? document.activeElement : null);
+    const scope = sourceElement?.closest("[data-theme]") as HTMLElement | null;
+
+    if (!scope) {
+      setThemeAttrs({});
+      return;
+    }
+
+    const syncThemeAttrs = () => {
+      setThemeAttrs({
+        theme: scope.dataset.theme,
+        mode: scope.dataset.mode,
+      });
+    };
+
+    syncThemeAttrs();
+
+    const observer = new MutationObserver(syncThemeAttrs);
+    observer.observe(scope, {
+      attributes: true,
+      attributeFilter: ["data-theme", "data-mode"],
+    });
+
+    return () => observer.disconnect();
+  }, [open, triggerElement]);
+
   const panel = (
     <div
       className={cx(
         "fixed inset-0 z-50",
         open ? (modal ? "pointer-events-auto" : "pointer-events-none") : "pointer-events-none"
       )}
+      data-theme={themeAttrs.theme}
+      data-mode={themeAttrs.mode}
       onKeyDown={(event) => {
         if (closeOnEscape && event.key === "Escape") {
           event.preventDefault();

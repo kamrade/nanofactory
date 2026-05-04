@@ -143,7 +143,7 @@ describe("page content validation", () => {
       blocks: [
         {
           id: "unknown-1",
-          type: "gallery",
+          type: "unknown-block",
           props: {},
         },
       ],

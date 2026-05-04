@@ -77,18 +77,18 @@ export function ProjectAssetsPanel({
             {error}
           </p>
         ) : null}
+        <ImageAssetUploadCard
+          projectId={projectId}
+          onUploaded={(asset) => {
+            setError(null);
+            setAssets((currentAssets) => [asset, ...currentAssets]);
+            onAssetUploaded?.(asset);
+          }}
+          onUploadError={(message) => setError(message)}
+        />
         <div className="grid grid-cols-8 gap-4">
-          <ImageAssetUploadCard
-            projectId={projectId}
-            onUploaded={(asset) => {
-              setError(null);
-              setAssets((currentAssets) => [asset, ...currentAssets]);
-              onAssetUploaded?.(asset);
-            }}
-            onUploadError={(message) => setError(message)}
-          />
           {assets.length === 0 ? (
-            <p className="col-span-7 rounded-2xl border border-dashed border-line px-4 py-8 text-sm text-text-placeholder">
+            <p className="col-span-8 rounded-2xl border border-dashed border-line px-4 py-8 text-sm text-text-placeholder">
               No assets uploaded yet.
             </p>
           ) : (

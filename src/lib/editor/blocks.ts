@@ -15,6 +15,7 @@ export type {
   FeaturesVariant,
   HeroVariant,
   CtaVariant,
+  GalleryVariant,
   PageBlock,
   PageContent,
   SupportedBlockType,

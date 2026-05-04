@@ -36,6 +36,7 @@ import { useToast } from "@/hooks/use-toast";
 import type { BackgroundSceneRecord } from "@/lib/background-scenes/types";
 import { normalizeAnchorId } from "@/lib/editor/anchor-id";
 import type { UiMode } from "@/lib/ui-preferences";
+import type { ThemeKey } from "@/lib/themes";
 
 type EditorProject = {
   id: string;
@@ -50,6 +51,8 @@ type ProjectEditorProps = {
   project: EditorProject;
   assets: ProjectAssetRecord[];
   initialMode: UiMode;
+  activeThemeKey: ThemeKey;
+  activeMode: UiMode;
   backgroundScenes?: BackgroundSceneRecord[];
 };
 
@@ -271,6 +274,8 @@ export function ProjectEditor({
   project,
   assets,
   initialMode,
+  activeThemeKey,
+  activeMode,
   backgroundScenes = [],
 }: ProjectEditorProps) {
   const { showToast } = useToast();
@@ -350,13 +355,13 @@ export function ProjectEditor({
         block={block}
         containerClassName="mx-4"
         backgroundScene={backgroundScene}
-        fallbackThemeKey={project.themeKey === "nightfall" ? "nightfall" : "sunwash"}
-        fallbackMode={initialMode}
+        fallbackThemeKey={activeThemeKey}
+        fallbackMode={activeMode}
       >
         <BlockRenderer
           block={block}
           assetMap={assetMap}
-          mode={initialMode}
+          mode={activeMode}
           theme={{
             muted: "text-text-muted",
             button:
