@@ -32,7 +32,7 @@ export function EditorToolbar({
 }: EditorToolbarProps) {
   return (
     <div className="flex flex-wrap items-center justify-between gap-4">
-      <div className="mx-4 flex flex-wrap items-center gap-3">
+      <div className="mx-auto container flex flex-wrap items-center gap-3 mb-12">
         <UIMenu
           ariaLabel="Add block"
           placement="bottom-start"

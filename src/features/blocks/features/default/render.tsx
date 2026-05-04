@@ -8,7 +8,7 @@ export function FeaturesDefaultRender({ block, theme }: BlockRenderProps) {
     : [];
 
   return (
-    <section className="space-y-5 p-4 md:p-8">
+    <section className="space-y-5 px-4 md:px-8 py-12">
       <h2 className="text-2xl font-semibold tracking-tight">{sectionTitle}</h2>
       <ul className="grid gap-3">
         {items.map((item) => (

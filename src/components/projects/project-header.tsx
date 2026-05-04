@@ -14,6 +14,7 @@ import { ProjectRenameForm } from "@/components/projects/project-rename-form";
 import { ProjectThemeForm } from "@/components/projects/project-theme-form";
 import { UIButton } from "@/components/ui/button";
 import { UIDivider } from "@/components/ui/divider";
+import { UIStickyHeader } from "@/components/ui/sticky-header";
 import {
   UISheet,
   UISheetClose,
@@ -71,9 +72,11 @@ export function ProjectHeader({
   }, []);
 
   return (
-    <div
+    <UIStickyHeader
       data-testid="ProjectHeader"
-      className="mx-4 flex flex-col gap-4 rounded-3xl border border-line bg-surface p-6 shadow-sm"
+      className="bg-surface shadow-xl shadow-black/3"
+      contentClassName="py-6"
+      revealOnScrollUp
     >
       <div className="mb-2 flex flex-wrap items-center justify-between gap-4">
         <div className="space-y-2">
@@ -177,6 +180,6 @@ export function ProjectHeader({
           </UIButton>
         ) : null}
       </div>
-    </div>
+    </UIStickyHeader>
   );
 }

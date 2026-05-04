@@ -110,7 +110,7 @@ export function ProjectRenderer({
               {showProjectMeta ? (
                 <div className="mt-3 flex flex-wrap items-center justify-between gap-3">
                   <p className={`text-sm ${theme.muted}`}>Project: {name}</p>
-                  <ProjectModeSwitcher initialMode={mode} />
+                  <ProjectModeSwitcher initialMode={mode} syncSearchParam="mode" />
                 </div>
               ) : null}
             </div>

@@ -10,10 +10,18 @@ type PublicProjectPageProps = {
   params: Promise<{
     slug: string;
   }>;
+  searchParams?: Promise<{
+    mode?: string;
+  }>;
 };
 
-export default async function PublicProjectPage({ params }: PublicProjectPageProps) {
+export default async function PublicProjectPage({
+  params,
+  searchParams,
+}: PublicProjectPageProps) {
   const { slug } = await params;
+  const resolvedSearchParams = searchParams ? await searchParams : {};
+  const mode = resolvedSearchParams.mode === "dark" ? "dark" : "light";
   const project = await getPublishedProjectBySlug(slug);
 
   if (!project) {
@@ -27,6 +35,7 @@ export default async function PublicProjectPage({ params }: PublicProjectPagePro
     <ProjectRenderer
       name={project.name}
       themeKey={project.themeKey}
+      mode={mode}
       content={normalizePageContent(project.contentJson)}
       assets={assets}
       backgroundScenes={backgroundScenes}

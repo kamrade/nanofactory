@@ -50,7 +50,7 @@ export function FeaturesCardsRender({ block, theme }: BlockRenderProps) {
   const items = readItems(block.props.items);
 
   return (
-    <section className="space-y-6 p-4 md:p-8">
+    <section className="space-y-6 px-4 md:px-8 py-12">
       <div className="space-y-2">
         <p className={`text-sm font-medium uppercase tracking-[0.18em] ${theme.kicker}`}>
           Features

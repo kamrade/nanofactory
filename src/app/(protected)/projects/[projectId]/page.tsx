@@ -50,7 +50,7 @@ export default async function ProjectPage({ params, searchParams }: ProjectPageP
     <main
       data-theme={project.themeKey}
       data-mode={initialMode}
-      className="min-h-screen bg-bg py-4 text-text-main"
+      className="min-h-screen bg-bg pb-4 text-text-main"
     >
       <div className="mx-auto flex w-full flex-col gap-8">
         <ProjectHeader

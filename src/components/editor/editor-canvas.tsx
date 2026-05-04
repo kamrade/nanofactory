@@ -35,7 +35,7 @@ export function EditorCanvas({
   getBlockDefinition,
 }: EditorCanvasProps) {
   return (
-    <div className="grid gap-4">
+    <div className="grid gap-12">
       {lastVariantUndo ? (
         <div className="flex flex-wrap items-center justify-between gap-3 rounded-2xl border border-emerald-200 bg-emerald-50 px-4 py-3 text-sm text-emerald-800">
           <span>

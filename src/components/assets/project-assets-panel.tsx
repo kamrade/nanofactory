@@ -53,7 +53,7 @@ export function ProjectAssetsPanel({
   }
 
   return (
-    <section data-testid="ProjectAssetsPanel" className="py-6 mx-4">
+    <section data-testid="ProjectAssetsPanel" className="py-6 mx-auto container">
 
       <div className="mt-6 grid gap-4">
         <h3 className="text-base font-semibold text-text-main">Background catalog</h3>

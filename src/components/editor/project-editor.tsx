@@ -353,7 +353,7 @@ export function ProjectEditor({
     return (
       <SectionShell
         block={block}
-        containerClassName="mx-4"
+        containerClassName="mx-auto container"
         backgroundScene={backgroundScene}
         fallbackThemeKey={activeThemeKey}
         fallbackMode={activeMode}
