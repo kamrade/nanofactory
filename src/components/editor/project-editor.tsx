@@ -1,6 +1,6 @@
 "use client";
 
-import { useActionState, useEffect, useMemo, useState } from "react";
+import { useActionState, useEffect, useMemo, useReducer } from "react";
 
 import type { PageContent } from "@/db/schema";
 import type { ProjectAssetRecord } from "@/lib/assets";
@@ -18,6 +18,9 @@ import {
   type SaveEditorState,
   saveProjectContentAction,
 } from "@/app/(protected)/projects/[projectId]/actions";
+import { BlockSettingsSheet } from "@/components/editor/block-settings-sheet";
+import { EditorCanvas } from "@/components/editor/editor-canvas";
+import { EditorToolbar } from "@/components/editor/editor-toolbar";
 import {
   applyVariantSwitchToContent,
   createPendingVariantSwitch,
@@ -26,26 +29,12 @@ import {
   undoVariantSwitchInContent,
 } from "@/components/editor/project-editor-variants";
 import { setPreviewDraftContent } from "@/components/editor/preview-draft-store";
-import type { BlockVariantDefinition } from "@/features/blocks/shared/types";
+import { SectionShell } from "@/components/projects/section-shell";
 import type { PageBlock } from "@/features/blocks/shared/content";
-import { ScenePicker } from "@/features/blocks/shared/scene-picker";
+import type { BlockVariantDefinition } from "@/features/blocks/shared/types";
 import { useToast } from "@/hooks/use-toast";
 import type { BackgroundSceneRecord } from "@/lib/background-scenes/types";
 import type { UiMode } from "@/lib/ui-preferences";
-import { UIButton } from "@/components/ui/button";
-import { UICheckbox } from "@/components/ui/checkbox";
-import { UIMenu, UIMenuItem, UIMenuLabel } from "@/components/ui/menu";
-import { UISelect } from "@/components/ui/select";
-import { SectionShell } from "@/components/projects/section-shell";
-import {
-  UISheet,
-  UISheetClose,
-  UISheetContent,
-  UISheetDescription,
-  UISheetFooter,
-  UISheetHeader,
-  UISheetTitle,
-} from "@/components/ui/sheet";
 
 type EditorProject = {
   id: string;
@@ -63,12 +52,215 @@ type ProjectEditorProps = {
   backgroundScenes?: BackgroundSceneRecord[];
 };
 
+type EditorState = {
+  content: PageContent;
+  activeEditorBlockId: string | null;
+  pendingVariantSwitch: PendingVariantSwitch | null;
+  lastVariantUndo: VariantUndo | null;
+};
+
+type EditorAction =
+  | { type: "add_block"; blockType: SupportedBlockType; variant: BlockVariant }
+  | { type: "delete_block"; blockId: string }
+  | { type: "move_block"; blockId: string; nextIndex: number }
+  | { type: "update_block_props"; blockId: string; nextProps: Record<string, unknown> }
+  | { type: "update_block_full_bleed"; blockId: string; nextFullBleed: boolean }
+  | { type: "update_block_background_scene"; blockId: string; nextSceneId?: string }
+  | { type: "select_variant"; block: PageBlock; definition: BlockVariantDefinition; nextVariant: BlockVariant }
+  | { type: "confirm_variant_switch" }
+  | { type: "cancel_variant_switch" }
+  | { type: "undo_variant_switch" }
+  | { type: "dismiss_variant_undo" }
+  | { type: "open_block"; blockId: string }
+  | { type: "close_sheet" };
+
 function formatDefinitionLabel(definition: {
   typeLabel: string;
   label: string;
   variant: string;
 }) {
   return definition.typeLabel;
+}
+
+function updateBlockById(
+  content: PageContent,
+  blockId: string,
+  updater: (block: PageBlock) => PageBlock
+): PageContent {
+  return {
+    blocks: content.blocks.map((block) => (block.id === blockId ? updater(block) : block)),
+  };
+}
+
+function moveBlock(content: PageContent, blockId: string, nextIndex: number): PageContent {
+  const currentIndex = content.blocks.findIndex((block) => block.id === blockId);
+  if (currentIndex < 0 || currentIndex === nextIndex) {
+    return content;
+  }
+
+  const boundedIndex = Math.max(0, Math.min(nextIndex, content.blocks.length - 1));
+  if (currentIndex === boundedIndex) {
+    return content;
+  }
+
+  const nextBlocks = [...content.blocks];
+  const [movedBlock] = nextBlocks.splice(currentIndex, 1);
+  nextBlocks.splice(boundedIndex, 0, movedBlock);
+
+  return { blocks: nextBlocks };
+}
+
+function applyVariantSwitchInState(
+  state: EditorState,
+  blockId: string,
+  nextDefinition: BlockVariantDefinition
+): EditorState {
+  const result = applyVariantSwitchToContent(state.content, blockId, nextDefinition, getBlockDefinition);
+
+  return {
+    ...state,
+    content: result.content,
+    pendingVariantSwitch: null,
+    lastVariantUndo: result.undo ?? state.lastVariantUndo,
+  };
+}
+
+function editorReducer(state: EditorState, action: EditorAction): EditorState {
+  switch (action.type) {
+    case "add_block": {
+      const nextBlock = createPageBlock(action.blockType, action.variant);
+      return {
+        ...state,
+        content: { blocks: [...state.content.blocks, nextBlock] },
+        activeEditorBlockId: nextBlock.id,
+        pendingVariantSwitch: null,
+      };
+    }
+    case "delete_block": {
+      return {
+        ...state,
+        content: {
+          blocks: state.content.blocks.filter((block) => block.id !== action.blockId),
+        },
+        activeEditorBlockId:
+          state.activeEditorBlockId === action.blockId ? null : state.activeEditorBlockId,
+        pendingVariantSwitch:
+          state.pendingVariantSwitch?.blockId === action.blockId ? null : state.pendingVariantSwitch,
+        lastVariantUndo:
+          state.lastVariantUndo?.blockId === action.blockId ? null : state.lastVariantUndo,
+      };
+    }
+    case "move_block": {
+      return {
+        ...state,
+        content: moveBlock(state.content, action.blockId, action.nextIndex),
+      };
+    }
+    case "update_block_props": {
+      return {
+        ...state,
+        content: updateBlockById(state.content, action.blockId, (block) => ({
+          ...block,
+          props: action.nextProps,
+        })),
+      };
+    }
+    case "update_block_full_bleed": {
+      return {
+        ...state,
+        content: updateBlockById(state.content, action.blockId, (block) => ({
+          ...block,
+          fullBleed: action.nextFullBleed,
+        })),
+      };
+    }
+    case "update_block_background_scene": {
+      return {
+        ...state,
+        content: updateBlockById(state.content, action.blockId, (block) => ({
+          ...block,
+          backgroundSceneId:
+            typeof action.nextSceneId === "string" && action.nextSceneId.trim().length > 0
+              ? action.nextSceneId
+              : undefined,
+        })),
+      };
+    }
+    case "select_variant": {
+      const pendingSwitch = createPendingVariantSwitch(
+        action.block,
+        action.definition,
+        action.nextVariant,
+        getBlockDefinition
+      );
+
+      if (!pendingSwitch) {
+        return {
+          ...state,
+          pendingVariantSwitch: null,
+        };
+      }
+
+      if (pendingSwitch.lostKeys.length === 0) {
+        return applyVariantSwitchInState(state, action.block.id, pendingSwitch.nextDefinition);
+      }
+
+      return {
+        ...state,
+        pendingVariantSwitch: pendingSwitch,
+      };
+    }
+    case "confirm_variant_switch": {
+      if (!state.pendingVariantSwitch) {
+        return state;
+      }
+
+      return applyVariantSwitchInState(
+        state,
+        state.pendingVariantSwitch.blockId,
+        state.pendingVariantSwitch.nextDefinition
+      );
+    }
+    case "cancel_variant_switch": {
+      return {
+        ...state,
+        pendingVariantSwitch: null,
+      };
+    }
+    case "undo_variant_switch": {
+      if (!state.lastVariantUndo) {
+        return state;
+      }
+
+      return {
+        ...state,
+        content: undoVariantSwitchInContent(state.content, state.lastVariantUndo),
+        lastVariantUndo: null,
+      };
+    }
+    case "dismiss_variant_undo": {
+      return {
+        ...state,
+        lastVariantUndo: null,
+      };
+    }
+    case "open_block": {
+      return {
+        ...state,
+        activeEditorBlockId: action.blockId,
+      };
+    }
+    case "close_sheet": {
+      return {
+        ...state,
+        activeEditorBlockId: null,
+        pendingVariantSwitch: null,
+      };
+    }
+    default: {
+      return state;
+    }
+  }
 }
 
 export function ProjectEditor({
@@ -78,11 +270,13 @@ export function ProjectEditor({
   backgroundScenes = [],
 }: ProjectEditorProps) {
   const { showToast } = useToast();
-  const [content, setContent] = useState<PageContent>(project.contentJson);
-  const [activeEditorBlockId, setActiveEditorBlockId] = useState<string | null>(null);
-  const [pendingVariantSwitch, setPendingVariantSwitch] =
-    useState<PendingVariantSwitch | null>(null);
-  const [lastVariantUndo, setLastVariantUndo] = useState<VariantUndo | null>(null);
+  const [state, dispatch] = useReducer(editorReducer, {
+    content: project.contentJson,
+    activeEditorBlockId: null,
+    pendingVariantSwitch: null,
+    lastVariantUndo: null,
+  });
+
   const initialSaveEditorState: SaveEditorState = {
     status: "idle",
     message: "",
@@ -93,7 +287,7 @@ export function ProjectEditor({
     initialSaveEditorState
   );
 
-  const serializedContent = useMemo(() => JSON.stringify(content), [content]);
+  const serializedContent = useMemo(() => JSON.stringify(state.content), [state.content]);
   const assetMap = useMemo(() => buildAssetMap(assets), [assets]);
   const sceneMap = useMemo(
     () => new Map(backgroundScenes.map((scene) => [scene.id, scene] as const)),
@@ -110,8 +304,8 @@ export function ProjectEditor({
   );
 
   useEffect(() => {
-    setPreviewDraftContent(content);
-  }, [content]);
+    setPreviewDraftContent(state.content);
+  }, [state.content]);
 
   useEffect(() => {
     if (saveState.status === "idle" || !saveState.message) {
@@ -124,168 +318,16 @@ export function ProjectEditor({
   }, [saveState.message, saveState.status, showToast]);
 
   useEffect(() => {
-    if (!lastVariantUndo) {
+    if (!state.lastVariantUndo) {
       return;
     }
 
     const timer = window.setTimeout(() => {
-      setLastVariantUndo(null);
+      dispatch({ type: "dismiss_variant_undo" });
     }, 10_000);
 
     return () => window.clearTimeout(timer);
-  }, [lastVariantUndo]);
-
-  function handleAddBlock(type: SupportedBlockType, variant: BlockVariant = "default") {
-    const nextBlock = createPageBlock(type, variant);
-    setContent((currentContent) => ({
-      blocks: [...currentContent.blocks, nextBlock],
-    }));
-    setActiveEditorBlockId(nextBlock.id);
-    setPendingVariantSwitch(null);
-  }
-
-  function handleDeleteBlock(blockId: string) {
-    setContent((currentContent) => ({
-      blocks: currentContent.blocks.filter((block) => block.id !== blockId),
-    }));
-    setActiveEditorBlockId((current) => (current === blockId ? null : current));
-    setPendingVariantSwitch((current) => (current?.blockId === blockId ? null : current));
-    setLastVariantUndo((current) => (current?.blockId === blockId ? null : current));
-  }
-
-  function handleMoveBlock(blockId: string, nextIndex: number) {
-    setContent((currentContent) => {
-      const currentIndex = currentContent.blocks.findIndex((block) => block.id === blockId);
-      if (currentIndex < 0 || currentIndex === nextIndex) {
-        return currentContent;
-      }
-
-      const boundedIndex = Math.max(0, Math.min(nextIndex, currentContent.blocks.length - 1));
-      if (currentIndex === boundedIndex) {
-        return currentContent;
-      }
-
-      const nextBlocks = [...currentContent.blocks];
-      const [movedBlock] = nextBlocks.splice(currentIndex, 1);
-      nextBlocks.splice(boundedIndex, 0, movedBlock);
-
-      return {
-        blocks: nextBlocks,
-      };
-    });
-  }
-
-  function handleUpdateBlockProps(blockId: string, nextProps: Record<string, unknown>) {
-    setContent((currentContent) => ({
-      blocks: currentContent.blocks.map((block) => {
-        if (block.id !== blockId) {
-          return block;
-        }
-
-        return {
-          ...block,
-          props: nextProps,
-        };
-      }),
-    }));
-  }
-
-  function handleUpdateBlockFullBleed(blockId: string, nextFullBleed: boolean) {
-    setContent((currentContent) => ({
-      blocks: currentContent.blocks.map((block) => {
-        if (block.id !== blockId) {
-          return block;
-        }
-
-        return {
-          ...block,
-          fullBleed: nextFullBleed,
-        };
-      }),
-    }));
-  }
-
-  function handleUpdateBlockBackgroundScene(blockId: string, nextSceneId?: string) {
-    setContent((currentContent) => ({
-      blocks: currentContent.blocks.map((block) => {
-        if (block.id !== blockId) {
-          return block;
-        }
-
-        return {
-          ...block,
-          backgroundSceneId:
-            typeof nextSceneId === "string" && nextSceneId.trim().length > 0
-              ? nextSceneId
-              : undefined,
-        };
-      }),
-    }));
-  }
-
-  function applyVariantSwitch(blockId: string, nextDefinition: BlockVariantDefinition) {
-    setContent((currentContent) => {
-      const result = applyVariantSwitchToContent(
-        currentContent,
-        blockId,
-        nextDefinition,
-        getBlockDefinition
-      );
-
-      if (result.undo) {
-        setLastVariantUndo(result.undo);
-      }
-
-      return result.content;
-    });
-    setPendingVariantSwitch(null);
-  }
-
-  function handleSelectVariant(
-    block: PageBlock,
-    definition: BlockVariantDefinition,
-    nextVariant: BlockVariant
-  ) {
-    const pendingSwitch = createPendingVariantSwitch(
-      block,
-      definition,
-      nextVariant,
-      getBlockDefinition
-    );
-
-    if (!pendingSwitch) {
-      setPendingVariantSwitch(null);
-      return;
-    }
-
-    if (pendingSwitch.lostKeys.length === 0) {
-      applyVariantSwitch(block.id, pendingSwitch.nextDefinition);
-      return;
-    }
-
-    setPendingVariantSwitch(pendingSwitch);
-  }
-
-  function handleConfirmVariantSwitch() {
-    if (!pendingVariantSwitch) {
-      return;
-    }
-
-    applyVariantSwitch(pendingVariantSwitch.blockId, pendingVariantSwitch.nextDefinition);
-  }
-
-  function handleCancelVariantSwitch() {
-    setPendingVariantSwitch(null);
-  }
-
-  function handleUndoVariantSwitch() {
-    if (!lastVariantUndo) {
-      return;
-    }
-
-    setContent((currentContent) => undoVariantSwitchInContent(currentContent, lastVariantUndo));
-    setLastVariantUndo(null);
-  }
+  }, [state.lastVariantUndo]);
 
   function renderBlockPreview(block: PageBlock) {
     const definition = getBlockDefinition(block.type, block.variant);
@@ -324,8 +366,8 @@ export function ProjectEditor({
   }
 
   const activeEditorBlock = useMemo(
-    () => content.blocks.find((block) => block.id === activeEditorBlockId) ?? null,
-    [activeEditorBlockId, content.blocks]
+    () => state.content.blocks.find((block) => block.id === state.activeEditorBlockId) ?? null,
+    [state.activeEditorBlockId, state.content.blocks]
   );
   const activeEditorDefinition = useMemo(
     () =>
@@ -339,316 +381,77 @@ export function ProjectEditor({
     [activeEditorDefinition]
   );
   const activePendingSwitch =
-    pendingVariantSwitch && pendingVariantSwitch.blockId === activeEditorBlock?.id
-      ? pendingVariantSwitch
+    state.pendingVariantSwitch && state.pendingVariantSwitch.blockId === activeEditorBlock?.id
+      ? state.pendingVariantSwitch
       : null;
   const activeVariant = activePendingSwitch
     ? activePendingSwitch.nextVariant
     : activeEditorDefinition?.variant;
   const activeEditorBlockIndex = activeEditorBlock
-    ? content.blocks.findIndex((block) => block.id === activeEditorBlock.id)
+    ? state.content.blocks.findIndex((block) => block.id === activeEditorBlock.id)
     : -1;
-  const canMoveActiveBlockUp = activeEditorBlockIndex > 0;
-  const canMoveActiveBlockDown =
-    activeEditorBlockIndex >= 0 && activeEditorBlockIndex < content.blocks.length - 1;
 
   return (
     <div className="grid gap-6">
       <section data-testid="ProjectEditorContent" className="space-y-6">
-        <div className="flex flex-wrap items-center justify-between gap-4">
-          <div className="flex flex-wrap items-center gap-3 mx-4">
-          
-            <UIMenu
-              ariaLabel="Add block"
-              placement="bottom-start"
-              size="sm"
-              trigger={
-                <UIButton type="button" theme="base" variant="contained" size="sm">
-                  Add block
-                </UIButton>
-              }
-            >
-              {addBlockGroups.map((group) => (
-                <div key={group.type} className="grid gap-[2px]">
-                  <UIMenuLabel>{group.label}</UIMenuLabel>
-                  {group.variants.map((definition) => (
-                    <UIMenuItem
-                      key={`${definition.type}:${definition.variant}`}
-                      onSelect={() => handleAddBlock(definition.type, definition.variant)}
-                      className="grid gap-0.5"
-                    >
-                      <span className="text-sm font-medium text-text-main">
-                        {definition.label}
-                      </span>
-                      {definition.description ? (
-                        <span className="text-xs leading-5 text-text-muted">
-                          {definition.description}
-                        </span>
-                      ) : null}
-                    </UIMenuItem>
-                  ))}
-                </div>
-              ))}
-            </UIMenu>
+        <EditorToolbar
+          addBlockGroups={addBlockGroups}
+          isPending={isPending}
+          serializedContent={serializedContent}
+          formAction={formAction}
+          onAddBlock={(blockType, variant) =>
+            dispatch({ type: "add_block", blockType, variant })
+          }
+        />
 
-            <form action={formAction} className="flex items-center gap-3">
-              <input type="hidden" name="content" value={serializedContent} />
-              <UIButton
-                type="submit"
-                disabled={isPending}
-                theme="primary"
-                variant="contained"
-                size="sm"
-              >
-                {isPending ? "Saving..." : "Save"}
-              </UIButton>
-            </form>
-          </div>
-        </div>
-
-        <div className="grid gap-4">
-          {lastVariantUndo ? (
-            <div className="flex flex-wrap items-center justify-between gap-3 rounded-2xl border border-emerald-200 bg-emerald-50 px-4 py-3 text-sm text-emerald-800">
-              <span>
-                Variant switched for {lastVariantUndo.typeLabel}: {lastVariantUndo.fromLabel} →{" "}
-                {lastVariantUndo.toLabel}.
-              </span>
-              <div className="flex flex-wrap items-center gap-2">
-                <UIButton
-                  type="button"
-                  onClick={handleUndoVariantSwitch}
-                  className="inline-flex items-center justify-center rounded-2xl border border-emerald-200 bg-white px-3 py-1.5 text-sm font-medium text-emerald-800 transition hover:border-emerald-300 hover:bg-emerald-100"
-                >
-                  Undo
-                </UIButton>
-                <UIButton
-                  type="button"
-                  onClick={() => setLastVariantUndo(null)}
-                  aria-label="Dismiss"
-                  title="Dismiss"
-                  className="inline-flex h-8 w-8 items-center justify-center rounded-full border border-emerald-200 bg-white text-lg font-semibold text-emerald-800 transition hover:border-emerald-300 hover:bg-emerald-100"
-                >
-                  ×
-                </UIButton>
-              </div>
-            </div>
-          ) : null}
-
-          {content.blocks.length === 0 ? (
-            <div className="rounded-2xl border border-dashed border-zinc-300 px-5 py-8 text-sm text-zinc-500">
-              No blocks yet. Use `Add block` in the header to choose a block type and
-              variant.
-            </div>
-          ) : (
-            content.blocks.map((block, index) => {
-              const definition = getBlockDefinition(block.type, block.variant);
-
-              if (!definition) {
-                return null;
-              }
-
-              return (
-                <div
-                  data-testid="Variant"
-                  key={block.id}
-                  role="button"
-                  tabIndex={0}
-                  aria-label={`Edit block ${index + 1}: ${formatDefinitionLabel(definition)}`}
-                  onClick={() => setActiveEditorBlockId(block.id)}
-                  onKeyDown={(event) => {
-                    if (event.key === "Enter" || event.key === " ") {
-                      event.preventDefault();
-                      setActiveEditorBlockId(block.id);
-                    }
-                  }}
-                  className="cursor-pointer transition focus:outline-none"
-                >
-                  <div data-testid="RenderredBlockInEditor">{renderBlockPreview(block)}</div>
-                </div>
-              );
-            })
-          )}
-        </div>
-
+        <EditorCanvas
+          content={state.content}
+          lastVariantUndo={state.lastVariantUndo}
+          onUndoVariantSwitch={() => dispatch({ type: "undo_variant_switch" })}
+          onDismissVariantUndo={() => dispatch({ type: "dismiss_variant_undo" })}
+          onSelectBlock={(blockId) => dispatch({ type: "open_block", blockId })}
+          renderBlockPreview={renderBlockPreview}
+          formatDefinitionLabel={formatDefinitionLabel}
+          getBlockDefinition={getBlockDefinition}
+        />
       </section>
 
-      <UISheet
+      <BlockSettingsSheet
         open={Boolean(activeEditorBlock && activeEditorDefinition)}
+        activeEditorBlock={activeEditorBlock}
+        activeEditorDefinition={activeEditorDefinition}
+        activeVariantOptions={activeVariantOptions}
+        activeVariant={activeVariant}
+        activePendingSwitch={activePendingSwitch}
+        assets={assets}
+        backgroundScenes={backgroundScenes}
+        activeEditorBlockIndex={activeEditorBlockIndex}
+        totalBlocks={state.content.blocks.length}
+        formatDefinitionLabel={formatDefinitionLabel}
         onOpenChange={(nextOpen) => {
           if (!nextOpen) {
-            setActiveEditorBlockId(null);
-            setPendingVariantSwitch(null);
+            dispatch({ type: "close_sheet" });
           }
         }}
-      >
-        <UISheetContent
-          side="right"
-          ariaLabel="Block editor"
-          closeOnOverlayClick
-          modal={false}
-          className="p-5 sm:p-6"
-        >
-          {activeEditorBlock && activeEditorDefinition ? (
-            <>
-              <UISheetHeader>
-                <UISheetClose>
-                  <div className="mb-3">
-                    <UIButton type="button" size="sm" theme="base" variant="outlined">
-                      Close
-                    </UIButton>
-                  </div>
-                </UISheetClose>
-                <UISheetTitle>{formatDefinitionLabel(activeEditorDefinition)}</UISheetTitle>
-                <UISheetDescription>
-                  Edit block content and settings. Changes are applied immediately.
-                </UISheetDescription>
-              </UISheetHeader>
-
-              <div className="mt-6 grid gap-5">
-                <div className="grid gap-4 rounded-2xl border border-neutral-line bg-surface-alt p-4">
-                  {activeVariantOptions.length > 1 ? (
-                    <div className="grid gap-1.5">
-                      <p className="text-sm font-medium text-text-main">Variant</p>
-                      <UISelect
-                        ariaLabel="Variant"
-                        size="sm"
-                        value={activeVariant}
-                        onValueChange={(value) =>
-                          handleSelectVariant(
-                            activeEditorBlock,
-                            activeEditorDefinition,
-                            value as BlockVariant
-                          )
-                        }
-                        options={activeVariantOptions.map((option) => ({
-                          value: option.variant,
-                          label: option.label,
-                          textValue: option.label,
-                        }))}
-                      />
-                    </div>
-                  ) : null}
-
-                  <UICheckbox
-                    label="Full bleed"
-                    checked={Boolean(activeEditorBlock.fullBleed)}
-                    onChange={(event) =>
-                      handleUpdateBlockFullBleed(activeEditorBlock.id, event.target.checked)
-                    }
-                  />
-
-                  <ScenePicker
-                    scenes={backgroundScenes}
-                    selectedSceneId={activeEditorBlock.backgroundSceneId}
-                    onSelect={(sceneId) =>
-                      handleUpdateBlockBackgroundScene(activeEditorBlock.id, sceneId)
-                    }
-                    onClear={() =>
-                      handleUpdateBlockBackgroundScene(activeEditorBlock.id, undefined)
-                    }
-                    title="Background scene"
-                    description="Attach a reusable background scene to this block shell."
-                    emptyMessage="Create a scene in Background Editor first, then select it here."
-                  />
-                </div>
-
-                {activePendingSwitch ? (
-                  <div className="rounded-2xl border border-amber-200 bg-amber-50 px-4 py-3 text-sm text-amber-900">
-                    <p className="font-medium">
-                      Switching variant will remove: {activePendingSwitch.lostLabels.join(", ")}.
-                    </p>
-                    <div className="mt-3 flex flex-wrap gap-2">
-                      <UIButton
-                        type="button"
-                        onClick={handleConfirmVariantSwitch}
-                        className="inline-flex items-center justify-center rounded-2xl border border-amber-300 bg-amber-100 px-3 py-1.5 text-sm font-medium text-amber-900 transition hover:border-amber-400 hover:bg-amber-200"
-                      >
-                        Switch variant
-                      </UIButton>
-                      <UIButton
-                        type="button"
-                        onClick={handleCancelVariantSwitch}
-                        className="inline-flex items-center justify-center rounded-2xl border border-amber-200 bg-white px-3 py-1.5 text-sm font-medium text-amber-900 transition hover:border-amber-300 hover:bg-amber-100"
-                      >
-                        Cancel
-                      </UIButton>
-                    </div>
-                  </div>
-                ) : null}
-
-                <activeEditorDefinition.Editor
-                  block={activeEditorBlock}
-                  assets={assets}
-                  definition={activeEditorDefinition}
-                  onChange={(nextProps) =>
-                    handleUpdateBlockProps(activeEditorBlock.id, nextProps)
-                  }
-                />
-              </div>
-
-              <UISheetFooter className="justify-between border-t border-neutral-line pt-4">
-                <div className="flex flex-wrap items-center gap-2">
-                  <UIButton
-                    type="button"
-                    size="sm"
-                    theme="base"
-                    variant="outlined"
-                    disabled={!canMoveActiveBlockUp}
-                    onClick={() => handleMoveBlock(activeEditorBlock.id, 0)}
-                  >
-                    ⇡
-                  </UIButton>
-                  <UIButton
-                    type="button"
-                    size="sm"
-                    theme="base"
-                    variant="outlined"
-                    disabled={!canMoveActiveBlockUp}
-                    onClick={() =>
-                      handleMoveBlock(activeEditorBlock.id, activeEditorBlockIndex - 1)
-                    }
-                  >
-                    ↑
-                  </UIButton>
-                  <UIButton
-                    type="button"
-                    size="sm"
-                    theme="base"
-                    variant="outlined"
-                    disabled={!canMoveActiveBlockDown}
-                    onClick={() =>
-                      handleMoveBlock(activeEditorBlock.id, activeEditorBlockIndex + 1)
-                    }
-                  >
-                    ↓
-                  </UIButton>
-                  <UIButton
-                    type="button"
-                    size="sm"
-                    theme="base"
-                    variant="outlined"
-                    disabled={!canMoveActiveBlockDown}
-                    onClick={() =>
-                      handleMoveBlock(activeEditorBlock.id, content.blocks.length - 1)
-                    }
-                  >
-                    ⇣
-                  </UIButton>
-                </div>
-                <UIButton
-                  type="button"
-                  size="sm"
-                  theme="danger"
-                  variant="outlined"
-                  onClick={() => handleDeleteBlock(activeEditorBlock.id)}
-                >
-                  Delete block
-                </UIButton>
-              </UISheetFooter>
-            </>
-          ) : null}
-        </UISheetContent>
-      </UISheet>
+        onSelectVariant={(block, definition, nextVariant) =>
+          dispatch({ type: "select_variant", block, definition, nextVariant })
+        }
+        onToggleFullBleed={(blockId, nextFullBleed) =>
+          dispatch({ type: "update_block_full_bleed", blockId, nextFullBleed })
+        }
+        onSelectScene={(blockId, nextSceneId) =>
+          dispatch({ type: "update_block_background_scene", blockId, nextSceneId })
+        }
+        onConfirmVariantSwitch={() => dispatch({ type: "confirm_variant_switch" })}
+        onCancelVariantSwitch={() => dispatch({ type: "cancel_variant_switch" })}
+        onChangeProps={(blockId, nextProps) =>
+          dispatch({ type: "update_block_props", blockId, nextProps })
+        }
+        onMoveBlock={(blockId, nextIndex) =>
+          dispatch({ type: "move_block", blockId, nextIndex })
+        }
+        onDeleteBlock={(blockId) => dispatch({ type: "delete_block", blockId })}
+      />
     </div>
   );
 }
