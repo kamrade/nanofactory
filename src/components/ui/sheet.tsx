@@ -208,7 +208,8 @@ export function UISheetContent({
       />
       <div
         className={cx(
-          "absolute top-0 h-full w-full max-w-2xl transform-gpu border border-line bg-surface shadow-[0_16px_48px_rgba(0,0,0,0.2)] outline-none will-change-transform [contain:layout_paint] transition-transform duration-200 ease-out",
+          "absolute top-0 h-full w-full max-w-2xl transform-gpu border border-line bg-surface outline-none will-change-transform [contain:layout_paint] transition-transform duration-200 ease-out",
+          open ? "shadow-[0_16px_48px_rgba(0,0,0,0.2)]" : "shadow-none",
           open ? "pointer-events-auto" : "pointer-events-none",
           side === "right" ? "right-0" : "left-0",
           side === "right"

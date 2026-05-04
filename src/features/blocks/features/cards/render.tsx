@@ -62,7 +62,7 @@ export function FeaturesCardsRender({ block, theme }: BlockRenderProps) {
         {items.map((item) => (
           <article
             key={`${block.id}-${item.title}`}
-            className="rounded-3xl border border-line bg-surface-alt p-5 shadow-sm"
+            className="rounded-3xl bg-surface-alt p-5"
           >
             <p className="break-words text-base font-medium text-text-main">{item.title}</p>
             {item.content.trim().length > 0 ? (

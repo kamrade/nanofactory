@@ -14,7 +14,7 @@ export function FeaturesDefaultRender({ block, theme }: BlockRenderProps) {
         {items.map((item) => (
           <li
             key={`${block.id}-${item}`}
-            className={`rounded-2xl border border-line bg-surface-alt px-4 py-3 text-sm leading-6 ${theme.muted}`}
+            className={`rounded-2xl bg-surface-alt px-4 py-3 text-sm leading-6 ${theme.muted}`}
           >
             {item}
           </li>

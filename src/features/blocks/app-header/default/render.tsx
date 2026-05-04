@@ -231,17 +231,19 @@ export function AppHeaderDefaultRender({ block, assetMap, theme, mode = "light" 
           ) : null}
         </nav>
 
-        <div className="flex items-center justify-start gap-3 md:justify-end">
+        <div className="flex gap-4 items-center justify-start gap-3 md:justify-end">
           {socialLinks.map((item, index) => (
             <a
               key={`${item.url}-${item.label}-${index}`}
               href={item.url}
               target="_blank"
               rel="noreferrer"
+              aria-label={item.label}
+              title={item.label}
               className={`inline-flex items-center gap-1.5 text-sm font-medium transition hover:underline ${theme.muted}`}
             >
               {renderSocialIcon(item.icon)}
-              {item.label}
+              <span className="sr-only">{item.label}</span>
             </a>
           ))}
         </div>
