@@ -1,4 +1,5 @@
 import Link from "next/link";
+import { headers } from "next/headers";
 import { notFound } from "next/navigation";
 import type { Metadata } from "next";
 import { GalleryItemKeyboardNav } from "./gallery-item-keyboard-nav";
@@ -7,11 +8,12 @@ import { getAssetsByProjectId } from "@/lib/assets";
 import { buildAssetMap, resolveAssetById } from "@/lib/assets/resolution";
 import { normalizePageContent } from "@/lib/editor/content";
 import {
-  buildEffectivePageAnchors,
-  getGalleryItemEffectiveAnchor,
-  normalizeAnchorId,
-} from "@/lib/editor/anchor-id";
+  type ResolvedGalleryItem,
+  resolveGalleryItemFromContent,
+} from "@/lib/gallery-item/resolve";
+import { buildGalleryItemNavigationHrefs } from "@/lib/gallery-item/navigation";
 import { getPublishedProjectBySlug } from "@/lib/projects";
+import { resolveGalleryItemLinkModeByHost } from "@/lib/routing/gallery-link-mode";
 
 type GalleryItemPageProps = {
   params: Promise<{
@@ -21,90 +23,31 @@ type GalleryItemPageProps = {
   }>;
 };
 
-type ResolvedGalleryItem = {
+type ResolvedPublishedGalleryItem = ResolvedGalleryItem & {
   projectSlug: string;
   projectName: string;
-  galleryAnchor: string;
-  itemAnchor: string;
-  itemIndex: number;
-  totalItems: number;
-  previousItemAnchor?: string;
-  nextItemAnchor?: string;
-  title: string;
-  description: string;
-  price: string;
-  meta: string;
-  assetId?: string;
 };
 
-async function resolvePublishedGalleryItem(
+export async function resolvePublishedGalleryItem(
   slug: string,
   galleryAnchor: string,
   itemAnchor: string
-): Promise<ResolvedGalleryItem | null> {
+): Promise<ResolvedPublishedGalleryItem | null> {
   const project = await getPublishedProjectBySlug(slug);
   if (!project) {
     return null;
   }
 
   const content = normalizePageContent(project.contentJson);
-  const effectiveAnchors = buildEffectivePageAnchors(content.blocks);
-  const normalizedGalleryAnchor = normalizeAnchorId(galleryAnchor);
-  const normalizedItemAnchor = normalizeAnchorId(itemAnchor);
-
-  const galleryBlock = content.blocks.find(
-    (block) =>
-      block.type === "gallery" &&
-      effectiveAnchors.blockAnchors.get(block.id) === normalizedGalleryAnchor &&
-      Array.isArray(block.props.items)
-  );
-
-  if (!galleryBlock || !Array.isArray(galleryBlock.props.items)) {
+  const resolved = resolveGalleryItemFromContent(content, galleryAnchor, itemAnchor);
+  if (!resolved) {
     return null;
   }
-
-  const galleryItemIndex = galleryBlock.props.items.findIndex((item, index) => {
-    const effectiveItemAnchor = getGalleryItemEffectiveAnchor(
-      effectiveAnchors.galleryItemAnchors,
-      galleryBlock.id,
-      index
-    );
-    return effectiveItemAnchor === normalizedItemAnchor;
-  });
-
-  if (galleryItemIndex < 0) {
-    return null;
-  }
-
-  const allGalleryAnchors = galleryBlock.props.items.map((_, index) =>
-    getGalleryItemEffectiveAnchor(effectiveAnchors.galleryItemAnchors, galleryBlock.id, index)
-  );
-
-  const rawItem = galleryBlock.props.items[galleryItemIndex];
-  if (typeof rawItem !== "object" || rawItem === null) {
-    return null;
-  }
-
-  const item = rawItem as Record<string, unknown>;
 
   return {
     projectSlug: project.slug,
     projectName: project.name,
-    galleryAnchor: normalizedGalleryAnchor,
-    itemAnchor: normalizedItemAnchor,
-    itemIndex: galleryItemIndex,
-    totalItems: galleryBlock.props.items.length,
-    previousItemAnchor:
-      galleryItemIndex > 0 ? allGalleryAnchors[galleryItemIndex - 1] ?? undefined : undefined,
-    nextItemAnchor:
-      galleryItemIndex < galleryBlock.props.items.length - 1
-        ? allGalleryAnchors[galleryItemIndex + 1] ?? undefined
-        : undefined,
-    title: typeof item.title === "string" ? item.title : "",
-    description: typeof item.description === "string" ? item.description : "",
-    price: typeof item.price === "string" ? item.price : "",
-    meta: typeof item.meta === "string" ? item.meta : "",
-    assetId: typeof item.assetId === "string" ? item.assetId : undefined,
+    ...resolved,
   };
 }
 
@@ -146,20 +89,28 @@ export default async function PublishedGalleryItemPage({ params }: GalleryItemPa
   const assets = await getAssetsByProjectId(project.id);
   const assetMap = buildAssetMap(assets);
   const asset = resolveAssetById(resolved.assetId, assetMap);
-  const previousHref = resolved.previousItemAnchor
-    ? `./${resolved.previousItemAnchor}`
-    : undefined;
-  const nextHref = resolved.nextItemAnchor
-    ? `./${resolved.nextItemAnchor}`
-    : undefined;
+  const requestHeaders = await headers();
+  const backLinkMode = resolveGalleryItemLinkModeByHost(requestHeaders.get("host"));
+  const navigationHrefs = buildGalleryItemNavigationHrefs({
+    galleryAnchor: resolved.galleryAnchor,
+    previousItemAnchor: resolved.previousItemAnchor,
+    nextItemAnchor: resolved.nextItemAnchor,
+    backHref:
+      backLinkMode === "absolute"
+        ? `/p/${resolved.projectSlug}#${resolved.galleryAnchor}`
+        : undefined,
+  });
 
   return (
     <main className="min-h-screen bg-bg py-10 text-text-main">
-      <GalleryItemKeyboardNav previousHref={previousHref} nextHref={nextHref} />
+      <GalleryItemKeyboardNav
+        previousHref={navigationHrefs.previousHref}
+        nextHref={navigationHrefs.nextHref}
+      />
       <div className="container mx-auto grid max-w-4xl gap-6 px-4">
         <div className="flex flex-wrap items-center justify-between gap-3">
           <Link
-            href={`../..#${resolved.galleryAnchor}`}
+            href={navigationHrefs.backHref}
             className="inline-flex items-center justify-center rounded-xl border border-line bg-surface px-3 py-2 text-sm font-medium text-text-main transition hover:bg-surface-alt"
           >
             Back to gallery
@@ -173,9 +124,9 @@ export default async function PublishedGalleryItemPage({ params }: GalleryItemPa
 
         <section className="overflow-hidden rounded-2xl border border-line bg-surface-alt">
           <div className="flex items-center justify-between gap-3 border-b border-line bg-surface px-4 py-3">
-            {previousHref ? (
+            {navigationHrefs.previousHref ? (
               <Link
-                href={previousHref}
+                href={navigationHrefs.previousHref}
                 className="inline-flex items-center justify-center rounded-xl border border-line bg-surface px-3 py-2 text-sm font-medium text-text-main transition hover:bg-surface-alt"
               >
                 Previous
@@ -186,9 +137,9 @@ export default async function PublishedGalleryItemPage({ params }: GalleryItemPa
               </span>
             )}
 
-            {nextHref ? (
+            {navigationHrefs.nextHref ? (
               <Link
-                href={nextHref}
+                href={navigationHrefs.nextHref}
                 className="inline-flex items-center justify-center rounded-xl border border-line bg-surface px-3 py-2 text-sm font-medium text-text-main transition hover:bg-surface-alt"
               >
                 Next

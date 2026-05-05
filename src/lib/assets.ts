@@ -17,6 +17,7 @@ const allowedMimeTypes = {
   "image/jpeg": ["jpg", "jpeg"],
   "image/png": ["png"],
   "image/webp": ["webp"],
+  "image/avif": ["avif"],
   "image/svg+xml": ["svg"],
 } as const;
 
@@ -96,7 +97,7 @@ export function validateAssetFile(file: File) {
   }
 
   if (!(file.type in allowedMimeTypes)) {
-    throw new AssetUploadError("Unsupported file type. Allowed: JPEG, PNG, WEBP, SVG.");
+    throw new AssetUploadError("Unsupported file type. Allowed: JPEG, PNG, WEBP, AVIF, SVG.");
   }
 
   const mimeType = file.type as AllowedMimeType;

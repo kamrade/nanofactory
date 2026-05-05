@@ -23,4 +23,17 @@ describe("asset upload validation", () => {
       sizeBytes: file.size,
     });
   });
+
+  it("accepts avif files", () => {
+    const file = new File(["image"], "catalog.avif", {
+      type: "image/avif",
+    });
+
+    expect(validateAssetFile(file)).toMatchObject({
+      originalFilename: "catalog.avif",
+      mimeType: "image/avif",
+      extension: "avif",
+      sizeBytes: file.size,
+    });
+  });
 });

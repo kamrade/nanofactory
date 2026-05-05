@@ -23,7 +23,7 @@ export function ImageAssetUploadCard({
   const inputRef = useRef<HTMLInputElement>(null);
 
   const acceptedMimeTypes = useMemo(
-    () => ["image/jpeg", "image/png", "image/webp", "image/svg+xml"],
+    () => ["image/jpeg", "image/png", "image/webp", "image/avif", "image/svg+xml"],
     []
   );
 
@@ -42,7 +42,7 @@ export function ImageAssetUploadCard({
     setError(null);
 
     if (files.length === 0) {
-      const nextError = "Choose at least one JPEG, PNG, WEBP, or SVG file.";
+      const nextError = "Choose at least one JPEG, PNG, WEBP, AVIF, or SVG file.";
       setError(nextError);
       onUploadError?.(nextError);
       return;
@@ -140,7 +140,7 @@ export function ImageAssetUploadCard({
         ref={inputRef}
         type="file"
         multiple
-        accept="image/jpeg,image/png,image/webp,image/svg+xml"
+        accept="image/jpeg,image/png,image/webp,image/avif,image/svg+xml"
         className="sr-only"
         onChange={async (event: ChangeEvent<HTMLInputElement>) => {
           if (isUploading) {
@@ -151,7 +151,7 @@ export function ImageAssetUploadCard({
       />
       <div className="grid gap-2 text-center">
         <p className="text-sm font-medium text-text-main">Drop images here</p>
-        <p className="text-xs text-text-muted">JPEG, PNG, WEBP, SVG. Multiple files supported.</p>
+        <p className="text-xs text-text-muted">JPEG, PNG, WEBP, AVIF, SVG. Multiple files supported.</p>
         <UIButton
           type="button"
           disabled={isUploading}
