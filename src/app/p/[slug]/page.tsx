@@ -1,4 +1,5 @@
 import { notFound } from "next/navigation";
+import { headers } from "next/headers";
 
 import { ProjectRenderer } from "@/components/projects/project-renderer";
 import { getAssetsByProjectId } from "@/lib/assets";
@@ -19,6 +20,12 @@ export default async function PublicProjectPage({
   params,
   searchParams,
 }: PublicProjectPageProps) {
+  const requestHeaders = await headers();
+  const requestHost = requestHeaders.get("host")?.split(":")[0]?.toLowerCase() ?? "";
+  const isPlatformHost =
+    requestHost === "app.olala.beauty" ||
+    requestHost === "localhost" ||
+    requestHost === "127.0.0.1";
   const { slug } = await params;
   const resolvedSearchParams = searchParams ? await searchParams : {};
   const mode = resolvedSearchParams.mode === "dark" ? "dark" : "light";
@@ -37,7 +44,7 @@ export default async function PublicProjectPage({
       slug={project.slug}
       themeKey={project.themeKey}
       mode={mode}
-      galleryItemLinkMode="relative"
+      galleryItemLinkMode={isPlatformHost ? "absolute" : "relative"}
       content={normalizePageContent(project.contentJson)}
       assets={assets}
       backgroundScenes={backgroundScenes}
