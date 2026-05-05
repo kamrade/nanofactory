@@ -5,6 +5,7 @@ import { useMemo, useState } from "react";
 import type { BlockEditorProps } from "../../shared/types";
 import { AssetPicker } from "../../shared/asset-picker";
 import { UIButton } from "@/components/ui/button";
+import { UICheckbox } from "@/components/ui/checkbox";
 import { UISelect } from "@/components/ui/select";
 import { UITextInput } from "@/components/ui/text-input";
 import {
@@ -32,6 +33,7 @@ export function AppHeaderDefaultEditor({
     logoLightAssetId: selectedLogoLightAssetId,
     logoDarkAssetId: selectedLogoDarkAssetId,
     collapseBreakpoint,
+    alwaysMobile,
     menuItems,
     socialLinks,
   } = appHeaderProps;
@@ -153,6 +155,16 @@ export function AppHeaderDefaultEditor({
           options={breakpointOptions}
         />
       </label>
+      <UICheckbox
+        checked={alwaysMobile}
+        onChange={(event) =>
+          onChange({
+            ...block.props,
+            alwaysMobile: event.currentTarget.checked,
+          })
+        }
+        label="Always use mobile layout"
+      />
 
       <div className="grid gap-4 rounded-2xl border border-line bg-surface-alt p-4">
         <p className="text-sm font-semibold text-text-main">Left: Logo</p>

@@ -8,14 +8,15 @@ import { getAssetsByProjectId } from "@/lib/assets";
 import { buildAssetMap, resolveAssetById } from "@/lib/assets/resolution";
 import { normalizePageContent } from "@/lib/editor/content";
 import {
+  readModeCookieValue,
+  resolveGalleryItemMode,
+} from "@/lib/gallery-item/mode";
+import {
   type ResolvedGalleryItem,
   resolveGalleryItemFromContent,
 } from "@/lib/gallery-item/resolve";
-import { buildGalleryItemNavigationHrefs } from "@/lib/gallery-item/navigation";
+import { buildGalleryItemPageViewModel } from "@/lib/gallery-item/view-model";
 import { getPublishedProjectBySlug } from "@/lib/projects";
-import { resolveGalleryItemLinkModeByHost } from "@/lib/routing/gallery-link-mode";
-import { DEFAULT_THEME_KEY, isThemeKey } from "@/lib/themes";
-import { UI_MODE_COOKIE } from "@/lib/ui-preferences";
 
 type GalleryItemPageProps = {
   params: Promise<{
@@ -86,24 +87,11 @@ export default async function PublishedGalleryItemPage({
   const resolvedSearchParams = searchParams ? await searchParams : {};
   const requestHeaders = await headers();
   const cookieStore = await cookies();
-  const referer = requestHeaders.get("referer");
-  let refererMode: "light" | "dark" | undefined;
-  if (referer) {
-    try {
-      const refererUrl = new URL(referer);
-      refererMode = refererUrl.searchParams.get("mode") === "dark" ? "dark" : "light";
-    } catch {
-      refererMode = undefined;
-    }
-  }
-  const resolvedMode =
-    resolvedSearchParams.mode === "dark"
-      ? "dark"
-      : refererMode === "dark"
-        ? "dark"
-        : cookieStore.get(UI_MODE_COOKIE)?.value === "dark"
-          ? "dark"
-          : "light";
+  const resolvedMode = resolveGalleryItemMode({
+    searchMode: resolvedSearchParams.mode,
+    referer: requestHeaders.get("referer"),
+    cookieMode: readModeCookieValue(cookieStore),
+  });
   const resolved = await resolvePublishedGalleryItem(slug, galleryAnchor, itemAnchor);
 
   if (!resolved) {
@@ -118,33 +106,27 @@ export default async function PublishedGalleryItemPage({
   const assets = await getAssetsByProjectId(project.id);
   const assetMap = buildAssetMap(assets);
   const asset = resolveAssetById(resolved.assetId, assetMap);
-  const resolvedThemeKey = isThemeKey(project.themeKey) ? project.themeKey : DEFAULT_THEME_KEY;
-  const backLinkMode = resolveGalleryItemLinkModeByHost(requestHeaders.get("host"));
-  const navigationHrefs = buildGalleryItemNavigationHrefs({
-    galleryAnchor: resolved.galleryAnchor,
-    previousItemAnchor: resolved.previousItemAnchor,
-    nextItemAnchor: resolved.nextItemAnchor,
+  const viewModel = buildGalleryItemPageViewModel({
+    resolvedItem: resolved,
+    projectThemeKey: project.themeKey,
     mode: resolvedMode,
-    backHref:
-      backLinkMode === "absolute"
-        ? `/p/${resolved.projectSlug}${resolvedMode === "dark" ? "?mode=dark" : ""}#${resolved.galleryAnchor}`
-        : undefined,
+    host: requestHeaders.get("host"),
   });
 
   return (
     <main
-      data-theme={resolvedThemeKey}
+      data-theme={viewModel.resolvedThemeKey}
       data-mode={resolvedMode}
       className="min-h-screen bg-bg py-10 text-text-main"
     >
       <GalleryItemKeyboardNav
-        previousHref={navigationHrefs.previousHref}
-        nextHref={navigationHrefs.nextHref}
+        previousHref={viewModel.navigationHrefs.previousHref}
+        nextHref={viewModel.navigationHrefs.nextHref}
       />
       <div className="container mx-auto grid max-w-4xl gap-6 px-4">
         <div className="flex flex-wrap items-center justify-between gap-3">
           <Link
-            href={navigationHrefs.backHref}
+            href={viewModel.navigationHrefs.backHref}
             className="inline-flex items-center justify-center rounded-xl border border-line bg-surface px-3 py-2 text-sm font-medium text-text-main transition hover:bg-surface-alt"
           >
             Back to gallery
@@ -158,9 +140,9 @@ export default async function PublishedGalleryItemPage({
 
         <section className="overflow-hidden rounded-2xl border border-line bg-surface-alt">
           <div className="flex items-center justify-between gap-3 border-b border-line bg-surface px-4 py-3">
-            {navigationHrefs.previousHref ? (
+            {viewModel.navigationHrefs.previousHref ? (
               <Link
-                href={navigationHrefs.previousHref}
+                href={viewModel.navigationHrefs.previousHref}
                 className="inline-flex items-center justify-center rounded-xl border border-line bg-surface px-3 py-2 text-sm font-medium text-text-main transition hover:bg-surface-alt"
               >
                 Previous
@@ -171,9 +153,9 @@ export default async function PublishedGalleryItemPage({
               </span>
             )}
 
-            {navigationHrefs.nextHref ? (
+            {viewModel.navigationHrefs.nextHref ? (
               <Link
-                href={navigationHrefs.nextHref}
+                href={viewModel.navigationHrefs.nextHref}
                 className="inline-flex items-center justify-center rounded-xl border border-line bg-surface px-3 py-2 text-sm font-medium text-text-main transition hover:bg-surface-alt"
               >
                 Next

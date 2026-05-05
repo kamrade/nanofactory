@@ -29,6 +29,7 @@ export type AppHeaderPropsModel = {
   logoLightAssetId?: string;
   logoDarkAssetId?: string;
   collapseBreakpoint: AppHeaderCollapseBreakpoint;
+  alwaysMobile: boolean;
   menuItems: AppHeaderMenuItem[];
   socialLinks: AppHeaderSocialLink[];
 };
@@ -96,6 +97,7 @@ export function readAppHeaderProps(input: unknown): AppHeaderPropsModel {
     collapseBreakpoint: isAppHeaderCollapseBreakpoint(props.collapseBreakpoint)
       ? props.collapseBreakpoint
       : "md",
+    alwaysMobile: props.alwaysMobile === true,
     menuItems: readAppHeaderMenuItems(props.menuItems),
     socialLinks: readAppHeaderSocialLinks(props.socialLinks),
   };

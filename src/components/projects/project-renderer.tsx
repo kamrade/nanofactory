@@ -27,6 +27,8 @@ type RenderedProject = {
   galleryItemLinkMode?: GalleryItemLinkMode;
 };
 
+type ProjectThemeClasses = ReturnType<typeof getThemeClasses>;
+
 function getThemeClasses(themeKey: string) {
   switch (themeKey) {
     case "nightfall":
@@ -43,6 +45,53 @@ function getThemeClasses(themeKey: string) {
   }
 }
 
+function buildGalleryItemAnchorMap(
+  block: PageContent["blocks"][number],
+  effectiveAnchors: ReturnType<typeof buildEffectivePageAnchors>
+) {
+  if (!(block.type === "gallery" && Array.isArray(block.props.items))) {
+    return undefined;
+  }
+
+  return new Map(
+    block.props.items
+      .map((_, index) => [
+        index,
+        getGalleryItemEffectiveAnchor(effectiveAnchors.galleryItemAnchors, block.id, index),
+      ] as const)
+      .filter((entry): entry is readonly [number, string] => Boolean(entry[1]))
+  );
+}
+
+function buildProjectRenderContext(input: {
+  themeKey: string;
+  mode: "light" | "dark";
+  content: PageContent;
+  assets: ProjectAssetRecord[];
+  backgroundScenes: BackgroundSceneRecord[];
+}) {
+  const resolvedThemeKey = isThemeKey(input.themeKey) ? input.themeKey : DEFAULT_THEME_KEY;
+  const theme = getThemeClasses(resolvedThemeKey);
+  const assetMap = buildAssetMap(input.assets);
+  const paletteAdjustedScenes = input.backgroundScenes.map((scene) => ({
+    ...scene,
+    sceneJson: remapSceneToPalette(scene.sceneJson, {
+      themeKey: resolvedThemeKey,
+      mode: input.mode,
+    }),
+  }));
+  const sceneMap = new Map(paletteAdjustedScenes.map((scene) => [scene.id, scene] as const));
+  const effectiveAnchors = buildEffectivePageAnchors(input.content.blocks);
+
+  return {
+    resolvedThemeKey,
+    theme,
+    assetMap,
+    sceneMap,
+    effectiveAnchors,
+  };
+}
+
 function renderBlock(
   block: PageContent["blocks"][number],
   publicProjectSlug: string | undefined,
@@ -51,7 +100,7 @@ function renderBlock(
   effectiveGalleryItemAnchors: Map<number, string> | undefined,
   assetMap: Map<string, ProjectAssetRecord>,
   sceneMap: Map<string, BackgroundSceneRecord>,
-  theme: ReturnType<typeof getThemeClasses>,
+  theme: ProjectThemeClasses,
   fallbackThemeKey: "sunwash" | "nightfall",
   fallbackMode: "light" | "dark"
 ) {
@@ -90,6 +139,37 @@ function renderBlock(
   );
 }
 
+function renderProjectMetaHeader(input: {
+  showPublishedBadge: boolean;
+  showProjectMeta: boolean;
+  containerClass: string;
+  theme: ProjectThemeClasses;
+  mode: "light" | "dark";
+  name: string;
+}) {
+  if (!(input.showPublishedBadge || input.showProjectMeta)) {
+    return null;
+  }
+
+  return (
+    <header className={input.containerClass}>
+      <div className={input.theme.heroCard}>
+        {input.showPublishedBadge ? (
+          <p className={`text-sm font-medium uppercase tracking-[0.2em] ${input.theme.kicker}`}>
+            Published with Nanofactory
+          </p>
+        ) : null}
+        {input.showProjectMeta ? (
+          <div className="mt-3 flex flex-wrap items-center justify-between gap-3">
+            <p className={`text-sm ${input.theme.muted}`}>Project: {input.name}</p>
+            <ProjectModeSwitcher initialMode={input.mode} syncSearchParam="mode" />
+          </div>
+        ) : null}
+      </div>
+    </header>
+  );
+}
+
 export function ProjectRenderer({
   name,
   slug,
@@ -102,51 +182,37 @@ export function ProjectRenderer({
   showProjectMeta = true,
   galleryItemLinkMode = "absolute",
 }: RenderedProject) {
-  const resolvedThemeKey = isThemeKey(themeKey) ? themeKey : DEFAULT_THEME_KEY;
-  const theme = getThemeClasses(resolvedThemeKey);
-  const assetMap = buildAssetMap(assets);
-  const paletteAdjustedScenes = backgroundScenes.map((scene) => ({
-    ...scene,
-    sceneJson: remapSceneToPalette(scene.sceneJson, {
-      themeKey: resolvedThemeKey,
-      mode,
-    }),
-  }));
-  const sceneMap = new Map(paletteAdjustedScenes.map((scene) => [scene.id, scene] as const));
-  const effectiveAnchors = buildEffectivePageAnchors(content.blocks);
-  const anchorMap = effectiveAnchors.blockAnchors;
+  const renderContext = buildProjectRenderContext({
+    themeKey,
+    mode,
+    content,
+    assets,
+    backgroundScenes,
+  });
+  const anchorMap = renderContext.effectiveAnchors.blockAnchors;
   const containerClass = "container mx-auto px-4";
 
   return (
     <main
-      data-theme={resolvedThemeKey}
+      data-theme={renderContext.resolvedThemeKey}
       data-mode={mode}
-      className={`min-h-screen py-8 ${theme.page}`}
+      className={`min-h-screen py-8 ${renderContext.theme.page}`}
     >
       <div className="flex w-full flex-col gap-12">
-        {showPublishedBadge || showProjectMeta ? (
-          <header className={containerClass}>
-            <div className={theme.heroCard}>
-              {showPublishedBadge ? (
-                <p className={`text-sm font-medium uppercase tracking-[0.2em] ${theme.kicker}`}>
-                  Published with Nanofactory
-                </p>
-              ) : null}
-              {showProjectMeta ? (
-                <div className="mt-3 flex flex-wrap items-center justify-between gap-3">
-                  <p className={`text-sm ${theme.muted}`}>Project: {name}</p>
-                  <ProjectModeSwitcher initialMode={mode} syncSearchParam="mode" />
-                </div>
-              ) : null}
-            </div>
-          </header>
-        ) : null}
+        {renderProjectMetaHeader({
+          showPublishedBadge,
+          showProjectMeta,
+          containerClass,
+          theme: renderContext.theme,
+          mode,
+          name,
+        })}
 
         {content.blocks.length === 0 ? (
           <section data-testid="ProjectRenderBlock" className={containerClass}>
             <div className="rounded-[2rem] border border-line bg-surface px-8 py-10 shadow-sm">
               <h1 className="text-3xl font-semibold tracking-tight">{name}</h1>
-              <p className={`mt-3 text-base leading-7 ${theme.muted}`}>
+              <p className={`mt-3 text-base leading-7 ${renderContext.theme.muted}`}>
                 This page has been published, but it does not contain any blocks yet.
               </p>
             </div>
@@ -159,24 +225,11 @@ export function ProjectRenderer({
                 slug,
                 galleryItemLinkMode,
                 anchorMap.get(block.id),
-                block.type === "gallery" && Array.isArray(block.props.items)
-                  ? new Map(
-                      block.props.items
-                        .map((_, index) => [
-                          index,
-                          getGalleryItemEffectiveAnchor(
-                            effectiveAnchors.galleryItemAnchors,
-                            block.id,
-                            index
-                          ),
-                        ] as const)
-                        .filter((entry): entry is readonly [number, string] => Boolean(entry[1]))
-                    )
-                  : undefined,
-                assetMap,
-                sceneMap,
-                theme,
-                resolvedThemeKey,
+                buildGalleryItemAnchorMap(block, renderContext.effectiveAnchors),
+                renderContext.assetMap,
+                renderContext.sceneMap,
+                renderContext.theme,
+                renderContext.resolvedThemeKey,
                 mode
               )}
             </div>

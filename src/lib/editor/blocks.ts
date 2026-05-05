@@ -16,6 +16,7 @@ export type {
   HeroVariant,
   CtaVariant,
   GalleryVariant,
+  FooterVariant,
   PageBlock,
   PageContent,
   SupportedBlockType,

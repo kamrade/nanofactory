@@ -3,6 +3,7 @@ import { describe, expect, it, vi } from "vitest";
 import {
   applyModeToRoot,
   readModeFromRoot,
+  syncModeToCookie,
   syncModeToUrl,
 } from "@/components/projects/project-mode-switcher";
 
@@ -77,6 +78,28 @@ describe("project mode switcher helpers", () => {
         delete (globalThis as { window?: unknown }).window;
       } else {
         (globalThis as { window: unknown }).window = originalWindow;
+      }
+    }
+  });
+
+  it("syncs mode to cookie", () => {
+    const originalDocument = (globalThis as { document?: unknown }).document;
+    const cookieWrites: string[] = [];
+    (globalThis as { document: unknown }).document = {
+      set cookie(value: string) {
+        cookieWrites.push(value);
+      },
+    };
+
+    try {
+      syncModeToCookie("dark");
+      expect(cookieWrites.at(-1)).toContain("nf_mode=dark");
+      expect(cookieWrites.at(-1)).toContain("path=/");
+    } finally {
+      if (originalDocument === undefined) {
+        delete (globalThis as { document?: unknown }).document;
+      } else {
+        (globalThis as { document: unknown }).document = originalDocument;
       }
     }
   });

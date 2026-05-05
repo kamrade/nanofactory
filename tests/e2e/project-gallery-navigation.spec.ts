@@ -18,19 +18,34 @@ async function createProjectFromDashboard(page: Page, name: string) {
   await page.waitForURL(/\/projects\/.+/);
 }
 
+async function ensureBlockEditorClosed(page: Page) {
+  const blockEditor = page.getByRole("dialog", { name: "Block editor" });
+  if (await blockEditor.isVisible()) {
+    await page.keyboard.press("Escape");
+    await page.waitForTimeout(100);
+
+    if (await blockEditor.isVisible()) {
+      const closeButton = blockEditor.getByRole("button", { name: "Close" }).first();
+      if ((await closeButton.count()) > 0) {
+        await closeButton.click({ force: true });
+        await page.waitForTimeout(100);
+      }
+    }
+
+    if (await blockEditor.isVisible()) {
+      await page.keyboard.press("Escape");
+    }
+  }
+}
+
 async function addBlock(page: Page, descriptionText: string) {
+  await ensureBlockEditorClosed(page);
   await page.getByRole("button", { name: "Add block" }).click();
   await page.locator('[role="menuitem"]').filter({ hasText: descriptionText }).first().click();
 }
 
 async function publishProject(page: Page) {
-  const blockEditor = page.getByRole("dialog", { name: "Block editor" });
-  if (await blockEditor.isVisible()) {
-    await page.keyboard.press("Escape");
-    if (await blockEditor.isVisible()) {
-      await blockEditor.getByRole("button", { name: "Close" }).first().click({ force: true });
-    }
-  }
+  await ensureBlockEditorClosed(page);
 
   await page.getByRole("button", { name: "Info" }).click();
   const infoSheet = page.getByRole("dialog", { name: "Project info" });
@@ -40,10 +55,7 @@ async function publishProject(page: Page) {
 }
 
 async function getPublicUrl(page: Page) {
-  const blockEditor = page.getByRole("dialog", { name: "Block editor" });
-  if (await blockEditor.isVisible()) {
-    await page.keyboard.press("Escape");
-  }
+  await ensureBlockEditorClosed(page);
 
   await page.getByRole("button", { name: "Info" }).click();
   const infoSheet = page.getByRole("dialog", { name: "Project info" });
@@ -57,10 +69,7 @@ async function getPublicUrl(page: Page) {
   return href;
 }
 
-test("gallery item page supports next/previous, keyboard arrows, and back to gallery", async ({
-  page,
-}) => {
-  const projectName = "Gallery Navigation Project";
+async function openPublishedGalleryPage(page: Page, projectName: string, extraQuery?: string) {
   await createProjectFromDashboard(page, projectName);
   await addBlock(page, "Image gallery with configurable columns and optional text details.");
   await page.getByRole("button", { name: "Save" }).click();
@@ -68,7 +77,14 @@ test("gallery item page supports next/previous, keyboard arrows, and back to gal
 
   await publishProject(page);
   const publicUrl = await getPublicUrl(page);
-  await page.goto(publicUrl);
+  const targetUrl = extraQuery ? `${publicUrl}${publicUrl.includes("?") ? "&" : "?"}${extraQuery}` : publicUrl;
+  await page.goto(targetUrl);
+}
+
+test("gallery item page supports next/previous, keyboard arrows, and back to gallery", async ({
+  page,
+}) => {
+  await openPublishedGalleryPage(page, "Gallery Navigation Project");
 
   const firstItemLink = page.locator('article[id^="gallery-"] a[href*="/gallery-"]').first();
   await expect(firstItemLink).toBeVisible();
@@ -93,15 +109,7 @@ test("gallery item page supports next/previous, keyboard arrows, and back to gal
 });
 
 test("gallery item page handles ArrowRight and edge states for previous/next", async ({ page }) => {
-  const projectName = "Gallery Navigation Edge States";
-  await createProjectFromDashboard(page, projectName);
-  await addBlock(page, "Image gallery with configurable columns and optional text details.");
-  await page.getByRole("button", { name: "Save" }).click();
-  await expect(page.getByText("Project content saved.")).toBeVisible();
-
-  await publishProject(page);
-  const publicUrl = await getPublicUrl(page);
-  await page.goto(publicUrl);
+  await openPublishedGalleryPage(page, "Gallery Navigation Edge States");
 
   const firstItemLink = page.locator('article[id^="gallery-"] a[href*="/gallery-"]').first();
   await expect(firstItemLink).toBeVisible();
@@ -129,7 +137,6 @@ test("returns 404 for invalid gallery item anchors", async ({ page }) => {
   await addBlock(page, "Image gallery with configurable columns and optional text details.");
   await page.getByRole("button", { name: "Save" }).click();
   await expect(page.getByText("Project content saved.")).toBeVisible();
-
   await publishProject(page);
   const publicUrl = await getPublicUrl(page);
   const url = new URL(publicUrl, page.url());
@@ -137,4 +144,16 @@ test("returns 404 for invalid gallery item anchors", async ({ page }) => {
 
   await page.goto(url.toString());
   await expect(page.getByRole("heading", { name: "404" })).toBeVisible();
+});
+
+test("preserves dark mode when opening a gallery item", async ({ page }) => {
+  await openPublishedGalleryPage(page, "Gallery Navigation Mode Preserve", "mode=dark");
+  await expect(page.locator('main[data-mode="dark"]')).toBeVisible();
+
+  const firstItemLink = page.locator('article[id^="gallery-"] a[href*="/gallery-"]').first();
+  await expect(firstItemLink).toBeVisible();
+  await firstItemLink.click();
+
+  await expect(page.locator('main[data-mode="dark"]')).toBeVisible();
+  await expect(page).toHaveURL(/mode=dark/);
 });

@@ -72,11 +72,14 @@ export function AppHeaderDefaultRender({ block, assetMap, theme, mode = "light" 
     logoLightAssetId,
     logoDarkAssetId,
     collapseBreakpoint,
+    alwaysMobile,
     menuItems,
     socialLinks,
   } =
     readAppHeaderProps(block.props);
   const responsive = getResponsiveClasses(collapseBreakpoint);
+  const mobileOnlyClass = alwaysMobile ? "" : responsive.mobileOnly;
+  const desktopOnlyClass = alwaysMobile ? "hidden" : responsive.desktopOnly;
   const selectedLogoId =
     activeMode === "dark" ? logoDarkAssetId ?? logoAssetId : logoLightAssetId ?? logoAssetId;
   const logoAsset = resolveAssetById(selectedLogoId, assetMap);
@@ -138,7 +141,7 @@ export function AppHeaderDefaultRender({ block, assetMap, theme, mode = "light" 
       ) : null}
 
 
-      <div className={`relative flex items-center justify-center ${responsive.mobileOnly}`}>
+      <div data-testid="MobileHeader" className={`relative flex items-center justify-center ${mobileOnlyClass}`}>
         <button
           type="button"
           aria-label={isMobileMenuOpen ? "Close menu" : "Open menu"}
@@ -168,8 +171,9 @@ export function AppHeaderDefaultRender({ block, assetMap, theme, mode = "light" 
       </div>
 
       <div
+        data-testid="MobileMenu"
         aria-hidden={!isMobileMenuOpen}
-        className={`overflow-hidden transition-all duration-300 ease-out ${responsive.mobileOnly} ${
+        className={`overflow-hidden transition-all duration-300 ease-out ${mobileOnlyClass} ${
           isMobileMenuOpen
             ? "mt-4 max-h-[24rem] opacity-100 translate-y-0"
             : "mt-0 max-h-0 opacity-0 -translate-y-1 pointer-events-none"
@@ -219,7 +223,8 @@ export function AppHeaderDefaultRender({ block, assetMap, theme, mode = "light" 
       </div>
 
       <div
-        className={`${responsive.desktopOnly} items-center gap-4 grid-cols-[minmax(0,1fr)_auto_minmax(0,1fr)]`}
+        data-testid="DesktopHeader"
+        className={`${desktopOnlyClass} items-center gap-4 grid-cols-[minmax(0,1fr)_auto_minmax(0,1fr)]`}
       >
         <div className="flex items-center gap-3 md:justify-start">
           {logoAsset ? (
