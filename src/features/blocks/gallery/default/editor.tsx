@@ -8,6 +8,7 @@ import { AssetPicker } from "../../shared/asset-picker";
 
 type GalleryItem = {
   assetId: string | undefined;
+  imageAnchor: string | undefined;
   title: string;
   description: string;
   price: string;
@@ -42,6 +43,7 @@ function readItems(props: Record<string, unknown>): GalleryItem[] {
       const record = item as Record<string, unknown>;
       return {
         assetId: typeof record.assetId === "string" ? record.assetId : undefined,
+        imageAnchor: typeof record.imageAnchor === "string" ? record.imageAnchor : undefined,
         title: typeof record.title === "string" ? record.title : "",
         description: typeof record.description === "string" ? record.description : "",
         price: typeof record.price === "string" ? record.price : "",
@@ -55,7 +57,12 @@ function readImageHeightMode(props: Record<string, unknown>): GalleryImageHeight
   return props.imageHeightMode === "natural" ? "natural" : "fixed";
 }
 
-export function GalleryDefaultEditor({ block, assets, onChange }: BlockEditorProps) {
+export function GalleryDefaultEditor({
+  block,
+  assets,
+  onChange,
+  effectiveGalleryItemAnchors,
+}: BlockEditorProps) {
   const sectionTitle = readSectionTitle(block.props);
   const columns = readColumns(block.props);
   const imageHeightMode = readImageHeightMode(block.props);
@@ -130,7 +137,7 @@ export function GalleryDefaultEditor({ block, assets, onChange }: BlockEditorPro
               update({
                 items: [
                   ...items,
-                  { assetId: undefined, title: "", description: "", price: "", meta: "" },
+                  { assetId: undefined, imageAnchor: undefined, title: "", description: "", price: "", meta: "" },
                 ],
               })
             }
@@ -167,6 +174,21 @@ export function GalleryDefaultEditor({ block, assets, onChange }: BlockEditorPro
                       Remove
                     </UIButton>
                   </div>
+
+                  <label className="grid gap-1 text-sm">
+                    <span className="font-medium text-text-main">Image anchor</span>
+                    <UITextInput
+                      size="sm"
+                      value={item.imageAnchor ?? ""}
+                      onValueChange={(value) =>
+                        updateItem(index, {
+                          ...item,
+                          imageAnchor: value.trim().length > 0 ? value : undefined,
+                        })
+                      }
+                      placeholder={effectiveGalleryItemAnchors?.get(index) ?? `gallery-item-${index + 1}`}
+                    />
+                  </label>
 
                   <AssetPicker
                     assets={assets}

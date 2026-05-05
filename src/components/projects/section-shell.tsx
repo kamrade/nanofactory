@@ -9,6 +9,7 @@ import type { UiMode } from "@/lib/ui-preferences";
 type SectionShellProps = {
   block: PageBlock;
   containerClassName: string;
+  anchorId?: string;
   backgroundScene?: BackgroundScene | null;
   fallbackThemeKey?: ThemeKey;
   fallbackMode?: UiMode;
@@ -47,19 +48,15 @@ function renderInnerContent(
 export function SectionShell({
   block,
   containerClassName,
+  anchorId,
   backgroundScene,
   fallbackThemeKey,
   fallbackMode,
   children,
 }: SectionShellProps) {
-  const sectionAnchorId =
-    typeof block.anchorId === "string" && block.anchorId.trim().length > 0
-      ? block.anchorId
-      : undefined;
-
   return (
     <section
-      id={sectionAnchorId}
+      id={anchorId}
       data-testid="SectionShell"
       className={cx("scroll-mt-24", containerClassName)}
     >

@@ -5,6 +5,7 @@ import { GalleryDefaultRender } from "./render";
 
 type GalleryItem = {
   assetId: string | undefined;
+  imageAnchor: string | undefined;
   title: string;
   description: string;
   price: string;
@@ -17,6 +18,7 @@ function defaultItems(): GalleryItem[] {
   return [
     {
       assetId: undefined,
+      imageAnchor: undefined,
       title: "Featured item",
       description: "Short description for this gallery item.",
       price: "$120",
@@ -24,6 +26,7 @@ function defaultItems(): GalleryItem[] {
     },
     {
       assetId: undefined,
+      imageAnchor: undefined,
       title: "Second item",
       description: "Another optional description text.",
       price: "$95",
@@ -53,6 +56,7 @@ function readItems(input: unknown): GalleryItem[] {
 
       return {
         assetId: readOptionalString(item.assetId),
+        imageAnchor: readOptionalString(item.imageAnchor),
         title: readString(item.title, ""),
         description: readString(item.description, ""),
         price: readString(item.price, ""),

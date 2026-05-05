@@ -95,6 +95,52 @@ export function validatePageContent(input: unknown): PageContentValidationResult
       block.anchorId = normalizedAnchorId;
     }
 
+    if (block.type === "gallery" && Array.isArray(block.props.items)) {
+      const normalizedItems = block.props.items.map((item) => {
+        if (!isPlainObject(item)) {
+          return item;
+        }
+
+        const nextItem = { ...item };
+        const rawImageAnchor = readOptionalString(nextItem.imageAnchor);
+        if (!rawImageAnchor) {
+          return nextItem;
+        }
+
+        const normalizedImageAnchor = normalizeAnchorId(rawImageAnchor);
+        if (!isValidAnchorId(normalizedImageAnchor)) {
+          return {
+            __anchorValidationError:
+              "Image anchor must contain only lowercase Latin letters, numbers, and hyphens, and start with a letter.",
+          };
+        }
+
+        if (seenAnchorIds.has(normalizedImageAnchor)) {
+          return {
+            __anchorValidationError: "Anchor id values must be unique within the page.",
+          };
+        }
+
+        seenAnchorIds.add(normalizedImageAnchor);
+        nextItem.imageAnchor = normalizedImageAnchor;
+        return nextItem;
+      });
+
+      const itemAnchorError = normalizedItems.find(
+        (item) =>
+          isPlainObject(item) &&
+          typeof (item as { __anchorValidationError?: unknown }).__anchorValidationError === "string"
+      ) as { __anchorValidationError: string } | undefined;
+      if (itemAnchorError) {
+        return {
+          success: false,
+          error: itemAnchorError.__anchorValidationError,
+        };
+      }
+
+      block.props.items = normalizedItems;
+    }
+
     blocks.push(block);
   }
 

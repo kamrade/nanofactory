@@ -35,6 +35,7 @@ type BlockSettingsSheetProps = {
     id: string;
     label: string;
   }>;
+  effectiveGalleryItemAnchors?: Map<number, string>;
   backgroundScenes: BackgroundSceneRecord[];
   activeEditorBlockIndex: number;
   totalBlocks: number;
@@ -57,6 +58,7 @@ type BlockSettingsSheetProps = {
   onMoveBlock: (blockId: string, nextIndex: number) => void;
   onDeleteBlock: (blockId: string) => void;
   allBlocks: PageBlock[];
+  effectiveAnchorId?: string;
   onAnchorIdRejected?: (message: string) => void;
 };
 
@@ -69,6 +71,7 @@ export function BlockSettingsSheet({
   activePendingSwitch,
   assets,
   availableAnchors,
+  effectiveGalleryItemAnchors,
   backgroundScenes,
   activeEditorBlockIndex,
   totalBlocks,
@@ -83,6 +86,7 @@ export function BlockSettingsSheet({
   onMoveBlock,
   onDeleteBlock,
   allBlocks,
+  effectiveAnchorId,
   onAnchorIdRejected,
 }: BlockSettingsSheetProps) {
   const canMoveActiveBlockUp = activeEditorBlockIndex > 0;
@@ -218,13 +222,13 @@ export function BlockSettingsSheet({
                     value={anchorDraft}
                     onValueChange={setAnchorDraft}
                     onBlur={handleAnchorBlur}
-                    placeholder="section-hero"
+                    placeholder={effectiveAnchorId ?? "section-hero"}
                     invalid={Boolean(anchorError)}
                     aria-label="Anchor id"
                   />
                   <span className={anchorError ? "text-xs text-danger" : "text-xs text-text-muted"}>
                     {anchorError ??
-                      "Optional. If set, this block becomes linkable from header menu."}
+                      `Optional. Auto anchor: ${effectiveAnchorId ?? "section-hero"}`}
                   </span>
                 </label>
 
@@ -274,6 +278,7 @@ export function BlockSettingsSheet({
                 block={activeEditorBlock}
                 assets={assets}
                 availableAnchors={availableAnchors}
+                effectiveGalleryItemAnchors={effectiveGalleryItemAnchors}
                 definition={activeEditorDefinition}
                 onChange={(nextProps) => onChangeProps(activeEditorBlock.id, nextProps)}
               />

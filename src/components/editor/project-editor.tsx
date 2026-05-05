@@ -34,7 +34,11 @@ import type { PageBlock } from "@/features/blocks/shared/content";
 import type { BlockVariantDefinition } from "@/features/blocks/shared/types";
 import { useToast } from "@/hooks/use-toast";
 import type { BackgroundSceneRecord } from "@/lib/background-scenes/types";
-import { normalizeAnchorId } from "@/lib/editor/anchor-id";
+import {
+  buildEffectivePageAnchors,
+  getGalleryItemEffectiveAnchor,
+  normalizeAnchorId,
+} from "@/lib/editor/anchor-id";
 import type { UiMode } from "@/lib/ui-preferences";
 import type { ThemeKey } from "@/lib/themes";
 
@@ -338,6 +342,11 @@ export function ProjectEditor({
     return () => window.clearTimeout(timer);
   }, [state.lastVariantUndo]);
 
+  const effectiveAnchors = useMemo(
+    () => buildEffectivePageAnchors(state.content.blocks),
+    [state.content.blocks]
+  );
+
   function renderBlockPreview(block: PageBlock) {
     const definition = getBlockDefinition(block.type, block.variant);
     if (!definition) {
@@ -349,10 +358,23 @@ export function ProjectEditor({
       typeof block.backgroundSceneId === "string"
         ? sceneMap.get(block.backgroundSceneId)?.sceneJson ?? null
         : null;
+    const effectiveAnchorId = effectiveAnchors.blockAnchors.get(block.id);
+    const galleryItemAnchors =
+      block.type === "gallery" && Array.isArray(block.props.items)
+        ? new Map(
+            block.props.items
+              .map((_, index) => [
+                index,
+                getGalleryItemEffectiveAnchor(effectiveAnchors.galleryItemAnchors, block.id, index),
+              ] as const)
+              .filter((entry): entry is readonly [number, string] => Boolean(entry[1]))
+          )
+        : undefined;
 
     return (
       <SectionShell
         block={block}
+        anchorId={effectiveAnchorId}
         containerClassName="mx-auto container"
         backgroundScene={backgroundScene}
         fallbackThemeKey={activeThemeKey}
@@ -362,6 +384,7 @@ export function ProjectEditor({
           block={block}
           assetMap={assetMap}
           mode={activeMode}
+          effectiveGalleryItemAnchors={galleryItemAnchors}
           theme={{
             muted: "text-text-muted",
             button:
@@ -399,27 +422,64 @@ export function ProjectEditor({
     ? state.content.blocks.findIndex((block) => block.id === activeEditorBlock.id)
     : -1;
   const availableAnchors = useMemo(
-    () =>
-      state.content.blocks
-        .map((block, index) => {
-          if (typeof block.anchorId !== "string" || block.anchorId.trim().length === 0) {
-            return null;
-          }
+    () => {
+      const anchors: Array<{ id: string; label: string }> = [];
 
-          return {
-            id: block.anchorId,
+      state.content.blocks.forEach((block, index) => {
+        const anchorId = effectiveAnchors.blockAnchors.get(block.id);
+        if (anchorId) {
+          anchors.push({
+            id: anchorId,
             label: `${index + 1}. ${formatDefinitionLabel(
               getBlockDefinition(block.type, block.variant) ?? {
                 typeLabel: block.type,
                 label: block.type,
                 variant: block.variant ?? "default",
               }
-            )} (${block.anchorId})`,
-          };
-        })
-        .filter((item): item is { id: string; label: string } => item !== null),
-    [state.content.blocks]
+            )} (${anchorId})`,
+          });
+        }
+
+        if (block.type === "gallery" && Array.isArray(block.props.items)) {
+          block.props.items.forEach((item, itemIndex) => {
+            const itemAnchorId = getGalleryItemEffectiveAnchor(
+              effectiveAnchors.galleryItemAnchors,
+              block.id,
+              itemIndex
+            );
+            if (!itemAnchorId) {
+              return;
+            }
+            const itemTitle =
+              typeof item === "object" && item !== null && typeof (item as { title?: unknown }).title === "string"
+                ? (item as { title: string }).title
+                : `Item ${itemIndex + 1}`;
+            anchors.push({
+              id: itemAnchorId,
+              label: `${index + 1}. Gallery → ${itemTitle} (${itemAnchorId})`,
+            });
+          });
+        }
+      });
+
+      return anchors;
+    },
+    [effectiveAnchors, state.content.blocks]
   );
+  const activeGalleryItemAnchors = useMemo(() => {
+    if (!activeEditorBlock || activeEditorBlock.type !== "gallery" || !Array.isArray(activeEditorBlock.props.items)) {
+      return undefined;
+    }
+
+    return new Map(
+      activeEditorBlock.props.items
+        .map((_, index) => [
+          index,
+          getGalleryItemEffectiveAnchor(effectiveAnchors.galleryItemAnchors, activeEditorBlock.id, index),
+        ] as const)
+        .filter((entry): entry is readonly [number, string] => Boolean(entry[1]))
+    );
+  }, [activeEditorBlock, effectiveAnchors.galleryItemAnchors]);
 
   return (
     <div className="grid gap-6">
@@ -455,6 +515,7 @@ export function ProjectEditor({
         activePendingSwitch={activePendingSwitch}
         assets={assets}
         availableAnchors={availableAnchors}
+        effectiveGalleryItemAnchors={activeGalleryItemAnchors}
         backgroundScenes={backgroundScenes}
         activeEditorBlockIndex={activeEditorBlockIndex}
         totalBlocks={state.content.blocks.length}
@@ -483,6 +544,9 @@ export function ProjectEditor({
         }
         onDeleteBlock={(blockId) => dispatch({ type: "delete_block", blockId })}
         allBlocks={state.content.blocks}
+        effectiveAnchorId={
+          activeEditorBlock ? effectiveAnchors.blockAnchors.get(activeEditorBlock.id) : undefined
+        }
         onAnchorIdRejected={(message) =>
           showToast({
             tone: "error",

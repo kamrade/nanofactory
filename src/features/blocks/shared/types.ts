@@ -22,6 +22,7 @@ export type BlockRenderProps = {
   assetMap: Map<string, ProjectAssetRecord>;
   theme: BlockTheme;
   mode?: "light" | "dark";
+  effectiveGalleryItemAnchors?: Map<number, string>;
 };
 
 export type BlockEditorProps = {
@@ -31,6 +32,7 @@ export type BlockEditorProps = {
     id: string;
     label: string;
   }>;
+  effectiveGalleryItemAnchors?: Map<number, string>;
   definition: Pick<BlockVariantDefinition, "fields" | "supportsAssetSelection">;
   onChange: (nextProps: Record<string, unknown>) => void;
 };

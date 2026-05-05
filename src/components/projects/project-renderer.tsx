@@ -6,6 +6,10 @@ import type { BackgroundSceneRecord } from "@/lib/background-scenes/types";
 import { ProjectModeSwitcher } from "@/components/projects/project-mode-switcher";
 import { DEFAULT_THEME_KEY, isThemeKey } from "@/lib/themes";
 import { SectionShell } from "@/components/projects/section-shell";
+import {
+  buildEffectivePageAnchors,
+  getGalleryItemEffectiveAnchor,
+} from "@/lib/editor/anchor-id";
 
 import { getBlockDefinition } from "@/lib/editor/blocks";
 
@@ -38,6 +42,8 @@ function getThemeClasses(themeKey: string) {
 
 function renderBlock(
   block: PageContent["blocks"][number],
+  anchorId: string | undefined,
+  effectiveGalleryItemAnchors: Map<number, string> | undefined,
   assetMap: Map<string, ProjectAssetRecord>,
   sceneMap: Map<string, BackgroundSceneRecord>,
   theme: ReturnType<typeof getThemeClasses>,
@@ -59,12 +65,19 @@ function renderBlock(
   return (
     <SectionShell
       block={block}
+      anchorId={anchorId}
       containerClassName="container mx-auto px-4"
       backgroundScene={backgroundScene}
       fallbackThemeKey={fallbackThemeKey}
       fallbackMode={fallbackMode}
     >
-      <Renderer block={block} assetMap={assetMap} theme={theme} mode={fallbackMode} />
+      <Renderer
+        block={block}
+        assetMap={assetMap}
+        theme={theme}
+        mode={fallbackMode}
+        effectiveGalleryItemAnchors={effectiveGalleryItemAnchors}
+      />
     </SectionShell>
   );
 }
@@ -90,6 +103,8 @@ export function ProjectRenderer({
     }),
   }));
   const sceneMap = new Map(paletteAdjustedScenes.map((scene) => [scene.id, scene] as const));
+  const effectiveAnchors = buildEffectivePageAnchors(content.blocks);
+  const anchorMap = effectiveAnchors.blockAnchors;
   const containerClass = "container mx-auto px-4";
 
   return (
@@ -131,6 +146,21 @@ export function ProjectRenderer({
             <div key={block.id}>
               {renderBlock(
                 block,
+                anchorMap.get(block.id),
+                block.type === "gallery" && Array.isArray(block.props.items)
+                  ? new Map(
+                      block.props.items
+                        .map((_, index) => [
+                          index,
+                          getGalleryItemEffectiveAnchor(
+                            effectiveAnchors.galleryItemAnchors,
+                            block.id,
+                            index
+                          ),
+                        ] as const)
+                        .filter((entry): entry is readonly [number, string] => Boolean(entry[1]))
+                    )
+                  : undefined,
                 assetMap,
                 sceneMap,
                 theme,

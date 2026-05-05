@@ -5,6 +5,7 @@ import type { BlockRenderProps } from "../../shared/types";
 
 type GalleryItem = {
   assetId: string | undefined;
+  imageAnchor: string | undefined;
   title: string;
   description: string;
   price: string;
@@ -39,6 +40,7 @@ function readItems(props: Record<string, unknown>): GalleryItem[] {
       const record = item as Record<string, unknown>;
       return {
         assetId: typeof record.assetId === "string" ? record.assetId : undefined,
+        imageAnchor: typeof record.imageAnchor === "string" ? record.imageAnchor : undefined,
         title: typeof record.title === "string" ? record.title : "",
         description: typeof record.description === "string" ? record.description : "",
         price: typeof record.price === "string" ? record.price : "",
@@ -66,7 +68,12 @@ const MASONRY_COLUMNS_CLASS: Record<1 | 2 | 3 | 4, string> = {
   4: "md:columns-4",
 };
 
-export function GalleryDefaultRender({ block, assetMap, theme }: BlockRenderProps) {
+export function GalleryDefaultRender({
+  block,
+  assetMap,
+  theme,
+  effectiveGalleryItemAnchors,
+}: BlockRenderProps) {
   const sectionTitle = readSectionTitle(block.props);
   const columns = readColumns(block.props);
   const imageHeightMode = readImageHeightMode(block.props);
@@ -90,6 +97,7 @@ export function GalleryDefaultRender({ block, assetMap, theme }: BlockRenderProp
           return (
             <article
               key={`${block.id}-gallery-${index}`}
+              id={effectiveGalleryItemAnchors?.get(index)}
               className={
                 imageHeightMode === "natural"
                   ? "mb-4 break-inside-avoid overflow-hidden rounded-2xl border border-line bg-surface-alt"

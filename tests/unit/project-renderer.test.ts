@@ -382,4 +382,19 @@ describe("ProjectRenderer", () => {
     expect(html).toContain("md:columns-3");
     expect(html).toContain("break-inside-avoid");
   });
+
+  it("assigns an auto anchor id to blocks without explicit anchorId", () => {
+    const html = renderToStaticMarkup(
+      ProjectRenderer({
+        name: "Auto Anchor Project",
+        themeKey: "sunwash",
+        content: createHeroContent(),
+        assets: [],
+        showPublishedBadge: false,
+        showProjectMeta: false,
+      })
+    );
+
+    expect(html).toContain('id="hero-1"');
+  });
 });
