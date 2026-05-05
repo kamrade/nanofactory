@@ -3,10 +3,15 @@ export function buildGalleryItemNavigationHrefs(input: {
   previousItemAnchor?: string;
   nextItemAnchor?: string;
   backHref?: string;
+  mode?: "light" | "dark";
 }) {
+  const modeQuery = input.mode === "dark" ? "?mode=dark" : "";
+
   return {
-    backHref: input.backHref ?? `../..#${input.galleryAnchor}`,
-    previousHref: input.previousItemAnchor ? `./${input.previousItemAnchor}` : undefined,
-    nextHref: input.nextItemAnchor ? `./${input.nextItemAnchor}` : undefined,
+    backHref: input.backHref ?? `../..${modeQuery}#${input.galleryAnchor}`,
+    previousHref: input.previousItemAnchor
+      ? `./${input.previousItemAnchor}${modeQuery}`
+      : undefined,
+    nextHref: input.nextItemAnchor ? `./${input.nextItemAnchor}${modeQuery}` : undefined,
   };
 }

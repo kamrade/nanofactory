@@ -2,6 +2,7 @@
 
 import { useRef, useState } from "react";
 import { UISegmentedControl } from "@/components/ui/segmented-control";
+import { UI_COOKIE_MAX_AGE, UI_MODE_COOKIE } from "@/lib/ui-preferences";
 
 export type ThemeMode = "light" | "dark";
 
@@ -41,6 +42,14 @@ export function syncModeToUrl(paramName: string, mode: ThemeMode) {
   window.history.replaceState(null, "", `${url.pathname}${url.search}${url.hash}`);
 }
 
+export function syncModeToCookie(mode: ThemeMode) {
+  if (typeof document === "undefined") {
+    return;
+  }
+
+  document.cookie = `${UI_MODE_COOKIE}=${mode}; path=/; max-age=${UI_COOKIE_MAX_AGE}; samesite=lax`;
+}
+
 export function ProjectModeSwitcher({
   initialMode,
   inputName,
@@ -63,6 +72,7 @@ export function ProjectModeSwitcher({
   function applyMode(nextMode: ThemeMode) {
     setMode(nextMode);
     applyModeToRoot(containerRef.current, nextMode);
+    syncModeToCookie(nextMode);
     if (syncSearchParam) {
       syncModeToUrl(syncSearchParam, nextMode);
     }

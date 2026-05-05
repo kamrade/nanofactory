@@ -73,6 +73,7 @@ export function GalleryDefaultRender({
   block,
   assetMap,
   theme,
+  mode = "light",
   publicProjectSlug,
   galleryItemLinkMode = "absolute",
   effectiveBlockAnchorId,
@@ -82,6 +83,7 @@ export function GalleryDefaultRender({
   const columns = readColumns(block.props);
   const imageHeightMode = readImageHeightMode(block.props);
   const items = readItems(block.props);
+  const modeQuery = mode === "dark" ? "?mode=dark" : "";
 
   return (
     <section className="space-y-6 p-4 md:p-8">
@@ -102,8 +104,8 @@ export function GalleryDefaultRender({
           const itemHref =
             publicProjectSlug && effectiveBlockAnchorId && itemAnchorId
               ? galleryItemLinkMode === "relative"
-                ? `./${effectiveBlockAnchorId}/${itemAnchorId}`
-                : `/p/${publicProjectSlug}/${effectiveBlockAnchorId}/${itemAnchorId}`
+                ? `./${effectiveBlockAnchorId}/${itemAnchorId}${modeQuery}`
+                : `/p/${publicProjectSlug}/${effectiveBlockAnchorId}/${itemAnchorId}${modeQuery}`
               : null;
           return (
             <article
