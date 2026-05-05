@@ -1,4 +1,5 @@
 import Image from "next/image";
+import Link from "next/link";
 
 import { resolveAssetById } from "@/lib/assets/resolution";
 import type { BlockRenderProps } from "../../shared/types";
@@ -72,6 +73,8 @@ export function GalleryDefaultRender({
   block,
   assetMap,
   theme,
+  publicProjectSlug,
+  effectiveBlockAnchorId,
   effectiveGalleryItemAnchors,
 }: BlockRenderProps) {
   const sectionTitle = readSectionTitle(block.props);
@@ -94,17 +97,37 @@ export function GalleryDefaultRender({
       >
         {items.map((item, index) => {
           const asset = resolveAssetById(item.assetId, assetMap);
+          const itemAnchorId = effectiveGalleryItemAnchors?.get(index);
+          const itemHref =
+            publicProjectSlug && effectiveBlockAnchorId && itemAnchorId
+              ? `/p/${publicProjectSlug}/${effectiveBlockAnchorId}/${itemAnchorId}`
+              : null;
           return (
             <article
               key={`${block.id}-gallery-${index}`}
-              id={effectiveGalleryItemAnchors?.get(index)}
+              id={itemAnchorId}
               className={
                 imageHeightMode === "natural"
-                  ? "mb-4 break-inside-avoid overflow-hidden rounded-2xl border border-line bg-surface-alt"
-                  : "self-start overflow-hidden rounded-2xl border border-line bg-surface-alt"
+                  ? "relative mb-4 break-inside-avoid overflow-hidden rounded-2xl border border-line bg-surface-alt"
+                  : "relative self-start overflow-hidden rounded-2xl border border-line bg-surface-alt"
               }
             >
-              {asset ? (
+              {asset ? itemHref ? (
+                <Link href={itemHref} className="block transition hover:opacity-95">
+                  <Image
+                    src={asset.publicUrl}
+                    alt={asset.alt ?? asset.originalFilename}
+                    width={800}
+                    height={600}
+                    unoptimized
+                    className={
+                      imageHeightMode === "natural"
+                        ? "h-auto w-full object-contain"
+                        : "h-56 w-full object-cover"
+                    }
+                  />
+                </Link>
+              ) : (
                 <Image
                   src={asset.publicUrl}
                   alt={asset.alt ?? asset.originalFilename}
@@ -118,16 +141,16 @@ export function GalleryDefaultRender({
                   }
                 />
               ) : (
-                <div
-                  className={
-                    imageHeightMode === "natural"
-                      ? "flex min-h-40 w-full items-center justify-center bg-surface text-sm text-text-muted"
-                      : "flex h-56 w-full items-center justify-center bg-surface text-sm text-text-muted"
-                  }
-                >
-                  No image
-                </div>
-              )}
+                  <div
+                    className={
+                      imageHeightMode === "natural"
+                        ? "flex min-h-40 w-full items-center justify-center bg-surface text-sm text-text-muted"
+                        : "flex h-56 w-full items-center justify-center bg-surface text-sm text-text-muted"
+                    }
+                  >
+                    No image
+                  </div>
+                )}
 
               {(item.title || item.description || item.price || item.meta) ? (
                 <div className="space-y-2 p-4">
@@ -144,6 +167,18 @@ export function GalleryDefaultRender({
                     <p className="text-xs text-text-muted">{item.meta}</p>
                   ) : null}
                 </div>
+              ) : null}
+
+              {itemHref ? (
+                <Link
+                  href={itemHref}
+                  aria-label={`Open ${item.title.trim().length > 0 ? item.title : `gallery item ${index + 1}`}`}
+                  className="absolute inset-0 z-20"
+                >
+                  <span className="sr-only">
+                    Open {item.title.trim().length > 0 ? item.title : `gallery item ${index + 1}`}
+                  </span>
+                </Link>
               ) : null}
             </article>
           );

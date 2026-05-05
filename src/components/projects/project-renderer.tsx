@@ -15,6 +15,7 @@ import { getBlockDefinition } from "@/lib/editor/blocks";
 
 type RenderedProject = {
   name: string;
+  slug?: string;
   themeKey: string;
   mode?: "light" | "dark";
   content: PageContent;
@@ -42,6 +43,7 @@ function getThemeClasses(themeKey: string) {
 
 function renderBlock(
   block: PageContent["blocks"][number],
+  publicProjectSlug: string | undefined,
   anchorId: string | undefined,
   effectiveGalleryItemAnchors: Map<number, string> | undefined,
   assetMap: Map<string, ProjectAssetRecord>,
@@ -76,6 +78,8 @@ function renderBlock(
         assetMap={assetMap}
         theme={theme}
         mode={fallbackMode}
+        publicProjectSlug={publicProjectSlug}
+        effectiveBlockAnchorId={anchorId}
         effectiveGalleryItemAnchors={effectiveGalleryItemAnchors}
       />
     </SectionShell>
@@ -84,6 +88,7 @@ function renderBlock(
 
 export function ProjectRenderer({
   name,
+  slug,
   themeKey,
   mode = "light",
   content,
@@ -146,6 +151,7 @@ export function ProjectRenderer({
             <div key={block.id}>
               {renderBlock(
                 block,
+                slug,
                 anchorMap.get(block.id),
                 block.type === "gallery" && Array.isArray(block.props.items)
                   ? new Map(

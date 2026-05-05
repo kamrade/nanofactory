@@ -34,6 +34,7 @@ export default async function PublicProjectPage({
   return (
     <ProjectRenderer
       name={project.name}
+      slug={project.slug}
       themeKey={project.themeKey}
       mode={mode}
       content={normalizePageContent(project.contentJson)}

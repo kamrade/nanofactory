@@ -22,6 +22,8 @@ export type BlockRenderProps = {
   assetMap: Map<string, ProjectAssetRecord>;
   theme: BlockTheme;
   mode?: "light" | "dark";
+  publicProjectSlug?: string;
+  effectiveBlockAnchorId?: string;
   effectiveGalleryItemAnchors?: Map<number, string>;
 };
 

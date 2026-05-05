@@ -111,6 +111,7 @@ export async function ProjectPreviewPageWithDependencies(
 
       <ProjectRenderer
         name={project.name}
+        slug={project.slug}
         themeKey={resolvedThemeKey}
         mode={resolvedMode}
         content={dependencies.normalizePageContent(content)}
