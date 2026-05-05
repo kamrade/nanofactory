@@ -240,22 +240,29 @@ export function BlockSettingsSheet({
               </div>
 
               {activePendingSwitch ? (
-                <div className="rounded-2xl border border-amber-200 bg-amber-50 px-4 py-3 text-sm text-amber-900">
-                  <p className="font-medium">
+                <div className="rounded-2xl border border-line bg-surface-alt px-4 py-3 text-sm text-text-main">
+                  <p className="font-medium text-text-main">
                     Switching variant will remove: {activePendingSwitch.lostLabels.join(", ")}.
+                  </p>
+                  <p className="mt-1 text-xs text-text-muted">
+                    Confirm to apply the new variant with these changes.
                   </p>
                   <div className="mt-3 flex flex-wrap gap-2">
                     <UIButton
                       type="button"
+                      size="sm"
+                      theme="primary"
+                      variant="contained"
                       onClick={onConfirmVariantSwitch}
-                      className="inline-flex items-center justify-center rounded-2xl border border-amber-300 bg-amber-100 px-3 py-1.5 text-sm font-medium text-amber-900 transition hover:border-amber-400 hover:bg-amber-200"
                     >
                       Switch variant
                     </UIButton>
                     <UIButton
                       type="button"
+                      size="sm"
+                      theme="base"
+                      variant="outlined"
                       onClick={onCancelVariantSwitch}
-                      className="inline-flex items-center justify-center rounded-2xl border border-amber-200 bg-white px-3 py-1.5 text-sm font-medium text-amber-900 transition hover:border-amber-300 hover:bg-amber-100"
                     >
                       Cancel
                     </UIButton>

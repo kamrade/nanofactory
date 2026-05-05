@@ -3,6 +3,30 @@ import type { BlockVariantDefinition } from "../../shared/types";
 import { FeaturesCardsEditor } from "./editor";
 import { FeaturesCardsRender } from "./render";
 
+type FeatureCardItem = {
+  title: string;
+  content: string;
+  imageAssetId: string | undefined;
+};
+
+const defaultItems: FeatureCardItem[] = [
+  {
+    title: "A tighter page structure with fewer moving parts",
+    content: "Ship quickly with a focused set of building blocks and less setup overhead.",
+    imageAssetId: undefined,
+  },
+  {
+    title: "Clean ownership between content, layout, and assets",
+    content: "Keep editing responsibilities clear so teams can collaborate without collisions.",
+    imageAssetId: undefined,
+  },
+  {
+    title: "A publishing flow that stays easy to reason about",
+    content: "Move from draft to live confidently with a predictable, testable workflow.",
+    imageAssetId: undefined,
+  },
+];
+
 export const featuresCardsDefinition: BlockVariantDefinition = {
   type: "features",
   typeLabel: "Features",
@@ -26,20 +50,7 @@ export const featuresCardsDefinition: BlockVariantDefinition = {
   Editor: FeaturesCardsEditor,
   createDefaultProps: () => ({
     sectionTitle: "What makes this workflow fast",
-    items: [
-      {
-        title: "A tighter page structure with fewer moving parts",
-        content: "Ship quickly with a focused set of building blocks and less setup overhead.",
-      },
-      {
-        title: "Clean ownership between content, layout, and assets",
-        content: "Keep editing responsibilities clear so teams can collaborate without collisions.",
-      },
-      {
-        title: "A publishing flow that stays easy to reason about",
-        content: "Move from draft to live confidently with a predictable, testable workflow.",
-      },
-    ],
+    items: defaultItems,
   }),
   normalizeProps: (input) => {
     const props = isPlainObject(input) ? input : {};
@@ -55,6 +66,7 @@ export const featuresCardsDefinition: BlockVariantDefinition = {
           return {
             title,
             content: "",
+            imageAssetId: undefined,
           };
         }
 
@@ -72,10 +84,11 @@ export const featuresCardsDefinition: BlockVariantDefinition = {
         return {
           title,
           content,
+          imageAssetId: readOptionalString(item.imageAssetId),
         };
       })
       .filter(
-        (item): item is { title: string; content: string } =>
+        (item): item is FeatureCardItem =>
           item !== null
       );
 
@@ -84,23 +97,7 @@ export const featuresCardsDefinition: BlockVariantDefinition = {
       items:
         normalizedItems.length > 0
           ? normalizedItems
-          : [
-              {
-                title: "A tighter page structure with fewer moving parts",
-                content:
-                  "Ship quickly with a focused set of building blocks and less setup overhead.",
-              },
-              {
-                title: "Clean ownership between content, layout, and assets",
-                content:
-                  "Keep editing responsibilities clear so teams can collaborate without collisions.",
-              },
-              {
-                title: "A publishing flow that stays easy to reason about",
-                content:
-                  "Move from draft to live confidently with a predictable, testable workflow.",
-              },
-            ],
+          : defaultItems,
     };
   },
   Renderer: FeaturesCardsRender,

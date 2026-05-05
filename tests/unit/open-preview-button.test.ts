@@ -2,6 +2,7 @@ import { describe, expect, it } from "vitest";
 
 import {
   buildPreviewUrl,
+  getSelectedModeFromDocument,
   getSelectedThemeKeyFromDocument,
 } from "@/components/editor/open-preview-button";
 
@@ -29,5 +30,24 @@ describe("open preview url helpers", () => {
     });
 
     expect(url).toBe("/projects/project-1/preview?draft=draft-token-123&theme=sunwash");
+  });
+
+  it("adds mode param when provided", () => {
+    const url = buildPreviewUrl("/projects/project-1/preview", {
+      selectedMode: "dark",
+    });
+
+    expect(url).toBe("/projects/project-1/preview?mode=dark");
+  });
+
+  it("reads selected mode from document field", () => {
+    const querySelector = (selector: string) => {
+      if (selector === '[name="previewMode"]') {
+        return { value: "dark" } as HTMLInputElement;
+      }
+      return null;
+    };
+
+    expect(getSelectedModeFromDocument({ querySelector })).toBe("dark");
   });
 });

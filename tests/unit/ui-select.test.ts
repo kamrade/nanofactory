@@ -38,6 +38,17 @@ describe("UISelect", () => {
     expect(html).toContain(">React<");
   });
 
+  it("uses text-text-main on trigger to keep selected value readable in dark mode", () => {
+    const html = renderToStaticMarkup(
+      createElement(UISelect, {
+        defaultValue: "react",
+        options: [{ value: "react", label: "React" }],
+      })
+    );
+
+    expect(html).toContain("text-text-main");
+  });
+
   it("marks trigger as invalid when invalid prop is set", () => {
     const html = renderToStaticMarkup(
       createElement(UISelect, {

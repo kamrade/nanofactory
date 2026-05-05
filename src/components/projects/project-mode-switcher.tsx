@@ -31,7 +31,7 @@ type ProjectModeSwitcherProps = {
   syncSearchParam?: string;
 };
 
-function syncModeToUrl(paramName: string, mode: ThemeMode) {
+export function syncModeToUrl(paramName: string, mode: ThemeMode) {
   if (typeof window === "undefined") {
     return;
   }

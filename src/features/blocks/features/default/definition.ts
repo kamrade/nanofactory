@@ -1,7 +1,31 @@
-import { isPlainObject, readString, readStringList } from "../../shared/base";
-import { GenericBlockEditor } from "../../shared/generic-editor";
+import { isPlainObject, readOptionalString, readString } from "../../shared/base";
 import type { BlockVariantDefinition } from "../../shared/types";
+import { FeaturesCardsEditor } from "../cards/editor";
 import { FeaturesDefaultRender } from "./render";
+
+type FeatureCardItem = {
+  title: string;
+  content: string;
+  imageAssetId: string | undefined;
+};
+
+const defaultItems: FeatureCardItem[] = [
+  {
+    title: "Fast page setup with a small editing surface",
+    content: "Build and ship pages quickly without wrestling with complex structure.",
+    imageAssetId: undefined,
+  },
+  {
+    title: "Reusable sections built around clear page structure",
+    content: "Keep content organized with consistent, predictable building blocks.",
+    imageAssetId: undefined,
+  },
+  {
+    title: "Simple publishing workflow ready for expansion",
+    content: "Move from draft to live with a straightforward release flow.",
+    imageAssetId: undefined,
+  },
+];
 
 export const featuresDefaultDefinition: BlockVariantDefinition = {
   type: "features",
@@ -23,25 +47,50 @@ export const featuresDefaultDefinition: BlockVariantDefinition = {
       placeholder: "One feature per line",
     },
   ],
-  Editor: GenericBlockEditor,
+  Editor: FeaturesCardsEditor,
   createDefaultProps: () => ({
     sectionTitle: "Why teams choose Nanofactory",
-    items: [
-      "Fast page setup with a small editing surface",
-      "Reusable sections built around clear page structure",
-      "Simple publishing workflow ready for expansion",
-    ],
+    items: defaultItems,
   }),
   normalizeProps: (input) => {
     const props = isPlainObject(input) ? input : {};
+    const rawItems = Array.isArray(props.items) ? props.items : [];
+    const normalizedItems = rawItems
+      .map((item) => {
+        if (typeof item === "string") {
+          const title = readOptionalString(item);
+          if (!title) {
+            return null;
+          }
+          return {
+            title,
+            content: "",
+            imageAssetId: undefined,
+          };
+        }
+
+        if (!isPlainObject(item)) {
+          return null;
+        }
+
+        const title = readOptionalString(item.title);
+        const content = readOptionalString(item.content) ?? "";
+
+        if (!title) {
+          return null;
+        }
+
+        return {
+          title,
+          content,
+          imageAssetId: readOptionalString(item.imageAssetId),
+        };
+      })
+      .filter((item): item is FeatureCardItem => item !== null);
 
     return {
       sectionTitle: readString(props.sectionTitle, "Why teams choose Nanofactory"),
-      items: readStringList(props.items, [
-        "Fast page setup with a small editing surface",
-        "Reusable sections built around clear page structure",
-        "Simple publishing workflow ready for expansion",
-      ]),
+      items: normalizedItems.length > 0 ? normalizedItems : defaultItems,
     };
   },
   Renderer: FeaturesDefaultRender,

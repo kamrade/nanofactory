@@ -1,12 +1,14 @@
 "use client";
 
 import type { BlockEditorProps } from "../../shared/types";
+import { AssetPicker } from "../../shared/asset-picker";
 import { UIButton } from "@/components/ui/button";
 import { UITextInput } from "@/components/ui/text-input";
 
 type FeatureCardItem = {
   title: string;
   content: string;
+  imageAssetId: string | undefined;
 };
 
 function readSectionTitle(props: Record<string, unknown>) {
@@ -24,6 +26,7 @@ function readItems(props: Record<string, unknown>): FeatureCardItem[] {
         return {
           title: item,
           content: "",
+          imageAssetId: undefined,
         };
       }
 
@@ -43,12 +46,16 @@ function readItems(props: Record<string, unknown>): FeatureCardItem[] {
       return {
         title,
         content,
+        imageAssetId:
+          typeof (item as { imageAssetId?: unknown }).imageAssetId === "string"
+            ? (item as { imageAssetId: string }).imageAssetId
+            : undefined,
       };
     })
     .filter((item): item is FeatureCardItem => item !== null);
 }
 
-export function FeaturesCardsEditor({ block, onChange }: BlockEditorProps) {
+export function FeaturesCardsEditor({ block, assets, onChange }: BlockEditorProps) {
   const sectionTitle = readSectionTitle(block.props);
   const items = readItems(block.props);
 
@@ -98,12 +105,26 @@ export function FeaturesCardsEditor({ block, onChange }: BlockEditorProps) {
       {
         title: "",
         content: "",
+        imageAssetId: undefined,
       },
     ]);
   }
 
   function handleRemoveItem(index: number) {
     updateItems(items.filter((_, currentIndex) => currentIndex !== index));
+  }
+
+  function handleUpdateItemImage(index: number, assetId?: string) {
+    updateItems(
+      items.map((item, currentIndex) =>
+        currentIndex === index
+          ? {
+              ...item,
+              imageAssetId: assetId,
+            }
+          : item
+      )
+    );
   }
 
   return (
@@ -178,6 +199,19 @@ export function FeaturesCardsEditor({ block, onChange }: BlockEditorProps) {
                     className="rounded-2xl border border-line bg-surface px-4 py-3 text-sm text-text-main outline-none transition placeholder:text-text-placeholder focus:ring-2 focus:ring-focus/50"
                   />
                 </label>
+
+                <AssetPicker
+                  assets={assets}
+                  selectedAssetId={item.imageAssetId}
+                  onSelect={(assetId) => handleUpdateItemImage(index, assetId)}
+                  onClear={() => handleUpdateItemImage(index, undefined)}
+                  title="Card image"
+                  description="Optional small image for this card."
+                  emptyMessage="Upload an image in Project assets first."
+                  clearLabel="Remove image"
+                  selectLabel="Use image"
+                  compact
+                />
               </article>
             ))}
           </div>

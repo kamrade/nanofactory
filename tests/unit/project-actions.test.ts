@@ -51,11 +51,14 @@ describe("saveProjectContentForUserWithDependencies", () => {
             id: "hero-1",
             type: "hero",
             variant: "default",
+            anchorId: undefined,
+            backgroundSceneId: undefined,
             props: {
               title: "Saved hero",
               subtitle:
                 "Write the core message, add a call to action, and publish a focused landing page without a long setup.",
               buttonText: "Start now",
+              buttonAnchor: "",
               imageAssetId: undefined,
             },
           },
@@ -71,11 +74,14 @@ describe("saveProjectContentForUserWithDependencies", () => {
             id: "hero-1",
             type: "hero",
             variant: "default",
+            anchorId: undefined,
+            backgroundSceneId: undefined,
             props: {
               title: "Saved hero",
               subtitle:
                 "Write the core message, add a call to action, and publish a focused landing page without a long setup.",
               buttonText: "Start now",
+              buttonAnchor: "",
               imageAssetId: undefined,
             },
           },

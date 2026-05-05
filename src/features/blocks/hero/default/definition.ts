@@ -29,6 +29,12 @@ export const heroDefaultDefinition: BlockVariantDefinition = {
       kind: "text",
       placeholder: "Get started",
     },
+    {
+      key: "buttonAnchor",
+      label: "Button anchor",
+      kind: "text",
+      placeholder: "section-id",
+    },
   ],
   Editor: HeroDefaultEditor,
   createDefaultProps: () => ({
@@ -38,6 +44,8 @@ export const heroDefaultDefinition: BlockVariantDefinition = {
     buttonText: "Start now",
     buttonAnchor: "",
     imageAssetId: undefined,
+    imageLightAssetId: undefined,
+    imageDarkAssetId: undefined,
   }),
   normalizeProps: (input) => {
     const props = isPlainObject(input) ? input : {};
@@ -51,6 +59,8 @@ export const heroDefaultDefinition: BlockVariantDefinition = {
       buttonText: readString(props.buttonText, "Start now"),
       buttonAnchor: readString(props.buttonAnchor, ""),
       imageAssetId: readOptionalString(props.imageAssetId),
+      imageLightAssetId: readOptionalString(props.imageLightAssetId),
+      imageDarkAssetId: readOptionalString(props.imageDarkAssetId),
     };
   },
   Renderer: HeroDefaultRender,

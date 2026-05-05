@@ -18,6 +18,7 @@ import { resolveAssetById } from "@/lib/assets/resolution";
 import type { BlockRenderProps } from "../../shared/types";
 import type { SocialIconKey } from "./social-icons";
 import { readAppHeaderProps } from "./model";
+import { normalizeAnchorId } from "@/lib/editor/anchor-id";
 
 const SOCIAL_ICON_COMPONENTS: Record<SocialIconKey, IconType> = {
   link: FiLink,
@@ -90,7 +91,10 @@ export function AppHeaderDefaultRender({ block, assetMap, theme, mode = "light" 
       return;
     }
 
-    const target = document.getElementById(anchorId);
+    const normalizedAnchorId = normalizeAnchorId(anchorId);
+    const target =
+      document.getElementById(anchorId) ??
+      document.getElementById(normalizedAnchorId);
     if (!target) {
       return;
     }
@@ -98,7 +102,7 @@ export function AppHeaderDefaultRender({ block, assetMap, theme, mode = "light" 
     event.preventDefault();
     target.scrollIntoView({ behavior: "smooth", block: "start" });
     if (typeof window !== "undefined") {
-      window.history.replaceState(null, "", `#${anchorId}`);
+      window.history.replaceState(null, "", `#${normalizedAnchorId || anchorId}`);
     }
   }
 

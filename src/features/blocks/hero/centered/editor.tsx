@@ -30,10 +30,13 @@ export function HeroCenteredEditor({
     });
   }
 
-  function selectAsset(assetId?: string) {
+  function selectAsset(
+    key: "imageAssetId" | "imageLightAssetId" | "imageDarkAssetId",
+    assetId?: string
+  ) {
     onChange({
       ...block.props,
-      imageAssetId: assetId,
+      [key]: assetId,
     });
   }
 
@@ -95,13 +98,47 @@ export function HeroCenteredEditor({
           selectedAssetId={
             typeof block.props.imageAssetId === "string" ? block.props.imageAssetId : undefined
           }
-          onSelect={selectAsset}
-          onClear={() => selectAsset(undefined)}
+          onSelect={(assetId) => selectAsset("imageAssetId", assetId)}
+          onClear={() => selectAsset("imageAssetId", undefined)}
           title="Optional image"
           description="This variant works without media. Add an image only when it strengthens the centered message."
           emptyMessage="Upload an asset in the project assets panel below to use it here."
           clearLabel="Remove image"
           selectLabel="Use image"
+          layout="grid"
+          compact
+        />
+        <AssetPicker
+          assets={assets}
+          selectedAssetId={
+            typeof block.props.imageLightAssetId === "string"
+              ? block.props.imageLightAssetId
+              : undefined
+          }
+          onSelect={(assetId) => selectAsset("imageLightAssetId", assetId)}
+          onClear={() => selectAsset("imageLightAssetId", undefined)}
+          title="Light mode image"
+          description="Optional override for light mode."
+          emptyMessage="Upload an asset in the project assets panel below to use it here."
+          clearLabel="Remove light image"
+          selectLabel="Use in light mode"
+          layout="grid"
+          compact
+        />
+        <AssetPicker
+          assets={assets}
+          selectedAssetId={
+            typeof block.props.imageDarkAssetId === "string"
+              ? block.props.imageDarkAssetId
+              : undefined
+          }
+          onSelect={(assetId) => selectAsset("imageDarkAssetId", assetId)}
+          onClear={() => selectAsset("imageDarkAssetId", undefined)}
+          title="Dark mode image"
+          description="Optional override for dark mode."
+          emptyMessage="Upload an asset in the project assets panel below to use it here."
+          clearLabel="Remove dark image"
+          selectLabel="Use in dark mode"
           layout="grid"
           compact
         />

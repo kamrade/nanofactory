@@ -27,6 +27,8 @@ function getDefinitionPropKeys(definition: BlockVariantDefinition) {
 
   if (definition.supportsAssetSelection) {
     keys.push("imageAssetId");
+    keys.push("imageLightAssetId");
+    keys.push("imageDarkAssetId");
   }
 
   return keys;

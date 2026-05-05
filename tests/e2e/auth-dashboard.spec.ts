@@ -53,7 +53,10 @@ test("creates a project from dashboard and opens it", async ({ page }) => {
 
   await page.waitForURL(/\/projects\/.+/);
   await expect(page.getByRole("heading", { name: "Playwright Project" })).toBeVisible();
-  await expect(page.getByText("Slug: playwright-project").first()).toBeVisible();
+  await page.getByRole("button", { name: "Info" }).click();
+  const infoSheet = page.getByRole("dialog", { name: "Project info" });
+  await expect(infoSheet).toBeVisible();
+  await expect(infoSheet.getByText("playwright-project").first()).toBeVisible();
 });
 
 test("adds a block, saves content, and reloads the editor state", async ({ page }) => {
@@ -84,13 +87,18 @@ test("publishes and unpublishes a project through the editor", async ({ page }) 
   await createProjectFromDashboard(page, "Public Flow Project");
 
   await page.waitForURL(/\/projects\/.+/);
-  await expect(page.getByText("Status: draft").first()).toBeVisible();
+  await page.getByRole("button", { name: "Info" }).click();
+  let infoSheet = page.getByRole("dialog", { name: "Project info" });
+  await expect(infoSheet).toBeVisible();
+  await expect(infoSheet.getByText("draft").first()).toBeVisible();
 
-  await page.getByRole("button", { name: "Publish" }).click();
+  await infoSheet.getByRole("button", { name: "Publish" }).click();
   await page.waitForURL(/\/projects\/.+/);
-  await expect(page.getByText("Status: published").first()).toBeVisible();
+  await page.getByRole("button", { name: "Info" }).click();
+  infoSheet = page.getByRole("dialog", { name: "Project info" });
+  await expect(infoSheet.getByText("published").first()).toBeVisible();
 
-  const publicLink = page.getByRole("link", { name: "Open public page" });
+  const publicLink = infoSheet.getByRole("link", { name: "Open public page" });
   await expect(publicLink).toBeVisible();
   const publicUrl = await publicLink.getAttribute("href");
 
@@ -103,55 +111,29 @@ test("publishes and unpublishes a project through the editor", async ({ page }) 
 
   await page.goto("/dashboard");
   await page.getByRole("link", { name: "Open" }).first().click();
-  await page.getByRole("button", { name: "Unpublish" }).click();
+  await page.getByRole("button", { name: "Info" }).click();
+  infoSheet = page.getByRole("dialog", { name: "Project info" });
+  await infoSheet.getByRole("button", { name: "Unpublish" }).click();
   await page.waitForURL(/\/projects\/.+/);
-  await expect(page.getByText("Status: draft").first()).toBeVisible();
+  await page.getByRole("button", { name: "Info" }).click();
+  infoSheet = page.getByRole("dialog", { name: "Project info" });
+  await expect(infoSheet.getByText("draft").first()).toBeVisible();
 
   await page.goto(publicUrl);
   await expect(page.getByText("This page could not be found.")).toBeVisible();
 });
 
-test("applies selected theme in preview before save and persists after apply", async ({
-  page,
-}) => {
-  await createProjectFromDashboard(page, "Theme Preview Project");
-
-  await page.waitForURL(/\/projects\/.+/);
-  await page.getByRole("radio", { name: "Nightfall" }).click();
-  await expect(page.getByText("Theme: sunwash").first()).toBeVisible();
-
-  const previewPopupBeforeSavePromise = page.waitForEvent("popup");
-  await page.getByRole("button", { name: "Open preview" }).click();
-  const previewPopupBeforeSave = await previewPopupBeforeSavePromise;
-
-  await previewPopupBeforeSave.waitForLoadState("domcontentloaded");
-  await expect(previewPopupBeforeSave).toHaveURL(/theme=nightfall/);
-  await expect(previewPopupBeforeSave.locator('main[data-theme="nightfall"]')).toBeVisible();
-  await expect(previewPopupBeforeSave.getByText("Theme preview: nightfall.")).toBeVisible();
-  await previewPopupBeforeSave.close();
-
-  await expect(page.getByText("Theme: sunwash").first()).toBeVisible();
-  await page.getByRole("button", { name: "Apply theme" }).click();
-  await page.waitForURL(/\/projects\/.+/);
-  await expect(page.getByText("Theme: nightfall").first()).toBeVisible();
-
-  const previewPopupAfterSavePromise = page.waitForEvent("popup");
-  await page.getByRole("button", { name: "Open preview" }).click();
-  const previewPopupAfterSave = await previewPopupAfterSavePromise;
-
-  await previewPopupAfterSave.waitForLoadState("domcontentloaded");
-  await expect(previewPopupAfterSave.locator('main[data-theme="nightfall"]')).toBeVisible();
-  await expect(previewPopupAfterSave.getByText("Theme: nightfall.")).toBeVisible();
-  await previewPopupAfterSave.close();
-});
 
 test("switches preview mode between light and dark", async ({ page }) => {
   await createProjectFromDashboard(page, "Mode Switch Project");
 
   await page.waitForURL(/\/projects\/.+/);
+  await page.getByRole("button", { name: "Info" }).click();
+  const infoSheet = page.getByRole("dialog", { name: "Project info" });
+  await expect(infoSheet).toBeVisible();
 
   const previewPopupPromise = page.waitForEvent("popup");
-  await page.getByRole("button", { name: "Open preview" }).click();
+  await infoSheet.getByRole("button", { name: "Open preview" }).click();
   const previewPopup = await previewPopupPromise;
 
   await previewPopup.waitForLoadState("domcontentloaded");

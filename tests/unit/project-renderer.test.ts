@@ -17,6 +17,7 @@ function createHeroContent(imageAssetId?: string): PageContent {
           title: "Hello from Nanofactory",
           subtitle: "Public hero subtitle",
           buttonText: "Start",
+          buttonAnchor: "",
           imageAssetId,
         },
       },
@@ -35,7 +36,34 @@ function createCenteredHeroContent(imageAssetId?: string): PageContent {
           title: "Centered Hero",
           subtitle: "A tighter centered hero variant",
           buttonText: "Launch",
+          buttonAnchor: "",
           imageAssetId,
+        },
+      },
+    ],
+  };
+}
+
+function createHeroWithButtonAnchorContent(): PageContent {
+  return {
+    blocks: [
+      {
+        id: "hero-anchor-1",
+        type: "hero",
+        props: {
+          title: "Hero with anchor",
+          subtitle: "Scroll to target",
+          buttonText: "Go pricing",
+          buttonAnchor: "pricing",
+        },
+      },
+      {
+        id: "cta-target-1",
+        type: "cta",
+        anchorId: "pricing",
+        props: {
+          title: "Pricing target",
+          buttonText: "Buy",
         },
       },
     ],
@@ -83,6 +111,26 @@ function createBackgroundSceneContent(sceneId: string): PageContent {
         props: {
           title: "Styled by scene",
           buttonText: "Inspect",
+        },
+      },
+    ],
+  };
+}
+
+function createGalleryNaturalContent(): PageContent {
+  return {
+    blocks: [
+      {
+        id: "gallery-1",
+        type: "gallery",
+        props: {
+          sectionTitle: "Gallery",
+          columns: 3,
+          imageHeightMode: "natural",
+          items: [
+            { title: "Item A", description: "", price: "", meta: "" },
+            { title: "Item B", description: "", price: "", meta: "" },
+          ],
         },
       },
     ],
@@ -300,5 +348,38 @@ describe("ProjectRenderer", () => {
     expect(html).toContain("repeating-linear-gradient(45deg");
     expect(html).toContain("rgba(107, 74, 34, 0.35)");
     expect(html).toContain("background-color:#f6ead9");
+  });
+
+  it("renders hero CTA as an anchor when buttonAnchor is set", () => {
+    const html = renderToStaticMarkup(
+      ProjectRenderer({
+        name: "Hero Anchor Project",
+        themeKey: "sunwash",
+        content: createHeroWithButtonAnchorContent(),
+        assets: [],
+        showPublishedBadge: false,
+        showProjectMeta: false,
+      })
+    );
+
+    expect(html).toContain('href="#pricing"');
+    expect(html).toContain("Go pricing");
+  });
+
+  it("uses masonry-like column classes for gallery natural image height mode", () => {
+    const html = renderToStaticMarkup(
+      ProjectRenderer({
+        name: "Gallery Natural Project",
+        themeKey: "sunwash",
+        content: createGalleryNaturalContent(),
+        assets: [],
+        showPublishedBadge: false,
+        showProjectMeta: false,
+      })
+    );
+
+    expect(html).toContain("columns-1");
+    expect(html).toContain("md:columns-3");
+    expect(html).toContain("break-inside-avoid");
   });
 });

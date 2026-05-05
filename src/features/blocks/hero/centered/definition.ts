@@ -29,6 +29,12 @@ export const heroCenteredDefinition: BlockVariantDefinition = {
       kind: "text",
       placeholder: "See how it works",
     },
+    {
+      key: "buttonAnchor",
+      label: "Button anchor",
+      kind: "text",
+      placeholder: "section-id",
+    },
   ],
   Editor: HeroCenteredEditor,
   createDefaultProps: () => ({
@@ -38,6 +44,8 @@ export const heroCenteredDefinition: BlockVariantDefinition = {
     buttonText: "See how it works",
     buttonAnchor: "",
     imageAssetId: undefined,
+    imageLightAssetId: undefined,
+    imageDarkAssetId: undefined,
   }),
   normalizeProps: (input) => {
     const props = isPlainObject(input) ? input : {};
@@ -51,6 +59,8 @@ export const heroCenteredDefinition: BlockVariantDefinition = {
       buttonText: readString(props.buttonText, "See how it works"),
       buttonAnchor: readString(props.buttonAnchor, ""),
       imageAssetId: readOptionalString(props.imageAssetId),
+      imageLightAssetId: readOptionalString(props.imageLightAssetId),
+      imageDarkAssetId: readOptionalString(props.imageDarkAssetId),
     };
   },
   Renderer: HeroCenteredRender,
