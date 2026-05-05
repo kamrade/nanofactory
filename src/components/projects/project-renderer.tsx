@@ -98,7 +98,7 @@ export function ProjectRenderer({
       data-mode={mode}
       className={`min-h-screen py-8 ${theme.page}`}
     >
-      <div className="flex w-full flex-col gap-8">
+      <div className="flex w-full flex-col gap-12">
         {showPublishedBadge || showProjectMeta ? (
           <header className={containerClass}>
             <div className={theme.heroCard}>

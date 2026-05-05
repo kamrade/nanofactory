@@ -4,8 +4,8 @@ import { AssetUploadError, validateAssetFile } from "../../src/lib/assets";
 
 describe("asset upload validation", () => {
   it("rejects unsupported mime types", () => {
-    const file = new File(["svg"], "icon.svg", {
-      type: "image/svg+xml",
+    const file = new File(["gif"], "icon.gif", {
+      type: "image/gif",
     });
 
     expect(() => validateAssetFile(file)).toThrow(AssetUploadError);

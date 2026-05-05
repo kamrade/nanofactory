@@ -28,7 +28,7 @@ function renderInnerContent(
   return (
     <div
       className={cx(
-        "relative rounded-3xl bg-surface",
+        "relative rounded-3xl bg-surface overflow-hidden",
         backgroundScene ? "overflow-hidden" : undefined
       )}
     >

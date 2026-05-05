@@ -34,7 +34,10 @@ describe("page content validation", () => {
       expect(result.data.blocks[0]?.props.imageAssetId).toBeUndefined();
       expect(result.data.blocks[1]?.props).toMatchObject({
         sectionTitle: "Features",
-        items: ["Fast", "Flexible"],
+        items: [
+          { title: "Fast", content: "", imageAssetId: undefined },
+          { title: "Flexible", content: "", imageAssetId: undefined },
+        ],
       });
     }
   });
