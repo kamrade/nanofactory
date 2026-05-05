@@ -5,6 +5,7 @@ import { buildAssetMap } from "@/lib/assets/resolution";
 import type { BackgroundSceneRecord } from "@/lib/background-scenes/types";
 import { ProjectModeSwitcher } from "@/components/projects/project-mode-switcher";
 import { DEFAULT_THEME_KEY, isThemeKey } from "@/lib/themes";
+import type { GalleryItemLinkMode } from "@/lib/routing/gallery-link-mode";
 import { SectionShell } from "@/components/projects/section-shell";
 import {
   buildEffectivePageAnchors,
@@ -23,7 +24,7 @@ type RenderedProject = {
   backgroundScenes?: BackgroundSceneRecord[];
   showPublishedBadge?: boolean;
   showProjectMeta?: boolean;
-  galleryItemLinkMode?: "absolute" | "relative";
+  galleryItemLinkMode?: GalleryItemLinkMode;
 };
 
 function getThemeClasses(themeKey: string) {
@@ -45,7 +46,7 @@ function getThemeClasses(themeKey: string) {
 function renderBlock(
   block: PageContent["blocks"][number],
   publicProjectSlug: string | undefined,
-  galleryItemLinkMode: "absolute" | "relative",
+  galleryItemLinkMode: GalleryItemLinkMode,
   anchorId: string | undefined,
   effectiveGalleryItemAnchors: Map<number, string> | undefined,
   assetMap: Map<string, ProjectAssetRecord>,

@@ -383,6 +383,40 @@ describe("ProjectRenderer", () => {
     expect(html).toContain("break-inside-avoid");
   });
 
+  it("renders absolute gallery item links in platform mode", () => {
+    const html = renderToStaticMarkup(
+      ProjectRenderer({
+        name: "Gallery Platform Links Project",
+        slug: "project-n4",
+        themeKey: "sunwash",
+        content: createGalleryNaturalContent(),
+        assets: [],
+        showPublishedBadge: false,
+        showProjectMeta: false,
+        galleryItemLinkMode: "absolute",
+      })
+    );
+
+    expect(html).toContain('href="/p/project-n4/gallery-1/gallery-1-item-1"');
+  });
+
+  it("renders relative gallery item links in custom-domain mode", () => {
+    const html = renderToStaticMarkup(
+      ProjectRenderer({
+        name: "Gallery Domain Links Project",
+        slug: "project-n4",
+        themeKey: "sunwash",
+        content: createGalleryNaturalContent(),
+        assets: [],
+        showPublishedBadge: false,
+        showProjectMeta: false,
+        galleryItemLinkMode: "relative",
+      })
+    );
+
+    expect(html).toContain('href="./gallery-1/gallery-1-item-1"');
+  });
+
   it("assigns an auto anchor id to blocks without explicit anchorId", () => {
     const html = renderToStaticMarkup(
       ProjectRenderer({

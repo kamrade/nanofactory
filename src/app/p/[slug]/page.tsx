@@ -6,6 +6,7 @@ import { getAssetsByProjectId } from "@/lib/assets";
 import { getBackgroundScenesByProjectId } from "@/lib/background-scenes";
 import { normalizePageContent } from "@/lib/editor/content";
 import { getPublishedProjectBySlug } from "@/lib/projects";
+import { resolveGalleryItemLinkModeByHost } from "@/lib/routing/gallery-link-mode";
 
 type PublicProjectPageProps = {
   params: Promise<{
@@ -21,11 +22,7 @@ export default async function PublicProjectPage({
   searchParams,
 }: PublicProjectPageProps) {
   const requestHeaders = await headers();
-  const requestHost = requestHeaders.get("host")?.split(":")[0]?.toLowerCase() ?? "";
-  const isPlatformHost =
-    requestHost === "app.olala.beauty" ||
-    requestHost === "localhost" ||
-    requestHost === "127.0.0.1";
+  const galleryItemLinkMode = resolveGalleryItemLinkModeByHost(requestHeaders.get("host"));
   const { slug } = await params;
   const resolvedSearchParams = searchParams ? await searchParams : {};
   const mode = resolvedSearchParams.mode === "dark" ? "dark" : "light";
@@ -44,7 +41,7 @@ export default async function PublicProjectPage({
       slug={project.slug}
       themeKey={project.themeKey}
       mode={mode}
-      galleryItemLinkMode={isPlatformHost ? "absolute" : "relative"}
+      galleryItemLinkMode={galleryItemLinkMode}
       content={normalizePageContent(project.contentJson)}
       assets={assets}
       backgroundScenes={backgroundScenes}
