@@ -23,6 +23,7 @@ export type BlockRenderProps = {
   theme: BlockTheme;
   mode?: "light" | "dark";
   publicProjectSlug?: string;
+  galleryItemLinkMode?: "absolute" | "relative";
   effectiveBlockAnchorId?: string;
   effectiveGalleryItemAnchors?: Map<number, string>;
 };

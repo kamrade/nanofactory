@@ -37,6 +37,7 @@ export default async function PublicProjectPage({
       slug={project.slug}
       themeKey={project.themeKey}
       mode={mode}
+      galleryItemLinkMode="relative"
       content={normalizePageContent(project.contentJson)}
       assets={assets}
       backgroundScenes={backgroundScenes}

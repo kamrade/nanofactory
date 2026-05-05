@@ -147,10 +147,10 @@ export default async function PublishedGalleryItemPage({ params }: GalleryItemPa
   const assetMap = buildAssetMap(assets);
   const asset = resolveAssetById(resolved.assetId, assetMap);
   const previousHref = resolved.previousItemAnchor
-    ? `/p/${resolved.projectSlug}/${resolved.galleryAnchor}/${resolved.previousItemAnchor}`
+    ? `../${resolved.previousItemAnchor}`
     : undefined;
   const nextHref = resolved.nextItemAnchor
-    ? `/p/${resolved.projectSlug}/${resolved.galleryAnchor}/${resolved.nextItemAnchor}`
+    ? `../${resolved.nextItemAnchor}`
     : undefined;
 
   return (
@@ -159,7 +159,7 @@ export default async function PublishedGalleryItemPage({ params }: GalleryItemPa
       <div className="container mx-auto grid max-w-4xl gap-6 px-4">
         <div className="flex flex-wrap items-center justify-between gap-3">
           <Link
-            href={`/p/${resolved.projectSlug}#${resolved.galleryAnchor}`}
+            href={`../..#${resolved.galleryAnchor}`}
             className="inline-flex items-center justify-center rounded-xl border border-line bg-surface px-3 py-2 text-sm font-medium text-text-main transition hover:bg-surface-alt"
           >
             Back to gallery

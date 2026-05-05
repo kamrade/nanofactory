@@ -31,8 +31,8 @@ export function proxy(req: NextRequest) {
   }
 
   const originalPath = url.pathname
-
-  url.pathname = `/p/${projectSlug}` // ${originalPath === '/' ? '' : originalPath}`
+  const normalizedPath = originalPath === '/' ? '' : originalPath
+  url.pathname = `/p/${projectSlug}${normalizedPath}`
 
   return NextResponse.rewrite(url)
 }

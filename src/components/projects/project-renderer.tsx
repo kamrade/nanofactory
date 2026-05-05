@@ -23,6 +23,7 @@ type RenderedProject = {
   backgroundScenes?: BackgroundSceneRecord[];
   showPublishedBadge?: boolean;
   showProjectMeta?: boolean;
+  galleryItemLinkMode?: "absolute" | "relative";
 };
 
 function getThemeClasses(themeKey: string) {
@@ -44,6 +45,7 @@ function getThemeClasses(themeKey: string) {
 function renderBlock(
   block: PageContent["blocks"][number],
   publicProjectSlug: string | undefined,
+  galleryItemLinkMode: "absolute" | "relative",
   anchorId: string | undefined,
   effectiveGalleryItemAnchors: Map<number, string> | undefined,
   assetMap: Map<string, ProjectAssetRecord>,
@@ -79,6 +81,7 @@ function renderBlock(
         theme={theme}
         mode={fallbackMode}
         publicProjectSlug={publicProjectSlug}
+        galleryItemLinkMode={galleryItemLinkMode}
         effectiveBlockAnchorId={anchorId}
         effectiveGalleryItemAnchors={effectiveGalleryItemAnchors}
       />
@@ -96,6 +99,7 @@ export function ProjectRenderer({
   backgroundScenes = [],
   showPublishedBadge = true,
   showProjectMeta = true,
+  galleryItemLinkMode = "absolute",
 }: RenderedProject) {
   const resolvedThemeKey = isThemeKey(themeKey) ? themeKey : DEFAULT_THEME_KEY;
   const theme = getThemeClasses(resolvedThemeKey);
@@ -152,6 +156,7 @@ export function ProjectRenderer({
               {renderBlock(
                 block,
                 slug,
+                galleryItemLinkMode,
                 anchorMap.get(block.id),
                 block.type === "gallery" && Array.isArray(block.props.items)
                   ? new Map(

@@ -74,6 +74,7 @@ export function GalleryDefaultRender({
   assetMap,
   theme,
   publicProjectSlug,
+  galleryItemLinkMode = "absolute",
   effectiveBlockAnchorId,
   effectiveGalleryItemAnchors,
 }: BlockRenderProps) {
@@ -100,7 +101,9 @@ export function GalleryDefaultRender({
           const itemAnchorId = effectiveGalleryItemAnchors?.get(index);
           const itemHref =
             publicProjectSlug && effectiveBlockAnchorId && itemAnchorId
-              ? `/p/${publicProjectSlug}/${effectiveBlockAnchorId}/${itemAnchorId}`
+              ? galleryItemLinkMode === "relative"
+                ? `./${effectiveBlockAnchorId}/${itemAnchorId}`
+                : `/p/${publicProjectSlug}/${effectiveBlockAnchorId}/${itemAnchorId}`
               : null;
           return (
             <article
