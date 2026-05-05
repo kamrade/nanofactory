@@ -147,10 +147,10 @@ export default async function PublishedGalleryItemPage({ params }: GalleryItemPa
   const assetMap = buildAssetMap(assets);
   const asset = resolveAssetById(resolved.assetId, assetMap);
   const previousHref = resolved.previousItemAnchor
-    ? `../${resolved.previousItemAnchor}`
+    ? `./${resolved.previousItemAnchor}`
     : undefined;
   const nextHref = resolved.nextItemAnchor
-    ? `../${resolved.nextItemAnchor}`
+    ? `./${resolved.nextItemAnchor}`
     : undefined;
 
   return (
