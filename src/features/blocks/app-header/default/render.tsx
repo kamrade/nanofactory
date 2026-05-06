@@ -132,7 +132,7 @@ export function AppHeaderDefaultRender({ block, assetMap, theme, mode = "light" 
   }, [mode]);
 
   return (
-    <section ref={sectionRef} className="p-4 md:p-8 md:py-2">
+    <section ref={sectionRef} className="p-6 md:py-2">
       {!hasContent ? (
         <div
           aria-hidden
@@ -179,7 +179,7 @@ export function AppHeaderDefaultRender({ block, assetMap, theme, mode = "light" 
             : "mt-0 max-h-0 opacity-0 -translate-y-1 pointer-events-none"
         }`}
       >
-        <div className="rounded-2xl border border-line bg-surface p-4">
+        <div className="rounded-2xl border border-line bg-surface p-4 mb-4">
           <div className="grid gap-4">
             {menuItems.length > 0 ? (
               <nav aria-label="Mobile page sections">

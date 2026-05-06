@@ -130,29 +130,34 @@ export function FooterDefaultRender({ block, assetMap, theme }: BlockRenderProps
 
   return (
     <section className="px-4 py-8 md:px-8 md:py-12">
+      <div className="mb-3 flex gap-3 items-center">
+        {logoAsset ? (
+          <Image
+            src={logoAsset.publicUrl}
+            alt={logoAsset.id}
+            width={140}
+            height={56}
+            unoptimized
+            className="h-10 w-auto object-contain"
+          />
+        ) : null}
+        {props.siteName.trim().length > 0 ? (
+          <p className="text-base font-semibold text-text-main">{props.siteName}</p>
+        ) : null}
+
+      </div>
+
       <div className="grid gap-8 border-t border-line pt-8 md:grid-cols-4">
         {hasLeftContent ? (
           <div className="flex flex-col gap-4 md:col-span-1">
+
             {props.leftTitle.trim().length > 0 ? (
               <h3 className="text-sm font-semibold uppercase tracking-wide text-text-main">
                 {props.leftTitle}
               </h3>
             ) : null}
 
-            {logoAsset ? (
-              <Image
-                src={logoAsset.publicUrl}
-                alt={logoAsset.id}
-                width={140}
-                height={56}
-                unoptimized
-                className="h-10 w-auto object-contain"
-              />
-            ) : null}
-
-            {props.siteName.trim().length > 0 ? (
-              <p className="text-base font-semibold text-text-main">{props.siteName}</p>
-            ) : null}
+            
 
             {props.siteDescription.trim().length > 0 ? (
               <p className={`text-sm ${theme.muted}`}>{props.siteDescription}</p>
@@ -203,7 +208,7 @@ export function FooterDefaultRender({ block, assetMap, theme }: BlockRenderProps
               {rightColumns.map((column, columnIndex) => (
                 <div key={`footer-column-${columnIndex}`} className="grid gap-3">
                   {column.title.trim().length > 0 ? (
-                    <h3 className="text-sm font-semibold uppercase tracking-wide text-text-main">
+                    <h3 className="text-base font-semibold text-text-main">
                       {column.title}
                     </h3>
                   ) : null}
