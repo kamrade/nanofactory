@@ -15,13 +15,21 @@ export function HeroDefaultEditor({
   onChange,
   availableAnchors = [],
 }: BlockEditorProps) {
+  const eyebrow = readStringProp(block.props, "eyebrow");
   const title = readStringProp(block.props, "title");
   const subtitle = readStringProp(block.props, "subtitle");
   const buttonText = readStringProp(block.props, "buttonText");
   const buttonAnchor = readStringProp(block.props, "buttonAnchor");
+  const contentPosition = readStringProp(block.props, "contentPosition") || "centered";
 
   function updateField(
-    key: "title" | "subtitle" | "buttonText" | "buttonAnchor",
+    key:
+      | "eyebrow"
+      | "title"
+      | "subtitle"
+      | "buttonText"
+      | "buttonAnchor"
+      | "contentPosition",
     value: string
   ) {
     onChange({
@@ -42,6 +50,16 @@ export function HeroDefaultEditor({
 
   return (
     <div className="grid gap-5">
+      <label className="grid gap-1.5 text-sm">
+        <span className="font-medium text-text-main">Eyebrow</span>
+        <UITextInput
+          size="sm"
+          value={eyebrow}
+          placeholder="Optional eyebrow text"
+          onValueChange={(value) => updateField("eyebrow", value)}
+        />
+      </label>
+
       <label className="grid gap-1.5 text-sm">
         <span className="font-medium text-text-main">Title</span>
         <UITextInput
@@ -87,6 +105,22 @@ export function HeroDefaultEditor({
             textValue: anchor.label,
           }))}
           clearable
+        />
+      </label>
+
+      <label className="grid gap-1.5 text-sm">
+        <span className="font-medium text-text-main">Content position</span>
+        <UISelect
+          ariaLabel="Hero content position"
+          size="sm"
+          value={contentPosition}
+          onValueChange={(value) => updateField("contentPosition", String(value))}
+          options={[
+            { value: "top", label: "Top", textValue: "Top" },
+            { value: "centered", label: "Centered", textValue: "Centered" },
+            { value: "bottom", label: "Bottom", textValue: "Bottom" },
+            { value: "stretch", label: "Stretch", textValue: "Stretch" },
+          ]}
         />
       </label>
 
