@@ -9,11 +9,16 @@ import {
   isValidProjectSlug,
   slugifyProjectName,
 } from "@/lib/projects/slug";
+import {
+  type ProjectModePolicy,
+  resolveProjectModePolicy,
+} from "@/lib/projects/mode-policy";
 import { DEFAULT_THEME_KEY, type ThemeKey } from "@/lib/themes";
 
 type CreateProjectInput = {
   name: string;
   themeKey?: ThemeKey;
+  modePolicy?: ProjectModePolicy;
 };
 
 function isUuid(value: string) {
@@ -49,6 +54,7 @@ export async function getProjectsByUserId(userId: string) {
       name: projects.name,
       slug: projects.slug,
       themeKey: projects.themeKey,
+      modePolicy: projects.modePolicy,
       status: projects.status,
       publishedAt: projects.publishedAt,
       createdAt: projects.createdAt,
@@ -72,6 +78,7 @@ export async function getProjectByIdForUser(projectId: string, userId: string) {
         name: projects.name,
         slug: projects.slug,
         themeKey: projects.themeKey,
+        modePolicy: projects.modePolicy,
         status: projects.status,
         publishedAt: projects.publishedAt,
         createdAt: projects.createdAt,
@@ -118,6 +125,7 @@ export async function getPublishedProjectBySlug(slug: string) {
       name: projects.name,
       slug: projects.slug,
       themeKey: projects.themeKey,
+      modePolicy: projects.modePolicy,
       status: projects.status,
       publishedAt: projects.publishedAt,
       updatedAt: projects.updatedAt,
@@ -288,6 +296,33 @@ export async function updateProjectThemeForUser(
   return project ?? null;
 }
 
+export async function updateProjectModePolicyForUser(
+  projectId: string,
+  userId: string,
+  modePolicy: ProjectModePolicy
+) {
+  if (!isUuid(projectId)) {
+    return null;
+  }
+
+  const now = new Date();
+  const [project] = await db
+    .update(projects)
+    .set({
+      modePolicy: resolveProjectModePolicy(modePolicy),
+      updatedAt: now,
+    })
+    .where(and(eq(projects.id, projectId), eq(projects.userId, userId)))
+    .returning({
+      id: projects.id,
+      slug: projects.slug,
+      modePolicy: projects.modePolicy,
+      updatedAt: projects.updatedAt,
+    });
+
+  return project ?? null;
+}
+
 export async function updateProjectNameForUser(
   projectId: string,
   userId: string,
@@ -349,6 +384,7 @@ export async function createProjectForUser(userId: string, input: CreateProjectI
 
   const slug = await generateUniqueProjectSlug(name);
   const themeKey = input.themeKey ?? DEFAULT_THEME_KEY;
+  const modePolicy = resolveProjectModePolicy(input.modePolicy);
 
   return db.transaction(async (tx) => {
     const [project] = await tx
@@ -358,6 +394,7 @@ export async function createProjectForUser(userId: string, input: CreateProjectI
         name,
         slug,
         themeKey,
+        modePolicy,
         status: "draft",
       })
       .returning({
@@ -366,6 +403,7 @@ export async function createProjectForUser(userId: string, input: CreateProjectI
         name: projects.name,
         slug: projects.slug,
         themeKey: projects.themeKey,
+        modePolicy: projects.modePolicy,
         status: projects.status,
         createdAt: projects.createdAt,
         updatedAt: projects.updatedAt,

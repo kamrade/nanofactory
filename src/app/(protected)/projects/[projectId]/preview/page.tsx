@@ -8,6 +8,7 @@ import { getBackgroundScenesByProjectIdForUser } from "@/lib/background-scenes";
 import { normalizePageContent } from "@/lib/editor/content";
 import { getPreviewDraft } from "@/lib/preview-drafts";
 import { getProjectByIdForUser } from "@/lib/projects";
+import { enforceModeByPolicy } from "@/lib/projects/mode-policy";
 import { isThemeKey } from "@/lib/themes";
 
 type ProjectPreviewPageProps = {
@@ -75,7 +76,10 @@ export async function ProjectPreviewPageWithDependencies(
     requestedThemeKey && isThemeKey(requestedThemeKey)
       ? requestedThemeKey
       : project.themeKey;
-  const resolvedMode = requestedMode === "dark" ? "dark" : "light";
+  const resolvedMode = enforceModeByPolicy(
+    project.modePolicy,
+    requestedMode === "dark" ? "dark" : "light"
+  );
   const hasThemeOverride = !!requestedThemeKey && resolvedThemeKey !== project.themeKey;
   const bannerTitle = hasValidDraft ? "Draft preview" : "Saved preview";
   const bannerDescription = hasValidDraft
@@ -114,6 +118,7 @@ export async function ProjectPreviewPageWithDependencies(
         slug={project.slug}
         themeKey={resolvedThemeKey}
         mode={resolvedMode}
+        modePolicy={project.modePolicy}
         content={dependencies.normalizePageContent(content)}
         assets={assets}
         backgroundScenes={backgroundScenes}

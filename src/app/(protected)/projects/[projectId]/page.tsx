@@ -9,9 +9,11 @@ import { getProjectByIdForUser } from "@/lib/projects";
 import {
   publishProjectAction,
   updateProjectNameAction,
+  updateProjectModePolicyAction,
   updateProjectThemeAction,
   unpublishProjectAction,
 } from "@/app/(protected)/projects/[projectId]/actions";
+import { enforceModeByPolicy } from "@/lib/projects/mode-policy";
 
 type ProjectPageProps = {
   params: Promise<{
@@ -26,7 +28,6 @@ export default async function ProjectPage({ params, searchParams }: ProjectPageP
   const currentUser = await requireCurrentUser();
   const { projectId } = await params;
   const resolvedSearchParams = searchParams ? await searchParams : {};
-  const initialMode = resolvedSearchParams.mode === "dark" ? "dark" : "light";
   const project = await getProjectByIdForUser(projectId, currentUser.id);
   const projectAssets = await getAssetsByProjectIdForUser(projectId, currentUser.id);
   const backgroundScenes = await getBackgroundScenesByProjectIdForUser(
@@ -37,6 +38,10 @@ export default async function ProjectPage({ params, searchParams }: ProjectPageP
   if (!project) {
     notFound();
   }
+  const initialMode = enforceModeByPolicy(
+    project.modePolicy,
+    resolvedSearchParams.mode === "dark" ? "dark" : "light"
+  );
 
   const normalizedContent = normalizePageContent(project.contentJson);
   const publicationAction =
@@ -45,6 +50,7 @@ export default async function ProjectPage({ params, searchParams }: ProjectPageP
       : publishProjectAction.bind(null, project.id);
   const themeAction = updateProjectThemeAction.bind(null, project.id);
   const nameAction = updateProjectNameAction.bind(null, project.id);
+  const modePolicyAction = updateProjectModePolicyAction.bind(null, project.id);
 
   return (
     <main
@@ -59,6 +65,7 @@ export default async function ProjectPage({ params, searchParams }: ProjectPageP
             name: project.name,
             slug: project.slug,
             themeKey: project.themeKey,
+            modePolicy: project.modePolicy,
             status: project.status,
             schemaVersion: project.schemaVersion,
             publishedAt: project.publishedAt,
@@ -67,6 +74,7 @@ export default async function ProjectPage({ params, searchParams }: ProjectPageP
           publicationAction={publicationAction}
           themeAction={themeAction}
           nameAction={nameAction}
+          modePolicyAction={modePolicyAction}
           contentShape={JSON.stringify(normalizedContent, null, 2)}
         />
 
@@ -76,6 +84,7 @@ export default async function ProjectPage({ params, searchParams }: ProjectPageP
             name: project.name,
             slug: project.slug,
             themeKey: project.themeKey,
+            modePolicy: project.modePolicy,
             status: project.status,
             contentJson: normalizedContent,
           }}

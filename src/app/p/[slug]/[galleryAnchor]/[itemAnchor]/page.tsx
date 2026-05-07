@@ -19,6 +19,7 @@ import { buildGalleryItemPageViewModel } from "@/lib/gallery-item/view-model";
 import { getPublishedProjectBySlug } from "@/lib/projects";
 import { resolveProjectsGalleryProjectFromContent } from "@/lib/projects-gallery/resolve";
 import { resolveGalleryItemLinkModeByHost } from "@/lib/routing/gallery-link-mode";
+import { enforceModeByPolicy } from "@/lib/projects/mode-policy";
 
 type GalleryItemPageProps = {
   params: Promise<{
@@ -146,7 +147,7 @@ export default async function PublishedGalleryItemPage({
   const requestHeaders = await headers();
   const linkMode = resolveGalleryItemLinkModeByHost(requestHeaders.get("host"));
   const cookieStore = await cookies();
-  const resolvedMode = resolveGalleryItemMode({
+  let resolvedMode = resolveGalleryItemMode({
     searchMode: resolvedSearchParams.mode,
     referer: requestHeaders.get("referer"),
     cookieMode: readModeCookieValue(cookieStore),
@@ -155,6 +156,7 @@ export default async function PublishedGalleryItemPage({
   if (!project) {
     notFound();
   }
+  resolvedMode = enforceModeByPolicy(project.modePolicy, resolvedMode);
 
   const resolvedProjectGallery = await resolvePublishedProjectsGalleryProject(
     slug,

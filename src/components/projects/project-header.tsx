@@ -27,6 +27,10 @@ import {
 import { THEME_OPTIONS } from "@/lib/themes";
 import { formatUiDateTime } from "@/lib/ui-date-time";
 import { resolveThemePreference } from "@/lib/ui-preferences";
+import {
+  PROJECT_MODE_POLICIES,
+  type ProjectModePolicy,
+} from "@/lib/projects/mode-policy";
 
 type ProjectHeaderProps = {
   project: {
@@ -34,6 +38,7 @@ type ProjectHeaderProps = {
     name: string;
     slug: string;
     themeKey: string;
+    modePolicy: ProjectModePolicy;
     status: "draft" | "published";
     schemaVersion: number;
     publishedAt: Date | null;
@@ -41,6 +46,7 @@ type ProjectHeaderProps = {
   initialMode: ThemeMode;
   publicationAction: () => void | Promise<void>;
   themeAction: (formData: FormData) => void | Promise<void>;
+  modePolicyAction: (formData: FormData) => void | Promise<void>;
   nameAction: (formData: FormData) => void | Promise<void>;
   contentShape: string;
 };
@@ -50,6 +56,7 @@ export function ProjectHeader({
   initialMode,
   publicationAction,
   themeAction,
+  modePolicyAction,
   nameAction,
   contentShape,
 }: ProjectHeaderProps) {
@@ -105,6 +112,7 @@ export function ProjectHeader({
             initialMode={initialMode}
             inputName="previewMode"
             syncSearchParam="mode"
+            policy={project.modePolicy}
           />
         </div>
 
@@ -141,6 +149,10 @@ export function ProjectHeader({
                   <span>{resolvedThemeKey}</span>
                 </div>
                 <div className="grid grid-cols-[160px_minmax(0,1fr)] gap-3 border-b border-line px-4 py-3">
+                  <span className="font-medium text-text-main">modePolicy</span>
+                  <span>{project.modePolicy}</span>
+                </div>
+                <div className="grid grid-cols-[160px_minmax(0,1fr)] gap-3 border-b border-line px-4 py-3">
                   <span className="font-medium text-text-main">schemaVersion</span>
                   <span>{project.schemaVersion}</span>
                 </div>
@@ -153,6 +165,23 @@ export function ProjectHeader({
               </div>
               <div className="grid gap-3 rounded-2xl border border-line bg-surface-alt p-4">
                 <h3 className="text-base font-semibold text-text-main">Actions</h3>
+                <form action={modePolicyAction} className="flex flex-wrap items-center gap-2">
+                  <label className="text-sm text-text-muted">Mode support</label>
+                  <select
+                    name="modePolicy"
+                    defaultValue={project.modePolicy}
+                    className="h-7 rounded-lg border border-line bg-surface px-2 text-sm text-text-main outline-none"
+                  >
+                    {PROJECT_MODE_POLICIES.map((policy) => (
+                      <option key={policy} value={policy}>
+                        {policy}
+                      </option>
+                    ))}
+                  </select>
+                  <UIButton type="submit" theme="base" variant="outlined" size="sm">
+                    Apply mode
+                  </UIButton>
+                </form>
                 <div className="flex flex-wrap items-center gap-3">
                   <form action={publicationAction}>
                     <UIButton

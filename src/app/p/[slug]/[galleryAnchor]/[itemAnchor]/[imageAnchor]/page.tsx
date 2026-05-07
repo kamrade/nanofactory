@@ -18,6 +18,7 @@ import {
 } from "@/lib/projects-gallery/resolve";
 import { resolveGalleryItemLinkModeByHost } from "@/lib/routing/gallery-link-mode";
 import { DEFAULT_THEME_KEY, isThemeKey } from "@/lib/themes";
+import { enforceModeByPolicy } from "@/lib/projects/mode-policy";
 
 type ProjectsGalleryImagePageProps = {
   params: Promise<{
@@ -105,7 +106,7 @@ export default async function ProjectsGalleryImagePage({
   const requestHeaders = await headers();
   const linkMode = resolveGalleryItemLinkModeByHost(requestHeaders.get("host"));
   const cookieStore = await cookies();
-  const resolvedMode = resolveGalleryItemMode({
+  let resolvedMode = resolveGalleryItemMode({
     searchMode: resolvedSearchParams.mode,
     referer: requestHeaders.get("referer"),
     cookieMode: readModeCookieValue(cookieStore),
@@ -124,6 +125,7 @@ export default async function ProjectsGalleryImagePage({
   if (!project) {
     notFound();
   }
+  resolvedMode = enforceModeByPolicy(project.modePolicy, resolvedMode);
 
   const assets = await getAssetsByProjectId(project.id);
   const assetMap = buildAssetMap(assets);
@@ -232,4 +234,3 @@ export default async function ProjectsGalleryImagePage({
     </main>
   );
 }
-

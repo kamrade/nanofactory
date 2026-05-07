@@ -47,6 +47,7 @@ type EditorProject = {
   name: string;
   slug: string;
   themeKey: string;
+  modePolicy: "switchable" | "light-only" | "dark-only";
   status: "draft" | "published";
   contentJson: PageContent;
 };

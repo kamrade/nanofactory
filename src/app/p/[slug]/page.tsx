@@ -7,6 +7,7 @@ import { getBackgroundScenesByProjectId } from "@/lib/background-scenes";
 import { normalizePageContent } from "@/lib/editor/content";
 import { getPublishedProjectBySlug } from "@/lib/projects";
 import { resolveGalleryItemLinkModeByHost } from "@/lib/routing/gallery-link-mode";
+import { enforceModeByPolicy } from "@/lib/projects/mode-policy";
 
 type PublicProjectPageProps = {
   params: Promise<{
@@ -25,12 +26,15 @@ export default async function PublicProjectPage({
   const galleryItemLinkMode = resolveGalleryItemLinkModeByHost(requestHeaders.get("host"));
   const { slug } = await params;
   const resolvedSearchParams = searchParams ? await searchParams : {};
-  const mode = resolvedSearchParams.mode === "dark" ? "dark" : "light";
   const project = await getPublishedProjectBySlug(slug);
 
   if (!project) {
     notFound();
   }
+  const mode = enforceModeByPolicy(
+    project.modePolicy,
+    resolvedSearchParams.mode === "dark" ? "dark" : "light"
+  );
 
   const assets = await getAssetsByProjectId(project.id);
   const backgroundScenes = await getBackgroundScenesByProjectId(project.id);
@@ -41,6 +45,7 @@ export default async function PublicProjectPage({
       slug={project.slug}
       themeKey={project.themeKey}
       mode={mode}
+      modePolicy={project.modePolicy}
       galleryItemLinkMode={galleryItemLinkMode}
       content={normalizePageContent(project.contentJson)}
       assets={assets}

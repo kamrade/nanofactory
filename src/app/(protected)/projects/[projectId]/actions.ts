@@ -24,9 +24,14 @@ import {
   publishProjectForUser,
   saveProjectContentForUser,
   unpublishProjectForUser,
+  updateProjectModePolicyForUser,
   updateProjectNameForUser,
   updateProjectThemeForUser,
 } from "@/lib/projects";
+import {
+  isProjectModePolicy,
+  resolveProjectModePolicy,
+} from "@/lib/projects/mode-policy";
 import { isValidProjectSlug } from "@/lib/projects/slug";
 import { isThemeKey } from "@/lib/themes";
 
@@ -78,6 +83,13 @@ type UpdateProjectNameDependencies = {
   redirect: typeof redirect;
 };
 
+type UpdateProjectModePolicyDependencies = {
+  requireCurrentUser: typeof requireCurrentUser;
+  updateProjectModePolicyForUser: typeof updateProjectModePolicyForUser;
+  revalidatePath: typeof revalidatePath;
+  redirect: typeof redirect;
+};
+
 const publishProjectDependencies: PublishProjectDependencies = {
   requireCurrentUser,
   publishProjectForUser,
@@ -102,6 +114,13 @@ const updateProjectThemeDependencies: UpdateProjectThemeDependencies = {
 const updateProjectNameDependencies: UpdateProjectNameDependencies = {
   requireCurrentUser,
   updateProjectNameForUser,
+  revalidatePath,
+  redirect,
+};
+
+const updateProjectModePolicyDependencies: UpdateProjectModePolicyDependencies = {
+  requireCurrentUser,
+  updateProjectModePolicyForUser,
   revalidatePath,
   redirect,
 };
@@ -275,6 +294,14 @@ export async function updateProjectNameAction(projectId: string, formData: FormD
   );
 }
 
+export async function updateProjectModePolicyAction(projectId: string, formData: FormData) {
+  return updateProjectModePolicyActionWithDependencies(
+    projectId,
+    formData,
+    updateProjectModePolicyDependencies
+  );
+}
+
 export async function updateProjectThemeActionWithDependencies(
   projectId: string,
   formData: FormData,
@@ -325,6 +352,34 @@ export async function updateProjectNameActionWithDependencies(
 
   if (!updatedProject) {
     dependencies.redirect("/dashboard");
+  }
+
+  dependencies.revalidatePath(`/projects/${projectId}`);
+  dependencies.revalidatePath("/dashboard");
+  dependencies.revalidatePath(`/p/${updatedProject.slug}`);
+  dependencies.redirect(`/projects/${projectId}`);
+}
+
+export async function updateProjectModePolicyActionWithDependencies(
+  projectId: string,
+  formData: FormData,
+  dependencies: UpdateProjectModePolicyDependencies
+) {
+  const currentUser = await dependencies.requireCurrentUser();
+  const rawModePolicy = String(formData.get("modePolicy") ?? "");
+
+  if (!isProjectModePolicy(rawModePolicy)) {
+    dependencies.redirect(`/projects/${projectId}`);
+  }
+
+  const updatedProject = await dependencies.updateProjectModePolicyForUser(
+    projectId,
+    currentUser.id,
+    resolveProjectModePolicy(rawModePolicy)
+  );
+
+  if (!updatedProject) {
+    dependencies.redirect(`/projects/${projectId}`);
   }
 
   dependencies.revalidatePath(`/projects/${projectId}`);

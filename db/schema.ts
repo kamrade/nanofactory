@@ -20,6 +20,11 @@ export type PageContent = BlockContentPageContent;
 
 export const projectStatusEnum = pgEnum("project_status", ["draft", "published"]);
 export const userRoleEnum = pgEnum("user_role", ["user", "admin"]);
+export const projectModePolicyEnum = pgEnum("project_mode_policy", [
+  "switchable",
+  "light-only",
+  "dark-only",
+]);
 
 // 1. Users
 export const users = pgTable("users", {
@@ -41,6 +46,7 @@ export const projects = pgTable("projects", {
   name: text("name").notNull(),
   slug: varchar("slug", { length: 255 }).notNull().unique(),
   themeKey: text("theme_key").default("sunwash").notNull(),
+  modePolicy: projectModePolicyEnum("mode_policy").default("switchable").notNull(),
   status: projectStatusEnum("status").default("draft").notNull(),
   publishedAt: timestamp("published_at", { withTimezone: true }),
   createdAt: timestamp("created_at", { withTimezone: true }).defaultNow().notNull(),

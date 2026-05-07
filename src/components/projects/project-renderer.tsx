@@ -6,6 +6,7 @@ import type { BackgroundSceneRecord } from "@/lib/background-scenes/types";
 import { ProjectModeSwitcher } from "@/components/projects/project-mode-switcher";
 import { DEFAULT_THEME_KEY, isThemeKey } from "@/lib/themes";
 import type { GalleryItemLinkMode } from "@/lib/routing/gallery-link-mode";
+import { type ProjectModePolicy, resolveProjectModePolicy } from "@/lib/projects/mode-policy";
 import { SectionShell } from "@/components/projects/section-shell";
 import {
   buildEffectivePageAnchors,
@@ -19,6 +20,7 @@ type RenderedProject = {
   slug?: string;
   themeKey: string;
   mode?: "light" | "dark";
+  modePolicy?: ProjectModePolicy;
   content: PageContent;
   assets: ProjectAssetRecord[];
   backgroundScenes?: BackgroundSceneRecord[];
@@ -145,8 +147,10 @@ function renderProjectMetaHeader(input: {
   containerClass: string;
   theme: ProjectThemeClasses;
   mode: "light" | "dark";
+  modePolicy: ProjectModePolicy;
   name: string;
 }) {
+
   if (!(input.showPublishedBadge || input.showProjectMeta)) {
     return null;
   }
@@ -154,17 +158,26 @@ function renderProjectMetaHeader(input: {
   return (
     <header className={input.containerClass}>
       <div className={input.theme.heroCard}>
+        
         {input.showPublishedBadge ? (
           <p className={`text-sm font-medium uppercase tracking-[0.2em] ${input.theme.kicker}`}>
             Published with Nanofactory
           </p>
         ) : null}
+        
         {input.showProjectMeta ? (
           <div className="mt-3 flex flex-wrap items-center justify-between gap-3">
             <p className={`text-sm ${input.theme.muted}`}>Project: {input.name}</p>
-            <ProjectModeSwitcher initialMode={input.mode} syncSearchParam="mode" />
+            {input.modePolicy === "switchable" ? (
+              <ProjectModeSwitcher
+                initialMode={input.mode}
+                syncSearchParam="mode"
+                policy={input.modePolicy}
+              />
+            ) : null}
           </div>
         ) : null}
+
       </div>
     </header>
   );
@@ -175,6 +188,7 @@ export function ProjectRenderer({
   slug,
   themeKey,
   mode = "light",
+  modePolicy = "switchable",
   content,
   assets,
   backgroundScenes = [],
@@ -190,6 +204,7 @@ export function ProjectRenderer({
     backgroundScenes,
   });
   const anchorMap = renderContext.effectiveAnchors.blockAnchors;
+  const resolvedModePolicy = resolveProjectModePolicy(modePolicy);
   const containerClass = "container mx-auto px-4";
 
   return (
@@ -205,6 +220,7 @@ export function ProjectRenderer({
           containerClass,
           theme: renderContext.theme,
           mode,
+          modePolicy: resolvedModePolicy,
           name,
         })}
 
