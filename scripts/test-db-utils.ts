@@ -82,18 +82,32 @@ export function syncTestDatabaseSchema() {
 }
 
 export async function resetTestDatabase() {
-  const client = new Client({
-    connectionString: loadTestEnv(),
-  });
+  const maxAttempts = 5;
+  const truncateSql =
+    'TRUNCATE TABLE "assets", "project_contents", "projects", "users" RESTART IDENTITY CASCADE';
 
-  await client.connect();
+  for (let attempt = 1; attempt <= maxAttempts; attempt += 1) {
+    const client = new Client({
+      connectionString: loadTestEnv(),
+    });
 
-  try {
-    await client.query(
-      'TRUNCATE TABLE "assets", "project_contents", "projects", "users" RESTART IDENTITY CASCADE'
-    );
-  } finally {
-    await client.end();
+    await client.connect();
+
+    try {
+      await client.query(truncateSql);
+      return;
+    } catch (error) {
+      const message =
+        error instanceof Error ? error.message.toLowerCase() : String(error).toLowerCase();
+      const isDeadlock = message.includes("deadlock detected");
+      if (!isDeadlock || attempt === maxAttempts) {
+        throw error;
+      }
+
+      await new Promise((resolve) => setTimeout(resolve, attempt * 150));
+    } finally {
+      await client.end();
+    }
   }
 }
 

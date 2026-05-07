@@ -4,7 +4,8 @@ export type SupportedBlockType =
   | "cta"
   | "app-header"
   | "gallery"
-  | "footer";
+  | "footer"
+  | "projects-gallery";
 
 export type HeroVariant = "default" | "centered";
 export type FeaturesVariant = "default" | "cards";
@@ -12,6 +13,7 @@ export type CtaVariant = "default";
 export type AppHeaderVariant = "default";
 export type GalleryVariant = "default";
 export type FooterVariant = "default";
+export type ProjectsGalleryVariant = "default";
 
 export type BlockVariant =
   | HeroVariant
@@ -19,7 +21,8 @@ export type BlockVariant =
   | CtaVariant
   | AppHeaderVariant
   | GalleryVariant
-  | FooterVariant;
+  | FooterVariant
+  | ProjectsGalleryVariant;
 
 export type PageBlock = {
   id: string;

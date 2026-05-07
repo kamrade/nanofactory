@@ -17,6 +17,7 @@ export type {
   CtaVariant,
   GalleryVariant,
   FooterVariant,
+  ProjectsGalleryVariant,
   PageBlock,
   PageContent,
   SupportedBlockType,

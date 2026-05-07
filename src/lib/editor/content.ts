@@ -141,6 +141,108 @@ export function validatePageContent(input: unknown): PageContentValidationResult
       block.props.items = normalizedItems;
     }
 
+    if (block.type === "projects-gallery" && Array.isArray(block.props.items)) {
+      const projectAnchors = new Set<string>();
+
+      const normalizedProjects = block.props.items.map((projectItem) => {
+        if (!isPlainObject(projectItem)) {
+          return projectItem;
+        }
+
+        const nextProject = { ...projectItem };
+        const rawProjectAnchor = readOptionalString(nextProject.projectAnchor);
+        if (rawProjectAnchor) {
+          const normalizedProjectAnchor = normalizeAnchorId(rawProjectAnchor);
+          if (!isValidAnchorId(normalizedProjectAnchor)) {
+            return {
+              __anchorValidationError:
+                "Project anchor must contain only lowercase Latin letters, numbers, and hyphens, and start with a letter.",
+            };
+          }
+          if (projectAnchors.has(normalizedProjectAnchor)) {
+            return {
+              __anchorValidationError: "Project anchors must be unique within Projects Gallery.",
+            };
+          }
+          projectAnchors.add(normalizedProjectAnchor);
+          nextProject.projectAnchor = normalizedProjectAnchor;
+        }
+
+        const rawGalleryAnchor = readOptionalString(nextProject.galleryAnchor);
+        if (rawGalleryAnchor) {
+          const normalizedGalleryAnchor = normalizeAnchorId(rawGalleryAnchor);
+          if (!isValidAnchorId(normalizedGalleryAnchor)) {
+            return {
+              __anchorValidationError:
+                "Nested gallery anchor must contain only lowercase Latin letters, numbers, and hyphens, and start with a letter.",
+            };
+          }
+          nextProject.galleryAnchor = normalizedGalleryAnchor;
+        }
+
+        if (Array.isArray(nextProject.galleryItems)) {
+          const imageAnchors = new Set<string>();
+          const normalizedImages = nextProject.galleryItems.map((imageItem) => {
+            if (!isPlainObject(imageItem)) {
+              return imageItem;
+            }
+            const nextImageItem = { ...imageItem };
+            const rawImageAnchor = readOptionalString(nextImageItem.imageAnchor);
+            if (!rawImageAnchor) {
+              return nextImageItem;
+            }
+            const normalizedImageAnchor = normalizeAnchorId(rawImageAnchor);
+            if (!isValidAnchorId(normalizedImageAnchor)) {
+              return {
+                __anchorValidationError:
+                  "Image anchor must contain only lowercase Latin letters, numbers, and hyphens, and start with a letter.",
+              };
+            }
+            if (imageAnchors.has(normalizedImageAnchor)) {
+              return {
+                __anchorValidationError:
+                  "Image anchors must be unique within a nested project gallery.",
+              };
+            }
+            imageAnchors.add(normalizedImageAnchor);
+            nextImageItem.imageAnchor = normalizedImageAnchor;
+            return nextImageItem;
+          });
+
+          const imageAnchorError = normalizedImages.find(
+            (item) =>
+              isPlainObject(item) &&
+              typeof (item as { __anchorValidationError?: unknown }).__anchorValidationError ===
+                "string"
+          ) as { __anchorValidationError: string } | undefined;
+          if (imageAnchorError) {
+            return {
+              __anchorValidationError: imageAnchorError.__anchorValidationError,
+            };
+          }
+
+          nextProject.galleryItems = normalizedImages;
+        }
+
+        return nextProject;
+      });
+
+      const projectAnchorError = normalizedProjects.find(
+        (item) =>
+          isPlainObject(item) &&
+          typeof (item as { __anchorValidationError?: unknown }).__anchorValidationError ===
+            "string"
+      ) as { __anchorValidationError: string } | undefined;
+      if (projectAnchorError) {
+        return {
+          success: false,
+          error: projectAnchorError.__anchorValidationError,
+        };
+      }
+
+      block.props.items = normalizedProjects;
+    }
+
     blocks.push(block);
   }
 

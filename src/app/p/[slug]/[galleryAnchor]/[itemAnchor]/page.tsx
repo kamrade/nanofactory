@@ -17,6 +17,8 @@ import {
 } from "@/lib/gallery-item/resolve";
 import { buildGalleryItemPageViewModel } from "@/lib/gallery-item/view-model";
 import { getPublishedProjectBySlug } from "@/lib/projects";
+import { resolveProjectsGalleryProjectFromContent } from "@/lib/projects-gallery/resolve";
+import { resolveGalleryItemLinkModeByHost } from "@/lib/routing/gallery-link-mode";
 
 type GalleryItemPageProps = {
   params: Promise<{
@@ -33,6 +35,14 @@ type ResolvedPublishedGalleryItem = ResolvedGalleryItem & {
   projectSlug: string;
   projectName: string;
 };
+
+type ResolvedPublishedProjectsGalleryProject = {
+  projectSlug: string;
+  projectName: string;
+  projectThemeKey: string;
+} & NonNullable<
+  ReturnType<typeof resolveProjectsGalleryProjectFromContent>
+>;
 
 export async function resolvePublishedGalleryItem(
   slug: string,
@@ -57,8 +67,56 @@ export async function resolvePublishedGalleryItem(
   };
 }
 
+async function resolvePublishedProjectsGalleryProject(
+  slug: string,
+  projectAnchor: string,
+  galleryAnchor: string
+): Promise<ResolvedPublishedProjectsGalleryProject | null> {
+  const project = await getPublishedProjectBySlug(slug);
+  if (!project) {
+    return null;
+  }
+
+  const content = normalizePageContent(project.contentJson);
+  const resolved = resolveProjectsGalleryProjectFromContent(
+    content,
+    projectAnchor,
+    galleryAnchor
+  );
+  if (!resolved) {
+    return null;
+  }
+
+  return {
+    projectSlug: project.slug,
+    projectName: project.name,
+    projectThemeKey: project.themeKey,
+    ...resolved,
+  };
+}
+
 export async function generateMetadata({ params }: GalleryItemPageProps): Promise<Metadata> {
   const { slug, galleryAnchor, itemAnchor } = await params;
+  const resolvedProjectGallery = await resolvePublishedProjectsGalleryProject(
+    slug,
+    galleryAnchor,
+    itemAnchor
+  );
+  if (resolvedProjectGallery) {
+    const title =
+      resolvedProjectGallery.title.trim().length > 0
+        ? resolvedProjectGallery.title
+        : "Project";
+    const description =
+      resolvedProjectGallery.description.trim().length > 0
+        ? resolvedProjectGallery.description
+        : `${resolvedProjectGallery.projectName} project gallery`;
+    return {
+      title: `${title} · ${resolvedProjectGallery.projectName}`,
+      description,
+    };
+  }
+
   const resolved = await resolvePublishedGalleryItem(slug, galleryAnchor, itemAnchor);
 
   if (!resolved) {
@@ -86,20 +144,137 @@ export default async function PublishedGalleryItemPage({
   const { slug, galleryAnchor, itemAnchor } = await params;
   const resolvedSearchParams = searchParams ? await searchParams : {};
   const requestHeaders = await headers();
+  const linkMode = resolveGalleryItemLinkModeByHost(requestHeaders.get("host"));
   const cookieStore = await cookies();
   const resolvedMode = resolveGalleryItemMode({
     searchMode: resolvedSearchParams.mode,
     referer: requestHeaders.get("referer"),
     cookieMode: readModeCookieValue(cookieStore),
   });
-  const resolved = await resolvePublishedGalleryItem(slug, galleryAnchor, itemAnchor);
-
-  if (!resolved) {
+  const project = await getPublishedProjectBySlug(slug);
+  if (!project) {
     notFound();
   }
 
-  const project = await getPublishedProjectBySlug(slug);
-  if (!project) {
+  const resolvedProjectGallery = await resolvePublishedProjectsGalleryProject(
+    slug,
+    galleryAnchor,
+    itemAnchor
+  );
+
+  if (resolvedProjectGallery) {
+    const assets = await getAssetsByProjectId(project.id);
+    const assetMap = buildAssetMap(assets);
+    const modeQuery = resolvedMode === "dark" ? "?mode=dark" : "";
+    const backHref =
+      linkMode === "relative"
+        ? `../..${modeQuery}#${resolvedProjectGallery.blockAnchor}`
+        : `/p/${resolvedProjectGallery.projectSlug}${modeQuery}#${resolvedProjectGallery.blockAnchor}`;
+
+    return (
+      <main
+        data-theme={resolvedProjectGallery.projectThemeKey}
+        data-mode={resolvedMode}
+        className="min-h-screen bg-bg py-10 text-text-main"
+      >
+        <div className="container mx-auto grid max-w-5xl gap-6 px-4">
+          <div className="flex flex-wrap items-center justify-between gap-3">
+            <Link
+              href={backHref}
+              className="inline-flex items-center justify-center rounded-xl border border-line bg-surface px-3 py-2 text-sm font-medium text-text-main transition hover:bg-surface-alt"
+            >
+              Back to projects
+            </Link>
+            <div className="inline-flex items-center gap-2 rounded-xl border border-line bg-surface px-3 py-2 text-sm text-text-muted">
+              <span>{resolvedProjectGallery.galleryItems.length} images</span>
+            </div>
+          </div>
+
+          <section className="grid gap-3 rounded-2xl border border-line bg-surface p-5">
+            <h1 className="text-2xl font-semibold tracking-tight text-text-main">
+              {resolvedProjectGallery.title.trim().length > 0
+                ? resolvedProjectGallery.title
+                : `Project ${resolvedProjectGallery.itemIndex + 1}`}
+            </h1>
+            {resolvedProjectGallery.description.trim().length > 0 ? (
+              <p className="text-sm leading-7 text-text-muted">
+                {resolvedProjectGallery.description}
+              </p>
+            ) : null}
+            {resolvedProjectGallery.price.trim().length > 0 ? (
+              <p className="text-base font-semibold text-text-main">{resolvedProjectGallery.price}</p>
+            ) : null}
+            {resolvedProjectGallery.meta.trim().length > 0 ? (
+              <p className="text-xs text-text-muted">{resolvedProjectGallery.meta}</p>
+            ) : null}
+          </section>
+
+          <section className="grid grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-3">
+            {resolvedProjectGallery.galleryItems.map((item, index) => {
+              const asset = resolveAssetById(item.assetId, assetMap);
+              const href =
+                linkMode === "relative"
+                  ? `./${item.imageAnchor}${modeQuery}`
+                  : `/p/${resolvedProjectGallery.projectSlug}/${resolvedProjectGallery.projectAnchor}/${resolvedProjectGallery.galleryAnchor}/${item.imageAnchor}${modeQuery}`;
+
+              return (
+                <article
+                  key={`${resolvedProjectGallery.projectAnchor}-${item.imageAnchor}-${index}`}
+                  className="relative overflow-hidden rounded-2xl border border-line bg-surface-alt"
+                >
+                  {asset ? (
+                    <Link href={href} className="block transition hover:opacity-95">
+                      {/* eslint-disable-next-line @next/next/no-img-element */}
+                      <img
+                        src={asset.publicUrl}
+                        alt={asset.alt ?? asset.originalFilename}
+                        className="h-56 w-full object-cover"
+                      />
+                    </Link>
+                  ) : (
+                    <div className="flex h-56 w-full items-center justify-center bg-surface text-sm text-text-muted">
+                      No image
+                    </div>
+                  )}
+
+                  {(item.title || item.description || item.price || item.meta) ? (
+                    <div className="space-y-2 p-4">
+                      {item.title.trim().length > 0 ? (
+                        <p className="text-base font-semibold text-text-main">{item.title}</p>
+                      ) : null}
+                      {item.description.trim().length > 0 ? (
+                        <p className="text-sm leading-6 text-text-muted">{item.description}</p>
+                      ) : null}
+                      {item.price.trim().length > 0 ? (
+                        <p className="text-sm font-semibold text-text-main">{item.price}</p>
+                      ) : null}
+                      {item.meta.trim().length > 0 ? (
+                        <p className="text-xs text-text-muted">{item.meta}</p>
+                      ) : null}
+                    </div>
+                  ) : null}
+
+                  <Link
+                    href={href}
+                    aria-label={`Open ${item.title.trim().length > 0 ? item.title : `image ${index + 1}`}`}
+                    className="absolute inset-0 z-20"
+                  >
+                    <span className="sr-only">
+                      Open {item.title.trim().length > 0 ? item.title : `image ${index + 1}`}
+                    </span>
+                  </Link>
+                </article>
+              );
+            })}
+          </section>
+        </div>
+      </main>
+    );
+  }
+
+  const resolved = await resolvePublishedGalleryItem(slug, galleryAnchor, itemAnchor);
+
+  if (!resolved) {
     notFound();
   }
 
