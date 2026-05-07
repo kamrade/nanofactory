@@ -1,6 +1,7 @@
 import type { ComponentType } from "react";
 
 import type { ProjectAssetRecord } from "@/lib/assets";
+import type { ProjectModePolicy } from "@/lib/projects/mode-policy";
 import type { GalleryItemLinkMode } from "@/lib/routing/gallery-link-mode";
 
 import type { BlockVariant, PageBlock, SupportedBlockType } from "./content";
@@ -23,6 +24,7 @@ export type BlockRenderProps = {
   assetMap: Map<string, ProjectAssetRecord>;
   theme: BlockTheme;
   mode?: "light" | "dark";
+  modePolicy?: ProjectModePolicy;
   publicProjectSlug?: string;
   galleryItemLinkMode?: GalleryItemLinkMode;
   effectiveBlockAnchorId?: string;

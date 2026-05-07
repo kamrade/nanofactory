@@ -38,7 +38,7 @@ function getThemeClasses(themeKey: string) {
     default:
       return {
         page: "bg-bg text-text-main",
-        heroCard: "",
+        heroCard: "flex justify-end",
         button:
           "inline-flex items-center justify-center rounded-2xl bg-primary-300 px-5 py-3 text-sm font-medium text-text-inverted-main transition hover:bg-primary-200",
         muted: "text-text-muted",
@@ -98,6 +98,7 @@ function renderBlock(
   block: PageContent["blocks"][number],
   publicProjectSlug: string | undefined,
   galleryItemLinkMode: GalleryItemLinkMode,
+  modePolicy: ProjectModePolicy,
   anchorId: string | undefined,
   effectiveGalleryItemAnchors: Map<number, string> | undefined,
   assetMap: Map<string, ProjectAssetRecord>,
@@ -132,6 +133,7 @@ function renderBlock(
         assetMap={assetMap}
         theme={theme}
         mode={fallbackMode}
+        modePolicy={modePolicy}
         publicProjectSlug={publicProjectSlug}
         galleryItemLinkMode={galleryItemLinkMode}
         effectiveBlockAnchorId={anchorId}
@@ -159,24 +161,26 @@ function renderProjectMetaHeader(input: {
     <header className={input.containerClass}>
       <div className={input.theme.heroCard}>
         
-        {input.showPublishedBadge ? (
+        {/* {input.showPublishedBadge ? (
           <p className={`text-sm font-medium uppercase tracking-[0.2em] ${input.theme.kicker}`}>
             Published with Nanofactory
           </p>
-        ) : null}
+        ) : null} */}
         
-        {input.showProjectMeta ? (
+        {/* {input.showProjectMeta ? (
           <div className="mt-3 flex flex-wrap items-center justify-between gap-3">
             <p className={`text-sm ${input.theme.muted}`}>Project: {input.name}</p>
-            {input.modePolicy === "switchable" ? (
-              <ProjectModeSwitcher
-                initialMode={input.mode}
-                syncSearchParam="mode"
-                policy={input.modePolicy}
-              />
-            ) : null}
+            
           </div>
-        ) : null}
+        ) : null} */}
+
+        {/* {input.modePolicy === "switchable" ? (
+          <ProjectModeSwitcher
+            initialMode={input.mode}
+            syncSearchParam="mode"
+            policy={input.modePolicy}
+          />
+        ) : null} */}
 
       </div>
     </header>
@@ -211,9 +215,9 @@ export function ProjectRenderer({
     <main
       data-theme={renderContext.resolvedThemeKey}
       data-mode={mode}
-      className={`min-h-screen py-8 ${renderContext.theme.page}`}
+      className={`min-h-screen py-4 ${renderContext.theme.page}`}
     >
-      <div className="flex w-full flex-col gap-12">
+      <div className="flex w-full flex-col gap-6">
         {renderProjectMetaHeader({
           showPublishedBadge,
           showProjectMeta,
@@ -240,6 +244,7 @@ export function ProjectRenderer({
                 block,
                 slug,
                 galleryItemLinkMode,
+                resolvedModePolicy,
                 anchorMap.get(block.id),
                 buildGalleryItemAnchorMap(block, renderContext.effectiveAnchors),
                 renderContext.assetMap,

@@ -15,6 +15,7 @@ import { FiLink, FiMenu, FiX } from "react-icons/fi";
 import type { IconType } from "react-icons";
 
 import { resolveAssetById } from "@/lib/assets/resolution";
+import { ProjectModeSwitcher } from "@/components/projects/project-mode-switcher";
 import type { BlockRenderProps } from "../../shared/types";
 import type { SocialIconKey } from "./social-icons";
 import { readAppHeaderProps } from "./model";
@@ -62,7 +63,13 @@ function getResponsiveClasses(collapseBreakpoint: "sm" | "md" | "lg" | "xl") {
   }
 }
 
-export function AppHeaderDefaultRender({ block, assetMap, theme, mode = "light" }: BlockRenderProps) {
+export function AppHeaderDefaultRender({
+  block,
+  assetMap,
+  theme,
+  mode = "light",
+  modePolicy = "switchable",
+}: BlockRenderProps) {
   const sectionRef = useRef<HTMLElement>(null);
   const [activeMode, setActiveMode] = useState<"light" | "dark">(mode);
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
@@ -73,6 +80,7 @@ export function AppHeaderDefaultRender({ block, assetMap, theme, mode = "light" 
     logoDarkAssetId,
     collapseBreakpoint,
     alwaysMobile,
+    showModeSwitcher,
     menuItems,
     socialLinks,
   } =
@@ -88,6 +96,7 @@ export function AppHeaderDefaultRender({ block, assetMap, theme, mode = "light" 
     Boolean(logoAsset) ||
     menuItems.length > 0 ||
     socialLinks.length > 0;
+  const canShowModeSwitcher = showModeSwitcher && modePolicy === "switchable";
 
   function handleAnchorClick(event: MouseEvent<HTMLAnchorElement>, anchorId: string) {
     if (typeof document === "undefined") {
@@ -218,6 +227,16 @@ export function AppHeaderDefaultRender({ block, assetMap, theme, mode = "light" 
                 ))}
               </div>
             ) : null}
+
+            {canShowModeSwitcher ? (
+              <div className="border-t border-line pt-3">
+                <ProjectModeSwitcher
+                  initialMode={activeMode}
+                  syncSearchParam="mode"
+                  policy={modePolicy}
+                />
+              </div>
+            ) : null}
           </div>
         </div>
       </div>
@@ -276,6 +295,13 @@ export function AppHeaderDefaultRender({ block, assetMap, theme, mode = "light" 
               <span className="sr-only">{item.label}</span>
             </a>
           ))}
+          {canShowModeSwitcher ? (
+            <ProjectModeSwitcher
+              initialMode={activeMode}
+              syncSearchParam="mode"
+              policy={modePolicy}
+            />
+          ) : null}
         </div>
       </div>
     </section>

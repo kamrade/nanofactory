@@ -25,6 +25,7 @@ export const appHeaderDefaultDefinition: BlockVariantDefinition = {
     logoDarkAssetId: undefined,
     collapseBreakpoint: "md",
     alwaysMobile: false,
+    showModeSwitcher: false,
     menuItems: [],
     socialLinks: [],
   }),

@@ -37,7 +37,7 @@ export function EditorCanvas({
   return (
     <div className="grid gap-12 mx-auto container">
       {lastVariantUndo ? (
-        <div className="flex flex-wrap items-center justify-between gap-3 rounded-2xl border border-emerald-200 bg-emerald-50 px-4 py-3 text-sm text-emerald-800">
+        <div className="flex flex-wrap items-center justify-between gap-3 rounded-2xl bg-neutral-300 px-4 py-3 text-sm text-text-main">
           <span>
             Variant switched for {lastVariantUndo.typeLabel}: {lastVariantUndo.fromLabel} →{" "}
             {lastVariantUndo.toLabel}.
@@ -45,17 +45,17 @@ export function EditorCanvas({
           <div className="flex flex-wrap items-center gap-2">
             <UIButton
               type="button"
+              theme="base"
               onClick={onUndoVariantSwitch}
-              className="inline-flex items-center justify-center rounded-2xl border border-emerald-200 bg-white px-3 py-1.5 text-sm font-medium text-emerald-800 transition hover:border-emerald-300 hover:bg-emerald-100"
             >
               Undo
             </UIButton>
             <UIButton
               type="button"
+              theme="base"
               onClick={onDismissVariantUndo}
               aria-label="Dismiss"
               title="Dismiss"
-              className="inline-flex h-8 w-8 items-center justify-center rounded-full border border-emerald-200 bg-white text-lg font-semibold text-emerald-800 transition hover:border-emerald-300 hover:bg-emerald-100"
             >
               ×
             </UIButton>

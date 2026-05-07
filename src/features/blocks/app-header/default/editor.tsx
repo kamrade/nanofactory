@@ -34,6 +34,7 @@ export function AppHeaderDefaultEditor({
     logoDarkAssetId: selectedLogoDarkAssetId,
     collapseBreakpoint,
     alwaysMobile,
+    showModeSwitcher,
     menuItems,
     socialLinks,
   } = appHeaderProps;
@@ -164,6 +165,16 @@ export function AppHeaderDefaultEditor({
           })
         }
         label="Always use mobile layout"
+      />
+      <UICheckbox
+        checked={showModeSwitcher}
+        onChange={(event) =>
+          onChange({
+            ...block.props,
+            showModeSwitcher: event.currentTarget.checked,
+          })
+        }
+        label="Show mode switcher"
       />
 
       <div className="grid gap-4 rounded-2xl border border-line bg-surface-alt p-4">
