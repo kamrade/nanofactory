@@ -1,11 +1,13 @@
 import { isPlainObject, readOptionalString, readString } from "../../shared/base";
 import { isValidAnchorId, normalizeAnchorId } from "@/lib/editor/anchor-id";
 
-export type ProjectsGalleryImageItem = {
+export type ProjectsGalleryEntryItem = {
+  kind: "image" | "markdown";
   assetId: string | undefined;
   imageAnchor: string | undefined;
   title: string;
   description: string;
+  contentMd: string;
   price: string;
   meta: string;
 };
@@ -15,10 +17,11 @@ export type ProjectsGalleryProjectItem = {
   galleryAnchor: string | undefined;
   title: string;
   description: string;
+  descriptionMd: string;
   price: string;
   meta: string;
   imageAssetId: string | undefined;
-  galleryItems: ProjectsGalleryImageItem[];
+  galleryItems: ProjectsGalleryEntryItem[];
 };
 
 export type ProjectsGalleryProps = {
@@ -49,7 +52,7 @@ export function getEffectiveProjectGalleryImageAnchor(
   return item.galleryItems[imageIndex]?.imageAnchor ?? `${projectAnchor}-${galleryAnchor}-item-${imageIndex + 1}`;
 }
 
-function readImageItems(input: unknown): ProjectsGalleryImageItem[] {
+function readEntryItems(input: unknown): ProjectsGalleryEntryItem[] {
   if (!Array.isArray(input)) {
     return [];
   }
@@ -64,15 +67,17 @@ function readImageItems(input: unknown): ProjectsGalleryImageItem[] {
       const imageAnchor = rawImageAnchor ? normalizeAnchorId(rawImageAnchor) : undefined;
 
       return {
+        kind: item.kind === "markdown" ? "markdown" : "image",
         assetId: readOptionalString(item.assetId),
         imageAnchor: imageAnchor && isValidAnchorId(imageAnchor) ? imageAnchor : undefined,
         title: readString(item.title, ""),
         description: readString(item.description, ""),
+        contentMd: readString(item.contentMd, ""),
         price: readString(item.price, ""),
         meta: readString(item.meta, ""),
       };
     })
-    .filter((item): item is ProjectsGalleryImageItem => item !== null);
+    .filter((item): item is ProjectsGalleryEntryItem => item !== null);
 }
 
 function readProjectItems(input: unknown): ProjectsGalleryProjectItem[] {
@@ -96,30 +101,35 @@ function readProjectItems(input: unknown): ProjectsGalleryProjectItem[] {
         galleryAnchor: galleryAnchor && isValidAnchorId(galleryAnchor) ? galleryAnchor : undefined,
         title: readString(item.title, ""),
         description: readString(item.description, ""),
+        descriptionMd: readString(item.descriptionMd, readString(item.description, "")),
         price: readString(item.price, ""),
         meta: readString(item.meta, ""),
         imageAssetId: readOptionalString(item.imageAssetId),
-        galleryItems: readImageItems(item.galleryItems),
+        galleryItems: readEntryItems(item.galleryItems),
       };
     })
     .filter((item): item is ProjectsGalleryProjectItem => item !== null);
 }
 
-function defaultGalleryItems(projectAnchorBase: string): ProjectsGalleryImageItem[] {
+function defaultGalleryItems(projectAnchorBase: string): ProjectsGalleryEntryItem[] {
   return [
     {
       assetId: undefined,
       imageAnchor: `${projectAnchorBase}-item-1`,
+      kind: "image",
       title: "Gallery image 1",
       description: "",
+      contentMd: "",
       price: "",
       meta: "",
     },
     {
       assetId: undefined,
       imageAnchor: `${projectAnchorBase}-item-2`,
+      kind: "image",
       title: "Gallery image 2",
       description: "",
+      contentMd: "",
       price: "",
       meta: "",
     },
@@ -133,6 +143,7 @@ function defaultItems(): ProjectsGalleryProjectItem[] {
       galleryAnchor: "gallery-1",
       title: "Project 1",
       description: "Project description.",
+      descriptionMd: "Project description.",
       price: "",
       meta: "",
       imageAssetId: undefined,

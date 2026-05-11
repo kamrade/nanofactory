@@ -3,7 +3,6 @@ import { remapSceneToPalette } from "@/components/assets/background-scene-defaul
 import type { ProjectAssetRecord } from "@/lib/assets";
 import { buildAssetMap } from "@/lib/assets/resolution";
 import type { BackgroundSceneRecord } from "@/lib/background-scenes/types";
-import { ProjectModeSwitcher } from "@/components/projects/project-mode-switcher";
 import { DEFAULT_THEME_KEY, isThemeKey } from "@/lib/themes";
 import type { GalleryItemLinkMode } from "@/lib/routing/gallery-link-mode";
 import { type ProjectModePolicy, resolveProjectModePolicy } from "@/lib/projects/mode-policy";
@@ -24,8 +23,6 @@ type RenderedProject = {
   content: PageContent;
   assets: ProjectAssetRecord[];
   backgroundScenes?: BackgroundSceneRecord[];
-  showPublishedBadge?: boolean;
-  showProjectMeta?: boolean;
   galleryItemLinkMode?: GalleryItemLinkMode;
 };
 
@@ -143,50 +140,6 @@ function renderBlock(
   );
 }
 
-function renderProjectMetaHeader(input: {
-  showPublishedBadge: boolean;
-  showProjectMeta: boolean;
-  containerClass: string;
-  theme: ProjectThemeClasses;
-  mode: "light" | "dark";
-  modePolicy: ProjectModePolicy;
-  name: string;
-}) {
-
-  if (!(input.showPublishedBadge || input.showProjectMeta)) {
-    return null;
-  }
-
-  return (
-    <header className={input.containerClass}>
-      <div className={input.theme.heroCard}>
-        
-        {/* {input.showPublishedBadge ? (
-          <p className={`text-sm font-medium uppercase tracking-[0.2em] ${input.theme.kicker}`}>
-            Published with Nanofactory
-          </p>
-        ) : null} */}
-        
-        {/* {input.showProjectMeta ? (
-          <div className="mt-3 flex flex-wrap items-center justify-between gap-3">
-            <p className={`text-sm ${input.theme.muted}`}>Project: {input.name}</p>
-            
-          </div>
-        ) : null} */}
-
-        {/* {input.modePolicy === "switchable" ? (
-          <ProjectModeSwitcher
-            initialMode={input.mode}
-            syncSearchParam="mode"
-            policy={input.modePolicy}
-          />
-        ) : null} */}
-
-      </div>
-    </header>
-  );
-}
-
 export function ProjectRenderer({
   name,
   slug,
@@ -196,8 +149,6 @@ export function ProjectRenderer({
   content,
   assets,
   backgroundScenes = [],
-  showPublishedBadge = true,
-  showProjectMeta = true,
   galleryItemLinkMode = "absolute",
 }: RenderedProject) {
   const renderContext = buildProjectRenderContext({
@@ -218,16 +169,6 @@ export function ProjectRenderer({
       className={`min-h-screen py-4 ${renderContext.theme.page}`}
     >
       <div className="flex w-full flex-col gap-6">
-        {renderProjectMetaHeader({
-          showPublishedBadge,
-          showProjectMeta,
-          containerClass,
-          theme: renderContext.theme,
-          mode,
-          modePolicy: resolvedModePolicy,
-          name,
-        })}
-
         {content.blocks.length === 0 ? (
           <section data-testid="ProjectRenderBlock" className={containerClass}>
             <div className="rounded-[2rem] border border-line bg-surface px-8 py-10 shadow-sm">

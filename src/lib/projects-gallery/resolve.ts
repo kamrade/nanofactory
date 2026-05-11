@@ -15,20 +15,24 @@ export type ResolvedProjectsGalleryProject = {
   itemIndex: number;
   title: string;
   description: string;
+  descriptionMd: string;
   price: string;
   meta: string;
   imageAssetId?: string;
   galleryItems: Array<{
+    kind: "image" | "markdown";
     imageAnchor: string;
     assetId?: string;
     title: string;
     description: string;
+    contentMd: string;
     price: string;
     meta: string;
   }>;
 };
 
-export type ResolvedProjectsGalleryImage = {
+export type ResolvedProjectsGalleryEntry = {
+  kind: "image" | "markdown";
   projectAnchor: string;
   galleryAnchor: string;
   imageAnchor: string;
@@ -43,6 +47,7 @@ export type ResolvedProjectsGalleryImage = {
   nextImageAnchor?: string;
   title: string;
   description: string;
+  contentMd: string;
   price: string;
   meta: string;
   assetId?: string;
@@ -82,14 +87,17 @@ export function resolveProjectsGalleryProjectFromContent(
         itemIndex: projectIndex,
         title: item.title,
         description: item.description,
+        descriptionMd: item.descriptionMd,
         price: item.price,
         meta: item.meta,
         imageAssetId: item.imageAssetId,
         galleryItems: item.galleryItems.map((galleryItem, imageIndex) => ({
+          kind: galleryItem.kind,
           imageAnchor: getEffectiveProjectGalleryImageAnchor(item, projectIndex, imageIndex),
           assetId: galleryItem.assetId,
           title: galleryItem.title,
           description: galleryItem.description,
+          contentMd: galleryItem.contentMd,
           price: galleryItem.price,
           meta: galleryItem.meta,
         })),
@@ -100,12 +108,12 @@ export function resolveProjectsGalleryProjectFromContent(
   return null;
 }
 
-export function resolveProjectsGalleryImageFromContent(
+export function resolveProjectsGalleryEntryFromContent(
   content: PageContent,
   projectAnchor: string,
   galleryAnchor: string,
   imageAnchor: string
-): ResolvedProjectsGalleryImage | null {
+): ResolvedProjectsGalleryEntry | null {
   const resolvedProject = resolveProjectsGalleryProjectFromContent(
     content,
     projectAnchor,
@@ -128,6 +136,7 @@ export function resolveProjectsGalleryImageFromContent(
   return {
     projectAnchor: resolvedProject.projectAnchor,
     galleryAnchor: resolvedProject.galleryAnchor,
+    kind: imageItem.kind,
     imageAnchor: normalizedImageAnchor,
     blockAnchor: resolvedProject.blockAnchor,
     projectTitle: resolvedProject.title,
@@ -146,6 +155,7 @@ export function resolveProjectsGalleryImageFromContent(
         : undefined,
     title: imageItem.title,
     description: imageItem.description,
+    contentMd: imageItem.contentMd,
     price: imageItem.price,
     meta: imageItem.meta,
     assetId: imageItem.assetId,

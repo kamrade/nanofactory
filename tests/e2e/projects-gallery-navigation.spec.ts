@@ -94,7 +94,7 @@ test("projects gallery supports project detail and nested image detail navigatio
 
   await expect(page).toHaveURL(/\/project-1\/gallery-1$/);
   await expect(page.getByRole("heading", { name: "Project 1" })).toBeVisible();
-  await expect(page.getByText("2 images")).toBeVisible();
+  await expect(page.getByText("2 items")).toBeVisible();
 
   const firstImageLink = page.locator('article a[href*="/project-1/gallery-1/"]').first();
   await expect(firstImageLink).toBeVisible();
@@ -134,4 +134,41 @@ test("projects gallery preserves dark mode in nested routes", async ({ page }) =
 
   await expect(page.locator('main[data-mode="dark"]')).toBeVisible();
   await expect(page).toHaveURL(/mode=dark/);
+});
+
+test("projects gallery supports markdown nested items with full-width preview and detail render", async ({
+  page,
+}) => {
+  await createProjectFromDashboard(page, "Projects Gallery Markdown Item");
+  await addBlock(page, "Projects gallery with nested per-project image galleries.");
+
+  await page.getByRole("button", { name: "Add markdown" }).first().click();
+  await page
+    .getByPlaceholder("Markdown for this nested item")
+    .first()
+    .fill("## Markdown block\n\n- first point\n- second point");
+
+  await page.getByRole("button", { name: "Save" }).click();
+  await expect(page.getByText("Project content saved.")).toBeVisible();
+
+  await publishProject(page);
+  const publicUrl = await getPublicUrl(page);
+  await page.goto(publicUrl);
+
+  const firstProjectLink = page
+    .locator('article a[href*="/project-1/gallery-1"]')
+    .first();
+  await expect(firstProjectLink).toBeVisible();
+  await firstProjectLink.click();
+
+  await expect(page).toHaveURL(/\/project-1\/gallery-1$/);
+  await expect(page.getByText("3 items")).toBeVisible();
+
+  const markdownItemArticle = page.locator("article", { hasText: "Markdown block" }).first();
+  await expect(markdownItemArticle).toBeVisible();
+  await expect(markdownItemArticle).toHaveClass(/lg:col-span-3/);
+
+  await markdownItemArticle.locator('a[href*="/project-1/gallery-1/"]').first().click();
+  await expect(page).toHaveURL(/\/project-1\/gallery-1\/project-1-gallery-1-item-3$/);
+  await expect(page.getByRole("heading", { name: "Markdown block" })).toBeVisible();
 });

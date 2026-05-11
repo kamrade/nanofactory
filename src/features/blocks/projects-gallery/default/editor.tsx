@@ -6,7 +6,7 @@ import type { BlockEditorProps } from "../../shared/types";
 import { AssetPicker } from "../../shared/asset-picker";
 import {
   readProjectsGalleryProps,
-  type ProjectsGalleryImageItem,
+  type ProjectsGalleryEntryItem,
   type ProjectsGalleryProjectItem,
 } from "./model";
 
@@ -41,7 +41,7 @@ export function ProjectsGalleryDefaultEditor({ block, assets, onChange }: BlockE
   function updateGalleryItem(
     projectIndex: number,
     imageIndex: number,
-    nextImageItem: ProjectsGalleryImageItem
+    nextImageItem: ProjectsGalleryEntryItem
   ) {
     const projectItem = props.items[projectIndex];
     if (!projectItem) {
@@ -97,6 +97,7 @@ export function ProjectsGalleryDefaultEditor({ block, assets, onChange }: BlockE
                     galleryAnchor: undefined,
                     title: "",
                     description: "",
+                    descriptionMd: "",
                     price: "",
                     meta: "",
                     imageAssetId: undefined,
@@ -190,7 +191,7 @@ export function ProjectsGalleryDefaultEditor({ block, assets, onChange }: BlockE
                   </label>
 
                   <label className="grid gap-1 text-sm">
-                    <span className="font-medium text-text-main">Description (optional)</span>
+                    <span className="font-medium text-text-main">Description (plain, optional)</span>
                     <textarea
                       value={item.description}
                       rows={3}
@@ -201,8 +202,27 @@ export function ProjectsGalleryDefaultEditor({ block, assets, onChange }: BlockE
                         })
                       }
                       className="rounded-xl border border-line bg-surface px-3 py-2 text-sm text-text-main outline-none transition focus:ring-2 focus:ring-focus/50"
-                      placeholder="Project description"
+                      placeholder="Project card description"
                     />
+                  </label>
+
+                  <label className="grid gap-1 text-sm">
+                    <span className="font-medium text-text-main">Description (Markdown, optional)</span>
+                    <textarea
+                      value={item.descriptionMd}
+                      rows={5}
+                      onChange={(event) =>
+                        updateProjectItem(projectIndex, {
+                          ...item,
+                          descriptionMd: event.target.value,
+                        })
+                      }
+                      className="rounded-xl border border-line bg-surface px-3 py-2 text-sm text-text-main outline-none transition focus:ring-2 focus:ring-focus/50"
+                      placeholder="Project details in markdown for inside page"
+                    />
+                    <span className="text-xs text-text-muted">
+                      Supports basic markdown: headings (<code>#</code>), lists, links, quotes, and inline/code blocks.
+                    </span>
                   </label>
 
                   <label className="grid gap-1 text-sm">
@@ -261,35 +281,65 @@ export function ProjectsGalleryDefaultEditor({ block, assets, onChange }: BlockE
 
                   <div className="grid gap-3 rounded-xl border border-line bg-surface-alt p-3">
                     <div className="flex items-center justify-between gap-3">
-                      <p className="text-sm font-medium text-text-main">Nested gallery images</p>
-                      <UIButton
-                        type="button"
-                        size="sm"
-                        theme="base"
-                        variant="contained"
-                        onClick={() =>
-                          updateProjectItem(projectIndex, {
-                            ...item,
-                            galleryItems: [
-                              ...item.galleryItems,
-                              {
-                                assetId: undefined,
-                                imageAnchor: undefined,
-                                title: "",
-                                description: "",
-                                price: "",
-                                meta: "",
-                              },
-                            ],
-                          })
-                        }
-                      >
-                        Add image
-                      </UIButton>
+                      <p className="text-sm font-medium text-text-main">Nested gallery items</p>
+                      <div className="flex items-center gap-2">
+                        <UIButton
+                          type="button"
+                          size="sm"
+                          theme="base"
+                          variant="outlined"
+                          onClick={() =>
+                            updateProjectItem(projectIndex, {
+                              ...item,
+                              galleryItems: [
+                                ...item.galleryItems,
+                                {
+                                  kind: "markdown",
+                                  assetId: undefined,
+                                  imageAnchor: undefined,
+                                  title: "",
+                                  description: "",
+                                  contentMd: "",
+                                  price: "",
+                                  meta: "",
+                                },
+                              ],
+                            })
+                          }
+                        >
+                          Add markdown
+                        </UIButton>
+                        <UIButton
+                          type="button"
+                          size="sm"
+                          theme="base"
+                          variant="contained"
+                          onClick={() =>
+                            updateProjectItem(projectIndex, {
+                              ...item,
+                              galleryItems: [
+                                ...item.galleryItems,
+                                {
+                                  kind: "image",
+                                  assetId: undefined,
+                                  imageAnchor: undefined,
+                                  title: "",
+                                  description: "",
+                                  contentMd: "",
+                                  price: "",
+                                  meta: "",
+                                },
+                              ],
+                            })
+                          }
+                        >
+                          Add image
+                        </UIButton>
+                      </div>
                     </div>
 
                     {item.galleryItems.length === 0 ? (
-                      <p className="text-sm text-text-muted">No nested gallery images yet.</p>
+                      <p className="text-sm text-text-muted">No nested gallery items yet.</p>
                     ) : (
                       <div className="grid gap-3">
                         {item.galleryItems.map((galleryItem, imageIndex) => (
@@ -299,7 +349,7 @@ export function ProjectsGalleryDefaultEditor({ block, assets, onChange }: BlockE
                           >
                             <div className="flex items-center justify-between gap-3">
                               <p className="text-sm font-medium text-text-main">
-                                Image {imageIndex + 1}
+                                {galleryItem.kind === "markdown" ? "Markdown" : "Image"} {imageIndex + 1}
                               </p>
                               <UIButton
                                 type="button"
@@ -320,7 +370,7 @@ export function ProjectsGalleryDefaultEditor({ block, assets, onChange }: BlockE
                             </div>
 
                             <label className="grid gap-1 text-sm">
-                              <span className="font-medium text-text-main">Image anchor</span>
+                              <span className="font-medium text-text-main">Item anchor</span>
                               <UITextInput
                                 size="sm"
                                 value={galleryItem.imageAnchor ?? ""}
@@ -339,29 +389,47 @@ export function ProjectsGalleryDefaultEditor({ block, assets, onChange }: BlockE
                               />
                             </label>
 
-                            <AssetPicker
-                              assets={assets}
-                              selectedAssetId={galleryItem.assetId}
-                              onSelect={(assetId) =>
-                                updateGalleryItem(projectIndex, imageIndex, {
-                                  ...galleryItem,
-                                  assetId,
-                                })
-                              }
-                              onClear={() =>
-                                updateGalleryItem(projectIndex, imageIndex, {
-                                  ...galleryItem,
-                                  assetId: undefined,
-                                })
-                              }
-                              title="Image"
-                              description="Choose image for nested gallery item."
-                              emptyMessage="Upload an image in Project assets first."
-                              clearLabel="Remove image"
-                              selectLabel="Use image"
-                              layout="grid"
-                              compact
-                            />
+                            {galleryItem.kind === "image" ? (
+                              <AssetPicker
+                                assets={assets}
+                                selectedAssetId={galleryItem.assetId}
+                                onSelect={(assetId) =>
+                                  updateGalleryItem(projectIndex, imageIndex, {
+                                    ...galleryItem,
+                                    assetId,
+                                  })
+                                }
+                                onClear={() =>
+                                  updateGalleryItem(projectIndex, imageIndex, {
+                                    ...galleryItem,
+                                    assetId: undefined,
+                                  })
+                                }
+                                title="Image"
+                                description="Choose image for nested gallery item."
+                                emptyMessage="Upload an image in Project assets first."
+                                clearLabel="Remove image"
+                                selectLabel="Use image"
+                                layout="grid"
+                                compact
+                              />
+                            ) : (
+                              <label className="grid gap-1 text-sm">
+                                <span className="font-medium text-text-main">Markdown content</span>
+                                <textarea
+                                  value={galleryItem.contentMd}
+                                  rows={6}
+                                  onChange={(event) =>
+                                    updateGalleryItem(projectIndex, imageIndex, {
+                                      ...galleryItem,
+                                      contentMd: event.target.value,
+                                    })
+                                  }
+                                  className="rounded-xl border border-line bg-surface px-3 py-2 text-sm text-text-main outline-none transition focus:ring-2 focus:ring-focus/50"
+                                  placeholder="Markdown for this nested item"
+                                />
+                              </label>
+                            )}
                           </article>
                         ))}
                       </div>
@@ -376,4 +444,3 @@ export function ProjectsGalleryDefaultEditor({ block, assets, onChange }: BlockE
     </div>
   );
 }
-

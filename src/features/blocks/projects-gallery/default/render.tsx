@@ -18,7 +18,7 @@ export function ProjectsGalleryDefaultRender({
   galleryItemLinkMode = "absolute",
 }: BlockRenderProps) {
   const props = readProjectsGalleryProps(block.props);
-  const modeQuery = mode === "dark" ? "?mode=dark" : "";
+  const modeQuery = `?mode=${mode}`;
 
   return (
     <section className="space-y-6 p-4 md:p-8">

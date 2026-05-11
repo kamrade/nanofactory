@@ -5,7 +5,7 @@ export function buildGalleryItemNavigationHrefs(input: {
   backHref?: string;
   mode?: "light" | "dark";
 }) {
-  const modeQuery = input.mode === "dark" ? "?mode=dark" : "";
+  const modeQuery = `?mode=${input.mode ?? "light"}`;
 
   return {
     backHref: input.backHref ?? `../..${modeQuery}#${input.galleryAnchor}`,

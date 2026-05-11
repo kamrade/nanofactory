@@ -26,7 +26,7 @@ export function buildGalleryItemPageViewModel(input: BuildGalleryItemPageViewMod
     mode,
     backHref:
       backLinkMode === "absolute"
-        ? `/p/${resolvedItem.projectSlug}${mode === "dark" ? "?mode=dark" : ""}#${resolvedItem.galleryAnchor}`
+        ? `/p/${resolvedItem.projectSlug}?mode=${mode}#${resolvedItem.galleryAnchor}`
         : undefined,
   });
 
@@ -35,4 +35,3 @@ export function buildGalleryItemPageViewModel(input: BuildGalleryItemPageViewMod
     navigationHrefs,
   };
 }
-

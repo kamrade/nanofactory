@@ -4,6 +4,7 @@ import { notFound } from "next/navigation";
 import type { Metadata } from "next";
 import { GalleryItemKeyboardNav } from "./gallery-item-keyboard-nav";
 
+import { MdRenderer } from "@/components/md-renderer";
 import { getAssetsByProjectId } from "@/lib/assets";
 import { buildAssetMap, resolveAssetById } from "@/lib/assets/resolution";
 import { normalizePageContent } from "@/lib/editor/content";
@@ -167,7 +168,7 @@ export default async function PublishedGalleryItemPage({
   if (resolvedProjectGallery) {
     const assets = await getAssetsByProjectId(project.id);
     const assetMap = buildAssetMap(assets);
-    const modeQuery = resolvedMode === "dark" ? "?mode=dark" : "";
+    const modeQuery = `?mode=${resolvedMode}`;
     const backHref =
       linkMode === "relative"
         ? `../..${modeQuery}#${resolvedProjectGallery.blockAnchor}`
@@ -188,7 +189,7 @@ export default async function PublishedGalleryItemPage({
               Back to projects
             </Link>
             <div className="inline-flex items-center gap-2 rounded-xl border border-line bg-surface px-3 py-2 text-sm text-text-muted">
-              <span>{resolvedProjectGallery.galleryItems.length} images</span>
+              <span>{resolvedProjectGallery.galleryItems.length} items</span>
             </div>
           </div>
 
@@ -198,10 +199,11 @@ export default async function PublishedGalleryItemPage({
                 ? resolvedProjectGallery.title
                 : `Project ${resolvedProjectGallery.itemIndex + 1}`}
             </h1>
-            {resolvedProjectGallery.description.trim().length > 0 ? (
-              <p className="text-sm leading-7 text-text-muted">
-                {resolvedProjectGallery.description}
-              </p>
+            {resolvedProjectGallery.descriptionMd.trim().length > 0 ? (
+              <MdRenderer
+                content={resolvedProjectGallery.descriptionMd}
+                className="text-sm text-text-muted"
+              />
             ) : null}
             {resolvedProjectGallery.price.trim().length > 0 ? (
               <p className="text-base font-semibold text-text-main">{resolvedProjectGallery.price}</p>
@@ -222,9 +224,19 @@ export default async function PublishedGalleryItemPage({
               return (
                 <article
                   key={`${resolvedProjectGallery.projectAnchor}-${item.imageAnchor}-${index}`}
-                  className="relative overflow-hidden rounded-2xl border border-line bg-surface-alt"
+                  className={`relative overflow-hidden rounded-2xl border border-line bg-surface-alt ${
+                    item.kind === "markdown" ? "md:col-span-2 lg:col-span-3" : ""
+                  }`}
                 >
-                  {asset ? (
+                  {item.kind === "markdown" ? (
+                    <div className="flex min-h-56 items-start bg-surface p-4">
+                      {item.contentMd.trim().length > 0 ? (
+                        <MdRenderer content={item.contentMd} className="text-sm text-text-muted" />
+                      ) : (
+                        <p className="text-sm text-text-muted">No markdown content</p>
+                      )}
+                    </div>
+                  ) : asset ? (
                     <Link href={href} className="block transition hover:opacity-95">
                       {/* eslint-disable-next-line @next/next/no-img-element */}
                       <img

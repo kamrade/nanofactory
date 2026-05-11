@@ -5,6 +5,7 @@ import { FiArchive, FiArrowRight, FiCopy, FiEdit2, FiMoreVertical, FiPlus, FiSea
 
 import { AppStickyHeader } from "@/components/navigation/app-sticky-header";
 import { ProjectRenderer } from "@/components/projects/project-renderer";
+import { MdRenderer } from "@/components/md-renderer";
 import { UIButton } from "@/components/ui/button";
 import { UIBadge } from "@/components/ui/badge";
 import { UICard } from "@/components/ui/card";
@@ -93,6 +94,46 @@ export function ShowcaseClient({
   const [profileRole, setProfileRole] = useState("Designer");
   const [profileSavedAt, setProfileSavedAt] = useState("never");
   const [isProfileSaving, setIsProfileSaving] = useState(false);
+  const [markdownValue, setMarkdownValue] = useState(
+    [
+      "# Heading 1",
+      "## Heading 2",
+      "### Heading 3",
+      "#### Heading 4",
+      "##### Heading 5",
+      "###### Heading 6",
+      "",
+      "Paragraph with **bold**, _italic_, ~~strikethrough~~, and `inline code`.",
+      "",
+      "> Blockquote: reusable markdown content for project storytelling.",
+      "",
+      "---",
+      "",
+      "Unordered list:",
+      "- First bullet",
+      "- Second bullet",
+      "- [x] Task done",
+      "- [ ] Task todo",
+      "",
+      "Ordered list:",
+      "1. First item",
+      "2. Second item",
+      "3. Third item",
+      "",
+      "[External link](https://example.com)",
+      "",
+      "```ts",
+      "const message = \"Code block example\";",
+      "console.log(message);",
+      "```",
+      "",
+      "| Feature | Status |",
+      "| --- | --- |",
+      "| Headings | Supported |",
+      "| Lists | Supported |",
+      "| Code | Supported |",
+    ].join("\n")
+  );
   const [switcherValues, setSwitcherValues] = useState({
     enabled: true,
   });
@@ -960,6 +1001,31 @@ export function ShowcaseClient({
                 </p>
               </div>
             </UICard>
+
+            <UICard title="UIKit · Markdown Renderer">
+              <p className="text-sm text-text-muted">
+                Введите Markdown слева и проверьте, как он будет выглядеть в карточке проекта. В примере уже заполнены все поддерживаемые элементы.
+              </p>
+              <div className="grid items-start gap-4 md:grid-cols-2">
+                <label className="grid h-[clamp(18rem,46vh,32rem)] gap-1.5 text-sm">
+                  <span className="font-medium text-text-main">Markdown input</span>
+                  <textarea
+                    value={markdownValue}
+                    rows={10}
+                    onChange={(event) => setMarkdownValue(event.target.value)}
+                    className="h-full rounded-xl border border-line bg-surface px-3 py-2 align-top text-sm leading-6 text-text-main outline-none transition focus:ring-2 focus:ring-focus/50"
+                    placeholder="Введите markdown..."
+                  />
+                </label>
+
+                <div className="grid h-[clamp(18rem,46vh,32rem)] gap-1.5 text-sm">
+                  <span className="font-medium text-text-main">Rendered preview</span>
+                  <div className="h-full max-h-[32rem] overflow-auto rounded-xl border border-line bg-surface-alt p-3">
+                    <MdRenderer content={markdownValue} className="text-sm text-text-muted" />
+                  </div>
+                </div>
+              </div>
+            </UICard>
           </div>
         </section>
       ) : null}
@@ -971,8 +1037,6 @@ export function ShowcaseClient({
           mode={mode}
           content={content}
           assets={[]}
-          showPublishedBadge={false}
-          showProjectMeta={false}
         />
       ) : null}
     </div>

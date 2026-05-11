@@ -107,7 +107,7 @@ test("publishes and unpublishes a project through the editor", async ({ page }) 
   }
 
   await page.goto(publicUrl);
-  await expect(page.getByText("Published with Nanofactory")).toBeVisible();
+  await expect(page.locator("main[data-theme][data-mode]")).toBeVisible();
 
   await page.goto("/dashboard");
   await page.getByRole("link", { name: "Open" }).first().click();
@@ -123,29 +123,6 @@ test("publishes and unpublishes a project through the editor", async ({ page }) 
   await expect(page.getByText("This page could not be found.")).toBeVisible();
 });
 
-
-test("switches preview mode between light and dark", async ({ page }) => {
-  await createProjectFromDashboard(page, "Mode Switch Project");
-
-  await page.waitForURL(/\/projects\/.+/);
-  await page.getByRole("button", { name: "Info" }).click();
-  const infoSheet = page.getByRole("dialog", { name: "Project info" });
-  await expect(infoSheet).toBeVisible();
-
-  const previewPopupPromise = page.waitForEvent("popup");
-  await infoSheet.getByRole("button", { name: "Open preview" }).click();
-  const previewPopup = await previewPopupPromise;
-
-  await previewPopup.waitForLoadState("domcontentloaded");
-  await expect(previewPopup.locator('main[data-mode="light"]')).toBeVisible();
-
-  await previewPopup.getByRole("radio", { name: "Dark" }).click();
-  await expect(previewPopup.locator('main[data-mode="dark"]')).toBeVisible();
-
-  await previewPopup.getByRole("radio", { name: "Light" }).click();
-  await expect(previewPopup.locator('main[data-mode="light"]')).toBeVisible();
-  await previewPopup.close();
-});
 
 test("does not show or open projects owned by another user", async ({ page }) => {
   const otherUser = await seedUser({

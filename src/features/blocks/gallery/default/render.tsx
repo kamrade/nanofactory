@@ -83,7 +83,7 @@ export function GalleryDefaultRender({
   const columns = readColumns(block.props);
   const imageHeightMode = readImageHeightMode(block.props);
   const items = readItems(block.props);
-  const modeQuery = mode === "dark" ? "?mode=dark" : "";
+  const modeQuery = `?mode=${mode}`;
 
   return (
     <section className="space-y-6 p-4 md:p-8">

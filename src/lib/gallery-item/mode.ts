@@ -16,12 +16,19 @@ export function resolveGalleryItemMode({
   if (searchMode === "dark") {
     return "dark";
   }
+  if (searchMode === "light") {
+    return "light";
+  }
 
   if (referer) {
     try {
       const refererUrl = new URL(referer);
-      if (refererUrl.searchParams.get("mode") === "dark") {
+      const refererMode = refererUrl.searchParams.get("mode");
+      if (refererMode === "dark") {
         return "dark";
+      }
+      if (refererMode === "light") {
+        return "light";
       }
     } catch {
       // ignore malformed referrer
@@ -36,4 +43,3 @@ export function readModeCookieValue(cookieStore: {
 }) {
   return cookieStore.get(UI_MODE_COOKIE)?.value;
 }
-

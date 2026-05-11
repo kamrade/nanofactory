@@ -4,6 +4,7 @@ import { notFound } from "next/navigation";
 import type { Metadata } from "next";
 
 import { GalleryItemKeyboardNav } from "../gallery-item-keyboard-nav";
+import { MdRenderer } from "@/components/md-renderer";
 import { getAssetsByProjectId } from "@/lib/assets";
 import { buildAssetMap, resolveAssetById } from "@/lib/assets/resolution";
 import { normalizePageContent } from "@/lib/editor/content";
@@ -13,48 +14,48 @@ import {
 } from "@/lib/gallery-item/mode";
 import { getPublishedProjectBySlug } from "@/lib/projects";
 import {
-  type ResolvedProjectsGalleryImage,
-  resolveProjectsGalleryImageFromContent,
+  type ResolvedProjectsGalleryEntry,
+  resolveProjectsGalleryEntryFromContent,
 } from "@/lib/projects-gallery/resolve";
 import { resolveGalleryItemLinkModeByHost } from "@/lib/routing/gallery-link-mode";
 import { DEFAULT_THEME_KEY, isThemeKey } from "@/lib/themes";
 import { enforceModeByPolicy } from "@/lib/projects/mode-policy";
 
-type ProjectsGalleryImagePageProps = {
+type ProjectsGalleryEntryPageProps = {
   params: Promise<{
     slug: string;
     galleryAnchor: string;
     itemAnchor: string;
-    imageAnchor: string;
+    entryAnchor: string;
   }>;
   searchParams?: Promise<{
     mode?: string;
   }>;
 };
 
-type ResolvedPublishedProjectsGalleryImage = ResolvedProjectsGalleryImage & {
+type ResolvedPublishedProjectsGalleryEntry = ResolvedProjectsGalleryEntry & {
   projectSlug: string;
   projectName: string;
   projectThemeKey: string;
 };
 
-async function resolvePublishedProjectsGalleryImage(
+async function resolvePublishedProjectsGalleryEntry(
   slug: string,
   projectAnchor: string,
   nestedGalleryAnchor: string,
-  imageAnchor: string
-): Promise<ResolvedPublishedProjectsGalleryImage | null> {
+  entryAnchor: string
+): Promise<ResolvedPublishedProjectsGalleryEntry | null> {
   const project = await getPublishedProjectBySlug(slug);
   if (!project) {
     return null;
   }
 
   const content = normalizePageContent(project.contentJson);
-  const resolved = resolveProjectsGalleryImageFromContent(
+  const resolved = resolveProjectsGalleryEntryFromContent(
     content,
     projectAnchor,
     nestedGalleryAnchor,
-    imageAnchor
+    entryAnchor
   );
   if (!resolved) {
     return null;
@@ -70,26 +71,28 @@ async function resolvePublishedProjectsGalleryImage(
 
 export async function generateMetadata({
   params,
-}: ProjectsGalleryImagePageProps): Promise<Metadata> {
-  const { slug, galleryAnchor, itemAnchor, imageAnchor } = await params;
-  const resolved = await resolvePublishedProjectsGalleryImage(
+}: ProjectsGalleryEntryPageProps): Promise<Metadata> {
+  const { slug, galleryAnchor, itemAnchor, entryAnchor } = await params;
+  const resolved = await resolvePublishedProjectsGalleryEntry(
     slug,
     galleryAnchor,
     itemAnchor,
-    imageAnchor
+    entryAnchor
   );
 
   if (!resolved) {
     return {
-      title: "Gallery image not found",
+      title: "Gallery item not found",
     };
   }
 
-  const title = resolved.title.trim().length > 0 ? resolved.title : "Gallery image";
+  const title = resolved.title.trim().length > 0 ? resolved.title : "Gallery item";
   const description =
-    resolved.description.trim().length > 0
-      ? resolved.description
-      : `${resolved.projectName} project gallery image`;
+    (resolved.kind === "markdown" ? resolved.contentMd : resolved.description).trim().length > 0
+      ? resolved.kind === "markdown"
+        ? resolved.contentMd
+        : resolved.description
+      : `${resolved.projectName} project gallery item`;
 
   return {
     title: `${title} · ${resolved.projectName}`,
@@ -97,11 +100,11 @@ export async function generateMetadata({
   };
 }
 
-export default async function ProjectsGalleryImagePage({
+export default async function ProjectsGalleryEntryPage({
   params,
   searchParams,
-}: ProjectsGalleryImagePageProps) {
-  const { slug, galleryAnchor, itemAnchor, imageAnchor } = await params;
+}: ProjectsGalleryEntryPageProps) {
+  const { slug, galleryAnchor, itemAnchor, entryAnchor } = await params;
   const resolvedSearchParams = searchParams ? await searchParams : {};
   const requestHeaders = await headers();
   const linkMode = resolveGalleryItemLinkModeByHost(requestHeaders.get("host"));
@@ -111,11 +114,11 @@ export default async function ProjectsGalleryImagePage({
     referer: requestHeaders.get("referer"),
     cookieMode: readModeCookieValue(cookieStore),
   });
-  const resolved = await resolvePublishedProjectsGalleryImage(
+  const resolved = await resolvePublishedProjectsGalleryEntry(
     slug,
     galleryAnchor,
     itemAnchor,
-    imageAnchor
+    entryAnchor
   );
   if (!resolved) {
     notFound();
@@ -130,7 +133,7 @@ export default async function ProjectsGalleryImagePage({
   const assets = await getAssetsByProjectId(project.id);
   const assetMap = buildAssetMap(assets);
   const asset = resolveAssetById(resolved.assetId, assetMap);
-  const modeQuery = resolvedMode === "dark" ? "?mode=dark" : "";
+  const modeQuery = `?mode=${resolvedMode}`;
   const backHref =
     linkMode === "relative"
       ? `../..${modeQuery}`
@@ -198,7 +201,17 @@ export default async function ProjectsGalleryImagePage({
             )}
           </div>
 
-          {asset ? (
+          {resolved.kind === "markdown" ? (
+            <div className="p-5">
+              {resolved.contentMd.trim().length > 0 ? (
+                <MdRenderer content={resolved.contentMd} className="text-sm text-text-muted" />
+              ) : (
+                <div className="flex min-h-64 items-center justify-center text-sm text-text-muted">
+                  No markdown content
+                </div>
+              )}
+            </div>
+          ) : asset ? (
             // eslint-disable-next-line @next/next/no-img-element
             <img
               src={asset.publicUrl}
