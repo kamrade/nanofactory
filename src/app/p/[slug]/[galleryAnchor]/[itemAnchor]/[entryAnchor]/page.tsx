@@ -19,6 +19,7 @@ import {
 import { buildModeQuery } from "@/lib/routing/mode-query";
 import { resolveGalleryItemLinkModeByHost } from "@/lib/routing/gallery-link-mode";
 import { DEFAULT_THEME_KEY, isThemeKey } from "@/lib/themes";
+import { stripMarkdownForMeta } from "@/lib/markdown/meta";
 import { enforceModeByPolicy } from "@/lib/projects/mode-policy";
 
 type ProjectsGalleryEntryPageProps = {
@@ -87,11 +88,11 @@ export async function generateMetadata({
   }
 
   const title = resolved.title.trim().length > 0 ? resolved.title : "Gallery item";
+  const rawDescription =
+    resolved.kind === "markdown" ? resolved.contentMd : resolved.description;
   const description =
-    (resolved.kind === "markdown" ? resolved.contentMd : resolved.description).trim().length > 0
-      ? resolved.kind === "markdown"
-        ? resolved.contentMd
-        : resolved.description
+    rawDescription.trim().length > 0
+      ? stripMarkdownForMeta(rawDescription)
       : `${resolved.projectName} project gallery item`;
 
   return {

@@ -161,7 +161,7 @@ page.tsx
 
 Решение: выделить shared-компонент GalleryItemNav (или расширить существующий GalleryItemKeyboardNav).
 
-5️⃣ Сырой Markdown в SEO-метаданных 🔒
+5️⃣ ✅ Сырой Markdown в SEO-метаданных 🔒
 Файлы:
 
 page.tsx
@@ -169,11 +169,3 @@ page.tsx (в generateMetadata)
 Проблема: в description метаданных может попасть сырой markdown с #, |, ` и т.д. для markdown-записей галереи. Уже отмечено как открытый пункт в Todo.md.
 
 Решение: добавить helper stripMarkdownForMeta(md: string): string с обрезкой до ~160 символов.
-
-Сводка по безопасности
-:	Описание	Риск
-1	isUuid → общий модуль	🔒 Безопасно
-2	ensureProjectOwner → общий модуль	🔒 Безопасно
-3	Factory для DI в actions	🟡 Умеренный (типизация)
-4	Shared компонент навигации	🔒 Безопасно
-5	stripMarkdownForMeta helper	🔒 Безопасно
