@@ -45,5 +45,5 @@ describe("resolveGalleryItemFromContent", () => {
     const resolved = resolveGalleryItemFromContent(createContent(), "gallery-main", "missing-item");
     expect(resolved).toBeNull();
   });
-});
 
+});

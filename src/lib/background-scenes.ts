@@ -4,6 +4,7 @@ import { and, desc, eq, inArray } from "drizzle-orm";
 
 import { db } from "@/db";
 import { backgroundSceneLibrary, projects } from "@/db/schema";
+import { isUuid } from "@/lib/validate";
 import type { BackgroundSceneRecord } from "@/lib/background-scenes/types";
 
 export class BackgroundSceneError extends Error {
@@ -14,12 +15,6 @@ export class BackgroundSceneError extends Error {
     this.name = "BackgroundSceneError";
     this.status = status;
   }
-}
-
-function isUuid(value: string) {
-  return /^[0-9a-f]{8}-[0-9a-f]{4}-[1-5][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i.test(
-    value
-  );
 }
 
 async function ensureProjectOwner(projectId: string, userId: string) {

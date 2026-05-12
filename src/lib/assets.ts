@@ -10,6 +10,7 @@ import {
   deleteObject,
   putObject,
 } from "@/lib/storage/service";
+import { isUuid } from "@/lib/validate";
 
 const MAX_UPLOAD_SIZE_BYTES = 10 * 1024 * 1024;
 
@@ -60,12 +61,6 @@ export class AssetUploadError extends Error {
     this.name = "AssetUploadError";
     this.status = status;
   }
-}
-
-function isUuid(value: string) {
-  return /^[0-9a-f]{8}-[0-9a-f]{4}-[1-5][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i.test(
-    value
-  );
 }
 
 function normalizeFilename(filename: string) {

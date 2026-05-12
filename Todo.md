@@ -118,7 +118,60 @@
 Что неудачно: поддержка и тестирование усложняются.
 Что сделать: выделить demo-секции в отдельные компоненты (MarkdownDemoCard, ModalDemoCard, etc.).
 
-10. В projects-gallery editor много inline-логики в JSX.
+10. ✅ В projects-gallery editor много inline-логики в JSX.
 Что неудачно: сложно читать и расширять.
 Что сделать: вынести операции addImageEntry/addMarkdownEntry/updateEntry/removeEntry в чистые helper-функции и покрыть unit-тестами.
 
+## Блок 3
+
+1️⃣ ✅ Дублирование isUuid в трёх модулях 🔒
+Файлы: projects.ts, assets.ts, background-scenes.ts
+
+Проблема: одна и та же функция-валидатор UUID определена трижды с идентичным regex.
+
+Решение: вынести в src/lib/validate.ts и импортировать.
+
+2️⃣ ✅ Дублирование ensureProjectOwner в assets и background-scenes 🔒
+Файлы: assets.ts, background-scenes.ts
+
+Проблема: два модуля содержат идентичную функцию проверки владения проектом (тот же SQL, тот же isUuid guard). Разница только в классе ошибки (AssetUploadError vs BackgroundSceneError).
+
+Решение: вынести в src/lib/projects/ownership.ts с параметризованным классом ошибки.
+
+3️⃣ Избыточный boilerplate DI-контейнеров в actions.ts 🟡
+Файл: actions.ts
+
+Проблема: для каждого из 6 action-методов определён:
+
+Интерфейс зависимостей (6 шт)
+Объект зависимостей (6 шт)
+*WithDependencies + публичная обёртка (12 функций)
+Итого ~100 строк шаблонного кода. Пример:
+
+Решение: одна factory withDeps(fn, deps), сокращает каждую пару до одной строки.
+
+4️⃣ Дублирование UI навигации в двух page.tsx 🔒
+Файлы:
+
+page.tsx
+page.tsx
+Проблема: обе страницы рендерят практически идентичную панель: кнопка Back, Previous/Next, счётчик Item X of Y. Различаются только data-testid и источник href.
+
+Решение: выделить shared-компонент GalleryItemNav (или расширить существующий GalleryItemKeyboardNav).
+
+5️⃣ Сырой Markdown в SEO-метаданных 🔒
+Файлы:
+
+page.tsx
+page.tsx (в generateMetadata)
+Проблема: в description метаданных может попасть сырой markdown с #, |, ` и т.д. для markdown-записей галереи. Уже отмечено как открытый пункт в Todo.md.
+
+Решение: добавить helper stripMarkdownForMeta(md: string): string с обрезкой до ~160 символов.
+
+Сводка по безопасности
+:	Описание	Риск
+1	isUuid → общий модуль	🔒 Безопасно
+2	ensureProjectOwner → общий модуль	🔒 Безопасно
+3	Factory для DI в actions	🟡 Умеренный (типизация)
+4	Shared компонент навигации	🔒 Безопасно
+5	stripMarkdownForMeta helper	🔒 Безопасно

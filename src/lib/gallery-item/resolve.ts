@@ -80,4 +80,3 @@ export function resolveGalleryItemFromContent(
     assetId: typeof item.assetId === "string" ? item.assetId : undefined,
   };
 }
-

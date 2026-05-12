@@ -43,6 +43,8 @@ export type ResolvedProjectsGalleryEntry = {
   projectMeta: string;
   entryIndex: number;
   totalEntries: number;
+  imageEntryIndex: number;
+  totalImageEntries: number;
   previousEntryAnchor?: string;
   nextEntryAnchor?: string;
   title: string;
@@ -132,6 +134,29 @@ export function resolveProjectsGalleryEntryFromContent(
   }
 
   const imageItem = resolvedProject.galleryItems[entryIndex];
+  const imageEntryAnchors = resolvedProject.galleryItems
+    .filter((item) => item.kind === "image")
+    .map((item) => item.entryAnchor);
+  const imageEntryIndex = imageEntryAnchors.findIndex(
+    (anchor) => anchor === normalizedEntryAnchor
+  );
+  const previousImageAnchor =
+    imageItem.kind === "image"
+      ? imageEntryIndex > 0
+        ? imageEntryAnchors[imageEntryIndex - 1]
+        : undefined
+      : [...resolvedProject.galleryItems]
+          .slice(0, entryIndex)
+          .reverse()
+          .find((item) => item.kind === "image")?.entryAnchor;
+  const nextImageAnchor =
+    imageItem.kind === "image"
+      ? imageEntryIndex >= 0 && imageEntryIndex < imageEntryAnchors.length - 1
+        ? imageEntryAnchors[imageEntryIndex + 1]
+        : undefined
+      : resolvedProject.galleryItems
+          .slice(entryIndex + 1)
+          .find((item) => item.kind === "image")?.entryAnchor;
 
   return {
     projectAnchor: resolvedProject.projectAnchor,
@@ -145,14 +170,10 @@ export function resolveProjectsGalleryEntryFromContent(
     projectMeta: resolvedProject.meta,
     entryIndex,
     totalEntries: resolvedProject.galleryItems.length,
-    previousEntryAnchor:
-      entryIndex > 0
-        ? resolvedProject.galleryItems[entryIndex - 1]?.entryAnchor
-        : undefined,
-    nextEntryAnchor:
-      entryIndex < resolvedProject.galleryItems.length - 1
-        ? resolvedProject.galleryItems[entryIndex + 1]?.entryAnchor
-        : undefined,
+    imageEntryIndex,
+    totalImageEntries: imageEntryAnchors.length,
+    previousEntryAnchor: previousImageAnchor,
+    nextEntryAnchor: nextImageAnchor,
     title: imageItem.title,
     description: imageItem.description,
     contentMd: imageItem.contentMd,

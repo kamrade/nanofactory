@@ -1,10 +1,9 @@
 import Link from "next/link";
 import { cookies, headers } from "next/headers";
-import { notFound } from "next/navigation";
+import { notFound, redirect } from "next/navigation";
 import type { Metadata } from "next";
 
 import { GalleryItemKeyboardNav } from "../gallery-item-keyboard-nav";
-import { MdRenderer } from "@/components/md-renderer";
 import { getAssetsByProjectId } from "@/lib/assets";
 import { buildAssetMap, resolveAssetById } from "@/lib/assets/resolution";
 import { normalizePageContent } from "@/lib/editor/content";
@@ -149,6 +148,15 @@ export default async function ProjectsGalleryEntryPage({
       ? `../${resolved.nextEntryAnchor}${modeQuery}`
       : `/p/${resolved.projectSlug}/${resolved.projectAnchor}/${resolved.galleryAnchor}/${resolved.nextEntryAnchor}${modeQuery}`
     : undefined;
+  if (resolved.kind !== "image") {
+    if (nextHref) {
+      redirect(nextHref);
+    }
+    if (previousHref) {
+      redirect(previousHref);
+    }
+    redirect(backHref);
+  }
 
   return (
     <main
@@ -170,7 +178,7 @@ export default async function ProjectsGalleryEntryPage({
           </Link>
           <div className="inline-flex items-center gap-2 rounded-xl border border-line bg-surface px-3 py-2 text-sm text-text-muted">
             <span data-testid="projects-gallery-entry-counter">
-              Item {resolved.entryIndex + 1} of {resolved.totalEntries}
+              Item {resolved.imageEntryIndex + 1} of {resolved.totalImageEntries}
             </span>
           </div>
         </div>
@@ -206,17 +214,7 @@ export default async function ProjectsGalleryEntryPage({
             )}
           </div>
 
-          {resolved.kind === "markdown" ? (
-            <div className="p-5">
-              {resolved.contentMd.trim().length > 0 ? (
-                <MdRenderer content={resolved.contentMd} className="text-sm text-text-muted" />
-              ) : (
-                <div className="flex min-h-64 items-center justify-center text-sm text-text-muted">
-                  No markdown content
-                </div>
-              )}
-            </div>
-          ) : asset ? (
+          {asset ? (
             // eslint-disable-next-line @next/next/no-img-element
             <img
               src={asset.publicUrl}

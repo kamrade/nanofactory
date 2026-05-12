@@ -5,6 +5,12 @@ import { UITextInput } from "@/components/ui/text-input";
 import type { BlockEditorProps } from "../../shared/types";
 import { AssetPicker } from "../../shared/asset-picker";
 import {
+  addImageEntry,
+  addMarkdownEntry,
+  removeEntry,
+  updateEntry,
+} from "./editor-operations";
+import {
   readProjectsGalleryProps,
   type ProjectsGalleryEntryItem,
   type ProjectsGalleryProjectItem,
@@ -48,12 +54,7 @@ export function ProjectsGalleryDefaultEditor({ block, assets, onChange }: BlockE
       return;
     }
 
-    updateProjectItem(projectIndex, {
-      ...projectItem,
-      galleryItems: projectItem.galleryItems.map((item, itemIdx) =>
-        itemIdx === entryIndex ? nextEntryItem : item
-      ),
-    });
+    updateProjectItem(projectIndex, updateEntry(projectItem, entryIndex, nextEntryItem));
   }
 
   return (
@@ -289,22 +290,7 @@ export function ProjectsGalleryDefaultEditor({ block, assets, onChange }: BlockE
                           theme="base"
                           variant="outlined"
                           onClick={() =>
-                            updateProjectItem(projectIndex, {
-                              ...item,
-                              galleryItems: [
-                                ...item.galleryItems,
-                                {
-                                  kind: "markdown",
-                                  assetId: undefined,
-                                  entryAnchor: undefined,
-                                  title: "",
-                                  description: "",
-                                  contentMd: "",
-                                  price: "",
-                                  meta: "",
-                                },
-                              ],
-                            })
+                            updateProjectItem(projectIndex, addMarkdownEntry(item))
                           }
                         >
                           Add markdown
@@ -315,22 +301,7 @@ export function ProjectsGalleryDefaultEditor({ block, assets, onChange }: BlockE
                           theme="base"
                           variant="contained"
                           onClick={() =>
-                            updateProjectItem(projectIndex, {
-                              ...item,
-                              galleryItems: [
-                                ...item.galleryItems,
-                                {
-                                  kind: "image",
-                                  assetId: undefined,
-                                  entryAnchor: undefined,
-                                  title: "",
-                                  description: "",
-                                  contentMd: "",
-                                  price: "",
-                                  meta: "",
-                                },
-                              ],
-                            })
+                            updateProjectItem(projectIndex, addImageEntry(item))
                           }
                         >
                           Add entry (image)
@@ -357,12 +328,7 @@ export function ProjectsGalleryDefaultEditor({ block, assets, onChange }: BlockE
                                 theme="danger"
                                 variant="outlined"
                                 onClick={() =>
-                                  updateProjectItem(projectIndex, {
-                                      ...item,
-                                      galleryItems: item.galleryItems.filter(
-                                      (_, idx) => idx !== entryIndex
-                                    ),
-                                  })
+                                  updateProjectItem(projectIndex, removeEntry(item, entryIndex))
                                 }
                               >
                                 Remove

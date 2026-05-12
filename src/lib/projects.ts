@@ -14,18 +14,13 @@ import {
   resolveProjectModePolicy,
 } from "@/lib/projects/mode-policy";
 import { DEFAULT_THEME_KEY, type ThemeKey } from "@/lib/themes";
+import { isUuid } from "@/lib/validate";
 
 type CreateProjectInput = {
   name: string;
   themeKey?: ThemeKey;
   modePolicy?: ProjectModePolicy;
 };
-
-function isUuid(value: string) {
-  return /^[0-9a-f]{8}-[0-9a-f]{4}-[1-5][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i.test(
-    value
-  );
-}
 
 async function generateUniqueProjectSlug(baseName: string) {
   const baseSlug = slugifyProjectName(baseName);

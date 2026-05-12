@@ -136,7 +136,7 @@ test("projects gallery preserves dark mode in nested routes", async ({ page }) =
   await expect(page).toHaveURL(/mode=dark/);
 });
 
-test("projects gallery supports markdown nested items with full-width preview and detail render", async ({
+test("projects gallery hides markdown nested items in image preview list", async ({
   page,
 }) => {
   await createProjectFromDashboard(page, "Projects Gallery Markdown Item");
@@ -162,13 +162,39 @@ test("projects gallery supports markdown nested items with full-width preview an
   await firstProjectLink.click();
 
   await expect(page).toHaveURL(/\/project-1\/gallery-1(?:\?mode=(?:light|dark))?$/);
-  await expect(page.getByTestId("projects-gallery-entry-count")).toHaveText("3 items");
+  await expect(page.getByTestId("projects-gallery-entry-count")).toHaveText("2 items");
+  const previewGrid = page.getByTestId("projects-gallery-image-preview");
+  await expect(previewGrid.locator("article", { hasText: "Markdown block" })).toHaveCount(0);
+  await expect(page.getByTestId("projects-gallery-all-entries").locator("article", { hasText: "Markdown block" })).toHaveCount(1);
 
-  const markdownItemArticle = page.locator("article", { hasText: "Markdown block" }).first();
-  await expect(markdownItemArticle).toBeVisible();
-  await expect(markdownItemArticle).toHaveClass(/lg:col-span-3/);
+  const imageLinks = previewGrid.locator('article a[href*="/project-1/gallery-1/"]');
+  await expect(imageLinks).toHaveCount(2);
 
-  await markdownItemArticle.locator('a[href*="/project-1/gallery-1/"]').first().click();
-  await expect(page).toHaveURL(/\/project-1\/gallery-1\/project-1-gallery-1-item-3(?:\?mode=(?:light|dark))?$/);
-  await expect(page.getByRole("heading", { name: "Markdown block" })).toBeVisible();
+  await page.goto(`${publicUrl}/project-1/gallery-1/project-1-gallery-1-item-3`);
+  await expect(page).toHaveURL(/\/project-1\/gallery-1\/project-1-gallery-1-item-(1|2)(?:\?mode=(?:light|dark))?$/);
+});
+
+test("projects gallery counter uses image-only sequence when markdown is in the middle", async ({
+  page,
+}) => {
+  await createProjectFromDashboard(page, "Projects Gallery Mixed Counter");
+  await addBlock(page, "Projects gallery with nested per-project image galleries.");
+
+  await page.getByRole("button", { name: "Add markdown" }).first().click();
+  await page
+    .getByPlaceholder("Markdown for this nested item")
+    .first()
+    .fill("### Middle markdown");
+
+  await page.getByRole("button", { name: "Add entry (image)" }).first().click();
+
+  await page.getByRole("button", { name: "Save" }).click();
+  await expect(page.getByText("Project content saved.")).toBeVisible();
+
+  await publishProject(page);
+  const publicUrl = await getPublicUrl(page);
+  await page.goto(`${publicUrl}/project-1/gallery-1/project-1-gallery-1-item-3`);
+
+  await expect(page).toHaveURL(/\/project-1\/gallery-1\/project-1-gallery-1-item-4(?:\?mode=(?:light|dark))?$/);
+  await expect(page.getByTestId("projects-gallery-entry-counter")).toHaveText("Item 3 of 3");
 });

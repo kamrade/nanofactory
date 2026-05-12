@@ -170,6 +170,9 @@ export default async function PublishedGalleryItemPage({
     const assets = await getAssetsByProjectId(project.id);
     const assetMap = buildAssetMap(assets);
     const modeQuery = buildModeQuery(resolvedMode);
+    const previewImageItems = resolvedProjectGallery.galleryItems.filter(
+      (item) => item.kind === "image"
+    );
     const backHref =
       linkMode === "relative"
         ? `../..${modeQuery}#${resolvedProjectGallery.blockAnchor}`
@@ -183,7 +186,7 @@ export default async function PublishedGalleryItemPage({
         className="min-h-screen bg-bg py-10 text-text-main"
       >
         <div className="container mx-auto grid max-w-5xl gap-6 px-4">
-          <div className="flex flex-wrap items-center justify-between gap-3">
+          <div data-testid="project-header" className="flex flex-wrap items-center justify-between gap-3">
             <Link
               data-testid="projects-gallery-back-to-projects"
               href={backHref}
@@ -193,7 +196,7 @@ export default async function PublishedGalleryItemPage({
             </Link>
             <div className="inline-flex items-center gap-2 rounded-xl border border-line bg-surface px-3 py-2 text-sm text-text-muted">
               <span data-testid="projects-gallery-entry-count">
-                {resolvedProjectGallery.galleryItems.length} items
+                {previewImageItems.length} items
               </span>
             </div>
           </div>
@@ -218,73 +221,85 @@ export default async function PublishedGalleryItemPage({
             ) : null}
           </section>
 
-          <section className="grid grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-3">
-            {resolvedProjectGallery.galleryItems.map((item, index) => {
-              const asset = resolveAssetById(item.assetId, assetMap);
-              const href =
-                linkMode === "relative"
-                  ? `./${item.entryAnchor}${modeQuery}`
-                  : `/p/${resolvedProjectGallery.projectSlug}/${resolvedProjectGallery.projectAnchor}/${resolvedProjectGallery.galleryAnchor}/${item.entryAnchor}${modeQuery}`;
+          <section
+            data-testid="projects-gallery-all-entries"
+            className="grid gap-3 rounded-2xl border border-line bg-surface p-5"
+          >
+            <div className="flex items-center justify-between gap-3">
+              <h2 className="text-lg font-semibold tracking-tight text-text-main">All entries</h2>
+              <span className="text-sm text-text-muted">
+                {resolvedProjectGallery.galleryItems.length} total
+              </span>
+            </div>
 
-              return (
-                <article
-                  key={`${resolvedProjectGallery.projectAnchor}-${item.entryAnchor}-${index}`}
-                  className={`relative overflow-hidden rounded-2xl border border-line bg-surface-alt ${
-                    item.kind === "markdown" ? "md:col-span-2 lg:col-span-3" : ""
-                  }`}
-                >
-                  {item.kind === "markdown" ? (
-                    <div className="flex min-h-56 items-start bg-surface p-4">
-                      {item.contentMd.trim().length > 0 ? (
-                        <MdRenderer content={item.contentMd} className="text-sm text-text-muted" />
-                      ) : (
-                        <p className="text-sm text-text-muted">No markdown content</p>
-                      )}
-                    </div>
-                  ) : asset ? (
-                    <Link href={href} className="block transition hover:opacity-95">
-                      {/* eslint-disable-next-line @next/next/no-img-element */}
-                      <img
-                        src={asset.publicUrl}
-                        alt={asset.alt ?? asset.originalFilename}
-                        className="h-56 w-full object-cover"
-                      />
-                    </Link>
-                  ) : (
-                    <div className="flex h-56 w-full items-center justify-center bg-surface text-sm text-text-muted">
-                      No image
-                    </div>
-                  )}
+            <div className="grid grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-3">
+              {resolvedProjectGallery.galleryItems.map((item, index) => {
+                const asset = resolveAssetById(item.assetId, assetMap);
+                const href =
+                  linkMode === "relative"
+                    ? `./${item.entryAnchor}${modeQuery}`
+                    : `/p/${resolvedProjectGallery.projectSlug}/${resolvedProjectGallery.projectAnchor}/${resolvedProjectGallery.galleryAnchor}/${item.entryAnchor}${modeQuery}`;
 
-                  {(item.title || item.description || item.price || item.meta) ? (
-                    <div className="space-y-2 p-4">
-                      {item.title.trim().length > 0 ? (
-                        <p className="text-base font-semibold text-text-main">{item.title}</p>
-                      ) : null}
-                      {item.description.trim().length > 0 ? (
-                        <p className="text-sm leading-6 text-text-muted">{item.description}</p>
-                      ) : null}
-                      {item.price.trim().length > 0 ? (
-                        <p className="text-sm font-semibold text-text-main">{item.price}</p>
-                      ) : null}
-                      {item.meta.trim().length > 0 ? (
-                        <p className="text-xs text-text-muted">{item.meta}</p>
-                      ) : null}
-                    </div>
-                  ) : null}
-
-                  <Link
-                    href={href}
-                    aria-label={`Open ${item.title.trim().length > 0 ? item.title : `entry ${index + 1}`}`}
-                    className="absolute inset-0 z-20"
+                return (
+                  <article
+                    key={`all-${resolvedProjectGallery.projectAnchor}-${item.entryAnchor}-${index}`}
+                    className={`relative overflow-hidden rounded-2xl border border-line bg-surface-alt ${
+                      item.kind === "markdown" ? "md:col-span-2 lg:col-span-3" : ""
+                    }`}
                   >
-                    <span className="sr-only">
-                      Open {item.title.trim().length > 0 ? item.title : `entry ${index + 1}`}
-                    </span>
-                  </Link>
-                </article>
-              );
-            })}
+                    {item.kind === "markdown" ? (
+                      <div className="flex min-h-56 items-start bg-surface p-4">
+                        {item.contentMd.trim().length > 0 ? (
+                          <MdRenderer content={item.contentMd} className="text-sm text-text-muted" />
+                        ) : (
+                          <p className="text-sm text-text-muted">No markdown content</p>
+                        )}
+                      </div>
+                    ) : asset ? (
+                      <Link href={href} className="block transition hover:opacity-95">
+                        {/* eslint-disable-next-line @next/next/no-img-element */}
+                        <img
+                          src={asset.publicUrl}
+                          alt={asset.alt ?? asset.originalFilename}
+                          className="h-56 w-full object-cover"
+                        />
+                      </Link>
+                    ) : (
+                      <div className="flex h-56 w-full items-center justify-center bg-surface text-sm text-text-muted">
+                        No image
+                      </div>
+                    )}
+
+                    {(item.title || item.description || item.price || item.meta) ? (
+                      <div className="space-y-2 p-4">
+                        {item.title.trim().length > 0 ? (
+                          <p className="text-base font-semibold text-text-main">{item.title}</p>
+                        ) : null}
+                        {item.description.trim().length > 0 ? (
+                          <p className="text-sm leading-6 text-text-muted">{item.description}</p>
+                        ) : null}
+                        {item.price.trim().length > 0 ? (
+                          <p className="text-sm font-semibold text-text-main">{item.price}</p>
+                        ) : null}
+                        {item.meta.trim().length > 0 ? (
+                          <p className="text-xs text-text-muted">{item.meta}</p>
+                        ) : null}
+                      </div>
+                    ) : null}
+
+                    <Link
+                      href={href}
+                      aria-label={`Open ${item.title.trim().length > 0 ? item.title : `entry ${index + 1}`}`}
+                      className="absolute inset-0 z-20"
+                    >
+                      <span className="sr-only">
+                        Open {item.title.trim().length > 0 ? item.title : `entry ${index + 1}`}
+                      </span>
+                    </Link>
+                  </article>
+                );
+              })}
+            </div>
           </section>
         </div>
       </main>
