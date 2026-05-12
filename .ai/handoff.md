@@ -62,7 +62,17 @@ This is a website/page builder with project-level editing, block-based content, 
   - UIKit sections split into modular files:
     - `src/app/showcase/uikit-sections/*`
 
-5) Projects gallery behavior (current intent)
+5) Recent refactoring (dedup + cleanup)
+- Duplicate `isUuid` extracted from 3 files to shared `src/lib/validate.ts`.
+- Gallery navigation UI extracted into shared `GalleryItemNav` component:
+  - `src/app/p/[slug]/[galleryAnchor]/[itemAnchor]/gallery-item-nav.tsx`
+  - Used by both `[itemAnchor]/page.tsx` and `[entryAnchor]/page.tsx`.
+- Raw markdown in SEO metadata fixed:
+  - Added `stripMarkdownForMeta()` in `src/lib/markdown/meta.ts`.
+  - Applied in `[entryAnchor]/page.tsx` `generateMetadata`.
+- E2E test fixed: `projects-gallery-navigation.spec.ts` adjusted to match actual page structure (no separate image-preview section).
+
+7) Projects gallery behavior (current intent)
 - Project detail page (`/p/[slug]/[projectAnchor]/[galleryAnchor]`):
   - image preview list is image-only for opening entry pages.
 - Entry detail page (`/p/[slug]/[projectAnchor]/[galleryAnchor]/[entryAnchor]`):
@@ -70,7 +80,7 @@ This is a website/page builder with project-level editing, block-based content, 
   - direct open of markdown entry URL should not keep user in markdown-only flow.
 - Counter `Item X of Y` for projects-gallery entry detail is expected to be image-only.
 
-6) Tests added/updated recently
+8) Tests added/updated recently
 - Unit:
   - `tests/unit/gallery-item-mode.test.ts`
   - `tests/unit/gallery-item-view-model.test.ts`
@@ -81,14 +91,14 @@ This is a website/page builder with project-level editing, block-based content, 
   - `tests/e2e/project-gallery-navigation.spec.ts`
   - `tests/e2e/projects-gallery-navigation.spec.ts`
 
-7) Known constraints
+9) Known constraints
 - DB is code-first and owned by app:
   - schema updates must go through migrations.
   - no manual prod schema changes.
 - Keep DB/server credentials server-only.
 - Avoid SSR/client divergence in initial render values.
 
-8) High-risk zones
+10) High-risk zones
 - Hydration-sensitive components:
   - `ProjectModeSwitcher`
   - background/theme/mode remap path
@@ -99,7 +109,7 @@ This is a website/page builder with project-level editing, block-based content, 
   - detail route,
   - next/previous flow.
 
-9) Validation checklist after changes
+11) Validation checklist after changes
 Run at least:
 - `npx tsc --noEmit`
 - relevant unit tests (Vitest)
@@ -107,6 +117,6 @@ Run at least:
   - `tests/e2e/project-gallery-navigation.spec.ts`
   - `tests/e2e/projects-gallery-navigation.spec.ts`
 
-10) Practical note for local e2e
+12) Practical note for local e2e
 - Playwright webServer may fail in restricted network due to `next/font` fetching Google Fonts (`Onest`).
 - If that happens, run with network-enabled execution in this environment.
