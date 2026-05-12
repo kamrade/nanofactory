@@ -1,3 +1,5 @@
+import { createId } from "@/lib/id";
+
 function normalizeExtension(extension?: string | null) {
   if (!extension) {
     return "";
@@ -9,14 +11,6 @@ function normalizeExtension(extension?: string | null) {
     .replace(/[^a-z0-9]/g, "");
 
   return sanitizedExtension ? `.${sanitizedExtension}` : "";
-}
-
-function createStorageId() {
-  if (typeof globalThis.crypto?.randomUUID === "function") {
-    return globalThis.crypto.randomUUID();
-  }
-
-  return `asset-${Date.now()}-${Math.random().toString(36).slice(2, 10)}`;
 }
 
 export function buildStorageKey(input: { projectId: string; extension?: string | null }) {
@@ -32,5 +26,5 @@ export function buildStorageKey(input: { projectId: string; extension?: string |
     throw new Error("buildStorageKey requires a safe projectId");
   }
 
-  return `projects/${safeProjectId}/assets/${createStorageId()}${normalizeExtension(input.extension)}`;
+  return `projects/${safeProjectId}/assets/${createId()}${normalizeExtension(input.extension)}`;
 }

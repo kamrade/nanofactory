@@ -1,3 +1,5 @@
+import { createId } from "@/lib/id";
+
 export function isPlainObject(input: unknown): input is Record<string, unknown> {
   return typeof input === "object" && input !== null && !Array.isArray(input);
 }
@@ -29,9 +31,5 @@ export function readStringList(input: unknown, fallback: string[]) {
 }
 
 export function createBlockId() {
-  if (typeof globalThis.crypto?.randomUUID === "function") {
-    return globalThis.crypto.randomUUID();
-  }
-
-  return `block-${Date.now()}-${Math.random().toString(36).slice(2, 10)}`;
+  return createId("block");
 }

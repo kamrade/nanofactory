@@ -9,14 +9,7 @@ import type {
 } from "@/lib/background-scenes/types";
 import type { ThemeKey } from "@/lib/themes";
 import type { UiMode } from "@/lib/ui-preferences";
-
-function createId(prefix: string) {
-  if (typeof crypto !== "undefined" && typeof crypto.randomUUID === "function") {
-    return `${prefix}_${crypto.randomUUID().slice(0, 8)}`;
-  }
-
-  return `${prefix}_${Math.random().toString(36).slice(2, 10)}`;
-}
+import { createId } from "@/lib/id";
 
 export type BackgroundDefaultsPalette = {
   canvasBackgroundColor: string;
