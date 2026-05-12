@@ -10,6 +10,8 @@ import {
   type ReactNode,
 } from "react";
 
+import { cx } from "@/lib/cn";
+
 type ValidationState = "default" | "error" | "success";
 type UITextInputSize = "sm" | "lg";
 
@@ -27,10 +29,6 @@ export type UITextInputProps = Omit<InputHTMLAttributes<HTMLInputElement>, "size
   onEnterPress?: (value: string) => void;
   onEscapePress?: (value: string) => void;
 };
-
-function cx(...parts: Array<string | false | null | undefined>) {
-  return parts.filter(Boolean).join(" ");
-}
 
 export const UITextInput = forwardRef<HTMLInputElement, UITextInputProps>(function UITextInput(
   {

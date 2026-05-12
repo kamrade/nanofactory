@@ -8,6 +8,8 @@ import {
   type UIMultiSelectListOption,
 } from "@/components/ui/multi-select-list";
 
+import { cx } from "@/lib/cn";
+
 type UIMultiSelectSize = "sm" | "lg";
 type ValidationState = "default" | "error" | "success";
 
@@ -30,10 +32,6 @@ export type UIMultiSelectProps = {
   ariaLabel?: string;
   className?: string;
 };
-
-function cx(...parts: Array<string | false | null | undefined>) {
-  return parts.filter(Boolean).join(" ");
-}
 
 export function UIMultiSelect({
   value,

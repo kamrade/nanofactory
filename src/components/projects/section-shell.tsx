@@ -5,6 +5,8 @@ import { BackgroundRenderer } from "@/components/projects/background-renderer";
 import type { BackgroundScene } from "@/lib/background-scenes/types";
 import type { ThemeKey } from "@/lib/themes";
 import type { UiMode } from "@/lib/ui-preferences";
+import { cx } from "@/lib/cn";
+
 
 type SectionShellProps = {
   block: PageBlock;
@@ -15,10 +17,6 @@ type SectionShellProps = {
   fallbackMode?: UiMode;
   children: ReactNode;
 };
-
-function cx(...parts: Array<string | false | null | undefined>) {
-  return parts.filter(Boolean).join(" ");
-}
 
 function renderInnerContent(
   backgroundScene: BackgroundScene | null | undefined,

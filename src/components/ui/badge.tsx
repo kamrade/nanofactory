@@ -1,4 +1,6 @@
 import type { HTMLAttributes } from "react";
+import { cx } from "@/lib/cn";
+
 
 type BadgeTheme = "base" | "primary" | "danger";
 type BadgeVariant = "contained" | "outlined";
@@ -27,10 +29,6 @@ const variantThemeClasses: Record<BadgeVariant, Record<BadgeTheme, string>> = {
     danger: "border border-danger-line bg-transparent text-text-danger",
   },
 };
-
-function cx(...parts: Array<string | false | null | undefined>) {
-  return parts.filter(Boolean).join(" ");
-}
 
 export function UIBadge({
   theme = "base",

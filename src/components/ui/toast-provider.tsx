@@ -1,6 +1,8 @@
 "use client";
 
 import { createContext, useCallback, useContext, useEffect, useMemo, useRef, useState, type ReactNode } from "react";
+import { cx } from "@/lib/cn";
+
 
 export type UIToastTone = "default" | "error";
 
@@ -28,10 +30,6 @@ type ThemeAttrs = {
 };
 
 const UIToastContext = createContext<UIToastContextValue | null>(null);
-
-function cx(...parts: Array<string | false | null | undefined>) {
-  return parts.filter(Boolean).join(" ");
-}
 
 export function UIToastProvider({ children }: { children: ReactNode }) {
   const [toasts, setToasts] = useState<UIToastRecord[]>([]);

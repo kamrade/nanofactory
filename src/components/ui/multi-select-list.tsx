@@ -1,6 +1,8 @@
 "use client";
 
 import { useMemo, useRef, useState, type KeyboardEvent, type ReactNode } from "react";
+import { cx } from "@/lib/cn";
+
 
 type ValidationState = "default" | "error" | "success";
 type UIMultiSelectListSize = "sm" | "lg";
@@ -29,10 +31,6 @@ export type UIMultiSelectListProps = {
   className?: string;
   name?: string;
 };
-
-function cx(...parts: Array<string | false | null | undefined>) {
-  return parts.filter(Boolean).join(" ");
-}
 
 function getOptionText(option: UIMultiSelectListOption) {
   return (option.textValue ?? (typeof option.label === "string" ? option.label : "")).toLowerCase();

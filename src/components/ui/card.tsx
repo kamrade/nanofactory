@@ -1,4 +1,6 @@
 import type { ReactNode } from "react";
+import { cx } from "@/lib/cn";
+
 
 type UICardProps = {
   title: string;
@@ -6,10 +8,6 @@ type UICardProps = {
   className?: string;
   titleClassName?: string;
 };
-
-function cx(...parts: Array<string | false | null | undefined>) {
-  return parts.filter(Boolean).join(" ");
-}
 
 export function UICard({ title, children, className, titleClassName }: UICardProps) {
   return (

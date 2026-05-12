@@ -16,13 +16,11 @@ import type { Placement } from "@floating-ui/react";
 
 import { UIDropdown } from "@/components/ui/dropdown";
 import { UIMenuList, type UIMenuItem as UIMenuDataItem } from "@/components/ui/menu-list";
+import { cx } from "@/lib/cn";
+
 
 export type { UIMenuDataItem };
 export type UIMenuSize = "sm" | "lg";
-
-function cx(...parts: Array<string | false | null | undefined>) {
-  return parts.filter(Boolean).join(" ");
-}
 
 type UIMenuCommonProps = {
   trigger: ReactElement;

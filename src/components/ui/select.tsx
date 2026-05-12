@@ -3,6 +3,8 @@
 import { useEffect, useId, useMemo, useRef, useState, type ReactNode } from "react";
 
 import { UIDropdown } from "@/components/ui/dropdown";
+import { cx } from "@/lib/cn";
+
 
 type UISelectSize = "sm" | "lg";
 type ValidationState = "default" | "error" | "success";
@@ -35,10 +37,6 @@ export type UISelectProps = {
   className?: string;
   ariaLabel?: string;
 };
-
-function cx(...parts: Array<string | false | null | undefined>) {
-  return parts.filter(Boolean).join(" ");
-}
 
 function getOptionText(option: UISelectOption) {
   return (option.textValue ?? (typeof option.label === "string" ? option.label : "")).toLowerCase();

@@ -1,14 +1,12 @@
 import type { ButtonHTMLAttributes, ReactNode } from "react";
+import { cx } from "@/lib/cn";
+
 
 export type UISwitcherProps = Omit<ButtonHTMLAttributes<HTMLButtonElement>, "onChange" | "children"> & {
   checked: boolean;
   onCheckedChange?: (checked: boolean) => void;
   label?: ReactNode;
 };
-
-function cx(...parts: Array<string | false | null | undefined>) {
-  return parts.filter(Boolean).join(" ");
-}
 
 export function UISwitcher({
   checked,

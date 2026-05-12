@@ -1,4 +1,6 @@
 import Link from "next/link";
+import { cx } from "@/lib/cn";
+
 
 type UITabItem = {
   label: string;
@@ -11,10 +13,6 @@ export type UITabsProps = {
   ariaLabel?: string;
   className?: string;
 };
-
-function cx(...parts: Array<string | false | null | undefined>) {
-  return parts.filter(Boolean).join(" ");
-}
 
 export function UITabs({ items, ariaLabel = "Tabs", className }: UITabsProps) {
   return (

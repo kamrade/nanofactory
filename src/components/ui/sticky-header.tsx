@@ -1,16 +1,14 @@
 "use client";
 
 import { useEffect, useState, type HTMLAttributes, type ReactNode } from "react";
+import { cx } from "@/lib/cn";
+
 
 export type UIStickyHeaderProps = Omit<HTMLAttributes<HTMLElement>, "children"> & {
   children: ReactNode;
   contentClassName?: string;
   revealOnScrollUp?: boolean;
 };
-
-function cx(...parts: Array<string | false | null | undefined>) {
-  return parts.filter(Boolean).join(" ");
-}
 
 export function UIStickyHeader({
   children,

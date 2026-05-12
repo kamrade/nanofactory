@@ -6,6 +6,8 @@ import {
   type ReactElement,
 } from "react";
 
+import { cx } from "@/lib/cn";
+
 type ButtonTheme = "base" | "primary" | "danger";
 type ButtonVariant = "text" | "contained" | "outlined";
 type ButtonSize = "sm" | "lg";
@@ -52,10 +54,6 @@ const variantThemeClasses: Record<ButtonVariant, Record<ButtonTheme, string>> = 
       "border border-danger-line bg-transparent text-text-danger hover:bg-danger-100 active:bg-danger-200",
   },
 };
-
-function cx(...parts: Array<string | false | null | undefined>) {
-  return parts.filter(Boolean).join(" ");
-}
 
 export const UIButton = forwardRef<HTMLButtonElement, UIButtonProps>(function UIButton(
   {

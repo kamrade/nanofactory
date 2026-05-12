@@ -1,4 +1,6 @@
 import type { KeyboardEvent, ReactNode } from "react";
+import { cx } from "@/lib/cn";
+
 
 type UISegmentedControlOption<T extends string> = {
   value: T;
@@ -14,10 +16,6 @@ export type UISegmentedControlProps<T extends string> = {
   ariaLabel?: string;
   className?: string;
 };
-
-function cx(...parts: Array<string | false | null | undefined>) {
-  return parts.filter(Boolean).join(" ");
-}
 
 export function UISegmentedControl<T extends string>({
   value,

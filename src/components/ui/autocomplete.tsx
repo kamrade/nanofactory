@@ -3,6 +3,8 @@
 import { useId, useMemo, useState, type ReactNode } from "react";
 
 import { UIDropdown } from "@/components/ui/dropdown";
+import { cx } from "@/lib/cn";
+
 
 type UIAutocompleteSize = "sm" | "lg";
 type ValidationState = "default" | "error" | "success";
@@ -33,10 +35,6 @@ export type UIAutocompleteProps = {
   className?: string;
   name?: string;
 };
-
-function cx(...parts: Array<string | false | null | undefined>) {
-  return parts.filter(Boolean).join(" ");
-}
 
 function getItemText(item: UIAutocompleteItem) {
   return item.textValue ?? (typeof item.label === "string" ? item.label : item.value);

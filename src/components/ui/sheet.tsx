@@ -16,6 +16,8 @@ import {
   type ReactNode,
 } from "react";
 import { createPortal } from "react-dom";
+import { cx } from "@/lib/cn";
+
 
 type ThemeAttrs = {
   theme?: string;
@@ -38,10 +40,6 @@ type UISheetContextValue = {
 };
 
 const UISheetContext = createContext<UISheetContextValue | null>(null);
-
-function cx(...parts: Array<string | false | null | undefined>) {
-  return parts.filter(Boolean).join(" ");
-}
 
 type UISheetProps = {
   open?: boolean;

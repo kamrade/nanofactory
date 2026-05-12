@@ -169,3 +169,45 @@ page.tsx (в generateMetadata)
 Проблема: в description метаданных может попасть сырой markdown с #, |, ` и т.д. для markdown-записей галереи. Уже отмечено как открытый пункт в Todo.md.
 
 Решение: добавить helper stripMarkdownForMeta(md: string): string с обрезкой до ~160 символов.
+
+## Блок 4
+
+1️⃣ cx() — утилита склеивания классов определена в 3+ местах 🔒
+Файлы: dialog.tsx, sticky-header.tsx, section-shell.tsx (возможно ещё modal.tsx, sheet.tsx)
+
+Везде одно и то же:
+
+Решение: вынести в src/lib/cn.ts (или src/lib/classnames.ts).
+
+2️⃣ createBlockId / createStorageId / createId — три разных генератора ID 🔒
+Файлы:
+
+features/blocks/shared/base.ts → createBlockId() — crypto.randomUUID() / block-${Date.now()}-${random}
+lib/storage/keys.ts → createStorageId() — crypto.randomUUID() / asset-${Date.now()}-${random}
+components/assets/background-scene-defaults.ts → createId(prefix) — crypto.randomUUID().slice(0,8) / ${prefix}_${random}
+Три разных реализации одного и того же с разными префиксами и fallback'ами.
+
+Решение: единый src/lib/id.ts: createId(prefix?).
+
+3️⃣ ProjectModeSwitcher — сложный inline-адаптер для DOM 🟡
+Файл: components/projects/project-mode-switcher.tsx
+
+Начальное состояние создаёт анонимный объект с методом closest прямо в useState:
+
+Это смешивает чтение DOM с логикой компонента, сложно тестировать.
+
+Решение: вынести в readModeFromDom() в отдельную функцию.
+
+4️⃣ getBackgroundDefaultsPalette — тернарный взрыв 🔒
+Файл: components/assets/background-scene-defaults.ts
+
+Функция возвращает большой объект с цветами через вложенные themeKey === "nightfall" ? mode === "dark" ? A : B : C. 4 комбинации → ~80 строк.
+
+Решение: lookup table Record<ThemeKey, Record<UiMode, Palette>>.
+
+5️⃣ readEntryItems / readProjectItems — дублирование парсинга 🔒
+Файл: features/blocks/projects-gallery/default/model.ts
+
+Обе функции делают одно и то же: isPlainObject → читают поля через readOptionalString/readString → нормализуют anchor → filter(Boolean). Различаются только набором полей и типом результата.
+
+Решение: общий helper mapPlainObjects<T>(input, fn).

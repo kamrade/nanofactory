@@ -1,6 +1,8 @@
 "use client";
 
 import { useRef, useState, type KeyboardEvent, type ReactNode } from "react";
+import { cx } from "@/lib/cn";
+
 
 export type UIMenuItem = {
   id: string;
@@ -21,10 +23,6 @@ export type UIMenuListProps = {
   ariaLabel?: string;
   className?: string;
 };
-
-function cx(...parts: Array<string | false | null | undefined>) {
-  return parts.filter(Boolean).join(" ");
-}
 
 function getFirstEnabledIndex(items: UIMenuItem[]) {
   return items.findIndex((item) => !item.disabled);

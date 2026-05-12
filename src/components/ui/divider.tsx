@@ -1,4 +1,6 @@
 import type { HTMLAttributes } from "react";
+import { cx } from "@/lib/cn";
+
 
 type UIDividerSpacing = "none" | "sm" | "md" | "lg";
 
@@ -13,10 +15,6 @@ const spacingClasses: Record<UIDividerSpacing, string> = {
   md: "my-5",
   lg: "my-8",
 };
-
-function cx(...parts: Array<string | false | null | undefined>) {
-  return parts.filter(Boolean).join(" ");
-}
 
 export function UIDivider({
   spacing = "md",
