@@ -3,6 +3,7 @@ import { cookies, headers } from "next/headers";
 import { notFound } from "next/navigation";
 import type { Metadata } from "next";
 import { GalleryItemKeyboardNav } from "./gallery-item-keyboard-nav";
+import { GalleryItemNav } from "./gallery-item-nav";
 
 import { MdRenderer } from "@/components/md-renderer";
 import { getAssetsByProjectId } from "@/lib/assets";
@@ -334,51 +335,14 @@ export default async function PublishedGalleryItemPage({
         nextHref={viewModel.navigationHrefs.nextHref}
       />
       <div className="container mx-auto grid max-w-4xl gap-6 px-4">
-        <div className="flex flex-wrap items-center justify-between gap-3">
-          <Link
-            data-testid="gallery-back-link"
-            href={viewModel.navigationHrefs.backHref}
-            className="inline-flex items-center justify-center rounded-xl border border-line bg-surface px-3 py-2 text-sm font-medium text-text-main transition hover:bg-surface-alt"
-          >
-            Back to gallery
-          </Link>
-          <div className="inline-flex items-center gap-2 rounded-xl border border-line bg-surface px-3 py-2 text-sm text-text-muted">
-            <span data-testid="gallery-item-counter">
-              Item {resolved.itemIndex + 1} of {resolved.totalItems}
-            </span>
-          </div>
-        </div>
+        <GalleryItemNav
+          backHref={viewModel.navigationHrefs.backHref}
+          counterText={`Item ${resolved.itemIndex + 1} of ${resolved.totalItems}`}
+          previousHref={viewModel.navigationHrefs.previousHref}
+          nextHref={viewModel.navigationHrefs.nextHref}
+        />
 
         <section className="overflow-hidden rounded-2xl border border-line bg-surface-alt">
-          <div className="flex items-center justify-between gap-3 border-b border-line bg-surface px-4 py-3">
-            {viewModel.navigationHrefs.previousHref ? (
-              <Link
-                data-testid="gallery-nav-previous"
-                href={viewModel.navigationHrefs.previousHref}
-                className="inline-flex items-center justify-center rounded-xl border border-line bg-surface px-3 py-2 text-sm font-medium text-text-main transition hover:bg-surface-alt"
-              >
-                Previous
-              </Link>
-            ) : (
-              <span className="inline-flex items-center justify-center rounded-xl border border-line bg-surface-alt px-3 py-2 text-sm font-medium text-text-placeholder">
-                Previous
-              </span>
-            )}
-
-            {viewModel.navigationHrefs.nextHref ? (
-              <Link
-                data-testid="gallery-nav-next"
-                href={viewModel.navigationHrefs.nextHref}
-                className="inline-flex items-center justify-center rounded-xl border border-line bg-surface px-3 py-2 text-sm font-medium text-text-main transition hover:bg-surface-alt"
-              >
-                Next
-              </Link>
-            ) : (
-              <span className="inline-flex items-center justify-center rounded-xl border border-line bg-surface-alt px-3 py-2 text-sm font-medium text-text-placeholder">
-                Next
-              </span>
-            )}
-          </div>
           {asset ? (
             // eslint-disable-next-line @next/next/no-img-element
             <img

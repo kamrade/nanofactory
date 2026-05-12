@@ -1,9 +1,9 @@
-import Link from "next/link";
 import { cookies, headers } from "next/headers";
 import { notFound, redirect } from "next/navigation";
 import type { Metadata } from "next";
 
 import { GalleryItemKeyboardNav } from "../gallery-item-keyboard-nav";
+import { GalleryItemNav } from "../gallery-item-nav";
 import { getAssetsByProjectId } from "@/lib/assets";
 import { buildAssetMap, resolveAssetById } from "@/lib/assets/resolution";
 import { normalizePageContent } from "@/lib/editor/content";
@@ -168,52 +168,15 @@ export default async function ProjectsGalleryEntryPage({
       <GalleryItemKeyboardNav previousHref={previousHref} nextHref={nextHref} />
 
       <div className="container mx-auto grid max-w-4xl gap-6 px-4">
-        <div className="flex flex-wrap items-center justify-between gap-3">
-          <Link
-            data-testid="projects-gallery-entry-back-link"
-            href={backHref}
-            className="inline-flex items-center justify-center rounded-xl border border-line bg-surface px-3 py-2 text-sm font-medium text-text-main transition hover:bg-surface-alt"
-          >
-            Back to gallery
-          </Link>
-          <div className="inline-flex items-center gap-2 rounded-xl border border-line bg-surface px-3 py-2 text-sm text-text-muted">
-            <span data-testid="projects-gallery-entry-counter">
-              Item {resolved.imageEntryIndex + 1} of {resolved.totalImageEntries}
-            </span>
-          </div>
-        </div>
+        <GalleryItemNav
+          backHref={backHref}
+          counterText={`Item ${resolved.imageEntryIndex + 1} of ${resolved.totalImageEntries}`}
+          previousHref={previousHref}
+          nextHref={nextHref}
+          testIdPrefix="projects-gallery-entry"
+        />
 
         <section className="overflow-hidden rounded-2xl border border-line bg-surface-alt">
-          <div className="flex items-center justify-between gap-3 border-b border-line bg-surface px-4 py-3">
-            {previousHref ? (
-              <Link
-                data-testid="projects-gallery-entry-nav-previous"
-                href={previousHref}
-                className="inline-flex items-center justify-center rounded-xl border border-line bg-surface px-3 py-2 text-sm font-medium text-text-main transition hover:bg-surface-alt"
-              >
-                Previous
-              </Link>
-            ) : (
-              <span className="inline-flex items-center justify-center rounded-xl border border-line bg-surface-alt px-3 py-2 text-sm font-medium text-text-placeholder">
-                Previous
-              </span>
-            )}
-
-            {nextHref ? (
-              <Link
-                data-testid="projects-gallery-entry-nav-next"
-                href={nextHref}
-                className="inline-flex items-center justify-center rounded-xl border border-line bg-surface px-3 py-2 text-sm font-medium text-text-main transition hover:bg-surface-alt"
-              >
-                Next
-              </Link>
-            ) : (
-              <span className="inline-flex items-center justify-center rounded-xl border border-line bg-surface-alt px-3 py-2 text-sm font-medium text-text-placeholder">
-                Next
-              </span>
-            )}
-          </div>
-
           {asset ? (
             // eslint-disable-next-line @next/next/no-img-element
             <img

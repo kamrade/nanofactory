@@ -136,7 +136,7 @@ test("projects gallery preserves dark mode in nested routes", async ({ page }) =
   await expect(page).toHaveURL(/mode=dark/);
 });
 
-test("projects gallery hides markdown nested items in image preview list", async ({
+test("projects gallery marks image-only count and redirects markdown entry URL to nearest image", async ({
   page,
 }) => {
   await createProjectFromDashboard(page, "Projects Gallery Markdown Item");
@@ -163,12 +163,8 @@ test("projects gallery hides markdown nested items in image preview list", async
 
   await expect(page).toHaveURL(/\/project-1\/gallery-1(?:\?mode=(?:light|dark))?$/);
   await expect(page.getByTestId("projects-gallery-entry-count")).toHaveText("2 items");
-  const previewGrid = page.getByTestId("projects-gallery-image-preview");
-  await expect(previewGrid.locator("article", { hasText: "Markdown block" })).toHaveCount(0);
-  await expect(page.getByTestId("projects-gallery-all-entries").locator("article", { hasText: "Markdown block" })).toHaveCount(1);
 
-  const imageLinks = previewGrid.locator('article a[href*="/project-1/gallery-1/"]');
-  await expect(imageLinks).toHaveCount(2);
+  await expect(page.getByTestId("projects-gallery-all-entries").locator("article", { hasText: "Markdown block" })).toHaveCount(1);
 
   await page.goto(`${publicUrl}/project-1/gallery-1/project-1-gallery-1-item-3`);
   await expect(page).toHaveURL(/\/project-1\/gallery-1\/project-1-gallery-1-item-(1|2)(?:\?mode=(?:light|dark))?$/);

@@ -4,8 +4,8 @@ import { and, desc, eq, inArray } from "drizzle-orm";
 
 import { db } from "@/db";
 import { backgroundSceneLibrary, projects } from "@/db/schema";
-import { isUuid } from "@/lib/validate";
 import type { BackgroundSceneRecord } from "@/lib/background-scenes/types";
+import { isUuid } from "@/lib/validate";
 
 export class BackgroundSceneError extends Error {
   status: number;
