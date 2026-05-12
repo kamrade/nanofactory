@@ -6,12 +6,38 @@ type MdRendererProps = {
   className?: string;
 };
 
-function isExternalHref(href: string | undefined) {
+const EXTERNAL_SCHEME_WHITELIST = new Set(["http", "https", "mailto", "tel"]);
+
+function isInternalHref(href: string) {
+  return (
+    href.startsWith("/") ||
+    href.startsWith("./") ||
+    href.startsWith("../") ||
+    href.startsWith("#") ||
+    href.startsWith("?")
+  );
+}
+
+function resolveHrefPolicy(href: string | undefined) {
   if (!href) {
-    return false;
+    return { kind: "empty" as const };
   }
 
-  return /^(?:[a-z][a-z0-9+.-]*:)?\/\//i.test(href) || /^[a-z][a-z0-9+.-]*:/i.test(href);
+  if (isInternalHref(href)) {
+    return { kind: "internal" as const };
+  }
+
+  const schemeMatch = href.match(/^([a-z][a-z0-9+.-]*):/i);
+  if (!schemeMatch) {
+    return { kind: "internal" as const };
+  }
+
+  const scheme = schemeMatch[1]?.toLowerCase();
+  if (scheme && EXTERNAL_SCHEME_WHITELIST.has(scheme)) {
+    return { kind: "external" as const };
+  }
+
+  return { kind: "blocked" as const };
 }
 
 export function MdRenderer({ content, className }: MdRendererProps) {
@@ -39,8 +65,17 @@ export function MdRenderer({ content, className }: MdRendererProps) {
           ul: ({ ...props }) => <ul className="my-0 list-disc space-y-1 pl-5" {...props} />,
           ol: ({ ...props }) => <ol className="my-0 list-decimal space-y-1 pl-5" {...props} />,
           li: ({ ...props }) => <li className="leading-6" {...props} />,
-          a: ({ href, ...props }) => {
-            const external = isExternalHref(href);
+          a: ({ href, children, ...props }) => {
+            const policy = resolveHrefPolicy(href);
+            if (policy.kind === "blocked" || policy.kind === "empty") {
+              return (
+                <span className="underline underline-offset-2 opacity-70" title="Unsupported link">
+                  {children}
+                </span>
+              );
+            }
+
+            const external = policy.kind === "external";
             return (
               <a
                 href={href}

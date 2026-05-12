@@ -17,6 +17,7 @@ import {
   type ResolvedProjectsGalleryEntry,
   resolveProjectsGalleryEntryFromContent,
 } from "@/lib/projects-gallery/resolve";
+import { buildModeQuery } from "@/lib/routing/mode-query";
 import { resolveGalleryItemLinkModeByHost } from "@/lib/routing/gallery-link-mode";
 import { DEFAULT_THEME_KEY, isThemeKey } from "@/lib/themes";
 import { enforceModeByPolicy } from "@/lib/projects/mode-policy";
@@ -133,24 +134,25 @@ export default async function ProjectsGalleryEntryPage({
   const assets = await getAssetsByProjectId(project.id);
   const assetMap = buildAssetMap(assets);
   const asset = resolveAssetById(resolved.assetId, assetMap);
-  const modeQuery = `?mode=${resolvedMode}`;
+  const modeQuery = buildModeQuery(resolvedMode);
   const backHref =
     linkMode === "relative"
       ? `../..${modeQuery}`
       : `/p/${resolved.projectSlug}/${resolved.projectAnchor}/${resolved.galleryAnchor}${modeQuery}`;
-  const previousHref = resolved.previousImageAnchor
+  const previousHref = resolved.previousEntryAnchor
     ? linkMode === "relative"
-      ? `../${resolved.previousImageAnchor}${modeQuery}`
-      : `/p/${resolved.projectSlug}/${resolved.projectAnchor}/${resolved.galleryAnchor}/${resolved.previousImageAnchor}${modeQuery}`
+      ? `../${resolved.previousEntryAnchor}${modeQuery}`
+      : `/p/${resolved.projectSlug}/${resolved.projectAnchor}/${resolved.galleryAnchor}/${resolved.previousEntryAnchor}${modeQuery}`
     : undefined;
-  const nextHref = resolved.nextImageAnchor
+  const nextHref = resolved.nextEntryAnchor
     ? linkMode === "relative"
-      ? `../${resolved.nextImageAnchor}${modeQuery}`
-      : `/p/${resolved.projectSlug}/${resolved.projectAnchor}/${resolved.galleryAnchor}/${resolved.nextImageAnchor}${modeQuery}`
+      ? `../${resolved.nextEntryAnchor}${modeQuery}`
+      : `/p/${resolved.projectSlug}/${resolved.projectAnchor}/${resolved.galleryAnchor}/${resolved.nextEntryAnchor}${modeQuery}`
     : undefined;
 
   return (
     <main
+      data-testid="projects-gallery-entry-mode-container"
       data-theme={resolved.projectThemeKey}
       data-mode={resolvedMode}
       className="min-h-screen bg-bg py-10 text-text-main"
@@ -160,14 +162,15 @@ export default async function ProjectsGalleryEntryPage({
       <div className="container mx-auto grid max-w-4xl gap-6 px-4">
         <div className="flex flex-wrap items-center justify-between gap-3">
           <Link
+            data-testid="projects-gallery-entry-back-link"
             href={backHref}
             className="inline-flex items-center justify-center rounded-xl border border-line bg-surface px-3 py-2 text-sm font-medium text-text-main transition hover:bg-surface-alt"
           >
             Back to gallery
           </Link>
           <div className="inline-flex items-center gap-2 rounded-xl border border-line bg-surface px-3 py-2 text-sm text-text-muted">
-            <span>
-              Item {resolved.imageIndex + 1} of {resolved.totalImages}
+            <span data-testid="projects-gallery-entry-counter">
+              Item {resolved.entryIndex + 1} of {resolved.totalEntries}
             </span>
           </div>
         </div>
@@ -176,6 +179,7 @@ export default async function ProjectsGalleryEntryPage({
           <div className="flex items-center justify-between gap-3 border-b border-line bg-surface px-4 py-3">
             {previousHref ? (
               <Link
+                data-testid="projects-gallery-entry-nav-previous"
                 href={previousHref}
                 className="inline-flex items-center justify-center rounded-xl border border-line bg-surface px-3 py-2 text-sm font-medium text-text-main transition hover:bg-surface-alt"
               >
@@ -189,6 +193,7 @@ export default async function ProjectsGalleryEntryPage({
 
             {nextHref ? (
               <Link
+                data-testid="projects-gallery-entry-nav-next"
                 href={nextHref}
                 className="inline-flex items-center justify-center rounded-xl border border-line bg-surface px-3 py-2 text-sm font-medium text-text-main transition hover:bg-surface-alt"
               >
@@ -230,7 +235,7 @@ export default async function ProjectsGalleryEntryPage({
             <h1 className="text-2xl font-semibold tracking-tight text-text-main">{resolved.title}</h1>
           ) : (
             <h1 className="text-2xl font-semibold tracking-tight text-text-main">
-              Gallery image
+              Gallery item
             </h1>
           )}
           {resolved.description.trim().length > 0 ? (

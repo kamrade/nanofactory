@@ -1,3 +1,5 @@
+import { buildModeQuery } from "@/lib/routing/mode-query";
+
 export function buildGalleryItemNavigationHrefs(input: {
   galleryAnchor: string;
   previousItemAnchor?: string;
@@ -5,7 +7,7 @@ export function buildGalleryItemNavigationHrefs(input: {
   backHref?: string;
   mode?: "light" | "dark";
 }) {
-  const modeQuery = `?mode=${input.mode ?? "light"}`;
+  const modeQuery = buildModeQuery(input.mode ?? "light");
 
   return {
     backHref: input.backHref ?? `../..${modeQuery}#${input.galleryAnchor}`,

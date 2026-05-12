@@ -297,22 +297,18 @@ describe("ProjectRenderer", () => {
     expect(html).toContain('data-mode="light"');
   });
 
-  it("can hide project meta block when showProjectMeta is false", () => {
+  it("does not render legacy project meta header block", () => {
     const html = renderToStaticMarkup(
       ProjectRenderer({
-        name: "Meta Hidden Project",
+        name: "No Meta Header Project",
         themeKey: "sunwash",
         content: createHeroContent(),
         assets: [],
-        showPublishedBadge: false,
-        showProjectMeta: false,
       })
     );
 
     expect(html).not.toContain("Project:");
-    expect(html).not.toContain("Mode:");
-    expect(html).not.toContain("Light");
-    expect(html).not.toContain("Dark");
+    expect(html).not.toContain("Published with Nanofactory");
   });
 
   it("renders cta blocks inside the standard section shell wrapper", () => {
@@ -322,8 +318,6 @@ describe("ProjectRenderer", () => {
         themeKey: "sunwash",
         content: createCtaContent(),
         assets: [],
-        showPublishedBadge: false,
-        showProjectMeta: false,
       })
     );
 
@@ -340,8 +334,6 @@ describe("ProjectRenderer", () => {
         content: createBackgroundSceneContent(scene.id),
         assets: [],
         backgroundScenes: [scene],
-        showPublishedBadge: false,
-        showProjectMeta: false,
       })
     );
 
@@ -357,8 +349,6 @@ describe("ProjectRenderer", () => {
         themeKey: "sunwash",
         content: createHeroWithButtonAnchorContent(),
         assets: [],
-        showPublishedBadge: false,
-        showProjectMeta: false,
       })
     );
 
@@ -373,8 +363,6 @@ describe("ProjectRenderer", () => {
         themeKey: "sunwash",
         content: createGalleryNaturalContent(),
         assets: [],
-        showPublishedBadge: false,
-        showProjectMeta: false,
       })
     );
 
@@ -391,13 +379,11 @@ describe("ProjectRenderer", () => {
         themeKey: "sunwash",
         content: createGalleryNaturalContent(),
         assets: [],
-        showPublishedBadge: false,
-        showProjectMeta: false,
         galleryItemLinkMode: "absolute",
       })
     );
 
-    expect(html).toContain('href="/p/project-n4/gallery-1/gallery-1-item-1"');
+    expect(html).toContain('href="/p/project-n4/gallery-1/gallery-1-item-1?mode=light"');
   });
 
   it("renders relative gallery item links in custom-domain mode", () => {
@@ -408,13 +394,11 @@ describe("ProjectRenderer", () => {
         themeKey: "sunwash",
         content: createGalleryNaturalContent(),
         assets: [],
-        showPublishedBadge: false,
-        showProjectMeta: false,
         galleryItemLinkMode: "relative",
       })
     );
 
-    expect(html).toContain('href="./gallery-1/gallery-1-item-1"');
+    expect(html).toContain('href="./gallery-1/gallery-1-item-1?mode=light"');
   });
 
   it("assigns an auto anchor id to blocks without explicit anchorId", () => {
@@ -424,8 +408,6 @@ describe("ProjectRenderer", () => {
         themeKey: "sunwash",
         content: createHeroContent(),
         assets: [],
-        showPublishedBadge: false,
-        showProjectMeta: false,
       })
     );
 

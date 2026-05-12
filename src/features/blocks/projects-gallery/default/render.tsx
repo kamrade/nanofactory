@@ -2,6 +2,7 @@ import Image from "next/image";
 import Link from "next/link";
 
 import { resolveAssetById } from "@/lib/assets/resolution";
+import { buildModeQuery } from "@/lib/routing/mode-query";
 import type { BlockRenderProps } from "../../shared/types";
 import {
   getEffectiveNestedGalleryAnchor,
@@ -18,7 +19,7 @@ export function ProjectsGalleryDefaultRender({
   galleryItemLinkMode = "absolute",
 }: BlockRenderProps) {
   const props = readProjectsGalleryProps(block.props);
-  const modeQuery = `?mode=${mode}`;
+  const modeQuery = buildModeQuery(mode);
 
   return (
     <section className="space-y-6 p-4 md:p-8">

@@ -35,7 +35,6 @@ function getThemeClasses(themeKey: string) {
     default:
       return {
         page: "bg-bg text-text-main",
-        heroCard: "flex justify-end",
         button:
           "inline-flex items-center justify-center rounded-2xl bg-primary-300 px-5 py-3 text-sm font-medium text-text-inverted-main transition hover:bg-primary-200",
         muted: "text-text-muted",
@@ -164,6 +163,7 @@ export function ProjectRenderer({
 
   return (
     <main
+      data-testid="project-mode-container"
       data-theme={renderContext.resolvedThemeKey}
       data-mode={mode}
       className={`min-h-screen py-4 ${renderContext.theme.page}`}

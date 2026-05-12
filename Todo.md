@@ -1,3 +1,5 @@
+## Блок 1
+
 1. ✅ projects-gallery nested route still называется [imageAnchor], хотя теперь там и markdown items.
 
 Что неудачно: терминология расходится с моделью (kind: "image" | "markdown"), будет путать и людей, и тесты.
@@ -38,7 +40,7 @@
 
 
 
-5. Markdown preview в UIKit зафиксирован по высоте (h-[420px]).
+5. ✅ Markdown preview в UIKit зафиксирован по высоте (h-[420px]).
 
 Что неудачно: жесткая высота может быть неудачной на разных брейкпоинтах.
 
@@ -48,7 +50,7 @@
 
 
 
-6. Metadata для markdown nested item берет сырой markdown текст.
+6. ❌ Metadata для markdown nested item берет сырой markdown текст.
 
 Что неудачно: в description могут попасть символы #, |, ``` и т.д.
 
@@ -58,7 +60,7 @@
 
 
 
-7. E2E завязаны на тексты UI (2 items, Published with Nanofactory).
+7. ❌ E2E завязаны на тексты UI (2 items, Published with Nanofactory).
 
 Что неудачно: хрупкость при copy changes.
 
@@ -68,7 +70,7 @@
 
 
 
-8. Нет отдельного unit-теста на backward compatibility descriptionMd <- description.
+8. ✅ Нет отдельного unit-теста на backward compatibility descriptionMd <- description.
 
 Что неудачно: можно сломать миграционную логику при следующем рефакторе модели.
 
@@ -76,4 +78,47 @@
 
 Файл: model.ts
 
-9. При открытии галлереи меняется mode на dark. 
+9. ✅ При открытии галлереи меняется mode на dark. 
+
+## Блок 2
+
+1. ✅ mode собирается вручную в нескольких местах (?mode=... строками).
+Что неудачно: риск расхождения логики и регрессий.
+Что сделать: вынести в единый helper buildModeQuery(mode) + appendModeToPath(path, mode) и использовать везде.
+
+2. ✅ В projects-gallery поле imageAnchor используется как универсальный anchor для image и markdown.
+Что неудачно: имя больше не отражает смысл.
+Что сделать: переименовать в entryAnchor на уровне модели/resolve (не только route param).
+
+3. ✅ В projects-gallery типы уже mixed (kind), но функция и нейминг частично еще “image-oriented” (getEffectiveProjectGalleryImageAnchor).
+Что неудачно: когнитивный шум.
+Что сделать: привести API к ...EntryAnchor/...EntryFromContent.
+
+4. ✅ ProjectRenderer хранит часть неиспользуемой темы (button, heroCard, kicker) после удаления header-мета.
+Что неудачно: мертвые поля в theme-contract.
+Что сделать: минимизировать getThemeClasses до реально используемых токенов.
+
+5. ✅ Ссылки в MdRenderer внешние определяются regex’ом.
+Что неудачно: edge cases (javascript:, weird schemes).
+Что сделать: явно whitelist (http:, https:, mailto:, tel:), остальное — как internal/blocked.
+
+6. descriptionMd в metadata идет сырым markdown.
+Что неудачно: SEO description может быть “грязным” (#, |, backticks).
+Что сделать: stripMarkdownForMeta() + trim до ~160 chars.
+
+7. ✅ Много e2e зависит от текстов UI и структуры DOM.
+Что неудачно: хрупкость при copy/layout правках.
+Что сделать: добавить data-testid на ключевые элементы (publish status, mode container, project-gallery counters, nav buttons).
+
+8. ✅ Нет unit-тестов на mode-helpers после недавних фиксов (light/dark, referer/query priority).
+Что неудачно: легко повторно сломать режимы.
+Что сделать: unit suite для resolveGalleryItemMode, buildGalleryItemNavigationHrefs, buildGalleryItemPageViewModel.
+
+9. ✅ В showcase-client.tsx большой монолитный компонент с кучей state.
+Что неудачно: поддержка и тестирование усложняются.
+Что сделать: выделить demo-секции в отдельные компоненты (MarkdownDemoCard, ModalDemoCard, etc.).
+
+10. В projects-gallery editor много inline-логики в JSX.
+Что неудачно: сложно читать и расширять.
+Что сделать: вынести операции addImageEntry/addMarkdownEntry/updateEntry/removeEntry в чистые helper-функции и покрыть unit-тестами.
+

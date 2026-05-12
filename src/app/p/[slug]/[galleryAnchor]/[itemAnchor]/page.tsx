@@ -19,6 +19,7 @@ import {
 import { buildGalleryItemPageViewModel } from "@/lib/gallery-item/view-model";
 import { getPublishedProjectBySlug } from "@/lib/projects";
 import { resolveProjectsGalleryProjectFromContent } from "@/lib/projects-gallery/resolve";
+import { buildModeQuery } from "@/lib/routing/mode-query";
 import { resolveGalleryItemLinkModeByHost } from "@/lib/routing/gallery-link-mode";
 import { enforceModeByPolicy } from "@/lib/projects/mode-policy";
 
@@ -168,7 +169,7 @@ export default async function PublishedGalleryItemPage({
   if (resolvedProjectGallery) {
     const assets = await getAssetsByProjectId(project.id);
     const assetMap = buildAssetMap(assets);
-    const modeQuery = `?mode=${resolvedMode}`;
+    const modeQuery = buildModeQuery(resolvedMode);
     const backHref =
       linkMode === "relative"
         ? `../..${modeQuery}#${resolvedProjectGallery.blockAnchor}`
@@ -176,6 +177,7 @@ export default async function PublishedGalleryItemPage({
 
     return (
       <main
+        data-testid="projects-gallery-mode-container"
         data-theme={resolvedProjectGallery.projectThemeKey}
         data-mode={resolvedMode}
         className="min-h-screen bg-bg py-10 text-text-main"
@@ -183,13 +185,16 @@ export default async function PublishedGalleryItemPage({
         <div className="container mx-auto grid max-w-5xl gap-6 px-4">
           <div className="flex flex-wrap items-center justify-between gap-3">
             <Link
+              data-testid="projects-gallery-back-to-projects"
               href={backHref}
               className="inline-flex items-center justify-center rounded-xl border border-line bg-surface px-3 py-2 text-sm font-medium text-text-main transition hover:bg-surface-alt"
             >
               Back to projects
             </Link>
             <div className="inline-flex items-center gap-2 rounded-xl border border-line bg-surface px-3 py-2 text-sm text-text-muted">
-              <span>{resolvedProjectGallery.galleryItems.length} items</span>
+              <span data-testid="projects-gallery-entry-count">
+                {resolvedProjectGallery.galleryItems.length} items
+              </span>
             </div>
           </div>
 
@@ -218,12 +223,12 @@ export default async function PublishedGalleryItemPage({
               const asset = resolveAssetById(item.assetId, assetMap);
               const href =
                 linkMode === "relative"
-                  ? `./${item.imageAnchor}${modeQuery}`
-                  : `/p/${resolvedProjectGallery.projectSlug}/${resolvedProjectGallery.projectAnchor}/${resolvedProjectGallery.galleryAnchor}/${item.imageAnchor}${modeQuery}`;
+                  ? `./${item.entryAnchor}${modeQuery}`
+                  : `/p/${resolvedProjectGallery.projectSlug}/${resolvedProjectGallery.projectAnchor}/${resolvedProjectGallery.galleryAnchor}/${item.entryAnchor}${modeQuery}`;
 
               return (
                 <article
-                  key={`${resolvedProjectGallery.projectAnchor}-${item.imageAnchor}-${index}`}
+                  key={`${resolvedProjectGallery.projectAnchor}-${item.entryAnchor}-${index}`}
                   className={`relative overflow-hidden rounded-2xl border border-line bg-surface-alt ${
                     item.kind === "markdown" ? "md:col-span-2 lg:col-span-3" : ""
                   }`}
@@ -270,11 +275,11 @@ export default async function PublishedGalleryItemPage({
 
                   <Link
                     href={href}
-                    aria-label={`Open ${item.title.trim().length > 0 ? item.title : `image ${index + 1}`}`}
+                    aria-label={`Open ${item.title.trim().length > 0 ? item.title : `entry ${index + 1}`}`}
                     className="absolute inset-0 z-20"
                   >
                     <span className="sr-only">
-                      Open {item.title.trim().length > 0 ? item.title : `image ${index + 1}`}
+                      Open {item.title.trim().length > 0 ? item.title : `entry ${index + 1}`}
                     </span>
                   </Link>
                 </article>
@@ -304,6 +309,7 @@ export default async function PublishedGalleryItemPage({
 
   return (
     <main
+      data-testid="gallery-entry-mode-container"
       data-theme={viewModel.resolvedThemeKey}
       data-mode={resolvedMode}
       className="min-h-screen bg-bg py-10 text-text-main"
@@ -315,13 +321,14 @@ export default async function PublishedGalleryItemPage({
       <div className="container mx-auto grid max-w-4xl gap-6 px-4">
         <div className="flex flex-wrap items-center justify-between gap-3">
           <Link
+            data-testid="gallery-back-link"
             href={viewModel.navigationHrefs.backHref}
             className="inline-flex items-center justify-center rounded-xl border border-line bg-surface px-3 py-2 text-sm font-medium text-text-main transition hover:bg-surface-alt"
           >
             Back to gallery
           </Link>
           <div className="inline-flex items-center gap-2 rounded-xl border border-line bg-surface px-3 py-2 text-sm text-text-muted">
-            <span>
+            <span data-testid="gallery-item-counter">
               Item {resolved.itemIndex + 1} of {resolved.totalItems}
             </span>
           </div>
@@ -331,6 +338,7 @@ export default async function PublishedGalleryItemPage({
           <div className="flex items-center justify-between gap-3 border-b border-line bg-surface px-4 py-3">
             {viewModel.navigationHrefs.previousHref ? (
               <Link
+                data-testid="gallery-nav-previous"
                 href={viewModel.navigationHrefs.previousHref}
                 className="inline-flex items-center justify-center rounded-xl border border-line bg-surface px-3 py-2 text-sm font-medium text-text-main transition hover:bg-surface-alt"
               >
@@ -344,6 +352,7 @@ export default async function PublishedGalleryItemPage({
 
             {viewModel.navigationHrefs.nextHref ? (
               <Link
+                data-testid="gallery-nav-next"
                 href={viewModel.navigationHrefs.nextHref}
                 className="inline-flex items-center justify-center rounded-xl border border-line bg-surface px-3 py-2 text-sm font-medium text-text-main transition hover:bg-surface-alt"
               >

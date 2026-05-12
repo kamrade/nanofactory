@@ -2,11 +2,12 @@ import Image from "next/image";
 import Link from "next/link";
 
 import { resolveAssetById } from "@/lib/assets/resolution";
+import { buildModeQuery } from "@/lib/routing/mode-query";
 import type { BlockRenderProps } from "../../shared/types";
 
 type GalleryItem = {
   assetId: string | undefined;
-  imageAnchor: string | undefined;
+  entryAnchor: string | undefined;
   title: string;
   description: string;
   price: string;
@@ -41,7 +42,12 @@ function readItems(props: Record<string, unknown>): GalleryItem[] {
       const record = item as Record<string, unknown>;
       return {
         assetId: typeof record.assetId === "string" ? record.assetId : undefined,
-        imageAnchor: typeof record.imageAnchor === "string" ? record.imageAnchor : undefined,
+        entryAnchor:
+          typeof record.entryAnchor === "string"
+            ? record.entryAnchor
+            : typeof record.imageAnchor === "string"
+              ? record.imageAnchor
+              : undefined,
         title: typeof record.title === "string" ? record.title : "",
         description: typeof record.description === "string" ? record.description : "",
         price: typeof record.price === "string" ? record.price : "",
@@ -83,7 +89,7 @@ export function GalleryDefaultRender({
   const columns = readColumns(block.props);
   const imageHeightMode = readImageHeightMode(block.props);
   const items = readItems(block.props);
-  const modeQuery = `?mode=${mode}`;
+  const modeQuery = buildModeQuery(mode);
 
   return (
     <section className="space-y-6 p-4 md:p-8">

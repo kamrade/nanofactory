@@ -18,7 +18,7 @@ function buildFallbackGalleryAnchor(index: number) {
   return `gallery-${index + 1}`;
 }
 
-function buildFallbackImageAnchor(projectAnchor: string, galleryAnchor: string, index: number) {
+function buildFallbackEntryAnchor(projectAnchor: string, galleryAnchor: string, index: number) {
   return `${projectAnchor}-${galleryAnchor}-item-${index + 1}`;
 }
 
@@ -40,8 +40,8 @@ export function ProjectsGalleryDefaultEditor({ block, assets, onChange }: BlockE
 
   function updateGalleryItem(
     projectIndex: number,
-    imageIndex: number,
-    nextImageItem: ProjectsGalleryEntryItem
+    entryIndex: number,
+    nextEntryItem: ProjectsGalleryEntryItem
   ) {
     const projectItem = props.items[projectIndex];
     if (!projectItem) {
@@ -51,7 +51,7 @@ export function ProjectsGalleryDefaultEditor({ block, assets, onChange }: BlockE
     updateProjectItem(projectIndex, {
       ...projectItem,
       galleryItems: projectItem.galleryItems.map((item, itemIdx) =>
-        itemIdx === imageIndex ? nextImageItem : item
+        itemIdx === entryIndex ? nextEntryItem : item
       ),
     });
   }
@@ -281,7 +281,7 @@ export function ProjectsGalleryDefaultEditor({ block, assets, onChange }: BlockE
 
                   <div className="grid gap-3 rounded-xl border border-line bg-surface-alt p-3">
                     <div className="flex items-center justify-between gap-3">
-                      <p className="text-sm font-medium text-text-main">Nested gallery items</p>
+                      <p className="text-sm font-medium text-text-main">Nested gallery entries</p>
                       <div className="flex items-center gap-2">
                         <UIButton
                           type="button"
@@ -296,7 +296,7 @@ export function ProjectsGalleryDefaultEditor({ block, assets, onChange }: BlockE
                                 {
                                   kind: "markdown",
                                   assetId: undefined,
-                                  imageAnchor: undefined,
+                                  entryAnchor: undefined,
                                   title: "",
                                   description: "",
                                   contentMd: "",
@@ -322,7 +322,7 @@ export function ProjectsGalleryDefaultEditor({ block, assets, onChange }: BlockE
                                 {
                                   kind: "image",
                                   assetId: undefined,
-                                  imageAnchor: undefined,
+                                  entryAnchor: undefined,
                                   title: "",
                                   description: "",
                                   contentMd: "",
@@ -333,7 +333,7 @@ export function ProjectsGalleryDefaultEditor({ block, assets, onChange }: BlockE
                             })
                           }
                         >
-                          Add image
+                          Add entry (image)
                         </UIButton>
                       </div>
                     </div>
@@ -342,14 +342,14 @@ export function ProjectsGalleryDefaultEditor({ block, assets, onChange }: BlockE
                       <p className="text-sm text-text-muted">No nested gallery items yet.</p>
                     ) : (
                       <div className="grid gap-3">
-                        {item.galleryItems.map((galleryItem, imageIndex) => (
+                        {item.galleryItems.map((galleryItem, entryIndex) => (
                           <article
-                            key={`${block.id}-project-${projectIndex}-image-${imageIndex}`}
+                            key={`${block.id}-project-${projectIndex}-entry-${entryIndex}`}
                             className="grid gap-2 rounded-lg border border-line bg-surface p-3"
                           >
                             <div className="flex items-center justify-between gap-3">
                               <p className="text-sm font-medium text-text-main">
-                                {galleryItem.kind === "markdown" ? "Markdown" : "Image"} {imageIndex + 1}
+                                {galleryItem.kind === "markdown" ? "Markdown entry" : "Image entry"} {entryIndex + 1}
                               </p>
                               <UIButton
                                 type="button"
@@ -358,9 +358,9 @@ export function ProjectsGalleryDefaultEditor({ block, assets, onChange }: BlockE
                                 variant="outlined"
                                 onClick={() =>
                                   updateProjectItem(projectIndex, {
-                                    ...item,
-                                    galleryItems: item.galleryItems.filter(
-                                      (_, idx) => idx !== imageIndex
+                                      ...item,
+                                      galleryItems: item.galleryItems.filter(
+                                      (_, idx) => idx !== entryIndex
                                     ),
                                   })
                                 }
@@ -373,18 +373,18 @@ export function ProjectsGalleryDefaultEditor({ block, assets, onChange }: BlockE
                               <span className="font-medium text-text-main">Item anchor</span>
                               <UITextInput
                                 size="sm"
-                                value={galleryItem.imageAnchor ?? ""}
+                                value={galleryItem.entryAnchor ?? ""}
                                 onValueChange={(value) =>
-                                  updateGalleryItem(projectIndex, imageIndex, {
+                                  updateGalleryItem(projectIndex, entryIndex, {
                                     ...galleryItem,
-                                    imageAnchor:
+                                    entryAnchor:
                                       value.trim().length > 0 ? value : undefined,
                                   })
                                 }
-                                placeholder={buildFallbackImageAnchor(
+                                placeholder={buildFallbackEntryAnchor(
                                   effectiveProjectAnchor,
                                   effectiveGalleryAnchor,
-                                  imageIndex
+                                  entryIndex
                                 )}
                               />
                             </label>
@@ -394,19 +394,19 @@ export function ProjectsGalleryDefaultEditor({ block, assets, onChange }: BlockE
                                 assets={assets}
                                 selectedAssetId={galleryItem.assetId}
                                 onSelect={(assetId) =>
-                                  updateGalleryItem(projectIndex, imageIndex, {
+                                  updateGalleryItem(projectIndex, entryIndex, {
                                     ...galleryItem,
                                     assetId,
                                   })
                                 }
                                 onClear={() =>
-                                  updateGalleryItem(projectIndex, imageIndex, {
+                                  updateGalleryItem(projectIndex, entryIndex, {
                                     ...galleryItem,
                                     assetId: undefined,
                                   })
                                 }
-                                title="Image"
-                                description="Choose image for nested gallery item."
+                                title="Entry image"
+                                description="Choose image for nested gallery entry."
                                 emptyMessage="Upload an image in Project assets first."
                                 clearLabel="Remove image"
                                 selectLabel="Use image"
@@ -420,7 +420,7 @@ export function ProjectsGalleryDefaultEditor({ block, assets, onChange }: BlockE
                                   value={galleryItem.contentMd}
                                   rows={6}
                                   onChange={(event) =>
-                                    updateGalleryItem(projectIndex, imageIndex, {
+                                    updateGalleryItem(projectIndex, entryIndex, {
                                       ...galleryItem,
                                       contentMd: event.target.value,
                                     })

@@ -102,27 +102,29 @@ export function validatePageContent(input: unknown): PageContentValidationResult
         }
 
         const nextItem = { ...item };
-        const rawImageAnchor = readOptionalString(nextItem.imageAnchor);
-        if (!rawImageAnchor) {
+        const rawEntryAnchor =
+          readOptionalString(nextItem.entryAnchor) ?? readOptionalString(nextItem.imageAnchor);
+        if (!rawEntryAnchor) {
           return nextItem;
         }
 
-        const normalizedImageAnchor = normalizeAnchorId(rawImageAnchor);
-        if (!isValidAnchorId(normalizedImageAnchor)) {
+        const normalizedEntryAnchor = normalizeAnchorId(rawEntryAnchor);
+        if (!isValidAnchorId(normalizedEntryAnchor)) {
           return {
             __anchorValidationError:
-              "Image anchor must contain only lowercase Latin letters, numbers, and hyphens, and start with a letter.",
+              "Entry anchor must contain only lowercase Latin letters, numbers, and hyphens, and start with a letter.",
           };
         }
 
-        if (seenAnchorIds.has(normalizedImageAnchor)) {
+        if (seenAnchorIds.has(normalizedEntryAnchor)) {
           return {
             __anchorValidationError: "Anchor id values must be unique within the page.",
           };
         }
 
-        seenAnchorIds.add(normalizedImageAnchor);
-        nextItem.imageAnchor = normalizedImageAnchor;
+        seenAnchorIds.add(normalizedEntryAnchor);
+        delete nextItem.imageAnchor;
+        nextItem.entryAnchor = normalizedEntryAnchor;
         return nextItem;
       });
 
@@ -181,31 +183,34 @@ export function validatePageContent(input: unknown): PageContentValidationResult
         }
 
         if (Array.isArray(nextProject.galleryItems)) {
-          const imageAnchors = new Set<string>();
+          const entryAnchors = new Set<string>();
           const normalizedImages = nextProject.galleryItems.map((imageItem) => {
             if (!isPlainObject(imageItem)) {
               return imageItem;
             }
             const nextImageItem = { ...imageItem };
-            const rawImageAnchor = readOptionalString(nextImageItem.imageAnchor);
-            if (!rawImageAnchor) {
+            const rawEntryAnchor =
+              readOptionalString(nextImageItem.entryAnchor) ??
+              readOptionalString(nextImageItem.imageAnchor);
+            if (!rawEntryAnchor) {
               return nextImageItem;
             }
-            const normalizedImageAnchor = normalizeAnchorId(rawImageAnchor);
-            if (!isValidAnchorId(normalizedImageAnchor)) {
+            const normalizedEntryAnchor = normalizeAnchorId(rawEntryAnchor);
+            if (!isValidAnchorId(normalizedEntryAnchor)) {
               return {
                 __anchorValidationError:
-                  "Image anchor must contain only lowercase Latin letters, numbers, and hyphens, and start with a letter.",
+                  "Entry anchor must contain only lowercase Latin letters, numbers, and hyphens, and start with a letter.",
               };
             }
-            if (imageAnchors.has(normalizedImageAnchor)) {
+            if (entryAnchors.has(normalizedEntryAnchor)) {
               return {
                 __anchorValidationError:
-                  "Image anchors must be unique within a nested project gallery.",
+                  "Entry anchors must be unique within a nested project gallery.",
               };
             }
-            imageAnchors.add(normalizedImageAnchor);
-            nextImageItem.imageAnchor = normalizedImageAnchor;
+            entryAnchors.add(normalizedEntryAnchor);
+            delete nextImageItem.imageAnchor;
+            nextImageItem.entryAnchor = normalizedEntryAnchor;
             return nextImageItem;
           });
 

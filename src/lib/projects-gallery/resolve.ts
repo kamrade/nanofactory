@@ -3,7 +3,7 @@ import { normalizeAnchorId } from "@/lib/editor/anchor-id";
 import {
   getEffectiveNestedGalleryAnchor,
   getEffectiveProjectAnchor,
-  getEffectiveProjectGalleryImageAnchor,
+  getEffectiveProjectGalleryEntryAnchor,
   readProjectsGalleryProps,
 } from "@/features/blocks/projects-gallery/default/model";
 
@@ -21,7 +21,7 @@ export type ResolvedProjectsGalleryProject = {
   imageAssetId?: string;
   galleryItems: Array<{
     kind: "image" | "markdown";
-    imageAnchor: string;
+    entryAnchor: string;
     assetId?: string;
     title: string;
     description: string;
@@ -35,16 +35,16 @@ export type ResolvedProjectsGalleryEntry = {
   kind: "image" | "markdown";
   projectAnchor: string;
   galleryAnchor: string;
-  imageAnchor: string;
+  entryAnchor: string;
   blockAnchor: string;
   projectTitle: string;
   projectDescription: string;
   projectPrice: string;
   projectMeta: string;
-  imageIndex: number;
-  totalImages: number;
-  previousImageAnchor?: string;
-  nextImageAnchor?: string;
+  entryIndex: number;
+  totalEntries: number;
+  previousEntryAnchor?: string;
+  nextEntryAnchor?: string;
   title: string;
   description: string;
   contentMd: string;
@@ -91,9 +91,9 @@ export function resolveProjectsGalleryProjectFromContent(
         price: item.price,
         meta: item.meta,
         imageAssetId: item.imageAssetId,
-        galleryItems: item.galleryItems.map((galleryItem, imageIndex) => ({
+        galleryItems: item.galleryItems.map((galleryItem, entryIndex) => ({
           kind: galleryItem.kind,
-          imageAnchor: getEffectiveProjectGalleryImageAnchor(item, projectIndex, imageIndex),
+          entryAnchor: getEffectiveProjectGalleryEntryAnchor(item, projectIndex, entryIndex),
           assetId: galleryItem.assetId,
           title: galleryItem.title,
           description: galleryItem.description,
@@ -112,7 +112,7 @@ export function resolveProjectsGalleryEntryFromContent(
   content: PageContent,
   projectAnchor: string,
   galleryAnchor: string,
-  imageAnchor: string
+  entryAnchor: string
 ): ResolvedProjectsGalleryEntry | null {
   const resolvedProject = resolveProjectsGalleryProjectFromContent(
     content,
@@ -123,35 +123,35 @@ export function resolveProjectsGalleryEntryFromContent(
     return null;
   }
 
-  const normalizedImageAnchor = normalizeAnchorId(imageAnchor);
-  const imageIndex = resolvedProject.galleryItems.findIndex(
-    (item) => item.imageAnchor === normalizedImageAnchor
+  const normalizedEntryAnchor = normalizeAnchorId(entryAnchor);
+  const entryIndex = resolvedProject.galleryItems.findIndex(
+    (item) => item.entryAnchor === normalizedEntryAnchor
   );
-  if (imageIndex < 0) {
+  if (entryIndex < 0) {
     return null;
   }
 
-  const imageItem = resolvedProject.galleryItems[imageIndex];
+  const imageItem = resolvedProject.galleryItems[entryIndex];
 
   return {
     projectAnchor: resolvedProject.projectAnchor,
     galleryAnchor: resolvedProject.galleryAnchor,
     kind: imageItem.kind,
-    imageAnchor: normalizedImageAnchor,
+    entryAnchor: normalizedEntryAnchor,
     blockAnchor: resolvedProject.blockAnchor,
     projectTitle: resolvedProject.title,
     projectDescription: resolvedProject.description,
     projectPrice: resolvedProject.price,
     projectMeta: resolvedProject.meta,
-    imageIndex,
-    totalImages: resolvedProject.galleryItems.length,
-    previousImageAnchor:
-      imageIndex > 0
-        ? resolvedProject.galleryItems[imageIndex - 1]?.imageAnchor
+    entryIndex,
+    totalEntries: resolvedProject.galleryItems.length,
+    previousEntryAnchor:
+      entryIndex > 0
+        ? resolvedProject.galleryItems[entryIndex - 1]?.entryAnchor
         : undefined,
-    nextImageAnchor:
-      imageIndex < resolvedProject.galleryItems.length - 1
-        ? resolvedProject.galleryItems[imageIndex + 1]?.imageAnchor
+    nextEntryAnchor:
+      entryIndex < resolvedProject.galleryItems.length - 1
+        ? resolvedProject.galleryItems[entryIndex + 1]?.entryAnchor
         : undefined,
     title: imageItem.title,
     description: imageItem.description,

@@ -138,7 +138,7 @@ export function ProjectHeader({
               <div className="overflow-hidden rounded-2xl border border-line bg-surface-alt">
                 <div className="grid grid-cols-[160px_minmax(0,1fr)] gap-3 border-b border-line px-4 py-3">
                   <span className="font-medium text-text-main">status</span>
-                  <span>{project.status}</span>
+                  <span data-testid="project-publish-status">{project.status}</span>
                 </div>
                 <div className="grid grid-cols-[160px_minmax(0,1fr)] gap-3 border-b border-line px-4 py-3">
                   <span className="font-medium text-text-main">slug</span>
@@ -185,6 +185,11 @@ export function ProjectHeader({
                 <div className="flex flex-wrap items-center gap-3">
                   <form action={publicationAction}>
                     <UIButton
+                      data-testid={
+                        project.status === "published"
+                          ? "project-unpublish-button"
+                          : "project-publish-button"
+                      }
                       type="submit"
                       theme={project.status === "published" ? "danger" : "primary"}
                       variant={project.status === "published" ? "outlined" : "contained"}

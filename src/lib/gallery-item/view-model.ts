@@ -1,6 +1,7 @@
 import type { ResolvedGalleryItem } from "@/lib/gallery-item/resolve";
 import { buildGalleryItemNavigationHrefs } from "@/lib/gallery-item/navigation";
 import type { GalleryItemMode } from "@/lib/gallery-item/mode";
+import { appendModeToPath } from "@/lib/routing/mode-query";
 import { resolveGalleryItemLinkModeByHost } from "@/lib/routing/gallery-link-mode";
 import { DEFAULT_THEME_KEY, isThemeKey } from "@/lib/themes";
 
@@ -26,7 +27,7 @@ export function buildGalleryItemPageViewModel(input: BuildGalleryItemPageViewMod
     mode,
     backHref:
       backLinkMode === "absolute"
-        ? `/p/${resolvedItem.projectSlug}?mode=${mode}#${resolvedItem.galleryAnchor}`
+        ? appendModeToPath(`/p/${resolvedItem.projectSlug}#${resolvedItem.galleryAnchor}`, mode)
         : undefined,
   });
 

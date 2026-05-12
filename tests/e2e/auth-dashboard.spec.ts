@@ -90,13 +90,13 @@ test("publishes and unpublishes a project through the editor", async ({ page }) 
   await page.getByRole("button", { name: "Info" }).click();
   let infoSheet = page.getByRole("dialog", { name: "Project info" });
   await expect(infoSheet).toBeVisible();
-  await expect(infoSheet.getByText("draft").first()).toBeVisible();
+  await expect(infoSheet.getByTestId("project-publish-status")).toHaveText("draft");
 
   await infoSheet.getByRole("button", { name: "Publish" }).click();
   await page.waitForURL(/\/projects\/.+/);
   await page.getByRole("button", { name: "Info" }).click();
   infoSheet = page.getByRole("dialog", { name: "Project info" });
-  await expect(infoSheet.getByText("published").first()).toBeVisible();
+  await expect(infoSheet.getByTestId("project-publish-status")).toHaveText("published");
 
   const publicLink = infoSheet.getByRole("link", { name: "Open public page" });
   await expect(publicLink).toBeVisible();
@@ -107,7 +107,7 @@ test("publishes and unpublishes a project through the editor", async ({ page }) 
   }
 
   await page.goto(publicUrl);
-  await expect(page.locator("main[data-theme][data-mode]")).toBeVisible();
+  await expect(page.getByTestId("project-mode-container")).toBeVisible();
 
   await page.goto("/dashboard");
   await page.getByRole("link", { name: "Open" }).first().click();
@@ -117,7 +117,7 @@ test("publishes and unpublishes a project through the editor", async ({ page }) 
   await page.waitForURL(/\/projects\/.+/);
   await page.getByRole("button", { name: "Info" }).click();
   infoSheet = page.getByRole("dialog", { name: "Project info" });
-  await expect(infoSheet.getByText("draft").first()).toBeVisible();
+  await expect(infoSheet.getByTestId("project-publish-status")).toHaveText("draft");
 
   await page.goto(publicUrl);
   await expect(page.getByText("This page could not be found.")).toBeVisible();

@@ -4,7 +4,7 @@ import { isValidAnchorId, normalizeAnchorId } from "@/lib/editor/anchor-id";
 export type ProjectsGalleryEntryItem = {
   kind: "image" | "markdown";
   assetId: string | undefined;
-  imageAnchor: string | undefined;
+  entryAnchor: string | undefined;
   title: string;
   description: string;
   contentMd: string;
@@ -42,14 +42,14 @@ export function getEffectiveNestedGalleryAnchor(item: ProjectsGalleryProjectItem
   return item.galleryAnchor ?? `gallery-${index + 1}`;
 }
 
-export function getEffectiveProjectGalleryImageAnchor(
+export function getEffectiveProjectGalleryEntryAnchor(
   item: ProjectsGalleryProjectItem,
   projectIndex: number,
-  imageIndex: number
+  entryIndex: number
 ) {
   const projectAnchor = getEffectiveProjectAnchor(item, projectIndex);
   const galleryAnchor = getEffectiveNestedGalleryAnchor(item, projectIndex);
-  return item.galleryItems[imageIndex]?.imageAnchor ?? `${projectAnchor}-${galleryAnchor}-item-${imageIndex + 1}`;
+  return item.galleryItems[entryIndex]?.entryAnchor ?? `${projectAnchor}-${galleryAnchor}-item-${entryIndex + 1}`;
 }
 
 function readEntryItems(input: unknown): ProjectsGalleryEntryItem[] {
@@ -63,13 +63,13 @@ function readEntryItems(input: unknown): ProjectsGalleryEntryItem[] {
         return null;
       }
 
-      const rawImageAnchor = readOptionalString(item.imageAnchor);
-      const imageAnchor = rawImageAnchor ? normalizeAnchorId(rawImageAnchor) : undefined;
+      const rawEntryAnchor = readOptionalString(item.entryAnchor) ?? readOptionalString(item.imageAnchor);
+      const entryAnchor = rawEntryAnchor ? normalizeAnchorId(rawEntryAnchor) : undefined;
 
       return {
         kind: item.kind === "markdown" ? "markdown" : "image",
         assetId: readOptionalString(item.assetId),
-        imageAnchor: imageAnchor && isValidAnchorId(imageAnchor) ? imageAnchor : undefined,
+        entryAnchor: entryAnchor && isValidAnchorId(entryAnchor) ? entryAnchor : undefined,
         title: readString(item.title, ""),
         description: readString(item.description, ""),
         contentMd: readString(item.contentMd, ""),
@@ -115,7 +115,7 @@ function defaultGalleryItems(projectAnchorBase: string): ProjectsGalleryEntryIte
   return [
     {
       assetId: undefined,
-      imageAnchor: `${projectAnchorBase}-item-1`,
+      entryAnchor: `${projectAnchorBase}-item-1`,
       kind: "image",
       title: "Gallery image 1",
       description: "",
@@ -125,7 +125,7 @@ function defaultGalleryItems(projectAnchorBase: string): ProjectsGalleryEntryIte
     },
     {
       assetId: undefined,
-      imageAnchor: `${projectAnchorBase}-item-2`,
+      entryAnchor: `${projectAnchorBase}-item-2`,
       kind: "image",
       title: "Gallery image 2",
       description: "",

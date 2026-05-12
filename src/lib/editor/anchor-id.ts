@@ -71,7 +71,9 @@ export function buildEffectivePageAnchors(
       if (typeof item !== "object" || item === null) {
         return;
       }
-      const raw = (item as { imageAnchor?: unknown }).imageAnchor;
+      const raw =
+        (item as { entryAnchor?: unknown }).entryAnchor ??
+        (item as { imageAnchor?: unknown }).imageAnchor;
       if (typeof raw !== "string" || raw.trim().length === 0) {
         return;
       }

@@ -10,9 +10,9 @@ describe("buildGalleryItemNavigationHrefs", () => {
       nextItemAnchor: "gallery-1-item-3",
     });
 
-    expect(hrefs.backHref).toBe("../..#gallery-1");
-    expect(hrefs.previousHref).toBe("./gallery-1-item-1");
-    expect(hrefs.nextHref).toBe("./gallery-1-item-3");
+    expect(hrefs.backHref).toBe("../..?mode=light#gallery-1");
+    expect(hrefs.previousHref).toBe("./gallery-1-item-1?mode=light");
+    expect(hrefs.nextHref).toBe("./gallery-1-item-3?mode=light");
   });
 
   it("omits previous/next hrefs at edges", () => {
@@ -20,7 +20,7 @@ describe("buildGalleryItemNavigationHrefs", () => {
       galleryAnchor: "gallery-1",
     });
 
-    expect(hrefs.backHref).toBe("../..#gallery-1");
+    expect(hrefs.backHref).toBe("../..?mode=light#gallery-1");
     expect(hrefs.previousHref).toBeUndefined();
     expect(hrefs.nextHref).toBeUndefined();
   });

@@ -92,32 +92,32 @@ test("projects gallery supports project detail and nested image detail navigatio
   await expect(firstProjectLink).toBeVisible();
   await firstProjectLink.click();
 
-  await expect(page).toHaveURL(/\/project-1\/gallery-1$/);
+  await expect(page).toHaveURL(/\/project-1\/gallery-1(?:\?mode=(?:light|dark))?$/);
   await expect(page.getByRole("heading", { name: "Project 1" })).toBeVisible();
-  await expect(page.getByText("2 items")).toBeVisible();
+  await expect(page.getByTestId("projects-gallery-entry-count")).toHaveText("2 items");
 
   const firstImageLink = page.locator('article a[href*="/project-1/gallery-1/"]').first();
   await expect(firstImageLink).toBeVisible();
   await firstImageLink.click();
 
-  await expect(page).toHaveURL(/\/project-1\/gallery-1\/project-1-gallery-1-item-1$/);
-  await expect(page.getByText("Item 1 of 2")).toBeVisible();
-  await expect(page.getByRole("link", { name: "Previous" })).toHaveCount(0);
-  await expect(page.getByRole("link", { name: "Next" })).toHaveCount(1);
+  await expect(page).toHaveURL(/\/project-1\/gallery-1\/project-1-gallery-1-item-1(?:\?mode=(?:light|dark))?$/);
+  await expect(page.getByTestId("projects-gallery-entry-counter")).toHaveText("Item 1 of 2");
+  await expect(page.getByTestId("projects-gallery-entry-nav-previous")).toHaveCount(0);
+  await expect(page.getByTestId("projects-gallery-entry-nav-next")).toHaveCount(1);
 
   await page.keyboard.press("ArrowRight");
-  await expect(page).toHaveURL(/\/project-1\/gallery-1\/project-1-gallery-1-item-2$/);
-  await expect(page.getByText("Item 2 of 2")).toBeVisible();
-  await expect(page.getByRole("link", { name: "Previous" })).toHaveCount(1);
-  await expect(page.getByRole("link", { name: "Next" })).toHaveCount(0);
+  await expect(page).toHaveURL(/\/project-1\/gallery-1\/project-1-gallery-1-item-2(?:\?mode=(?:light|dark))?$/);
+  await expect(page.getByTestId("projects-gallery-entry-counter")).toHaveText("Item 2 of 2");
+  await expect(page.getByTestId("projects-gallery-entry-nav-previous")).toHaveCount(1);
+  await expect(page.getByTestId("projects-gallery-entry-nav-next")).toHaveCount(0);
 
-  await page.getByRole("link", { name: "Back to gallery" }).click();
-  await expect(page).toHaveURL(/\/project-1\/gallery-1$/);
+  await page.getByTestId("projects-gallery-entry-back-link").click();
+  await expect(page).toHaveURL(/\/project-1\/gallery-1(?:\?mode=(?:light|dark))?$/);
 });
 
 test("projects gallery preserves dark mode in nested routes", async ({ page }) => {
   await openPublishedProjectsGalleryPage(page, "Projects Gallery Mode", "mode=dark");
-  await expect(page.locator('main[data-mode="dark"]')).toBeVisible();
+  await expect(page.getByTestId("project-mode-container")).toHaveAttribute("data-mode", "dark");
 
   const firstProjectLink = page
     .locator('article a[href*="/project-1/gallery-1"]')
@@ -125,14 +125,14 @@ test("projects gallery preserves dark mode in nested routes", async ({ page }) =
   await expect(firstProjectLink).toBeVisible();
   await firstProjectLink.click();
 
-  await expect(page.locator('main[data-mode="dark"]')).toBeVisible();
+  await expect(page.getByTestId("projects-gallery-mode-container")).toHaveAttribute("data-mode", "dark");
   await expect(page).toHaveURL(/mode=dark/);
 
   const firstImageLink = page.locator('article a[href*="/project-1/gallery-1/"]').first();
   await expect(firstImageLink).toBeVisible();
   await firstImageLink.click();
 
-  await expect(page.locator('main[data-mode="dark"]')).toBeVisible();
+  await expect(page.getByTestId("projects-gallery-entry-mode-container")).toHaveAttribute("data-mode", "dark");
   await expect(page).toHaveURL(/mode=dark/);
 });
 
@@ -161,14 +161,14 @@ test("projects gallery supports markdown nested items with full-width preview an
   await expect(firstProjectLink).toBeVisible();
   await firstProjectLink.click();
 
-  await expect(page).toHaveURL(/\/project-1\/gallery-1$/);
-  await expect(page.getByText("3 items")).toBeVisible();
+  await expect(page).toHaveURL(/\/project-1\/gallery-1(?:\?mode=(?:light|dark))?$/);
+  await expect(page.getByTestId("projects-gallery-entry-count")).toHaveText("3 items");
 
   const markdownItemArticle = page.locator("article", { hasText: "Markdown block" }).first();
   await expect(markdownItemArticle).toBeVisible();
   await expect(markdownItemArticle).toHaveClass(/lg:col-span-3/);
 
   await markdownItemArticle.locator('a[href*="/project-1/gallery-1/"]').first().click();
-  await expect(page).toHaveURL(/\/project-1\/gallery-1\/project-1-gallery-1-item-3$/);
+  await expect(page).toHaveURL(/\/project-1\/gallery-1\/project-1-gallery-1-item-3(?:\?mode=(?:light|dark))?$/);
   await expect(page.getByRole("heading", { name: "Markdown block" })).toBeVisible();
 });
