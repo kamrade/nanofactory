@@ -24,71 +24,70 @@ type BackgroundDefaultsInput = {
   mode: UiMode;
 };
 
+const PALETTES: Record<string, BackgroundDefaultsPalette> = {
+  "sunwash:light": {
+    canvasBackgroundColor: "#f6ead9",
+    layerForegroundColor: "#6b4a22",
+    gradientA: "#f59e0b",
+    gradientB: "#fb7185",
+    colorChoices: [
+      { token: "Canvas / Base", value: "#f6ead9" },
+      { token: "Canvas / Elevated", value: "#fef3c7" },
+      { token: "Foreground / Soft", value: "#6b4a22" },
+      { token: "Gradient / A", value: "#f59e0b" },
+      { token: "Gradient / B", value: "#fb7185" },
+      { token: "Accent / Lift", value: "#fdba74" },
+    ],
+  },
+  "sunwash:dark": {
+    canvasBackgroundColor: "#2f2417",
+    layerForegroundColor: "#fff3dd",
+    gradientA: "#f59e0b",
+    gradientB: "#f97316",
+    colorChoices: [
+      { token: "Canvas / Base", value: "#2f2417" },
+      { token: "Canvas / Elevated", value: "#4a3520" },
+      { token: "Foreground / Soft", value: "#fff3dd" },
+      { token: "Gradient / A", value: "#f59e0b" },
+      { token: "Gradient / B", value: "#f97316" },
+      { token: "Accent / Lift", value: "#fdba74" },
+    ],
+  },
+  "nightfall:light": {
+    canvasBackgroundColor: "#dbe7ff",
+    layerForegroundColor: "#243b73",
+    gradientA: "#7aa2ff",
+    gradientB: "#67e8f9",
+    colorChoices: [
+      { token: "Canvas / Base", value: "#dbe7ff" },
+      { token: "Canvas / Elevated", value: "#f1f5ff" },
+      { token: "Foreground / Soft", value: "#243b73" },
+      { token: "Gradient / A", value: "#7aa2ff" },
+      { token: "Gradient / B", value: "#67e8f9" },
+      { token: "Accent / Lift", value: "#2563eb" },
+    ],
+  },
+  "nightfall:dark": {
+    canvasBackgroundColor: "#0b1020",
+    layerForegroundColor: "#d9e0ff",
+    gradientA: "#5b7cfa",
+    gradientB: "#39d0ff",
+    colorChoices: [
+      { token: "Canvas / Base", value: "#0b1020" },
+      { token: "Canvas / Elevated", value: "#1f2b52" },
+      { token: "Foreground / Soft", value: "#d9e0ff" },
+      { token: "Gradient / A", value: "#5b7cfa" },
+      { token: "Gradient / B", value: "#39d0ff" },
+      { token: "Accent / Lift", value: "#93a4ff" },
+    ],
+  },
+};
+
 export function getBackgroundDefaultsPalette({
   themeKey,
   mode,
 }: BackgroundDefaultsInput): BackgroundDefaultsPalette {
-  if (themeKey === "nightfall") {
-    return mode === "dark"
-      ? {
-          canvasBackgroundColor: "#0b1020",
-          layerForegroundColor: "#d9e0ff",
-          gradientA: "#5b7cfa",
-          gradientB: "#39d0ff",
-          colorChoices: [
-            { token: "Canvas / Base", value: "#0b1020" },
-            { token: "Canvas / Elevated", value: "#1f2b52" },
-            { token: "Foreground / Soft", value: "#d9e0ff" },
-            { token: "Gradient / A", value: "#5b7cfa" },
-            { token: "Gradient / B", value: "#39d0ff" },
-            { token: "Accent / Lift", value: "#93a4ff" },
-          ],
-        }
-      : {
-          canvasBackgroundColor: "#dbe7ff",
-          layerForegroundColor: "#243b73",
-          gradientA: "#7aa2ff",
-          gradientB: "#67e8f9",
-          colorChoices: [
-            { token: "Canvas / Base", value: "#dbe7ff" },
-            { token: "Canvas / Elevated", value: "#f1f5ff" },
-            { token: "Foreground / Soft", value: "#243b73" },
-            { token: "Gradient / A", value: "#7aa2ff" },
-            { token: "Gradient / B", value: "#67e8f9" },
-            { token: "Accent / Lift", value: "#2563eb" },
-          ],
-        };
-  }
-
-  return mode === "dark"
-    ? {
-        canvasBackgroundColor: "#2f2417",
-        layerForegroundColor: "#fff3dd",
-        gradientA: "#f59e0b",
-        gradientB: "#f97316",
-        colorChoices: [
-          { token: "Canvas / Base", value: "#2f2417" },
-          { token: "Canvas / Elevated", value: "#4a3520" },
-          { token: "Foreground / Soft", value: "#fff3dd" },
-          { token: "Gradient / A", value: "#f59e0b" },
-          { token: "Gradient / B", value: "#f97316" },
-          { token: "Accent / Lift", value: "#fdba74" },
-        ],
-      }
-    : {
-        canvasBackgroundColor: "#f6ead9",
-        layerForegroundColor: "#6b4a22",
-        gradientA: "#f59e0b",
-        gradientB: "#fb7185",
-        colorChoices: [
-          { token: "Canvas / Base", value: "#f6ead9" },
-          { token: "Canvas / Elevated", value: "#fef3c7" },
-          { token: "Foreground / Soft", value: "#6b4a22" },
-          { token: "Gradient / A", value: "#f59e0b" },
-          { token: "Gradient / B", value: "#fb7185" },
-          { token: "Accent / Lift", value: "#fdba74" },
-        ],
-      };
+  return PALETTES[`${themeKey}:${mode}`] ?? PALETTES["sunwash:light"];
 }
 
 export function createDefaultStripesLayer(
