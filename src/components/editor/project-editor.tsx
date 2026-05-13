@@ -341,6 +341,14 @@ export function ProjectEditor({
     }
 
     const BlockRenderer = definition.Renderer;
+    const blockShellRadiusClassName =
+      block.type === "features" || block.type === "cta"
+        ? project.borderRadiusPolicy === "none"
+          ? "rounded-none"
+          : project.borderRadiusPolicy === "md"
+            ? "rounded-xl"
+            : "rounded-3xl"
+        : undefined;
     const backgroundScene =
       typeof block.backgroundSceneId === "string"
         ? sceneMap.get(block.backgroundSceneId)?.sceneJson ?? null
@@ -360,9 +368,9 @@ export function ProjectEditor({
 
     return (
       <SectionShell
-        block={block}
         anchorId={effectiveAnchorId}
         containerClassName="mx-auto container"
+        innerRadiusClassName={blockShellRadiusClassName}
         backgroundScene={backgroundScene}
         fallbackThemeKey={activeThemeKey}
         fallbackMode={activeMode}

@@ -10,7 +10,7 @@ export function buildGalleryItemNavigationHrefs(input: {
   const modeQuery = buildModeQuery(input.mode ?? "light");
 
   return {
-    backHref: input.backHref ?? `../..${modeQuery}#${input.galleryAnchor}`,
+    backHref: input.backHref ?? `..${modeQuery}#${input.galleryAnchor}`,
     previousHref: input.previousItemAnchor
       ? `./${input.previousItemAnchor}${modeQuery}`
       : undefined,

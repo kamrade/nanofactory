@@ -1,6 +1,5 @@
 import type { ReactNode } from "react";
 
-import type { PageBlock } from "@/features/blocks/shared/content";
 import { BackgroundRenderer } from "@/components/projects/background-renderer";
 import type { BackgroundScene } from "@/lib/background-scenes/types";
 import type { ThemeKey } from "@/lib/themes";
@@ -9,8 +8,8 @@ import { cx } from "@/lib/cn";
 
 
 type SectionShellProps = {
-  block: PageBlock;
   containerClassName: string;
+  innerRadiusClassName?: string;
   anchorId?: string;
   backgroundScene?: BackgroundScene | null;
   fallbackThemeKey?: ThemeKey;
@@ -19,6 +18,7 @@ type SectionShellProps = {
 };
 
 function renderInnerContent(
+  innerRadiusClassName: string | undefined,
   backgroundScene: BackgroundScene | null | undefined,
   fallbackThemeKey: ThemeKey | undefined,
   fallbackMode: UiMode | undefined,
@@ -27,7 +27,8 @@ function renderInnerContent(
   return (
     <div
       className={cx(
-        "relative rounded-3xl bg-surface overflow-hidden",
+        "relative bg-surface overflow-hidden",
+        innerRadiusClassName ?? "rounded-3xl",
         backgroundScene ? "overflow-hidden" : undefined
       )}
     >
@@ -44,8 +45,8 @@ function renderInnerContent(
 }
 
 export function SectionShell({
-  block,
   containerClassName,
+  innerRadiusClassName,
   anchorId,
   backgroundScene,
   fallbackThemeKey,
@@ -59,6 +60,7 @@ export function SectionShell({
       className={cx("scroll-mt-24", containerClassName)}
     >
       {renderInnerContent(
+        innerRadiusClassName,
         backgroundScene,
         fallbackThemeKey,
         fallbackMode,

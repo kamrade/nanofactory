@@ -58,7 +58,7 @@ describe("buildGalleryItemPageViewModel", () => {
     });
 
     expect(viewModel.resolvedThemeKey).toBe("nightfall");
-    expect(viewModel.navigationHrefs.backHref).toBe("../..?mode=light#gallery-1");
+    expect(viewModel.navigationHrefs.backHref).toBe("..?mode=light#gallery-1");
     expect(viewModel.navigationHrefs.previousHref).toBe("./entry-1?mode=light");
     expect(viewModel.navigationHrefs.nextHref).toBe("./entry-3?mode=light");
   });

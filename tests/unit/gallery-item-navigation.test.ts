@@ -10,7 +10,7 @@ describe("buildGalleryItemNavigationHrefs", () => {
       nextItemAnchor: "gallery-1-item-3",
     });
 
-    expect(hrefs.backHref).toBe("../..?mode=light#gallery-1");
+    expect(hrefs.backHref).toBe("..?mode=light#gallery-1");
     expect(hrefs.previousHref).toBe("./gallery-1-item-1?mode=light");
     expect(hrefs.nextHref).toBe("./gallery-1-item-3?mode=light");
   });
@@ -20,7 +20,7 @@ describe("buildGalleryItemNavigationHrefs", () => {
       galleryAnchor: "gallery-1",
     });
 
-    expect(hrefs.backHref).toBe("../..?mode=light#gallery-1");
+    expect(hrefs.backHref).toBe("..?mode=light#gallery-1");
     expect(hrefs.previousHref).toBeUndefined();
     expect(hrefs.nextHref).toBeUndefined();
   });
@@ -33,7 +33,7 @@ describe("buildGalleryItemNavigationHrefs", () => {
       mode: "dark",
     });
 
-    expect(hrefs.backHref).toBe("../..?mode=dark#gallery-1");
+    expect(hrefs.backHref).toBe("..?mode=dark#gallery-1");
     expect(hrefs.previousHref).toBe("./gallery-1-item-1?mode=dark");
     expect(hrefs.nextHref).toBe("./gallery-1-item-3?mode=dark");
   });

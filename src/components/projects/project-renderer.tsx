@@ -113,6 +113,14 @@ function renderBlock(
   }
 
   const Renderer = definition.Renderer;
+  const blockShellRadiusClassName =
+    block.type === "features" || block.type === "cta"
+      ? borderRadiusPolicy === "none"
+        ? "rounded-none"
+        : borderRadiusPolicy === "md"
+          ? "rounded-xl"
+          : "rounded-3xl"
+      : undefined;
   const backgroundScene =
     typeof block.backgroundSceneId === "string"
       ? sceneMap.get(block.backgroundSceneId)?.sceneJson ?? null
@@ -120,9 +128,9 @@ function renderBlock(
 
   return (
     <SectionShell
-      block={block}
       anchorId={anchorId}
       containerClassName="container mx-auto px-4"
+      innerRadiusClassName={blockShellRadiusClassName}
       backgroundScene={backgroundScene}
       fallbackThemeKey={fallbackThemeKey}
       fallbackMode={fallbackMode}
