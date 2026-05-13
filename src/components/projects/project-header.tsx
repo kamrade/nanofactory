@@ -1,9 +1,11 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useActionState, useEffect, useMemo, useState } from "react";
 import Link from "next/link";
 import { FiArrowLeft } from "react-icons/fi";
 
+import type { SaveEditorState } from "@/app/(protected)/projects/[projectId]/actions";
+import { EDITOR_ADD_BLOCK_EVENT, type EditorAddBlockEventDetail } from "@/components/editor/editor-events";
 import { OpenPreviewButton } from "@/components/editor/open-preview-button";
 import {
   getPreviewDraftContent,
@@ -13,6 +15,7 @@ import { ProjectModeSwitcher, type ThemeMode } from "@/components/projects/proje
 import { ProjectRenameForm } from "@/components/projects/project-rename-form";
 import { ProjectThemeForm } from "@/components/projects/project-theme-form";
 import { UIButton } from "@/components/ui/button";
+import { UIMenu, UIMenuItem, UIMenuLabel } from "@/components/ui/menu";
 import { UIStickyHeader } from "@/components/ui/sticky-header";
 import {
   UISheet,
@@ -31,6 +34,8 @@ import {
   PROJECT_MODE_POLICIES,
   type ProjectModePolicy,
 } from "@/lib/projects/mode-policy";
+import { getBlockTypes, getBlockVariants } from "@/lib/editor/blocks";
+import { useToast } from "@/hooks/use-toast";
 
 type ProjectHeaderProps = {
   project: {
@@ -48,6 +53,10 @@ type ProjectHeaderProps = {
   themeAction: (formData: FormData) => void | Promise<void>;
   modePolicyAction: (formData: FormData) => void | Promise<void>;
   nameAction: (formData: FormData) => void | Promise<void>;
+  saveAction: (
+    state: SaveEditorState,
+    payload: FormData
+  ) => SaveEditorState | Promise<SaveEditorState>;
   contentShape: string;
 };
 
@@ -58,14 +67,25 @@ export function ProjectHeader({
   themeAction,
   modePolicyAction,
   nameAction,
+  saveAction,
   contentShape,
 }: ProjectHeaderProps) {
+  const { showToast } = useToast();
   const resolvedThemeKey = resolveThemePreference(project.themeKey);
-  const [liveContentShape, setLiveContentShape] = useState(contentShape);
-
-  useEffect(() => {
-    setLiveContentShape(contentShape);
-  }, [contentShape, project.id]);
+  const [liveDraftContentShape, setLiveDraftContentShape] = useState<string | null>(null);
+  const initialSaveState: SaveEditorState = {
+    status: "idle",
+    message: "",
+  };
+  const [saveState, saveFormAction, isSaving] = useActionState(saveAction, initialSaveState);
+  const addBlockGroups = useMemo(
+    () =>
+      getBlockTypes().map((blockType) => ({
+        ...blockType,
+        variants: getBlockVariants(blockType.type),
+      })),
+    []
+  );
 
   useEffect(() => {
     return subscribePreviewDraft(() => {
@@ -73,9 +93,33 @@ export function ProjectHeader({
       if (!nextDraft) {
         return;
       }
-      setLiveContentShape(JSON.stringify(nextDraft, null, 2));
+      setLiveDraftContentShape(JSON.stringify(nextDraft, null, 2));
     });
   }, []);
+
+  useEffect(() => {
+    if (saveState.status === "idle" || !saveState.message) {
+      return;
+    }
+
+    showToast({
+      tone: saveState.status === "success" ? "default" : "error",
+      title: saveState.message,
+    });
+  }, [saveState.message, saveState.status, showToast]);
+
+  const liveContentShape = liveDraftContentShape ?? contentShape;
+
+  function handleAddBlock(blockType: string, variant: string) {
+    window.dispatchEvent(
+      new CustomEvent<EditorAddBlockEventDetail>(EDITOR_ADD_BLOCK_EVENT, {
+        detail: {
+          blockType: blockType as EditorAddBlockEventDetail["blockType"],
+          variant: variant as EditorAddBlockEventDetail["variant"],
+        },
+      })
+    );
+  }
 
   return (
     <UIStickyHeader
@@ -101,6 +145,7 @@ export function ProjectHeader({
       </div>
 
       <div className="flex flex-wrap items-center gap-3">
+        
         <ProjectThemeForm
           initialThemeKey={resolvedThemeKey}
           options={THEME_OPTIONS}
@@ -226,7 +271,49 @@ export function ProjectHeader({
             </UISheetFooter>
           </UISheetContent>
         </UISheet>
+
+        <UIMenu
+          ariaLabel="Add block"
+          placement="bottom-start"
+          size="sm"
+          trigger={
+            <UIButton type="button" theme="base" variant="contained" size="sm">
+              Add block
+            </UIButton>
+          }
+        >
+          {addBlockGroups.map((group) => (
+            <div key={group.type} className="grid gap-0.5">
+              <UIMenuLabel>{group.label}</UIMenuLabel>
+              {group.variants.map((definition) => (
+                <UIMenuItem
+                  key={`${definition.type}:${definition.variant}`}
+                  onSelect={() => handleAddBlock(definition.type, definition.variant)}
+                  className="grid gap-0.5"
+                >
+                  <span className="text-sm font-medium text-text-main">{definition.label}</span>
+                  {definition.description ? (
+                    <span className="text-xs leading-5 text-text-muted">
+                      {definition.description}
+                    </span>
+                  ) : null}
+                </UIMenuItem>
+              ))}
+            </div>
+          ))}
+        </UIMenu>
+        <form action={saveFormAction} className="flex items-center gap-3">
+          <input type="hidden" name="content" value={liveContentShape} />
+          <UIButton type="submit" disabled={isSaving} theme="primary" variant="contained" size="sm">
+            {isSaving ? "Saving..." : "Save"}
+          </UIButton>
+        </form>
+
+
       </div>
+      {saveState.status === "error" && saveState.message ? (
+        <p className="mt-2 text-sm text-danger-500">{saveState.message}</p>
+      ) : null}
     </UIStickyHeader>
   );
 }

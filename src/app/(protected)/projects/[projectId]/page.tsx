@@ -8,6 +8,7 @@ import { normalizePageContent } from "@/lib/editor/content";
 import { getProjectByIdForUser } from "@/lib/projects";
 import {
   publishProjectAction,
+  saveProjectContentAction,
   updateProjectNameAction,
   updateProjectModePolicyAction,
   updateProjectThemeAction,
@@ -51,6 +52,7 @@ export default async function ProjectPage({ params, searchParams }: ProjectPageP
   const themeAction = updateProjectThemeAction.bind(null, project.id);
   const nameAction = updateProjectNameAction.bind(null, project.id);
   const modePolicyAction = updateProjectModePolicyAction.bind(null, project.id);
+  const saveAction = saveProjectContentAction.bind(null, project.id);
 
   return (
     <main
@@ -75,6 +77,7 @@ export default async function ProjectPage({ params, searchParams }: ProjectPageP
           themeAction={themeAction}
           nameAction={nameAction}
           modePolicyAction={modePolicyAction}
+          saveAction={saveAction}
           contentShape={JSON.stringify(normalizedContent, null, 2)}
         />
 

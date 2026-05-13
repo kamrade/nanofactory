@@ -44,6 +44,12 @@ async function addBlock(page: Page, descriptionText: string) {
   await page.locator('[role="menuitem"]').filter({ hasText: descriptionText }).first().click();
 }
 
+async function saveProject(page: Page) {
+  await ensureBlockEditorClosed(page);
+  await page.getByRole("button", { name: "Save" }).click();
+  await expect(page.getByText("Project content saved.")).toBeVisible();
+}
+
 async function publishProject(page: Page) {
   await ensureBlockEditorClosed(page);
 
@@ -72,8 +78,7 @@ async function getPublicUrl(page: Page) {
 async function openPublishedGalleryPage(page: Page, projectName: string, extraQuery?: string) {
   await createProjectFromDashboard(page, projectName);
   await addBlock(page, "Image gallery with configurable columns and optional text details.");
-  await page.getByRole("button", { name: "Save" }).click();
-  await expect(page.getByText("Project content saved.")).toBeVisible();
+  await saveProject(page);
 
   await publishProject(page);
   const publicUrl = await getPublicUrl(page);
@@ -135,8 +140,7 @@ test("returns 404 for invalid gallery item anchors", async ({ page }) => {
   const projectName = "Gallery Navigation NotFound";
   await createProjectFromDashboard(page, projectName);
   await addBlock(page, "Image gallery with configurable columns and optional text details.");
-  await page.getByRole("button", { name: "Save" }).click();
-  await expect(page.getByText("Project content saved.")).toBeVisible();
+  await saveProject(page);
   await publishProject(page);
   const publicUrl = await getPublicUrl(page);
   const url = new URL(publicUrl, page.url());

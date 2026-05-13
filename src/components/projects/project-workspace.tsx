@@ -81,7 +81,6 @@ export function ProjectWorkspace({
       <ProjectEditor
         project={project}
         assets={assets}
-        initialMode={initialMode}
         activeThemeKey={activeThemeMode.themeKey}
         activeMode={activeThemeMode.mode}
         backgroundScenes={backgroundScenes}

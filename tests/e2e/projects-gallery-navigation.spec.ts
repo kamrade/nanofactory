@@ -40,6 +40,12 @@ async function addBlock(page: Page, descriptionText: string) {
   await page.locator('[role="menuitem"]').filter({ hasText: descriptionText }).first().click();
 }
 
+async function saveProject(page: Page) {
+  await ensureBlockEditorClosed(page);
+  await page.getByRole("button", { name: "Save" }).click();
+  await expect(page.getByText("Project content saved.")).toBeVisible();
+}
+
 async function publishProject(page: Page) {
   await ensureBlockEditorClosed(page);
   await page.getByRole("button", { name: "Info" }).click();
@@ -70,8 +76,7 @@ async function openPublishedProjectsGalleryPage(
 ) {
   await createProjectFromDashboard(page, projectName);
   await addBlock(page, "Projects gallery with nested per-project image galleries.");
-  await page.getByRole("button", { name: "Save" }).click();
-  await expect(page.getByText("Project content saved.")).toBeVisible();
+  await saveProject(page);
 
   await publishProject(page);
   const publicUrl = await getPublicUrl(page);
@@ -148,8 +153,7 @@ test("projects gallery marks image-only count and redirects markdown entry URL t
     .first()
     .fill("## Markdown block\n\n- first point\n- second point");
 
-  await page.getByRole("button", { name: "Save" }).click();
-  await expect(page.getByText("Project content saved.")).toBeVisible();
+  await saveProject(page);
 
   await publishProject(page);
   const publicUrl = await getPublicUrl(page);
@@ -184,8 +188,7 @@ test("projects gallery counter uses image-only sequence when markdown is in the 
 
   await page.getByRole("button", { name: "Add entry (image)" }).first().click();
 
-  await page.getByRole("button", { name: "Save" }).click();
-  await expect(page.getByText("Project content saved.")).toBeVisible();
+  await saveProject(page);
 
   await publishProject(page);
   const publicUrl = await getPublicUrl(page);

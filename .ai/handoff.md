@@ -40,6 +40,17 @@ This is a website/page builder with project-level editing, block-based content, 
   - `db/schema.ts`
 
 4) Recent important changes (latest)
+- Project editor primary actions moved to header:
+  - `Add block` and `Save` now render in `ProjectHeader` (`size="sm"`).
+  - `Save` is handled in header via `useActionState` and uses draft content from preview-draft store.
+  - save success/error toasts are triggered from `ProjectHeader`.
+- Editor action wiring update:
+  - `ProjectEditor` no longer renders toolbar save/add controls.
+  - add-block flow is now bridged via event (`src/components/editor/editor-events.ts`).
+- E2E updates for header-driven save flow:
+  - specs use helper-based save that closes block editor before clicking header `Save`.
+  - removed unstable spec file:
+    - `tests/e2e/project-anchors.spec.ts`
 - Added markdown rendering support component and usage:
   - `src/components/md-renderer.tsx`
 - `projects-gallery` now supports mixed nested entries:

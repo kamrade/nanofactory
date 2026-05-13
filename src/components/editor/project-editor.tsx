@@ -1,6 +1,6 @@
 "use client";
 
-import { useActionState, useEffect, useMemo, useReducer } from "react";
+import { useEffect, useMemo, useReducer } from "react";
 
 import type { PageContent } from "@/db/schema";
 import type { ProjectAssetRecord } from "@/lib/assets";
@@ -9,18 +9,16 @@ import {
   type BlockVariant,
   createPageBlock,
   getBlockDefinition,
-  getBlockTypes,
   getBlockVariants,
   type SupportedBlockType,
 } from "@/lib/editor/blocks";
 
-import {
-  type SaveEditorState,
-  saveProjectContentAction,
-} from "@/app/(protected)/projects/[projectId]/actions";
 import { BlockSettingsSheet } from "@/components/editor/block-settings-sheet";
 import { EditorCanvas } from "@/components/editor/editor-canvas";
-import { EditorToolbar } from "@/components/editor/editor-toolbar";
+import {
+  EDITOR_ADD_BLOCK_EVENT,
+  type EditorAddBlockEventDetail,
+} from "@/components/editor/editor-events";
 import {
   applyVariantSwitchToContent,
   createPendingVariantSwitch,
@@ -55,7 +53,6 @@ type EditorProject = {
 type ProjectEditorProps = {
   project: EditorProject;
   assets: ProjectAssetRecord[];
-  initialMode: UiMode;
   activeThemeKey: ThemeKey;
   activeMode: UiMode;
   backgroundScenes?: BackgroundSceneRecord[];
@@ -278,7 +275,6 @@ function editorReducer(state: EditorState, action: EditorAction): EditorState {
 export function ProjectEditor({
   project,
   assets,
-  initialMode,
   activeThemeKey,
   activeMode,
   backgroundScenes = [],
@@ -291,45 +287,14 @@ export function ProjectEditor({
     lastVariantUndo: null,
   });
 
-  const initialSaveEditorState: SaveEditorState = {
-    status: "idle",
-    message: "",
-  };
-  const saveAction = saveProjectContentAction.bind(null, project.id);
-  const [saveState, formAction, isPending] = useActionState(
-    saveAction,
-    initialSaveEditorState
-  );
-
-  const serializedContent = useMemo(() => JSON.stringify(state.content), [state.content]);
   const assetMap = useMemo(() => buildAssetMap(assets), [assets]);
   const sceneMap = useMemo(
     () => new Map(backgroundScenes.map((scene) => [scene.id, scene] as const)),
     [backgroundScenes]
   );
-  const blockTypes = useMemo(() => getBlockTypes(), []);
-  const addBlockGroups = useMemo(
-    () =>
-      blockTypes.map((blockType) => ({
-        ...blockType,
-        variants: getBlockVariants(blockType.type),
-      })),
-    [blockTypes]
-  );
-
   useEffect(() => {
     setPreviewDraftContent(state.content);
   }, [state.content]);
-
-  useEffect(() => {
-    if (saveState.status === "idle" || !saveState.message) {
-      return;
-    }
-    showToast({
-      tone: saveState.status === "success" ? "default" : "error",
-      title: saveState.message,
-    });
-  }, [saveState.message, saveState.status, showToast]);
 
   useEffect(() => {
     if (!state.lastVariantUndo) {
@@ -342,6 +307,26 @@ export function ProjectEditor({
 
     return () => window.clearTimeout(timer);
   }, [state.lastVariantUndo]);
+
+  useEffect(() => {
+    function handleAddBlock(event: Event) {
+      const detail = (event as CustomEvent<EditorAddBlockEventDetail>).detail;
+      if (!detail) {
+        return;
+      }
+
+      dispatch({
+        type: "add_block",
+        blockType: detail.blockType,
+        variant: detail.variant,
+      });
+    }
+
+    window.addEventListener(EDITOR_ADD_BLOCK_EVENT, handleAddBlock);
+    return () => {
+      window.removeEventListener(EDITOR_ADD_BLOCK_EVENT, handleAddBlock);
+    };
+  }, []);
 
   const effectiveAnchors = useMemo(
     () => buildEffectivePageAnchors(state.content.blocks),
@@ -485,16 +470,6 @@ export function ProjectEditor({
   return (
     <div className="grid gap-6">
       <section data-testid="ProjectEditorContent" className="space-y-6">
-        <EditorToolbar
-          addBlockGroups={addBlockGroups}
-          isPending={isPending}
-          serializedContent={serializedContent}
-          formAction={formAction}
-          onAddBlock={(blockType, variant) =>
-            dispatch({ type: "add_block", blockType, variant })
-          }
-        />
-
         <EditorCanvas
           content={state.content}
           lastVariantUndo={state.lastVariantUndo}

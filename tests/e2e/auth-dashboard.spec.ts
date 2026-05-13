@@ -23,6 +23,28 @@ async function createProjectFromDashboard(page: Page, name: string) {
   await dialog.getByRole("button", { name: "Create project" }).click();
 }
 
+async function ensureBlockEditorClosed(page: Page) {
+  const blockEditor = page.getByRole("dialog", { name: "Block editor" });
+  if (await blockEditor.isVisible()) {
+    await page.keyboard.press("Escape");
+    await page.waitForTimeout(100);
+
+    if (await blockEditor.isVisible()) {
+      const closeButton = blockEditor.getByRole("button", { name: "Close" }).first();
+      if ((await closeButton.count()) > 0) {
+        await closeButton.click({ force: true });
+        await page.waitForTimeout(100);
+      }
+    }
+  }
+}
+
+async function saveProject(page: Page) {
+  await ensureBlockEditorClosed(page);
+  await page.getByRole("button", { name: "Save" }).click();
+  await expect(page.getByText("Project content saved.")).toBeVisible();
+}
+
 test("redirects guests from dashboard to login", async ({ page }) => {
   await page.context().clearCookies();
   await page.goto("/dashboard");
@@ -70,9 +92,7 @@ test("adds a block, saves content, and reloads the editor state", async ({ page 
     "Saved hero subtitle from Playwright."
   );
   await page.getByLabel("Button text", { exact: true }).fill("Launch");
-  await page.getByRole("button", { name: "Save" }).click();
-
-  await expect(page.getByText("Project content saved.")).toBeVisible();
+  await saveProject(page);
   await page.reload();
   await page.getByTestId("Variant").first().click();
 
