@@ -72,6 +72,26 @@ export async function resolvePublishedGalleryItem(
   };
 }
 
+function getProjectRadiusClass(borderRadiusPolicy: "none" | "md" | "lg") {
+  if (borderRadiusPolicy === "none") {
+    return "rounded-none";
+  }
+  if (borderRadiusPolicy === "md") {
+    return "rounded-xl";
+  }
+  return "rounded-2xl";
+}
+
+function getProjectControlRadiusClass(borderRadiusPolicy: "none" | "md" | "lg") {
+  if (borderRadiusPolicy === "none") {
+    return "rounded-none";
+  }
+  if (borderRadiusPolicy === "md") {
+    return "rounded-lg";
+  }
+  return "rounded-xl";
+}
+
 async function resolvePublishedProjectsGalleryProject(
   slug: string,
   projectAnchor: string,
@@ -172,6 +192,8 @@ export default async function PublishedGalleryItemPage({
     const assets = await getAssetsByProjectId(project.id);
     const assetMap = buildAssetMap(assets);
     const modeQuery = buildModeQuery(resolvedMode);
+    const previewRadiusClass = getProjectRadiusClass(project.borderRadiusPolicy);
+    const controlRadiusClass = getProjectControlRadiusClass(project.borderRadiusPolicy);
     const previewImageItems = resolvedProjectGallery.galleryItems.filter(
       (item) => item.kind === "image"
     );
@@ -193,18 +215,18 @@ export default async function PublishedGalleryItemPage({
             <Link
               data-testid="projects-gallery-back-to-projects"
               href={backHref}
-              className="inline-flex items-center justify-center rounded-xl border border-line bg-surface px-3 py-2 text-sm font-medium text-text-main transition hover:bg-surface-alt"
+              className={`inline-flex items-center justify-center border border-line bg-surface px-3 py-2 text-sm font-medium text-text-main transition hover:bg-surface-alt ${controlRadiusClass}`}
             >
               Back to projects
             </Link>
-            <div className="inline-flex items-center gap-2 rounded-xl border border-line bg-surface px-3 py-2 text-sm text-text-muted">
+            <div className={`inline-flex items-center gap-2 border border-line bg-surface px-3 py-2 text-sm text-text-muted ${controlRadiusClass}`}>
               <span data-testid="projects-gallery-entry-count">
                 {previewImageItems.length} items
               </span>
             </div>
           </div>
 
-          <section className="grid gap-3 rounded-2xl border border-line bg-surface p-5">
+          <section className={`grid gap-3 border border-line bg-surface p-5 ${previewRadiusClass}`}>
             <h1 className="text-2xl font-semibold tracking-tight text-text-main">
               {resolvedProjectGallery.title.trim().length > 0
                 ? resolvedProjectGallery.title
@@ -226,7 +248,7 @@ export default async function PublishedGalleryItemPage({
 
           <section
             data-testid="projects-gallery-all-entries"
-            className="grid gap-3 rounded-2xl border border-line bg-surface p-5"
+            className={`grid gap-3 border border-line bg-surface p-5 ${previewRadiusClass}`}
           >
             <div className="flex items-center justify-between gap-3">
               <h2 className="text-lg font-semibold tracking-tight text-text-main">All entries</h2>
@@ -251,7 +273,7 @@ export default async function PublishedGalleryItemPage({
                 return (
                   <article
                     key={`all-${resolvedProjectGallery.projectAnchor}-${item.entryAnchor}-${index}`}
-                    className={`relative overflow-hidden rounded-2xl border border-line bg-surface-alt ${
+                    className={`relative overflow-hidden border border-line bg-surface-alt ${previewRadiusClass} ${
                       item.kind === "markdown" ? "md:col-span-2 lg:col-span-3" : ""
                     }`}
                   >
@@ -329,6 +351,8 @@ export default async function PublishedGalleryItemPage({
     mode: resolvedMode,
     host: requestHeaders.get("host"),
   });
+  const previewRadiusClass = getProjectRadiusClass(project.borderRadiusPolicy);
+  const controlRadiusClass = getProjectControlRadiusClass(project.borderRadiusPolicy);
 
   return (
     <main
@@ -348,9 +372,12 @@ export default async function PublishedGalleryItemPage({
           counterText={`Item ${resolved.itemIndex + 1} of ${resolved.totalItems}`}
           previousHref={viewModel.navigationHrefs.previousHref}
           nextHref={viewModel.navigationHrefs.nextHref}
+          radiusClassName={controlRadiusClass}
         />
 
-        <section className="overflow-hidden rounded-2xl border border-line bg-surface-alt">
+        <section
+          className={`overflow-hidden border border-line bg-surface-alt ${previewRadiusClass}`}
+        >
           {asset ? (
             // eslint-disable-next-line @next/next/no-img-element
             <img
@@ -365,7 +392,7 @@ export default async function PublishedGalleryItemPage({
           )}
         </section>
 
-        <section className="grid gap-2 rounded-2xl border border-line bg-surface p-5">
+        <section className={`grid gap-2 border border-line bg-surface p-5 ${previewRadiusClass}`}>
           {resolved.title.trim().length > 0 ? (
             <h1 className="text-2xl font-semibold tracking-tight text-text-main">{resolved.title}</h1>
           ) : (

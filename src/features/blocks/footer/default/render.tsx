@@ -12,6 +12,7 @@ import {
 } from "react-icons/fa6";
 import { FiLink } from "react-icons/fi";
 import type { IconType } from "react-icons";
+import type { CSSProperties } from "react";
 
 import type { BlockRenderProps } from "../../shared/types";
 import { normalizeAnchorId } from "@/lib/editor/anchor-id";
@@ -49,10 +50,38 @@ function getRightGridColsClass(columnCount: number) {
   return "grid-cols-1 sm:grid-cols-2 lg:grid-cols-3";
 }
 
-export function FooterDefaultRender({ block, assetMap, theme }: BlockRenderProps) {
+type BorderRadiusPolicy = "none" | "md" | "lg";
+
+export function FooterDefaultRender({
+  block,
+  assetMap,
+  theme,
+  projectBorderRadiusPolicy,
+}: BlockRenderProps) {
   const props = readFooterProps(block.props);
   const logoAsset = resolveAssetById(props.logoAssetId, assetMap);
   const currentYear = new Date().getFullYear();
+  const effectiveBorderRadius: BorderRadiusPolicy =
+    projectBorderRadiusPolicy === "none" ||
+    projectBorderRadiusPolicy === "md" ||
+    projectBorderRadiusPolicy === "lg"
+      ? projectBorderRadiusPolicy
+      : "lg";
+  const radiusVars =
+    effectiveBorderRadius === "none"
+      ? {
+          "--footer-radius-shell": "0px",
+          "--footer-radius-control": "0px",
+        }
+      : effectiveBorderRadius === "md"
+        ? {
+            "--footer-radius-shell": "0.75rem",
+            "--footer-radius-control": "0.5rem",
+          }
+        : {
+            "--footer-radius-shell": "1rem",
+            "--footer-radius-control": "0.75rem",
+          };
 
   const rightColumns = [
     {
@@ -129,7 +158,10 @@ export function FooterDefaultRender({ block, assetMap, theme }: BlockRenderProps
     props.scrollTopLabel.trim().length > 0;
 
   return (
-    <section className="px-4 py-8 md:px-8 md:py-12">
+    <section
+      className="px-4 py-8 md:px-8 md:py-12 [border-radius:var(--footer-radius-shell)]"
+      style={radiusVars as CSSProperties}
+    >
       <div className="mb-3 flex gap-3 items-center">
         {logoAsset ? (
           <Image
@@ -175,7 +207,7 @@ export function FooterDefaultRender({ block, assetMap, theme }: BlockRenderProps
                     href={item.url}
                     target="_blank"
                     rel="noreferrer noopener"
-                    className={`inline-flex items-center gap-2 text-sm transition hover:underline ${theme.muted}`}
+                    className={`inline-flex items-center gap-2 border border-line bg-surface px-2 py-1 text-sm transition hover:bg-surface-alt ${theme.muted} [border-radius:var(--footer-radius-control)]`}
                     aria-label={item.label}
                     title={item.label}
                   >
@@ -189,7 +221,7 @@ export function FooterDefaultRender({ block, assetMap, theme }: BlockRenderProps
             {props.scrollTopLabel.trim().length > 0 ? (
               <button
                 type="button"
-                className={`mt-auto inline-flex w-fit items-center text-sm font-medium transition hover:underline ${theme.muted}`}
+                className={`mt-auto inline-flex w-fit items-center border border-line bg-surface px-3 py-2 text-sm font-medium transition hover:bg-surface-alt ${theme.muted} [border-radius:var(--footer-radius-control)]`}
                 onClick={() => {
                   if (typeof window !== "undefined") {
                     window.scrollTo({ top: 0, behavior: "smooth" });

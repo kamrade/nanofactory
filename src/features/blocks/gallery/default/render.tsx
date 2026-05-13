@@ -1,5 +1,6 @@
 import Image from "next/image";
 import Link from "next/link";
+import type { CSSProperties } from "react";
 
 import { resolveAssetById } from "@/lib/assets/resolution";
 import { buildModeQuery } from "@/lib/routing/mode-query";
@@ -15,6 +16,7 @@ type GalleryItem = {
 };
 
 type GalleryImageHeightMode = "fixed" | "natural";
+type BorderRadiusPolicy = "none" | "md" | "lg";
 
 function readSectionTitle(props: Record<string, unknown>) {
   return typeof props.sectionTitle === "string" ? props.sectionTitle : "";
@@ -80,6 +82,7 @@ export function GalleryDefaultRender({
   assetMap,
   theme,
   mode = "light",
+  projectBorderRadiusPolicy,
   publicProjectSlug,
   galleryItemLinkMode = "absolute",
   effectiveBlockAnchorId,
@@ -90,9 +93,31 @@ export function GalleryDefaultRender({
   const imageHeightMode = readImageHeightMode(block.props);
   const items = readItems(block.props);
   const modeQuery = buildModeQuery(mode);
+  const effectiveBorderRadius: BorderRadiusPolicy =
+    projectBorderRadiusPolicy === "none" ||
+    projectBorderRadiusPolicy === "md" ||
+    projectBorderRadiusPolicy === "lg"
+      ? projectBorderRadiusPolicy
+      : "lg";
+
+  const radiusVars =
+    effectiveBorderRadius === "none"
+      ? {
+          "--gallery-radius-card": "0px",
+          "--gallery-radius-media": "0px",
+        }
+      : effectiveBorderRadius === "md"
+        ? {
+            "--gallery-radius-card": "0.75rem",
+            "--gallery-radius-media": "0.5rem",
+          }
+        : {
+            "--gallery-radius-card": "1rem",
+            "--gallery-radius-media": "1rem",
+          };
 
   return (
-    <section className="space-y-6 p-4 md:p-8">
+    <section className="space-y-6 p-4 md:p-8" style={radiusVars as CSSProperties}>
       {sectionTitle.trim().length > 0 ? (
         <h2 className="text-2xl font-semibold tracking-tight text-text-main">{sectionTitle}</h2>
       ) : null}
@@ -119,8 +144,8 @@ export function GalleryDefaultRender({
               id={itemAnchorId}
               className={
                 imageHeightMode === "natural"
-                  ? "relative mb-4 break-inside-avoid overflow-hidden rounded-2xl border border-line bg-surface-alt"
-                  : "relative self-start overflow-hidden rounded-2xl border border-line bg-surface-alt"
+                  ? "relative mb-4 break-inside-avoid overflow-hidden border border-line bg-surface-alt [border-radius:var(--gallery-radius-card)]"
+                  : "relative self-start overflow-hidden border border-line bg-surface-alt [border-radius:var(--gallery-radius-card)]"
               }
             >
               {asset ? itemHref ? (
@@ -158,6 +183,7 @@ export function GalleryDefaultRender({
                         ? "flex min-h-40 w-full items-center justify-center bg-surface text-sm text-text-muted"
                         : "flex h-56 w-full items-center justify-center bg-surface text-sm text-text-muted"
                     }
+                    style={{ borderRadius: "var(--gallery-radius-media)" }}
                   >
                     No image
                   </div>

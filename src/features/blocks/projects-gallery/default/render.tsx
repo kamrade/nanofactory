@@ -1,5 +1,6 @@
 import Image from "next/image";
 import Link from "next/link";
+import type { CSSProperties } from "react";
 
 import { resolveAssetById } from "@/lib/assets/resolution";
 import { buildModeQuery } from "@/lib/routing/mode-query";
@@ -9,20 +10,43 @@ import {
   getEffectiveProjectAnchor,
   readProjectsGalleryProps,
 } from "./model";
+type BorderRadiusPolicy = "none" | "md" | "lg";
 
 export function ProjectsGalleryDefaultRender({
   block,
   assetMap,
   theme,
   mode = "light",
+  projectBorderRadiusPolicy,
   publicProjectSlug,
   galleryItemLinkMode = "absolute",
 }: BlockRenderProps) {
   const props = readProjectsGalleryProps(block.props);
   const modeQuery = buildModeQuery(mode);
+  const effectiveBorderRadius: BorderRadiusPolicy =
+    projectBorderRadiusPolicy === "none" ||
+    projectBorderRadiusPolicy === "md" ||
+    projectBorderRadiusPolicy === "lg"
+      ? projectBorderRadiusPolicy
+      : "lg";
+  const radiusVars =
+    effectiveBorderRadius === "none"
+      ? {
+          "--projects-gallery-radius-card": "0px",
+          "--projects-gallery-radius-media": "0px",
+        }
+      : effectiveBorderRadius === "md"
+        ? {
+            "--projects-gallery-radius-card": "0.75rem",
+            "--projects-gallery-radius-media": "0.5rem",
+          }
+        : {
+            "--projects-gallery-radius-card": "1rem",
+            "--projects-gallery-radius-media": "1rem",
+          };
 
   return (
-    <section className="space-y-6 p-4 md:p-8">
+    <section className="space-y-6 p-4 md:p-8" style={radiusVars as CSSProperties}>
       {props.sectionTitle.trim().length > 0 ? (
         <h2 className="text-2xl font-semibold tracking-tight text-text-main">{props.sectionTitle}</h2>
       ) : null}
@@ -44,7 +68,7 @@ export function ProjectsGalleryDefaultRender({
           return (
             <article
               key={`${block.id}-project-gallery-${index}`}
-              className="relative overflow-hidden rounded-2xl border border-line bg-surface-alt"
+              className="relative overflow-hidden border border-line bg-surface-alt [border-radius:var(--projects-gallery-radius-card)]"
             >
               {imageAsset ? resolvedHref ? (
                 <Link href={resolvedHref} className="block transition hover:opacity-95">
@@ -54,7 +78,7 @@ export function ProjectsGalleryDefaultRender({
                     width={800}
                     height={600}
                     unoptimized
-                    className="h-56 w-full object-cover"
+                    className="h-56 w-full object-cover [border-radius:var(--projects-gallery-radius-media)]"
                   />
                 </Link>
               ) : (
@@ -64,10 +88,10 @@ export function ProjectsGalleryDefaultRender({
                   width={800}
                   height={600}
                   unoptimized
-                  className="h-56 w-full object-cover"
+                  className="h-56 w-full object-cover [border-radius:var(--projects-gallery-radius-media)]"
                 />
               ) : (
-                  <div className="flex h-56 w-full items-center justify-center bg-surface text-sm text-text-muted">
+                  <div className="flex h-56 w-full items-center justify-center bg-surface text-sm text-text-muted [border-radius:var(--projects-gallery-radius-media)]">
                     No image
                   </div>
                 )}

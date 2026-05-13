@@ -40,6 +40,26 @@ type ResolvedPublishedProjectsGalleryEntry = ResolvedProjectsGalleryEntry & {
   projectThemeKey: string;
 };
 
+function getProjectRadiusClass(borderRadiusPolicy: "none" | "md" | "lg") {
+  if (borderRadiusPolicy === "none") {
+    return "rounded-none";
+  }
+  if (borderRadiusPolicy === "md") {
+    return "rounded-xl";
+  }
+  return "rounded-2xl";
+}
+
+function getProjectControlRadiusClass(borderRadiusPolicy: "none" | "md" | "lg") {
+  if (borderRadiusPolicy === "none") {
+    return "rounded-none";
+  }
+  if (borderRadiusPolicy === "md") {
+    return "rounded-lg";
+  }
+  return "rounded-xl";
+}
+
 async function resolvePublishedProjectsGalleryEntry(
   slug: string,
   projectAnchor: string,
@@ -152,6 +172,8 @@ export default async function ProjectsGalleryEntryPage({
     }
     redirect(backHref);
   }
+  const previewRadiusClass = getProjectRadiusClass(project.borderRadiusPolicy);
+  const controlRadiusClass = getProjectControlRadiusClass(project.borderRadiusPolicy);
 
   return (
     <main
@@ -169,10 +191,13 @@ export default async function ProjectsGalleryEntryPage({
           counterText={`Item ${resolved.imageEntryIndex + 1} of ${resolved.totalImageEntries}`}
           previousHref={previousHref}
           nextHref={nextHref}
+          radiusClassName={controlRadiusClass}
           testIdPrefix="projects-gallery-entry"
         />
 
-        <section className="overflow-hidden rounded-2xl border border-line bg-surface-alt">
+        <section
+          className={`overflow-hidden border border-line bg-surface-alt ${previewRadiusClass}`}
+        >
           {asset ? (
             // eslint-disable-next-line @next/next/no-img-element
             <img
@@ -187,7 +212,7 @@ export default async function ProjectsGalleryEntryPage({
           )}
         </section>
 
-        <section className="grid gap-2 rounded-2xl border border-line bg-surface p-5">
+        <section className={`grid gap-2 border border-line bg-surface p-5 ${previewRadiusClass}`}>
           {resolved.title.trim().length > 0 ? (
             <h1 className="text-2xl font-semibold tracking-tight text-text-main">{resolved.title}</h1>
           ) : (
