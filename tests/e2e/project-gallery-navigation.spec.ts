@@ -90,18 +90,18 @@ test("gallery item page supports next/previous, keyboard arrows, and back to gal
   await expect(firstItemLink).toBeVisible();
   await firstItemLink.click();
 
-  await expect(page.getByTestId("gallery-item-counter")).toHaveText("Item 1 of 2");
+  await expect(page.getByTestId("gallery-counter")).toHaveText("Item 1 of 2");
   const firstDetailUrl = new URL(page.url());
   const firstSegments = firstDetailUrl.pathname.split("/").filter(Boolean);
   const galleryAnchor = firstSegments[firstSegments.length - 2];
 
   await page.getByTestId("gallery-nav-next").click();
-  await expect(page.getByTestId("gallery-item-counter")).toHaveText("Item 2 of 2");
+  await expect(page.getByTestId("gallery-counter")).toHaveText("Item 2 of 2");
   const secondDetailUrl = new URL(page.url());
   expect(secondDetailUrl.pathname).not.toBe(firstDetailUrl.pathname);
 
   await page.keyboard.press("ArrowLeft");
-  await expect(page.getByTestId("gallery-item-counter")).toHaveText("Item 1 of 2");
+  await expect(page.getByTestId("gallery-counter")).toHaveText("Item 1 of 2");
   await expect(page).toHaveURL(firstDetailUrl.toString());
 
   await page.getByTestId("gallery-back-link").click();
@@ -115,20 +115,20 @@ test("gallery item page handles ArrowRight and edge states for previous/next", a
   await expect(firstItemLink).toBeVisible();
   await firstItemLink.click();
 
-  await expect(page.getByTestId("gallery-item-counter")).toHaveText("Item 1 of 2");
+  await expect(page.getByTestId("gallery-counter")).toHaveText("Item 1 of 2");
   const firstDetailUrl = page.url();
   await expect(page.getByText("Previous")).toBeVisible();
   await expect(page.getByTestId("gallery-nav-previous")).toHaveCount(0);
   await expect(page.getByTestId("gallery-nav-next")).toHaveCount(1);
 
   await page.keyboard.press("ArrowRight");
-  await expect(page.getByTestId("gallery-item-counter")).toHaveText("Item 2 of 2");
+  await expect(page.getByTestId("gallery-counter")).toHaveText("Item 2 of 2");
   await expect(page.url()).not.toBe(firstDetailUrl);
   await expect(page.getByTestId("gallery-nav-previous")).toHaveCount(1);
   await expect(page.getByTestId("gallery-nav-next")).toHaveCount(0);
 
   await page.keyboard.press("ArrowRight");
-  await expect(page.getByTestId("gallery-item-counter")).toHaveText("Item 2 of 2");
+  await expect(page.getByTestId("gallery-counter")).toHaveText("Item 2 of 2");
 });
 
 test("returns 404 for invalid gallery item anchors", async ({ page }) => {

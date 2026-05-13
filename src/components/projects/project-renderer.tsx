@@ -171,7 +171,7 @@ export function ProjectRenderer({
       <div className="flex w-full flex-col gap-6">
         {content.blocks.length === 0 ? (
           <section data-testid="ProjectRenderBlock" className={containerClass}>
-            <div className="rounded-[2rem] border border-line bg-surface px-8 py-10 shadow-sm">
+            <div className="rounded-2xl border border-line bg-surface px-8 py-10 shadow-sm">
               <h1 className="text-3xl font-semibold tracking-tight">{name}</h1>
               <p className={`mt-3 text-base leading-7 ${renderContext.theme.muted}`}>
                 This page has been published, but it does not contain any blocks yet.

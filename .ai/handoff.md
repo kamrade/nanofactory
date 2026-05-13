@@ -71,6 +71,11 @@ This is a website/page builder with project-level editing, block-based content, 
   - Added `stripMarkdownForMeta()` in `src/lib/markdown/meta.ts`.
   - Applied in `[entryAnchor]/page.tsx` `generateMetadata`.
 - E2E test fixed: `projects-gallery-navigation.spec.ts` adjusted to match actual page structure (no separate image-preview section).
+- Inline `cx()` classname utility extracted from 21 components to shared `src/lib/cn.ts`.
+- Duplicate `createBlockId`/`createStorageId`/`createId` unified into `src/lib/id.ts`.
+- DOM mode helpers (`readModeFromRoot`/`applyModeToRoot`) extracted to `src/lib/dom-utils.ts`; `ClosestCapableNode` adapter removed.
+- Background palette lookup flattened from nested ternaries to a `PALETTES` record in `background-scene-defaults.ts`.
+- `mapPlainObjects<T>` helper extracted in `model.ts` to deduplicate array parsing in `readEntryItems`/`readProjectItems`.
 
 7) Projects gallery behavior (current intent)
 - Project detail page (`/p/[slug]/[projectAnchor]/[galleryAnchor]`):

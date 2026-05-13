@@ -20,7 +20,7 @@ describe("project mode switcher helpers", () => {
 
     applyModeToRoot(node, "dark");
 
-    expect(node.closest).toHaveBeenCalledWith("main[data-theme]");
+    expect(node.closest).toHaveBeenCalledWith("[data-theme]");
     expect(setAttribute).toHaveBeenCalledWith("data-mode", "dark");
   });
 

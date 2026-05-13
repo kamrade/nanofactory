@@ -19,7 +19,7 @@ export function GalleryItemNav({
   testIdPrefix = "gallery",
 }: GalleryItemNavProps) {
   const backTestId = `${testIdPrefix}-back-link`;
-  const counterTestId = `${testIdPrefix}-item-counter`;
+  const counterTestId = `${testIdPrefix}-counter`;
   const previousTestId = `${testIdPrefix}-nav-previous`;
   const nextTestId = `${testIdPrefix}-nav-next`;
 

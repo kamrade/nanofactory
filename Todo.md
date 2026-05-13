@@ -198,14 +198,14 @@ components/assets/background-scene-defaults.ts → createId(prefix) — crypto.r
 
 Решение: вынести в readModeFromDom() в отдельную функцию.
 
-4️⃣ getBackgroundDefaultsPalette — тернарный взрыв 🔒
+4️⃣ ✅ getBackgroundDefaultsPalette — тернарный взрыв 🔒
 Файл: components/assets/background-scene-defaults.ts
 
 Функция возвращает большой объект с цветами через вложенные themeKey === "nightfall" ? mode === "dark" ? A : B : C. 4 комбинации → ~80 строк.
 
 Решение: lookup table Record<ThemeKey, Record<UiMode, Palette>>.
 
-5️⃣ readEntryItems / readProjectItems — дублирование парсинга 🔒
+5️⃣ ✅ readEntryItems / readProjectItems — дублирование парсинга 🔒
 Файл: features/blocks/projects-gallery/default/model.ts
 
 Обе функции делают одно и то же: isPlainObject → читают поля через readOptionalString/readString → нормализуют anchor → filter(Boolean). Различаются только набором полей и типом результата.
