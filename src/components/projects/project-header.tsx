@@ -15,6 +15,7 @@ import { ProjectModeSwitcher, type ThemeMode } from "@/components/projects/proje
 import { ProjectRenameForm } from "@/components/projects/project-rename-form";
 import { ProjectThemeForm } from "@/components/projects/project-theme-form";
 import { UIButton } from "@/components/ui/button";
+import { UIDivider } from "@/components/ui/divider";
 import { UIMenu, UIMenuItem, UIMenuLabel } from "@/components/ui/menu";
 import { UISelect } from "@/components/ui/select";
 import { UIStickyHeader } from "@/components/ui/sticky-header";
@@ -262,6 +263,9 @@ export function ProjectHeader({
                     </UIButton>
                   </form>
                 </div>
+
+                <UIDivider></UIDivider>
+                
                 <div className="flex flex-wrap items-center gap-3">
                   <form action={publicationAction}>
                     <UIButton
