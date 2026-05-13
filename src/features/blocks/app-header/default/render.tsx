@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useRef, useState, type MouseEvent } from "react";
+import type { CSSProperties } from "react";
 import Image from "next/image";
 import {
   FaFacebook,
@@ -69,9 +70,10 @@ export function AppHeaderDefaultRender({
   theme,
   mode = "light",
   modePolicy = "switchable",
+  projectBorderRadiusPolicy,
 }: BlockRenderProps) {
   const sectionRef = useRef<HTMLElement>(null);
-  const [activeMode, setActiveMode] = useState<"light" | "dark">(mode);
+  const [observedMode, setObservedMode] = useState<"light" | "dark" | null>(null);
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const {
     title,
@@ -86,6 +88,7 @@ export function AppHeaderDefaultRender({
   } =
     readAppHeaderProps(block.props);
   const responsive = getResponsiveClasses(collapseBreakpoint);
+  const activeMode = observedMode ?? mode;
   const mobileOnlyClass = alwaysMobile ? "" : responsive.mobileOnly;
   const desktopOnlyClass = alwaysMobile ? "hidden" : responsive.desktopOnly;
   const selectedLogoId =
@@ -97,6 +100,31 @@ export function AppHeaderDefaultRender({
     menuItems.length > 0 ||
     socialLinks.length > 0;
   const canShowModeSwitcher = showModeSwitcher && modePolicy === "switchable";
+  const effectiveBorderRadius =
+    projectBorderRadiusPolicy === "none" ||
+    projectBorderRadiusPolicy === "md" ||
+    projectBorderRadiusPolicy === "lg"
+      ? projectBorderRadiusPolicy
+      : "lg";
+
+  const radiusVars =
+    effectiveBorderRadius === "none"
+      ? {
+          "--app-header-radius-shell": "0px",
+          "--app-header-radius-panel": "0px",
+          "--app-header-radius-control": "0px",
+        }
+      : effectiveBorderRadius === "md"
+        ? {
+            "--app-header-radius-shell": "0.75rem",
+            "--app-header-radius-panel": "0.75rem",
+            "--app-header-radius-control": "0.5rem",
+          }
+        : {
+            "--app-header-radius-shell": "1.5rem",
+            "--app-header-radius-panel": "1rem",
+            "--app-header-radius-control": "0.75rem",
+          };
 
   function handleAnchorClick(event: MouseEvent<HTMLAnchorElement>, anchorId: string) {
     if (typeof document === "undefined") {
@@ -121,13 +149,12 @@ export function AppHeaderDefaultRender({
   useEffect(() => {
     const host = sectionRef.current?.closest("main[data-theme]");
     if (!host) {
-      setActiveMode(mode);
       return;
     }
 
     const syncMode = () => {
       const nextMode = host.getAttribute("data-mode");
-      setActiveMode(nextMode === "dark" ? "dark" : "light");
+      setObservedMode(nextMode === "dark" ? "dark" : "light");
     };
 
     syncMode();
@@ -138,14 +165,18 @@ export function AppHeaderDefaultRender({
     });
 
     return () => observer.disconnect();
-  }, [mode]);
+  }, []);
 
   return (
-    <section ref={sectionRef} className="p-6 md:py-2">
+    <section
+      ref={sectionRef}
+      className="p-6 md:py-2 [border-radius:var(--app-header-radius-shell)]"
+      style={radiusVars as CSSProperties}
+    >
       {!hasContent ? (
         <div
           aria-hidden
-          className="h-10 w-full rounded-xl border border-dashed border-line bg-surface-alt"
+          className="h-10 w-full border border-dashed border-line bg-surface-alt [border-radius:var(--app-header-radius-control)]"
         />
       ) : null}
 
@@ -155,7 +186,7 @@ export function AppHeaderDefaultRender({
           type="button"
           aria-label={isMobileMenuOpen ? "Close menu" : "Open menu"}
           aria-expanded={isMobileMenuOpen}
-          className="absolute left-0 inline-flex h-9 w-9 items-center justify-center rounded-lg border border-line bg-surface-alt text-text-main transition hover:bg-surface"
+          className="absolute left-0 inline-flex h-9 w-9 items-center justify-center border border-line bg-surface-alt text-text-main transition hover:bg-surface [border-radius:var(--app-header-radius-control)]"
           onClick={() => setIsMobileMenuOpen((prev) => !prev)}
         >
           {isMobileMenuOpen ? <FiX aria-hidden className="h-5 w-5" /> : <FiMenu aria-hidden className="h-5 w-5" />}
@@ -188,7 +219,7 @@ export function AppHeaderDefaultRender({
             : "mt-0 max-h-0 opacity-0 -translate-y-1 pointer-events-none"
         }`}
       >
-        <div className="rounded-2xl border border-line bg-surface p-4 mb-4">
+        <div className="mb-4 border border-line bg-surface p-4 [border-radius:var(--app-header-radius-panel)]">
           <div className="grid gap-4">
             {menuItems.length > 0 ? (
               <nav aria-label="Mobile page sections">

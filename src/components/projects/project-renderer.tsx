@@ -114,7 +114,7 @@ function renderBlock(
 
   const Renderer = definition.Renderer;
   const blockShellRadiusClassName =
-    block.type === "features" || block.type === "cta"
+    block.type === "features" || block.type === "cta" || block.type === "app-header"
       ? borderRadiusPolicy === "none"
         ? "rounded-none"
         : borderRadiusPolicy === "md"
