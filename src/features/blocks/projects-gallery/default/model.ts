@@ -52,63 +52,59 @@ export function getEffectiveProjectGalleryEntryAnchor(
   return item.galleryItems[entryIndex]?.entryAnchor ?? `${projectAnchor}-${galleryAnchor}-item-${entryIndex + 1}`;
 }
 
-function readEntryItems(input: unknown): ProjectsGalleryEntryItem[] {
+function mapPlainObjects<T>(
+  input: unknown,
+  fn: (item: Record<string, unknown>) => T | null
+): T[] {
   if (!Array.isArray(input)) {
     return [];
   }
 
   return input
-    .map((item) => {
-      if (!isPlainObject(item)) {
-        return null;
-      }
+    .map((item) => (isPlainObject(item) ? fn(item) : null))
+    .filter((item): item is T => item !== null);
+}
 
-      const rawEntryAnchor = readOptionalString(item.entryAnchor) ?? readOptionalString(item.imageAnchor);
-      const entryAnchor = rawEntryAnchor ? normalizeAnchorId(rawEntryAnchor) : undefined;
+function readEntryItems(input: unknown): ProjectsGalleryEntryItem[] {
+  return mapPlainObjects(input, (item) => {
+    const rawEntryAnchor =
+      readOptionalString(item.entryAnchor) ?? readOptionalString(item.imageAnchor);
+    const entryAnchor = rawEntryAnchor ? normalizeAnchorId(rawEntryAnchor) : undefined;
 
-      return {
-        kind: item.kind === "markdown" ? "markdown" : "image",
-        assetId: readOptionalString(item.assetId),
-        entryAnchor: entryAnchor && isValidAnchorId(entryAnchor) ? entryAnchor : undefined,
-        title: readString(item.title, ""),
-        description: readString(item.description, ""),
-        contentMd: readString(item.contentMd, ""),
-        price: readString(item.price, ""),
-        meta: readString(item.meta, ""),
-      };
-    })
-    .filter((item): item is ProjectsGalleryEntryItem => item !== null);
+    return {
+      kind: item.kind === "markdown" ? "markdown" : "image",
+      assetId: readOptionalString(item.assetId),
+      entryAnchor: entryAnchor && isValidAnchorId(entryAnchor) ? entryAnchor : undefined,
+      title: readString(item.title, ""),
+      description: readString(item.description, ""),
+      contentMd: readString(item.contentMd, ""),
+      price: readString(item.price, ""),
+      meta: readString(item.meta, ""),
+    };
+  });
 }
 
 function readProjectItems(input: unknown): ProjectsGalleryProjectItem[] {
-  if (!Array.isArray(input)) {
-    return [];
-  }
+  return mapPlainObjects(input, (item) => {
+    const rawProjectAnchor = readOptionalString(item.projectAnchor);
+    const projectAnchor = rawProjectAnchor ? normalizeAnchorId(rawProjectAnchor) : undefined;
+    const rawGalleryAnchor = readOptionalString(item.galleryAnchor);
+    const galleryAnchor = rawGalleryAnchor ? normalizeAnchorId(rawGalleryAnchor) : undefined;
 
-  return input
-    .map((item) => {
-      if (!isPlainObject(item)) {
-        return null;
-      }
-
-      const rawProjectAnchor = readOptionalString(item.projectAnchor);
-      const projectAnchor = rawProjectAnchor ? normalizeAnchorId(rawProjectAnchor) : undefined;
-      const rawGalleryAnchor = readOptionalString(item.galleryAnchor);
-      const galleryAnchor = rawGalleryAnchor ? normalizeAnchorId(rawGalleryAnchor) : undefined;
-
-      return {
-        projectAnchor: projectAnchor && isValidAnchorId(projectAnchor) ? projectAnchor : undefined,
-        galleryAnchor: galleryAnchor && isValidAnchorId(galleryAnchor) ? galleryAnchor : undefined,
-        title: readString(item.title, ""),
-        description: readString(item.description, ""),
-        descriptionMd: readString(item.descriptionMd, readString(item.description, "")),
-        price: readString(item.price, ""),
-        meta: readString(item.meta, ""),
-        imageAssetId: readOptionalString(item.imageAssetId),
-        galleryItems: readEntryItems(item.galleryItems),
-      };
-    })
-    .filter((item): item is ProjectsGalleryProjectItem => item !== null);
+    return {
+      projectAnchor:
+        projectAnchor && isValidAnchorId(projectAnchor) ? projectAnchor : undefined,
+      galleryAnchor:
+        galleryAnchor && isValidAnchorId(galleryAnchor) ? galleryAnchor : undefined,
+      title: readString(item.title, ""),
+      description: readString(item.description, ""),
+      descriptionMd: readString(item.descriptionMd, readString(item.description, "")),
+      price: readString(item.price, ""),
+      meta: readString(item.meta, ""),
+      imageAssetId: readOptionalString(item.imageAssetId),
+      galleryItems: readEntryItems(item.galleryItems),
+    };
+  });
 }
 
 function defaultGalleryItems(projectAnchorBase: string): ProjectsGalleryEntryItem[] {
