@@ -16,7 +16,7 @@ import {
   type ResolvedProjectsGalleryEntry,
   resolveProjectsGalleryEntryFromContent,
 } from "@/lib/projects-gallery/resolve";
-import { buildModeQuery } from "@/lib/routing/mode-query";
+import { buildProjectsGalleryEntryNavHrefs } from "@/lib/projects-gallery/navigation";
 import { resolveGalleryItemLinkModeByHost } from "@/lib/routing/gallery-link-mode";
 import { DEFAULT_THEME_KEY, isThemeKey } from "@/lib/themes";
 import { stripMarkdownForMeta } from "@/lib/markdown/meta";
@@ -134,21 +134,15 @@ export default async function ProjectsGalleryEntryPage({
   const assets = await getAssetsByProjectId(project.id);
   const assetMap = buildAssetMap(assets);
   const asset = resolveAssetById(resolved.assetId, assetMap);
-  const modeQuery = buildModeQuery(resolvedMode);
-  const backHref =
-    linkMode === "relative"
-      ? `..${modeQuery}`
-      : `/p/${resolved.projectSlug}/${resolved.projectAnchor}/${resolved.galleryAnchor}${modeQuery}`;
-  const previousHref = resolved.previousEntryAnchor
-    ? linkMode === "relative"
-      ? `../${resolved.previousEntryAnchor}${modeQuery}`
-      : `/p/${resolved.projectSlug}/${resolved.projectAnchor}/${resolved.galleryAnchor}/${resolved.previousEntryAnchor}${modeQuery}`
-    : undefined;
-  const nextHref = resolved.nextEntryAnchor
-    ? linkMode === "relative"
-      ? `../${resolved.nextEntryAnchor}${modeQuery}`
-      : `/p/${resolved.projectSlug}/${resolved.projectAnchor}/${resolved.galleryAnchor}/${resolved.nextEntryAnchor}${modeQuery}`
-    : undefined;
+  const { backHref, previousHref, nextHref } = buildProjectsGalleryEntryNavHrefs({
+    linkMode,
+    projectSlug: resolved.projectSlug,
+    projectAnchor: resolved.projectAnchor,
+    galleryAnchor: resolved.galleryAnchor,
+    previousEntryAnchor: resolved.previousEntryAnchor,
+    nextEntryAnchor: resolved.nextEntryAnchor,
+    mode: resolvedMode,
+  });
   if (resolved.kind !== "image") {
     if (nextHref) {
       redirect(nextHref);

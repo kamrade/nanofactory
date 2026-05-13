@@ -19,6 +19,7 @@ import {
 } from "@/lib/gallery-item/resolve";
 import { buildGalleryItemPageViewModel } from "@/lib/gallery-item/view-model";
 import { getPublishedProjectBySlug } from "@/lib/projects";
+import { buildProjectsGalleryEntryHref } from "@/lib/projects-gallery/navigation";
 import { resolveProjectsGalleryProjectFromContent } from "@/lib/projects-gallery/resolve";
 import { buildModeQuery } from "@/lib/routing/mode-query";
 import { resolveGalleryItemLinkModeByHost } from "@/lib/routing/gallery-link-mode";
@@ -238,9 +239,14 @@ export default async function PublishedGalleryItemPage({
               {resolvedProjectGallery.galleryItems.map((item, index) => {
                 const asset = resolveAssetById(item.assetId, assetMap);
                 const href =
-                  linkMode === "relative"
-                    ? `./${resolvedProjectGallery.galleryAnchor}/${item.entryAnchor}${modeQuery}`
-                    : `/p/${resolvedProjectGallery.projectSlug}/${resolvedProjectGallery.projectAnchor}/${resolvedProjectGallery.galleryAnchor}/${item.entryAnchor}${modeQuery}`;
+                  buildProjectsGalleryEntryHref({
+                    linkMode,
+                    projectSlug: resolvedProjectGallery.projectSlug,
+                    projectAnchor: resolvedProjectGallery.projectAnchor,
+                    galleryAnchor: resolvedProjectGallery.galleryAnchor,
+                    entryAnchor: item.entryAnchor,
+                    mode: resolvedMode,
+                  });
 
                 return (
                   <article
