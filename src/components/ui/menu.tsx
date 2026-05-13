@@ -335,7 +335,7 @@ export function UIMenu(allProps: UIMenuProps) {
           aria-label={ariaLabel}
           onKeyDown={handleManualKeyDown}
           className={cx(
-            "flex min-w-44 max-h-[min(24rem,calc(100vh-2rem))] flex-col gap-[2px] overflow-y-auto rounded-xl border border-line bg-surface p-1 shadow-[0_10px_30px_rgba(0,0,0,0.12)]",
+            "flex min-w-44 max-h-[min(24rem,calc(100vh-2rem))] flex-col gap-0.5 overflow-y-auto rounded-xl border border-line bg-surface p-1 shadow-[0_10px_30px_rgba(0,0,0,0.12)]",
             className
           )}
         >

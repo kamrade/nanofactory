@@ -44,7 +44,7 @@ export function EditorToolbar({
           }
         >
           {addBlockGroups.map((group) => (
-            <div key={group.type} className="grid gap-[2px]">
+            <div key={group.type} className="grid gap-0.5">
               <UIMenuLabel>{group.label}</UIMenuLabel>
               {group.variants.map((definition) => (
                 <UIMenuItem
