@@ -46,6 +46,7 @@ export default async function PublicProjectPage({
       themeKey={project.themeKey}
       mode={mode}
       modePolicy={project.modePolicy}
+      borderRadiusPolicy={project.borderRadiusPolicy}
       galleryItemLinkMode={galleryItemLinkMode}
       content={normalizePageContent(project.contentJson)}
       assets={assets}

@@ -23,11 +23,16 @@ import {
 import {
   publishProjectForUser,
   saveProjectContentForUser,
+  updateProjectBorderRadiusPolicyForUser,
   unpublishProjectForUser,
   updateProjectModePolicyForUser,
   updateProjectNameForUser,
   updateProjectThemeForUser,
 } from "@/lib/projects";
+import {
+  isProjectBorderRadiusPolicy,
+  resolveProjectBorderRadiusPolicy,
+} from "@/lib/projects/border-radius-policy";
 import {
   isProjectModePolicy,
   resolveProjectModePolicy,
@@ -90,6 +95,13 @@ type UpdateProjectModePolicyDependencies = {
   redirect: typeof redirect;
 };
 
+type UpdateProjectBorderRadiusPolicyDependencies = {
+  requireCurrentUser: typeof requireCurrentUser;
+  updateProjectBorderRadiusPolicyForUser: typeof updateProjectBorderRadiusPolicyForUser;
+  revalidatePath: typeof revalidatePath;
+  redirect: typeof redirect;
+};
+
 const publishProjectDependencies: PublishProjectDependencies = {
   requireCurrentUser,
   publishProjectForUser,
@@ -121,6 +133,13 @@ const updateProjectNameDependencies: UpdateProjectNameDependencies = {
 const updateProjectModePolicyDependencies: UpdateProjectModePolicyDependencies = {
   requireCurrentUser,
   updateProjectModePolicyForUser,
+  revalidatePath,
+  redirect,
+};
+
+const updateProjectBorderRadiusPolicyDependencies: UpdateProjectBorderRadiusPolicyDependencies = {
+  requireCurrentUser,
+  updateProjectBorderRadiusPolicyForUser,
   revalidatePath,
   redirect,
 };
@@ -302,6 +321,17 @@ export async function updateProjectModePolicyAction(projectId: string, formData:
   );
 }
 
+export async function updateProjectBorderRadiusPolicyAction(
+  projectId: string,
+  formData: FormData
+) {
+  return updateProjectBorderRadiusPolicyActionWithDependencies(
+    projectId,
+    formData,
+    updateProjectBorderRadiusPolicyDependencies
+  );
+}
+
 export async function updateProjectThemeActionWithDependencies(
   projectId: string,
   formData: FormData,
@@ -376,6 +406,34 @@ export async function updateProjectModePolicyActionWithDependencies(
     projectId,
     currentUser.id,
     resolveProjectModePolicy(rawModePolicy)
+  );
+
+  if (!updatedProject) {
+    dependencies.redirect(`/projects/${projectId}`);
+  }
+
+  dependencies.revalidatePath(`/projects/${projectId}`);
+  dependencies.revalidatePath("/dashboard");
+  dependencies.revalidatePath(`/p/${updatedProject.slug}`);
+  dependencies.redirect(`/projects/${projectId}`);
+}
+
+export async function updateProjectBorderRadiusPolicyActionWithDependencies(
+  projectId: string,
+  formData: FormData,
+  dependencies: UpdateProjectBorderRadiusPolicyDependencies
+) {
+  const currentUser = await dependencies.requireCurrentUser();
+  const rawPolicy = String(formData.get("borderRadiusPolicy") ?? "");
+
+  if (!isProjectBorderRadiusPolicy(rawPolicy)) {
+    dependencies.redirect(`/projects/${projectId}`);
+  }
+
+  const updatedProject = await dependencies.updateProjectBorderRadiusPolicyForUser(
+    projectId,
+    currentUser.id,
+    resolveProjectBorderRadiusPolicy(rawPolicy)
   );
 
   if (!updatedProject) {

@@ -9,6 +9,8 @@ type FeatureCardItem = {
   imageAssetId: string | undefined;
 };
 
+type FeatureBorderRadius = "none" | "md" | "lg";
+
 const defaultItems: FeatureCardItem[] = [
   {
     title: "Fast page setup with a small editing surface",
@@ -51,6 +53,7 @@ export const featuresDefaultDefinition: BlockVariantDefinition = {
   createDefaultProps: () => ({
     sectionTitle: "Why teams choose Nanofactory",
     items: defaultItems,
+    borderRadius: "lg" as FeatureBorderRadius,
   }),
   normalizeProps: (input) => {
     const props = isPlainObject(input) ? input : {};
@@ -91,6 +94,10 @@ export const featuresDefaultDefinition: BlockVariantDefinition = {
     return {
       sectionTitle: readString(props.sectionTitle, "Why teams choose Nanofactory"),
       items: normalizedItems.length > 0 ? normalizedItems : defaultItems,
+      borderRadius:
+        props.borderRadius === "none" || props.borderRadius === "md" || props.borderRadius === "lg"
+          ? props.borderRadius
+          : "lg",
     };
   },
   Renderer: FeaturesDefaultRender,

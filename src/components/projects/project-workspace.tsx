@@ -21,6 +21,7 @@ type EditorProject = {
   slug: string;
   themeKey: string;
   modePolicy: "switchable" | "light-only" | "dark-only";
+  borderRadiusPolicy: "none" | "md" | "lg";
   status: "draft" | "published";
   contentJson: PageContent;
 };

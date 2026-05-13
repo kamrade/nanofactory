@@ -46,6 +46,7 @@ type EditorProject = {
   slug: string;
   themeKey: string;
   modePolicy: "switchable" | "light-only" | "dark-only";
+  borderRadiusPolicy: "none" | "md" | "lg";
   status: "draft" | "published";
   contentJson: PageContent;
 };
@@ -370,6 +371,7 @@ export function ProjectEditor({
           block={block}
           assetMap={assetMap}
           mode={activeMode}
+          projectBorderRadiusPolicy={project.borderRadiusPolicy}
           effectiveGalleryItemAnchors={galleryItemAnchors}
           theme={{
             muted: "text-text-muted",

@@ -10,6 +10,10 @@ import {
   slugifyProjectName,
 } from "@/lib/projects/slug";
 import {
+  type ProjectBorderRadiusPolicy,
+  resolveProjectBorderRadiusPolicy,
+} from "@/lib/projects/border-radius-policy";
+import {
   type ProjectModePolicy,
   resolveProjectModePolicy,
 } from "@/lib/projects/mode-policy";
@@ -20,6 +24,7 @@ type CreateProjectInput = {
   name: string;
   themeKey?: ThemeKey;
   modePolicy?: ProjectModePolicy;
+  borderRadiusPolicy?: ProjectBorderRadiusPolicy;
 };
 
 async function generateUniqueProjectSlug(baseName: string) {
@@ -50,6 +55,7 @@ export async function getProjectsByUserId(userId: string) {
       slug: projects.slug,
       themeKey: projects.themeKey,
       modePolicy: projects.modePolicy,
+      borderRadiusPolicy: projects.borderRadiusPolicy,
       status: projects.status,
       publishedAt: projects.publishedAt,
       createdAt: projects.createdAt,
@@ -74,6 +80,7 @@ export async function getProjectByIdForUser(projectId: string, userId: string) {
         slug: projects.slug,
         themeKey: projects.themeKey,
         modePolicy: projects.modePolicy,
+        borderRadiusPolicy: projects.borderRadiusPolicy,
         status: projects.status,
         publishedAt: projects.publishedAt,
         createdAt: projects.createdAt,
@@ -121,6 +128,7 @@ export async function getPublishedProjectBySlug(slug: string) {
       slug: projects.slug,
       themeKey: projects.themeKey,
       modePolicy: projects.modePolicy,
+      borderRadiusPolicy: projects.borderRadiusPolicy,
       status: projects.status,
       publishedAt: projects.publishedAt,
       updatedAt: projects.updatedAt,
@@ -318,6 +326,33 @@ export async function updateProjectModePolicyForUser(
   return project ?? null;
 }
 
+export async function updateProjectBorderRadiusPolicyForUser(
+  projectId: string,
+  userId: string,
+  borderRadiusPolicy: ProjectBorderRadiusPolicy
+) {
+  if (!isUuid(projectId)) {
+    return null;
+  }
+
+  const now = new Date();
+  const [project] = await db
+    .update(projects)
+    .set({
+      borderRadiusPolicy: resolveProjectBorderRadiusPolicy(borderRadiusPolicy),
+      updatedAt: now,
+    })
+    .where(and(eq(projects.id, projectId), eq(projects.userId, userId)))
+    .returning({
+      id: projects.id,
+      slug: projects.slug,
+      borderRadiusPolicy: projects.borderRadiusPolicy,
+      updatedAt: projects.updatedAt,
+    });
+
+  return project ?? null;
+}
+
 export async function updateProjectNameForUser(
   projectId: string,
   userId: string,
@@ -380,6 +415,7 @@ export async function createProjectForUser(userId: string, input: CreateProjectI
   const slug = await generateUniqueProjectSlug(name);
   const themeKey = input.themeKey ?? DEFAULT_THEME_KEY;
   const modePolicy = resolveProjectModePolicy(input.modePolicy);
+  const borderRadiusPolicy = resolveProjectBorderRadiusPolicy(input.borderRadiusPolicy);
 
   return db.transaction(async (tx) => {
     const [project] = await tx
@@ -390,6 +426,7 @@ export async function createProjectForUser(userId: string, input: CreateProjectI
         slug,
         themeKey,
         modePolicy,
+        borderRadiusPolicy,
         status: "draft",
       })
       .returning({
@@ -399,6 +436,7 @@ export async function createProjectForUser(userId: string, input: CreateProjectI
         slug: projects.slug,
         themeKey: projects.themeKey,
         modePolicy: projects.modePolicy,
+        borderRadiusPolicy: projects.borderRadiusPolicy,
         status: projects.status,
         createdAt: projects.createdAt,
         updatedAt: projects.updatedAt,

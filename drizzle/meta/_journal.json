@@ -43,6 +43,13 @@
       "when": 1777302362536,
       "tag": "0005_first_dakota_north",
       "breakpoints": true
+    },
+    {
+      "idx": 6,
+      "version": "7",
+      "when": 1778700086482,
+      "tag": "0006_shallow_synch",
+      "breakpoints": true
     }
   ]
 }

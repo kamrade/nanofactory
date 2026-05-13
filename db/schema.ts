@@ -25,6 +25,11 @@ export const projectModePolicyEnum = pgEnum("project_mode_policy", [
   "light-only",
   "dark-only",
 ]);
+export const projectBorderRadiusPolicyEnum = pgEnum("project_border_radius_policy", [
+  "none",
+  "md",
+  "lg",
+]);
 
 // 1. Users
 export const users = pgTable("users", {
@@ -47,6 +52,9 @@ export const projects = pgTable("projects", {
   slug: varchar("slug", { length: 255 }).notNull().unique(),
   themeKey: text("theme_key").default("sunwash").notNull(),
   modePolicy: projectModePolicyEnum("mode_policy").default("switchable").notNull(),
+  borderRadiusPolicy: projectBorderRadiusPolicyEnum("border_radius_policy")
+    .default("lg")
+    .notNull(),
   status: projectStatusEnum("status").default("draft").notNull(),
   publishedAt: timestamp("published_at", { withTimezone: true }),
   createdAt: timestamp("created_at", { withTimezone: true }).defaultNow().notNull(),

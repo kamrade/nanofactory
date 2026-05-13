@@ -137,7 +137,7 @@ export default async function ProjectsGalleryEntryPage({
   const modeQuery = buildModeQuery(resolvedMode);
   const backHref =
     linkMode === "relative"
-      ? `../..${modeQuery}`
+      ? `..${modeQuery}`
       : `/p/${resolved.projectSlug}/${resolved.projectAnchor}/${resolved.galleryAnchor}${modeQuery}`;
   const previousHref = resolved.previousEntryAnchor
     ? linkMode === "relative"
@@ -164,6 +164,7 @@ export default async function ProjectsGalleryEntryPage({
       data-testid="projects-gallery-entry-mode-container"
       data-theme={resolved.projectThemeKey}
       data-mode={resolvedMode}
+      data-border-radius={project.borderRadiusPolicy}
       className="min-h-screen bg-bg py-10 text-text-main"
     >
       <GalleryItemKeyboardNav previousHref={previousHref} nextHref={nextHref} />

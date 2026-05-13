@@ -1,4 +1,5 @@
 import Image from "next/image";
+import type { CSSProperties } from "react";
 import type { BlockRenderProps } from "../../shared/types";
 import { resolveAssetById } from "@/lib/assets/resolution";
 
@@ -7,6 +8,8 @@ type FeatureItem = {
   content: string;
   imageAssetId: string | undefined;
 };
+
+type FeatureBorderRadius = "none" | "md" | "lg";
 
 function readItems(input: unknown): FeatureItem[] {
   if (!Array.isArray(input)) {
@@ -52,13 +55,39 @@ function readItems(input: unknown): FeatureItem[] {
     .filter((item): item is FeatureItem => item !== null);
 }
 
-export function FeaturesDefaultRender({ block, theme, assetMap }: BlockRenderProps) {
+export function FeaturesDefaultRender({
+  block,
+  theme,
+  assetMap,
+  projectBorderRadiusPolicy,
+}: BlockRenderProps) {
   const sectionTitle =
     typeof block.props.sectionTitle === "string" ? block.props.sectionTitle : "";
   const items = readItems(block.props.items);
+  const borderRadius: FeatureBorderRadius =
+    block.props.borderRadius === "none" || block.props.borderRadius === "md" || block.props.borderRadius === "lg"
+      ? block.props.borderRadius
+      : "lg";
+  const effectiveBorderRadius = projectBorderRadiusPolicy ?? borderRadius;
+
+  const radiusVars =
+    effectiveBorderRadius === "none"
+      ? {
+          "--feature-radius-card": "0px",
+          "--feature-radius-media": "0px",
+        }
+      : effectiveBorderRadius === "md"
+        ? {
+            "--feature-radius-card": "0.75rem",
+            "--feature-radius-media": "0.375rem",
+          }
+        : {
+            "--feature-radius-card": "1rem",
+            "--feature-radius-media": "0.375rem",
+          };
 
   return (
-    <section className="space-y-5 px-4 md:px-8 py-12">
+    <section className="space-y-5 px-4 py-12 md:px-8" style={radiusVars as CSSProperties}>
       <h2 className="text-2xl font-semibold tracking-tight">{sectionTitle}</h2>
       <ul className="grid gap-3">
         {items.map((item) => {
@@ -66,30 +95,30 @@ export function FeaturesDefaultRender({ block, theme, assetMap }: BlockRenderPro
           return (
             <li
               key={`${block.id}-${item.title}`}
-              className="rounded-2xl bg-surface-alt px-4 py-3"
+              className="bg-surface-alt px-4 py-3 [border-radius:var(--feature-radius-card)]"
             >
               <div className="flex items-start gap-3">
                 {itemImage ? (
-                <div className="h-10 w-10 shrink-0 overflow-hidden rounded-md border border-line bg-surface">
-                  <Image
-                    src={itemImage.publicUrl}
-                    alt={itemImage.originalFilename}
-                    width={40}
-                    height={40}
-                    unoptimized
-                    className="h-full w-full object-cover"
-                  />
-                </div>
-              ) : null}
-              <div>
-                <p className="break-words text-sm font-medium leading-6 text-text-main">{item.title}</p>
-                {item.content.trim().length > 0 ? (
-                  <p className={`mt-1 break-words text-sm leading-6 ${theme.muted}`}>
-                    {item.content}
-                  </p>
+                  <div className="h-10 w-10 shrink-0 overflow-hidden border border-line bg-surface [border-radius:var(--feature-radius-media)]">
+                    <Image
+                      src={itemImage.publicUrl}
+                      alt={itemImage.originalFilename}
+                      width={40}
+                      height={40}
+                      unoptimized
+                      className="h-full w-full object-cover"
+                    />
+                  </div>
                 ) : null}
+                <div>
+                  <p className="break-words text-sm font-medium leading-6 text-text-main">{item.title}</p>
+                  {item.content.trim().length > 0 ? (
+                    <p className={`mt-1 break-words text-sm leading-6 ${theme.muted}`}>
+                      {item.content}
+                    </p>
+                  ) : null}
+                </div>
               </div>
-            </div>
             </li>
           );
         })}

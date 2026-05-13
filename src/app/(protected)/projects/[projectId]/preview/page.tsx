@@ -119,6 +119,7 @@ export async function ProjectPreviewPageWithDependencies(
         themeKey={resolvedThemeKey}
         mode={resolvedMode}
         modePolicy={project.modePolicy}
+        borderRadiusPolicy={project.borderRadiusPolicy}
         content={dependencies.normalizePageContent(content)}
         assets={assets}
         backgroundScenes={backgroundScenes}

@@ -16,6 +16,7 @@ import { ProjectRenameForm } from "@/components/projects/project-rename-form";
 import { ProjectThemeForm } from "@/components/projects/project-theme-form";
 import { UIButton } from "@/components/ui/button";
 import { UIMenu, UIMenuItem, UIMenuLabel } from "@/components/ui/menu";
+import { UISelect } from "@/components/ui/select";
 import { UIStickyHeader } from "@/components/ui/sticky-header";
 import {
   UISheet,
@@ -31,6 +32,10 @@ import { THEME_OPTIONS } from "@/lib/themes";
 import { formatUiDateTime } from "@/lib/ui-date-time";
 import { resolveThemePreference } from "@/lib/ui-preferences";
 import {
+  PROJECT_BORDER_RADIUS_POLICIES,
+  type ProjectBorderRadiusPolicy,
+} from "@/lib/projects/border-radius-policy";
+import {
   PROJECT_MODE_POLICIES,
   type ProjectModePolicy,
 } from "@/lib/projects/mode-policy";
@@ -44,6 +49,7 @@ type ProjectHeaderProps = {
     slug: string;
     themeKey: string;
     modePolicy: ProjectModePolicy;
+    borderRadiusPolicy: ProjectBorderRadiusPolicy;
     status: "draft" | "published";
     schemaVersion: number;
     publishedAt: Date | null;
@@ -52,6 +58,7 @@ type ProjectHeaderProps = {
   publicationAction: () => void | Promise<void>;
   themeAction: (formData: FormData) => void | Promise<void>;
   modePolicyAction: (formData: FormData) => void | Promise<void>;
+  borderRadiusPolicyAction: (formData: FormData) => void | Promise<void>;
   nameAction: (formData: FormData) => void | Promise<void>;
   saveAction: (
     state: SaveEditorState,
@@ -66,6 +73,7 @@ export function ProjectHeader({
   publicationAction,
   themeAction,
   modePolicyAction,
+  borderRadiusPolicyAction,
   nameAction,
   saveAction,
   contentShape,
@@ -198,6 +206,10 @@ export function ProjectHeader({
                   <span>{project.modePolicy}</span>
                 </div>
                 <div className="grid grid-cols-[160px_minmax(0,1fr)] gap-3 border-b border-line px-4 py-3">
+                  <span className="font-medium text-text-main">borderRadius</span>
+                  <span>{project.borderRadiusPolicy}</span>
+                </div>
+                <div className="grid grid-cols-[160px_minmax(0,1fr)] gap-3 border-b border-line px-4 py-3">
                   <span className="font-medium text-text-main">schemaVersion</span>
                   <span>{project.schemaVersion}</span>
                 </div>
@@ -210,23 +222,46 @@ export function ProjectHeader({
               </div>
               <div className="grid gap-3 rounded-2xl border border-line bg-surface-alt p-4">
                 <h3 className="text-base font-semibold text-text-main">Actions</h3>
-                <form action={modePolicyAction} className="flex flex-wrap items-center gap-2">
+                <div className="grid gap-1">
                   <label className="text-sm text-text-muted">Mode support</label>
-                  <select
-                    name="modePolicy"
-                    defaultValue={project.modePolicy}
-                    className="h-7 rounded-lg border border-line bg-surface px-2 text-sm text-text-main outline-none"
-                  >
-                    {PROJECT_MODE_POLICIES.map((policy) => (
-                      <option key={policy} value={policy}>
-                        {policy}
-                      </option>
-                    ))}
-                  </select>
-                  <UIButton type="submit" theme="base" variant="outlined" size="sm">
-                    Apply mode
-                  </UIButton>
-                </form>
+                  <form action={modePolicyAction} className="flex items-center gap-2">
+                    <UISelect
+                      ariaLabel="Mode support"
+                      size="sm"
+                      name="modePolicy"
+                      defaultValue={project.modePolicy}
+                      options={PROJECT_MODE_POLICIES.map((policy) => ({
+                        value: policy,
+                        label: policy,
+                        textValue: policy,
+                      }))}
+                      className="min-w-36"
+                    />
+                    <UIButton type="submit" theme="base" variant="outlined" size="sm">
+                      Apply mode
+                    </UIButton>
+                  </form>
+                </div>
+                <div className="grid gap-1">
+                  <label className="text-sm text-text-muted">Border radius</label>
+                  <form action={borderRadiusPolicyAction} className="flex items-center gap-2">
+                    <UISelect
+                      ariaLabel="Border radius"
+                      size="sm"
+                      name="borderRadiusPolicy"
+                      defaultValue={project.borderRadiusPolicy}
+                      options={PROJECT_BORDER_RADIUS_POLICIES.map((policy) => ({
+                        value: policy,
+                        label: policy,
+                        textValue: policy,
+                      }))}
+                      className="min-w-36"
+                    />
+                    <UIButton type="submit" theme="base" variant="outlined" size="sm">
+                      Apply radius
+                    </UIButton>
+                  </form>
+                </div>
                 <div className="flex flex-wrap items-center gap-3">
                   <form action={publicationAction}>
                     <UIButton

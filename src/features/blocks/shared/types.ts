@@ -1,6 +1,7 @@
 import type { ComponentType } from "react";
 
 import type { ProjectAssetRecord } from "@/lib/assets";
+import type { ProjectBorderRadiusPolicy } from "@/lib/projects/border-radius-policy";
 import type { ProjectModePolicy } from "@/lib/projects/mode-policy";
 import type { GalleryItemLinkMode } from "@/lib/routing/gallery-link-mode";
 
@@ -25,6 +26,7 @@ export type BlockRenderProps = {
   theme: BlockTheme;
   mode?: "light" | "dark";
   modePolicy?: ProjectModePolicy;
+  projectBorderRadiusPolicy?: ProjectBorderRadiusPolicy;
   publicProjectSlug?: string;
   galleryItemLinkMode?: GalleryItemLinkMode;
   effectiveBlockAnchorId?: string;

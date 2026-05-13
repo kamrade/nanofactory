@@ -184,6 +184,7 @@ export default async function PublishedGalleryItemPage({
         data-testid="projects-gallery-mode-container"
         data-theme={resolvedProjectGallery.projectThemeKey}
         data-mode={resolvedMode}
+        data-border-radius={project.borderRadiusPolicy}
         className="min-h-screen bg-bg py-10 text-text-main"
       >
         <div className="container mx-auto grid max-w-5xl gap-6 px-4">
@@ -238,7 +239,7 @@ export default async function PublishedGalleryItemPage({
                 const asset = resolveAssetById(item.assetId, assetMap);
                 const href =
                   linkMode === "relative"
-                    ? `./${item.entryAnchor}${modeQuery}`
+                    ? `./${resolvedProjectGallery.galleryAnchor}/${item.entryAnchor}${modeQuery}`
                     : `/p/${resolvedProjectGallery.projectSlug}/${resolvedProjectGallery.projectAnchor}/${resolvedProjectGallery.galleryAnchor}/${item.entryAnchor}${modeQuery}`;
 
                 return (
@@ -328,6 +329,7 @@ export default async function PublishedGalleryItemPage({
       data-testid="gallery-entry-mode-container"
       data-theme={viewModel.resolvedThemeKey}
       data-mode={resolvedMode}
+      data-border-radius={project.borderRadiusPolicy}
       className="min-h-screen bg-bg py-10 text-text-main"
     >
       <GalleryItemKeyboardNav

@@ -1,4 +1,5 @@
 import Image from "next/image";
+import type { CSSProperties } from "react";
 import type { BlockRenderProps } from "../../shared/types";
 import { resolveAssetById } from "@/lib/assets/resolution";
 
@@ -7,6 +8,8 @@ type FeatureCardItem = {
   content: string;
   imageAssetId: string | undefined;
 };
+
+type FeatureBorderRadius = "none" | "md" | "lg";
 
 function readItems(input: unknown): FeatureCardItem[] {
   if (!Array.isArray(input)) {
@@ -52,13 +55,39 @@ function readItems(input: unknown): FeatureCardItem[] {
     .filter((item): item is FeatureCardItem => item !== null);
 }
 
-export function FeaturesCardsRender({ block, theme, assetMap }: BlockRenderProps) {
+export function FeaturesCardsRender({
+  block,
+  theme,
+  assetMap,
+  projectBorderRadiusPolicy,
+}: BlockRenderProps) {
   const sectionTitle =
     typeof block.props.sectionTitle === "string" ? block.props.sectionTitle : "";
   const items = readItems(block.props.items);
+  const borderRadius: FeatureBorderRadius =
+    block.props.borderRadius === "none" || block.props.borderRadius === "md" || block.props.borderRadius === "lg"
+      ? block.props.borderRadius
+      : "lg";
+  const effectiveBorderRadius = projectBorderRadiusPolicy ?? borderRadius;
+
+  const radiusVars =
+    effectiveBorderRadius === "none"
+      ? {
+          "--feature-radius-card": "0px",
+          "--feature-radius-media": "0px",
+        }
+      : effectiveBorderRadius === "md"
+        ? {
+            "--feature-radius-card": "0.75rem",
+            "--feature-radius-media": "0.5rem",
+          }
+        : {
+            "--feature-radius-card": "1.5rem",
+            "--feature-radius-media": "0.75rem",
+          };
 
   return (
-    <section className="space-y-6 px-4 md:px-8 py-12">
+    <section className="space-y-6 px-4 py-12 md:px-8" style={radiusVars as CSSProperties}>
       <div className="space-y-2">
         <h2 className="text-2xl font-semibold tracking-tight">{sectionTitle}</h2>
       </div>
@@ -69,10 +98,10 @@ export function FeaturesCardsRender({ block, theme, assetMap }: BlockRenderProps
           return (
           <article
             key={`${block.id}-${item.title}`}
-            className="rounded-3xl bg-surface-alt p-5"
+            className="bg-surface-alt p-5 [border-radius:var(--feature-radius-card)]"
           >
             {cardImage ? (
-              <div className="mb-3 h-12 w-12 overflow-hidden rounded-lg border border-line bg-surface">
+              <div className="mb-3 h-12 w-12 overflow-hidden border border-line bg-surface [border-radius:var(--feature-radius-media)]">
                 <Image
                   src={cardImage.publicUrl}
                   alt={cardImage.alt ?? cardImage.originalFilename}

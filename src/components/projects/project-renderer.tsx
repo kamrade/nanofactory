@@ -5,6 +5,7 @@ import { buildAssetMap } from "@/lib/assets/resolution";
 import type { BackgroundSceneRecord } from "@/lib/background-scenes/types";
 import { DEFAULT_THEME_KEY, isThemeKey } from "@/lib/themes";
 import type { GalleryItemLinkMode } from "@/lib/routing/gallery-link-mode";
+import { type ProjectBorderRadiusPolicy, resolveProjectBorderRadiusPolicy } from "@/lib/projects/border-radius-policy";
 import { type ProjectModePolicy, resolveProjectModePolicy } from "@/lib/projects/mode-policy";
 import { SectionShell } from "@/components/projects/section-shell";
 import {
@@ -20,6 +21,7 @@ type RenderedProject = {
   themeKey: string;
   mode?: "light" | "dark";
   modePolicy?: ProjectModePolicy;
+  borderRadiusPolicy?: ProjectBorderRadiusPolicy;
   content: PageContent;
   assets: ProjectAssetRecord[];
   backgroundScenes?: BackgroundSceneRecord[];
@@ -95,6 +97,7 @@ function renderBlock(
   publicProjectSlug: string | undefined,
   galleryItemLinkMode: GalleryItemLinkMode,
   modePolicy: ProjectModePolicy,
+  borderRadiusPolicy: ProjectBorderRadiusPolicy,
   anchorId: string | undefined,
   effectiveGalleryItemAnchors: Map<number, string> | undefined,
   assetMap: Map<string, ProjectAssetRecord>,
@@ -130,6 +133,7 @@ function renderBlock(
         theme={theme}
         mode={fallbackMode}
         modePolicy={modePolicy}
+        projectBorderRadiusPolicy={borderRadiusPolicy}
         publicProjectSlug={publicProjectSlug}
         galleryItemLinkMode={galleryItemLinkMode}
         effectiveBlockAnchorId={anchorId}
@@ -145,6 +149,7 @@ export function ProjectRenderer({
   themeKey,
   mode = "light",
   modePolicy = "switchable",
+  borderRadiusPolicy = "lg",
   content,
   assets,
   backgroundScenes = [],
@@ -159,6 +164,7 @@ export function ProjectRenderer({
   });
   const anchorMap = renderContext.effectiveAnchors.blockAnchors;
   const resolvedModePolicy = resolveProjectModePolicy(modePolicy);
+  const resolvedBorderRadiusPolicy = resolveProjectBorderRadiusPolicy(borderRadiusPolicy);
   const containerClass = "container mx-auto px-4";
 
   return (
@@ -166,6 +172,7 @@ export function ProjectRenderer({
       data-testid="project-mode-container"
       data-theme={renderContext.resolvedThemeKey}
       data-mode={mode}
+      data-border-radius={resolvedBorderRadiusPolicy}
       className={`min-h-screen py-4 ${renderContext.theme.page}`}
     >
       <div className="flex w-full flex-col gap-6">
@@ -186,6 +193,7 @@ export function ProjectRenderer({
                 slug,
                 galleryItemLinkMode,
                 resolvedModePolicy,
+                resolvedBorderRadiusPolicy,
                 anchorMap.get(block.id),
                 buildGalleryItemAnchorMap(block, renderContext.effectiveAnchors),
                 renderContext.assetMap,

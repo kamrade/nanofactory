@@ -9,6 +9,8 @@ type FeatureCardItem = {
   imageAssetId: string | undefined;
 };
 
+type FeatureBorderRadius = "none" | "md" | "lg";
+
 const defaultItems: FeatureCardItem[] = [
   {
     title: "A tighter page structure with fewer moving parts",
@@ -51,6 +53,7 @@ export const featuresCardsDefinition: BlockVariantDefinition = {
   createDefaultProps: () => ({
     sectionTitle: "What makes this workflow fast",
     items: defaultItems,
+    borderRadius: "lg" as FeatureBorderRadius,
   }),
   normalizeProps: (input) => {
     const props = isPlainObject(input) ? input : {};
@@ -98,6 +101,10 @@ export const featuresCardsDefinition: BlockVariantDefinition = {
         normalizedItems.length > 0
           ? normalizedItems
           : defaultItems,
+      borderRadius:
+        props.borderRadius === "none" || props.borderRadius === "md" || props.borderRadius === "lg"
+          ? props.borderRadius
+          : "lg",
     };
   },
   Renderer: FeaturesCardsRender,

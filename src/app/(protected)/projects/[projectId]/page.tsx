@@ -9,6 +9,7 @@ import { getProjectByIdForUser } from "@/lib/projects";
 import {
   publishProjectAction,
   saveProjectContentAction,
+  updateProjectBorderRadiusPolicyAction,
   updateProjectNameAction,
   updateProjectModePolicyAction,
   updateProjectThemeAction,
@@ -52,12 +53,17 @@ export default async function ProjectPage({ params, searchParams }: ProjectPageP
   const themeAction = updateProjectThemeAction.bind(null, project.id);
   const nameAction = updateProjectNameAction.bind(null, project.id);
   const modePolicyAction = updateProjectModePolicyAction.bind(null, project.id);
+  const borderRadiusPolicyAction = updateProjectBorderRadiusPolicyAction.bind(
+    null,
+    project.id
+  );
   const saveAction = saveProjectContentAction.bind(null, project.id);
 
   return (
     <main
       data-theme={project.themeKey}
       data-mode={initialMode}
+      data-border-radius={project.borderRadiusPolicy}
       className="min-h-screen bg-bg pb-4 text-text-main"
     >
       <div className="mx-auto flex w-full flex-col gap-8">
@@ -68,6 +74,7 @@ export default async function ProjectPage({ params, searchParams }: ProjectPageP
             slug: project.slug,
             themeKey: project.themeKey,
             modePolicy: project.modePolicy,
+            borderRadiusPolicy: project.borderRadiusPolicy,
             status: project.status,
             schemaVersion: project.schemaVersion,
             publishedAt: project.publishedAt,
@@ -77,6 +84,7 @@ export default async function ProjectPage({ params, searchParams }: ProjectPageP
           themeAction={themeAction}
           nameAction={nameAction}
           modePolicyAction={modePolicyAction}
+          borderRadiusPolicyAction={borderRadiusPolicyAction}
           saveAction={saveAction}
           contentShape={JSON.stringify(normalizedContent, null, 2)}
         />
@@ -88,6 +96,7 @@ export default async function ProjectPage({ params, searchParams }: ProjectPageP
             slug: project.slug,
             themeKey: project.themeKey,
             modePolicy: project.modePolicy,
+            borderRadiusPolicy: project.borderRadiusPolicy,
             status: project.status,
             contentJson: normalizedContent,
           }}
