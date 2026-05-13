@@ -119,7 +119,8 @@ function renderBlock(
     block.type === "app-header" ||
     block.type === "gallery" ||
     block.type === "hero" ||
-    block.type === "projects-gallery"
+    block.type === "projects-gallery" ||
+    block.type === "footer"
       ? borderRadiusPolicy === "none"
         ? "rounded-none"
         : borderRadiusPolicy === "md"

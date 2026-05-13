@@ -347,7 +347,8 @@ export function ProjectEditor({
       block.type === "app-header" ||
       block.type === "gallery" ||
       block.type === "hero" ||
-      block.type === "projects-gallery"
+      block.type === "projects-gallery" ||
+      block.type === "footer"
         ? project.borderRadiusPolicy === "none"
           ? "rounded-none"
           : project.borderRadiusPolicy === "md"

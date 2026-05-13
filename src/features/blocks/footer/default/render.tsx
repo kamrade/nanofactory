@@ -70,16 +70,13 @@ export function FooterDefaultRender({
   const radiusVars =
     effectiveBorderRadius === "none"
       ? {
-          "--footer-radius-shell": "0px",
           "--footer-radius-control": "0px",
         }
       : effectiveBorderRadius === "md"
         ? {
-            "--footer-radius-shell": "0.75rem",
             "--footer-radius-control": "0.5rem",
           }
         : {
-            "--footer-radius-shell": "1rem",
             "--footer-radius-control": "0.75rem",
           };
 
@@ -159,7 +156,7 @@ export function FooterDefaultRender({
 
   return (
     <section
-      className="px-4 py-8 md:px-8 md:py-12 [border-radius:var(--footer-radius-shell)]"
+      className="px-4 py-8 md:px-8 md:py-12"
       style={radiusVars as CSSProperties}
     >
       <div className="mb-3 flex gap-3 items-center">
