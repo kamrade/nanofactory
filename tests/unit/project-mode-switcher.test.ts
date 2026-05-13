@@ -3,6 +3,8 @@ import { describe, expect, it, vi } from "vitest";
 import {
   applyModeToRoot,
   readModeFromRoot,
+} from "@/lib/dom-utils";
+import {
   syncModeToCookie,
   syncModeToUrl,
 } from "@/components/projects/project-mode-switcher";

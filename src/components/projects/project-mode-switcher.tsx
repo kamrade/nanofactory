@@ -8,28 +8,13 @@ import {
   resolveProjectModePolicy,
   type ProjectModePolicy,
 } from "@/lib/projects/mode-policy";
+import {
+  applyModeToRoot,
+  readModeFromRoot,
+  type ThemeMode,
+} from "@/lib/dom-utils";
 
-export type ThemeMode = "light" | "dark";
-
-function isThemeMode(value: string | null | undefined): value is ThemeMode {
-  return value === "light" || value === "dark";
-}
-
-type ClosestCapableNode = {
-  closest: (selector: string) => {
-    setAttribute: (name: string, value: string) => void;
-    getAttribute?: (name: string) => string | null;
-  } | null;
-};
-
-export function readModeFromRoot(node: ClosestCapableNode | null | undefined): ThemeMode {
-  const rootMode = node?.closest("main[data-theme]")?.getAttribute?.("data-mode");
-  return isThemeMode(rootMode) ? rootMode : "light";
-}
-
-export function applyModeToRoot(node: ClosestCapableNode | null | undefined, mode: ThemeMode) {
-  node?.closest("main[data-theme]")?.setAttribute("data-mode", mode);
-}
+export type { ThemeMode };
 
 type ProjectModeSwitcherProps = {
   initialMode?: ThemeMode;
@@ -68,15 +53,9 @@ export function ProjectModeSwitcher({
     enforceModeByPolicy(
       resolvedPolicy,
       initialMode ??
-    (typeof document === "undefined"
-      ? "light"
-      : readModeFromRoot({
-          closest: (selector) =>
-            document.querySelector(selector) as {
-              setAttribute: (name: string, value: string) => void;
-              getAttribute: (name: string) => string | null;
-            } | null,
-        }))
+        (typeof document === "undefined"
+          ? "light"
+          : readModeFromRoot(document.querySelector("[data-theme]") as HTMLElement | null))
     )
   );
 

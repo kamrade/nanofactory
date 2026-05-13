@@ -172,14 +172,14 @@ page.tsx (в generateMetadata)
 
 ## Блок 4
 
-1️⃣ cx() — утилита склеивания классов определена в 3+ местах 🔒
+1️⃣ ✅ cx() — утилита склеивания классов определена в 3+ местах 🔒
 Файлы: dialog.tsx, sticky-header.tsx, section-shell.tsx (возможно ещё modal.tsx, sheet.tsx)
 
 Везде одно и то же:
 
 Решение: вынести в src/lib/cn.ts (или src/lib/classnames.ts).
 
-2️⃣ createBlockId / createStorageId / createId — три разных генератора ID 🔒
+2️⃣ ✅ createBlockId / createStorageId / createId — три разных генератора ID 🔒
 Файлы:
 
 features/blocks/shared/base.ts → createBlockId() — crypto.randomUUID() / block-${Date.now()}-${random}
@@ -189,7 +189,7 @@ components/assets/background-scene-defaults.ts → createId(prefix) — crypto.r
 
 Решение: единый src/lib/id.ts: createId(prefix?).
 
-3️⃣ ProjectModeSwitcher — сложный inline-адаптер для DOM 🟡
+3️⃣ ✅ ProjectModeSwitcher — сложный inline-адаптер для DOM 🟡
 Файл: components/projects/project-mode-switcher.tsx
 
 Начальное состояние создаёт анонимный объект с методом closest прямо в useState:
