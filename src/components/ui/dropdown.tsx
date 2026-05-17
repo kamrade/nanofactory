@@ -32,6 +32,20 @@ type ThemeAttrs = {
   mode?: string;
 };
 
+function readThemeAttrs(node: HTMLElement | null): ThemeAttrs {
+  if (!node) {
+    return {};
+  }
+  const scope = node.closest("[data-theme]") as HTMLElement | null;
+  if (!scope) {
+    return {};
+  }
+  return {
+    theme: scope.dataset.theme,
+    mode: scope.dataset.mode,
+  };
+}
+
 export type UIDropdownProps = {
   trigger: ReactElement;
   open: boolean;
@@ -75,21 +89,7 @@ export function UIDropdown({
   const setReference = useCallback(
     (node: HTMLElement | null) => {
       refs.setReference(node);
-      if (!node) {
-        setThemeAttrs({});
-        return;
-      }
-
-      const scope = node.closest("[data-theme]") as HTMLElement | null;
-      if (!scope) {
-        setThemeAttrs({});
-        return;
-      }
-
-      setThemeAttrs({
-        theme: scope.dataset.theme,
-        mode: scope.dataset.mode,
-      });
+      setThemeAttrs(readThemeAttrs(node));
     },
     [refs]
   );
@@ -104,19 +104,20 @@ export function UIDropdown({
   useEffect(() => {
     const node = refs.reference.current as HTMLElement | null;
     if (!node) {
+      setThemeAttrs({});
       return;
     }
 
+    setThemeAttrs(readThemeAttrs(node));
+
     const scope = node.closest("[data-theme]") as HTMLElement | null;
     if (!scope) {
+      setThemeAttrs({});
       return;
     }
 
     const observer = new MutationObserver(() => {
-      setThemeAttrs({
-        theme: scope.dataset.theme,
-        mode: scope.dataset.mode,
-      });
+      setThemeAttrs(readThemeAttrs(node));
     });
     observer.observe(scope, {
       attributes: true,
@@ -124,7 +125,7 @@ export function UIDropdown({
     });
 
     return () => observer.disconnect();
-  }, [open, refs.reference]);
+  }, [open, refs]);
 
   const referenceProps = getReferenceProps({
     "aria-haspopup": hasPopup,

@@ -271,7 +271,7 @@ export function ProjectHeader({
                       label: policy,
                       textValue: policy,
                     }))}
-                    className="min-w-36"
+                    
                   />
                   <UIButton type="submit" theme="base" variant="outlined" size="sm">
                     Apply radius
@@ -287,7 +287,6 @@ export function ProjectHeader({
                 />
 
                 <div className="flex items-center gap-2 text-sm text-text-muted">
-                  <span>Mode</span>
                   <ProjectModeSwitcher
                     initialMode={initialMode}
                     inputName="previewMode"

@@ -1,9 +1,11 @@
 "use client";
 
-import { useRef, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 
 import { UIButton } from "@/components/ui/button";
-import { UISegmentedControl } from "@/components/ui/segmented-control";
+import { UISelect } from "@/components/ui/select";
+import { useThemeModeFromDom } from "@/hooks/use-theme-mode-from-dom";
+import { resolveThemePreference } from "@/lib/ui-preferences";
 
 type ThemeOption = {
   key: string;
@@ -23,6 +25,18 @@ export function ProjectThemeForm({
 }: ProjectThemeFormProps) {
   const [themeKey, setThemeKey] = useState(initialThemeKey);
   const containerRef = useRef<HTMLDivElement | null>(null);
+  const { themeKey: domThemeKey } = useThemeModeFromDom({
+    rootSelector: "main[data-theme]",
+    fallbackThemeKey: resolveThemePreference(initialThemeKey),
+  });
+
+  useEffect(() => {
+    setThemeKey(initialThemeKey);
+  }, [initialThemeKey]);
+
+  useEffect(() => {
+    setThemeKey(domThemeKey);
+  }, [domThemeKey]);
 
   function applyTheme(nextThemeKey: string) {
     setThemeKey(nextThemeKey);
@@ -32,23 +46,32 @@ export function ProjectThemeForm({
   }
 
   return (
-    <form action={action} className="flex items-center gap-2">
-      <div ref={containerRef}>
-        <UISegmentedControl
-        ariaLabel="Theme"
-        size="sm"
-        value={themeKey}
-        onValueChange={applyTheme}
-        options={options.map((theme) => ({
-          value: theme.key,
-          label: theme.label,
-        }))}
-      />
-      </div>
-      <input type="hidden" name="themeKey" value={themeKey} />
-      <UIButton type="submit" theme="base" variant="outlined" size="sm">
-        Apply theme
-      </UIButton>
-    </form>
+    <div>
+      
+      <form action={action} className="flex items-end gap-2">
+        <label className="text-sm text-text-muted w-full">
+          <span>Theme</span>
+          <div ref={containerRef} className="w-full">
+        <UISelect
+          key={initialThemeKey}
+          ariaLabel="Theme"
+          size="sm"
+          value={themeKey}
+              onValueChange={applyTheme}
+              
+              options={options.map((theme) => ({
+                value: theme.key,
+                label: theme.label,
+                textValue: theme.label,
+              }))}
+            />
+          </div>
+        </label>
+        <input type="hidden" name="themeKey" value={themeKey} />
+        <UIButton type="submit" theme="base" variant="outlined" size="sm">
+          Apply theme
+        </UIButton>
+      </form>
+    </div>
   );
 }

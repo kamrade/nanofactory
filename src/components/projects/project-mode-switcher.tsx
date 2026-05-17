@@ -2,6 +2,7 @@
 
 import { useEffect, useRef, useState } from "react";
 import { UISegmentedControl } from "@/components/ui/segmented-control";
+import { useThemeModeFromDom } from "@/hooks/use-theme-mode-from-dom";
 import { UI_COOKIE_MAX_AGE, UI_MODE_COOKIE } from "@/lib/ui-preferences";
 import {
   enforceModeByPolicy,
@@ -49,6 +50,10 @@ export function ProjectModeSwitcher({
 }: ProjectModeSwitcherProps = {}) {
   const containerRef = useRef<HTMLDivElement>(null);
   const resolvedPolicy = resolveProjectModePolicy(policy);
+  const { mode: domMode } = useThemeModeFromDom({
+    rootSelector: "main[data-theme][data-mode]",
+    fallbackMode: initialMode ?? "light",
+  });
   const [mode, setMode] = useState<ThemeMode>(() =>
     enforceModeByPolicy(
       resolvedPolicy,
@@ -83,6 +88,17 @@ export function ProjectModeSwitcher({
       }
     }
   }, [mode, resolvedPolicy, syncSearchParam]);
+
+  useEffect(() => {
+    const nextMode = enforceModeByPolicy(resolvedPolicy, initialMode ?? "light");
+    setMode((currentMode) => (currentMode === nextMode ? currentMode : nextMode));
+    applyModeToRoot(containerRef.current, nextMode);
+  }, [initialMode, resolvedPolicy]);
+
+  useEffect(() => {
+    const nextMode = enforceModeByPolicy(resolvedPolicy, domMode);
+    setMode((currentMode) => (currentMode === nextMode ? currentMode : nextMode));
+  }, [domMode, resolvedPolicy]);
 
   const options: Array<{ value: ThemeMode; label: string }> =
     resolvedPolicy === "switchable"
