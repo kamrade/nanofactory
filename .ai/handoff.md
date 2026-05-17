@@ -72,6 +72,18 @@ This is a website/page builder with project-level editing, block-based content, 
   - demo cards extracted: `src/app/showcase/demo-cards.tsx`
   - UIKit sections split into modular files:
     - `src/app/showcase/uikit-sections/*`
+- Project settings `Actions` in `ProjectHeader` now apply immediately on selection (no `Apply` buttons):
+  - `modePolicy`, `borderRadiusPolicy`, and `theme` updates are triggered from client `onValueChange` via server actions.
+  - files:
+    - `src/components/projects/project-header.tsx`
+    - `src/components/projects/project-theme-form.tsx`
+- Mode policy is mirrored to DOM for live UI behavior:
+  - `main` now carries `data-mode-policy` on project page render.
+  - `ProjectHeader` updates `data-mode-policy` on change before server roundtrip.
+  - file:
+    - `src/app/(protected)/projects/[projectId]/page.tsx`
+- Feature block app header mode switcher visibility now follows live DOM mode policy:
+  - `src/features/blocks/app-header/default/render.tsx` observes `data-mode-policy` and hides mode switcher when policy is not `switchable`.
 
 5) Recent refactoring (dedup + cleanup)
 - Duplicate `isUuid` extracted from 3 files to shared `src/lib/validate.ts`.
