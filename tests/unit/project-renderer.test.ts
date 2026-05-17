@@ -137,6 +137,22 @@ function createGalleryNaturalContent(): PageContent {
   };
 }
 
+function createFooterContent(): PageContent {
+  return {
+    blocks: [
+      {
+        id: "footer-1",
+        type: "footer",
+        props: {
+          siteName: "Nanofactory",
+          siteDescription: "Build fast",
+          scrollTopLabel: "Back to top",
+        },
+      },
+    ],
+  };
+}
+
 function createAsset(id: string): ProjectAssetRecord {
   const timestamp = new Date("2026-03-29T12:00:00.000Z");
 
@@ -412,5 +428,44 @@ describe("ProjectRenderer", () => {
     );
 
     expect(html).toContain('id="hero-1"');
+  });
+
+  it("applies footer section shell radius from project policy (none)", () => {
+    const html = renderToStaticMarkup(
+      ProjectRenderer({
+        name: "Footer Radius None Project",
+        themeKey: "sunwash",
+        borderRadiusPolicy: "none",
+        content: createFooterContent(),
+        assets: [],
+      })
+    );
+
+    expect(html).toContain("rounded-none");
+  });
+
+  it("applies footer section shell radius from project policy (md, lg)", () => {
+    const mdHtml = renderToStaticMarkup(
+      ProjectRenderer({
+        name: "Footer Radius Md Project",
+        themeKey: "sunwash",
+        borderRadiusPolicy: "md",
+        content: createFooterContent(),
+        assets: [],
+      })
+    );
+
+    const lgHtml = renderToStaticMarkup(
+      ProjectRenderer({
+        name: "Footer Radius Lg Project",
+        themeKey: "sunwash",
+        borderRadiusPolicy: "lg",
+        content: createFooterContent(),
+        assets: [],
+      })
+    );
+
+    expect(mdHtml).toContain("rounded-xl");
+    expect(lgHtml).toContain("rounded-3xl");
   });
 });

@@ -485,7 +485,7 @@ export function ProjectEditor({
 
   return (
     <div className="grid gap-6">
-      <section data-testid="ProjectEditorContent" className="space-y-6">
+      <section data-testid="ProjectEditorContent" className="space-y-6 px-20">
         <EditorCanvas
           content={state.content}
           lastVariantUndo={state.lastVariantUndo}

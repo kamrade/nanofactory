@@ -65,7 +65,7 @@ export function EditorCanvas({
 
       {content.blocks.length === 0 ? (
         <div className="rounded-2xl border border-dashed border-zinc-300 px-5 py-8 text-sm text-zinc-500">
-          No blocks yet. Use `Add block` in the header to choose a block type and variant.
+          No blocks yet. Use `Add block` in the Info panel to choose a block type and variant.
         </div>
       ) : (
         content.blocks.map((block, index) => {

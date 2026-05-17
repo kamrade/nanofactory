@@ -11,9 +11,15 @@ type ProjectRenameFormProps = {
   initialName: string;
   initialSlug: string;
   action: (formData: FormData) => void | Promise<void>;
+  iconOnly?: boolean;
 };
 
-export function ProjectRenameForm({ initialName, initialSlug, action }: ProjectRenameFormProps) {
+export function ProjectRenameForm({
+  initialName,
+  initialSlug,
+  action,
+  iconOnly = false,
+}: ProjectRenameFormProps) {
   const [name, setName] = useState(initialName);
   const [slug, setSlug] = useState(initialSlug);
   const [submitAttempted, setSubmitAttempted] = useState(false);
@@ -34,9 +40,17 @@ export function ProjectRenameForm({ initialName, initialSlug, action }: ProjectR
       size="md"
       action={action}
       trigger={
-        <UIButton theme="base" variant="outlined" size="sm">
+        <UIButton
+          theme="base"
+          variant="text"
+          size="sm"
+          iconButton={iconOnly}
+          aria-label={iconOnly ? "Rename project" : undefined}
+          title={iconOnly ? "Rename project" : undefined}
+          className={iconOnly ? "rounded-full" : undefined}
+        >
           <FiEdit2 aria-hidden className="h-4 w-4" />
-          <span>Rename</span>
+          {iconOnly ? null : <span>Rename</span>}
         </UIButton>
       }
       title="Rename project"

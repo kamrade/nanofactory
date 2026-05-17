@@ -2,7 +2,7 @@
 
 import { useActionState, useEffect, useMemo, useState } from "react";
 import Link from "next/link";
-import { FiArrowLeft } from "react-icons/fi";
+import { FiArrowLeft, FiSettings } from "react-icons/fi";
 
 import type { SaveEditorState } from "@/app/(protected)/projects/[projectId]/actions";
 import { EDITOR_ADD_BLOCK_EVENT, type EditorAddBlockEventDetail } from "@/components/editor/editor-events";
@@ -18,7 +18,6 @@ import { UIButton } from "@/components/ui/button";
 import { UIDivider } from "@/components/ui/divider";
 import { UIMenu, UIMenuItem, UIMenuLabel } from "@/components/ui/menu";
 import { UISelect } from "@/components/ui/select";
-import { UIStickyHeader } from "@/components/ui/sticky-header";
 import {
   UISheet,
   UISheetClose,
@@ -131,64 +130,208 @@ export function ProjectHeader({
   }
 
   return (
-    <UIStickyHeader
+    <div
       data-testid="ProjectHeader"
-      className="bg-surface shadow-xl shadow-black/3"
-      contentClassName="py-6"
-      revealOnScrollUp
+      className="fixed right-4 top-4 z-50 flex flex-col items-end gap-3"
     >
-      <div className="mb-2 flex flex-wrap items-center justify-between gap-4">
-        <div className="space-y-2">
-          <p className="text-xs font-medium uppercase tracking-[0.2em] text-text-placeholder">
-            Project
-          </p>
-          <h1 className="text-3xl font-semibold tracking-tight">{project.name}</h1>
-        </div>
+      <UIButton asChild theme="base" variant="outlined" size="lg" iconButton className="rounded-full">
+        <Link href="/dashboard" aria-label="Back to dashboard" title="Back to dashboard">
+          <FiArrowLeft aria-hidden className="h-5 w-5" />
+        </Link>
+      </UIButton>
+      <UISheet>
+        <UISheetTrigger>
+          <UIButton
+            type="button"
+            theme="base"
+            variant="contained"
+            size="lg"
+            iconButton
+            aria-label="Settings"
+            title="Settings"
+            className="rounded-full"
+          >
+            <FiSettings aria-hidden className="h-5 w-5" />
+          </UIButton>
+        </UISheetTrigger>
+        <UISheetContent side="right">
+          <UISheetHeader className="flex-row items-start justify-between gap-3">
+            
+            <div>
+              <UISheetClose>
+                <UIButton type="button" theme="base" variant="contained" size="sm">
+                  Close
+                </UIButton>
+              </UISheetClose>
+            </div>
 
-        <UIButton asChild theme="base" variant="outlined" size="sm">
-          <Link href="/dashboard">
-            <FiArrowLeft aria-hidden className="h-4 w-4" />
-            <span>Back to dashboard</span>
-          </Link>
-        </UIButton>
-      </div>
+            <UIDivider></UIDivider>
 
-      <div className="flex flex-wrap items-center gap-3">
-        
-        <ProjectThemeForm
-          initialThemeKey={resolvedThemeKey}
-          options={THEME_OPTIONS}
-          action={themeAction}
-        />
-        <div className="flex items-center gap-2 text-sm text-text-muted">
-          <span>Mode</span>
-          <ProjectModeSwitcher
-            initialMode={initialMode}
-            inputName="previewMode"
-            syncSearchParam="mode"
-            policy={project.modePolicy}
-          />
-        </div>
+          </UISheetHeader>
+          <div className="mt-6 grid gap-5 text-sm text-text-muted">
+            <div className="space-y-2">
+              <p className="text-xs font-medium uppercase tracking-[0.2em] text-text-placeholder">
+                Project
+              </p>
+              <div className="flex items-center gap-2 mb-4">
+                <h2 className="text-2xl font-semibold tracking-tight text-text-main">
+                  {project.name}
+                </h2>
+                <ProjectRenameForm
+                  initialName={project.name}
+                  initialSlug={project.slug}
+                  action={nameAction}
+                  iconOnly
+                />
+              </div>
 
-        <ProjectRenameForm
-          initialName={project.name}
-          initialSlug={project.slug}
-          action={nameAction}
-        />
-        <UISheet>
-          <UISheetTrigger>
-            <UIButton type="button" theme="base" variant="outlined" size="sm">
-              Info
-            </UIButton>
-          </UISheetTrigger>
-          <UISheetContent side="right">
-            <UISheetHeader>
-              <UISheetTitle>Project info</UISheetTitle>
-              <UISheetDescription>
-                Project metadata and publication details.
-              </UISheetDescription>
-            </UISheetHeader>
-            <div className="mt-6 grid gap-5 text-sm text-text-muted">
+
+              <div className="flex gap-3">
+                <div className="flex flex-wrap items-center gap-3">
+                  <UIMenu
+                    ariaLabel="Add block"
+                    placement="bottom-start"
+                    size="sm"
+                    trigger={
+                      <UIButton type="button" theme="base" variant="contained" size="sm">
+                        Add block
+                      </UIButton>
+                    }
+                  >
+                    {addBlockGroups.map((group) => (
+                      <div key={group.type} className="grid gap-0.5">
+                        <UIMenuLabel>{group.label}</UIMenuLabel>
+                        {group.variants.map((definition) => (
+                          <UIMenuItem
+                            key={`${definition.type}:${definition.variant}`}
+                            onSelect={() => handleAddBlock(definition.type, definition.variant)}
+                            className="grid gap-0.5"
+                          >
+                            <span className="text-sm font-medium text-text-main">{definition.label}</span>
+                            {definition.description ? (
+                              <span className="text-xs leading-5 text-text-muted">
+                                {definition.description}
+                              </span>
+                            ) : null}
+                          </UIMenuItem>
+                        ))}
+                      </div>
+                    ))}
+                  </UIMenu>
+                </div>
+                <form action={saveFormAction} className="flex items-center gap-3">
+                  <input type="hidden" name="content" value={liveContentShape} />
+                  <UIButton
+                    type="submit"
+                    disabled={isSaving}
+                    theme="primary"
+                    variant="contained"
+                    size="sm"
+                  >
+                    {isSaving ? "Saving..." : "Save"}
+                  </UIButton>
+                </form>
+              </div>
+            </div>
+
+            <UIDivider spacing="sm" />
+
+            <div className="grid gap-3 rounded-2xl border border-line bg-surface-alt p-4">
+              <h3 className="text-base font-semibold text-text-main">Actions</h3>
+              <div className="grid gap-1">
+                <label className="text-sm text-text-muted">Mode support</label>
+                <form action={modePolicyAction} className="flex items-center gap-2">
+                  <UISelect
+                    ariaLabel="Mode support"
+                    size="sm"
+                    name="modePolicy"
+                    defaultValue={project.modePolicy}
+                    options={PROJECT_MODE_POLICIES.map((policy) => ({
+                      value: policy,
+                      label: policy,
+                      textValue: policy,
+                    }))}
+                    className="min-w-36"
+                  />
+                  <UIButton type="submit" theme="base" variant="outlined" size="sm">
+                    Apply mode
+                  </UIButton>
+                </form>
+              </div>
+              <div className="grid gap-1">
+                <label className="text-sm text-text-muted">Border radius</label>
+                <form action={borderRadiusPolicyAction} className="flex items-center gap-2">
+                  <UISelect
+                    ariaLabel="Border radius"
+                    size="sm"
+                    name="borderRadiusPolicy"
+                    defaultValue={project.borderRadiusPolicy}
+                    options={PROJECT_BORDER_RADIUS_POLICIES.map((policy) => ({
+                      value: policy,
+                      label: policy,
+                      textValue: policy,
+                    }))}
+                    className="min-w-36"
+                  />
+                  <UIButton type="submit" theme="base" variant="outlined" size="sm">
+                    Apply radius
+                  </UIButton>
+                </form>
+              </div>
+
+              <div className="grid gap-4">
+                <ProjectThemeForm
+                  initialThemeKey={resolvedThemeKey}
+                  options={THEME_OPTIONS}
+                  action={themeAction}
+                />
+
+                <div className="flex items-center gap-2 text-sm text-text-muted">
+                  <span>Mode</span>
+                  <ProjectModeSwitcher
+                    initialMode={initialMode}
+                    inputName="previewMode"
+                    syncSearchParam="mode"
+                    policy={project.modePolicy}
+                  />
+                </div>
+                
+              </div>
+
+              <UIDivider></UIDivider>
+                
+              <div className="flex flex-wrap items-center gap-3">
+                <form action={publicationAction}>
+                  <UIButton
+                    data-testid={
+                      project.status === "published"
+                        ? "project-unpublish-button"
+                        : "project-publish-button"
+                    }
+                    type="submit"
+                    theme={project.status === "published" ? "danger" : "primary"}
+                    variant={project.status === "published" ? "outlined" : "contained"}
+                    size="sm"
+                  >
+                    {project.status === "published" ? "Unpublish" : "Publish"}
+                  </UIButton>
+                </form>
+
+                <OpenPreviewButton projectId={project.id} />
+
+                {project.status === "published" ? (
+                  <UIButton asChild theme="base" variant="contained" size="sm">
+                    <Link href={`/p/${project.slug}`} target="_blank" rel="noreferrer">
+                      Open public page
+                    </Link>
+                  </UIButton>
+                ) : null}
+              </div>
+            </div>
+
+            {saveState.status === "error" && saveState.message ? (
+              <p className="text-sm text-danger-500">{saveState.message}</p>
+            ) : null}
               <div className="overflow-hidden rounded-2xl border border-line bg-surface-alt">
                 <div className="grid grid-cols-[160px_minmax(0,1fr)] gap-3 border-b border-line px-4 py-3">
                   <span className="font-medium text-text-main">status</span>
@@ -221,138 +364,23 @@ export function ProjectHeader({
                   </span>
                 </div>
               </div>
-              <div className="grid gap-3 rounded-2xl border border-line bg-surface-alt p-4">
-                <h3 className="text-base font-semibold text-text-main">Actions</h3>
-                <div className="grid gap-1">
-                  <label className="text-sm text-text-muted">Mode support</label>
-                  <form action={modePolicyAction} className="flex items-center gap-2">
-                    <UISelect
-                      ariaLabel="Mode support"
-                      size="sm"
-                      name="modePolicy"
-                      defaultValue={project.modePolicy}
-                      options={PROJECT_MODE_POLICIES.map((policy) => ({
-                        value: policy,
-                        label: policy,
-                        textValue: policy,
-                      }))}
-                      className="min-w-36"
-                    />
-                    <UIButton type="submit" theme="base" variant="outlined" size="sm">
-                      Apply mode
-                    </UIButton>
-                  </form>
-                </div>
-                <div className="grid gap-1">
-                  <label className="text-sm text-text-muted">Border radius</label>
-                  <form action={borderRadiusPolicyAction} className="flex items-center gap-2">
-                    <UISelect
-                      ariaLabel="Border radius"
-                      size="sm"
-                      name="borderRadiusPolicy"
-                      defaultValue={project.borderRadiusPolicy}
-                      options={PROJECT_BORDER_RADIUS_POLICIES.map((policy) => ({
-                        value: policy,
-                        label: policy,
-                        textValue: policy,
-                      }))}
-                      className="min-w-36"
-                    />
-                    <UIButton type="submit" theme="base" variant="outlined" size="sm">
-                      Apply radius
-                    </UIButton>
-                  </form>
-                </div>
-
-                <UIDivider></UIDivider>
-                
-                <div className="flex flex-wrap items-center gap-3">
-                  <form action={publicationAction}>
-                    <UIButton
-                      data-testid={
-                        project.status === "published"
-                          ? "project-unpublish-button"
-                          : "project-publish-button"
-                      }
-                      type="submit"
-                      theme={project.status === "published" ? "danger" : "primary"}
-                      variant={project.status === "published" ? "outlined" : "contained"}
-                      size="sm"
-                    >
-                      {project.status === "published" ? "Unpublish" : "Publish"}
-                    </UIButton>
-                  </form>
-
-                  <OpenPreviewButton projectId={project.id} />
-
-                  {project.status === "published" ? (
-                    <UIButton asChild theme="base" variant="contained" size="sm">
-                      <Link href={`/p/${project.slug}`} target="_blank" rel="noreferrer">
-                        Open public page
-                      </Link>
-                    </UIButton>
-                  ) : null}
-                </div>
-              </div>
+              
               <div className="space-y-2">
                 <h3 className="text-base font-semibold text-text-main">Content shape</h3>
-                <pre className="max-h-[38vh] max-w-[60vw] overflow-auto whitespace-pre-wrap wrap-break-word rounded-2xl border border-line bg-surface-alt p-4 text-xs leading-6 text-text-main">
+                <pre className="max-h-[50vh] overflow-auto whitespace-pre-wrap wrap-break-word rounded-2xl border border-line bg-surface-alt p-4 text-xs leading-6 text-text-main">
                   {liveContentShape}
                 </pre>
               </div>
-            </div>
-            <UISheetFooter>
-              <UISheetClose>
-                <UIButton type="button" theme="base" variant="outlined" size="sm">
-                  Close
-                </UIButton>
-              </UISheetClose>
-            </UISheetFooter>
-          </UISheetContent>
-        </UISheet>
-
-        <UIMenu
-          ariaLabel="Add block"
-          placement="bottom-start"
-          size="sm"
-          trigger={
-            <UIButton type="button" theme="base" variant="contained" size="sm">
-              Add block
-            </UIButton>
-          }
-        >
-          {addBlockGroups.map((group) => (
-            <div key={group.type} className="grid gap-0.5">
-              <UIMenuLabel>{group.label}</UIMenuLabel>
-              {group.variants.map((definition) => (
-                <UIMenuItem
-                  key={`${definition.type}:${definition.variant}`}
-                  onSelect={() => handleAddBlock(definition.type, definition.variant)}
-                  className="grid gap-0.5"
-                >
-                  <span className="text-sm font-medium text-text-main">{definition.label}</span>
-                  {definition.description ? (
-                    <span className="text-xs leading-5 text-text-muted">
-                      {definition.description}
-                    </span>
-                  ) : null}
-                </UIMenuItem>
-              ))}
-            </div>
-          ))}
-        </UIMenu>
-        <form action={saveFormAction} className="flex items-center gap-3">
-          <input type="hidden" name="content" value={liveContentShape} />
-          <UIButton type="submit" disabled={isSaving} theme="primary" variant="contained" size="sm">
-            {isSaving ? "Saving..." : "Save"}
-          </UIButton>
-        </form>
-
-
-      </div>
-      {saveState.status === "error" && saveState.message ? (
-        <p className="mt-2 text-sm text-danger-500">{saveState.message}</p>
-      ) : null}
-    </UIStickyHeader>
+          </div>
+          <UISheetFooter>
+            <UISheetClose>
+              <UIButton type="button" theme="base" variant="outlined" size="sm">
+                Close
+              </UIButton>
+            </UISheetClose>
+          </UISheetFooter>
+        </UISheetContent>
+      </UISheet>
+    </div>
   );
 }

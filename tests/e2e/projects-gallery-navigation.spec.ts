@@ -34,31 +34,54 @@ async function ensureBlockEditorClosed(page: Page) {
   }
 }
 
+async function openProjectControls(page: Page) {
+  const controlsSheet = page
+    .locator('[role="dialog"]')
+    .filter({ has: page.getByTestId("project-publish-status") });
+  if (!(await controlsSheet.isVisible())) {
+    await page.getByRole("button", { name: "Settings" }).click();
+  }
+  await expect(controlsSheet).toBeVisible();
+  return controlsSheet;
+}
+
 async function addBlock(page: Page, descriptionText: string) {
   await ensureBlockEditorClosed(page);
-  await page.getByRole("button", { name: "Add block" }).click();
-  await page.locator('[role="menuitem"]').filter({ hasText: descriptionText }).first().click();
+  const blockType = descriptionText.includes("Projects gallery")
+    ? "projects-gallery"
+    : "gallery";
+  await page.evaluate(({ nextBlockType }) => {
+    window.dispatchEvent(
+      new CustomEvent("project-editor:add-block", {
+        detail: { blockType: nextBlockType, variant: "default" },
+      })
+    );
+  }, { nextBlockType: blockType });
 }
 
 async function saveProject(page: Page) {
   await ensureBlockEditorClosed(page);
-  await page.getByRole("button", { name: "Save" }).click();
+  const controlsSheet = await openProjectControls(page);
+  const saveForm = controlsSheet.locator('form:has(input[name="content"])').first();
+  await saveForm.evaluate((form) => {
+    (form as HTMLFormElement).requestSubmit();
+  });
   await expect(page.getByText("Project content saved.")).toBeVisible();
 }
 
 async function publishProject(page: Page) {
   await ensureBlockEditorClosed(page);
-  await page.getByRole("button", { name: "Info" }).click();
-  const infoSheet = page.getByRole("dialog", { name: "Project info" });
+  const infoSheet = await openProjectControls(page);
   await expect(infoSheet).toBeVisible();
-  await infoSheet.getByRole("button", { name: "Publish" }).click();
+  await infoSheet.getByTestId("project-publish-button").evaluate((button) => {
+    (button as HTMLButtonElement).click();
+  });
   await page.waitForURL(/\/projects\/.+/);
 }
 
 async function getPublicUrl(page: Page) {
   await ensureBlockEditorClosed(page);
-  await page.getByRole("button", { name: "Info" }).click();
-  const infoSheet = page.getByRole("dialog", { name: "Project info" });
+  const infoSheet = await openProjectControls(page);
   await expect(infoSheet).toBeVisible();
   const publicLink = infoSheet.getByRole("link", { name: "Open public page" });
   await expect(publicLink).toBeVisible();

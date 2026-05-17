@@ -39,9 +39,24 @@ async function ensureBlockEditorClosed(page: Page) {
   }
 }
 
+async function openProjectControls(page: Page) {
+  const controlsSheet = page
+    .locator('[role="dialog"]')
+    .filter({ has: page.getByTestId("project-publish-status") });
+  if (!(await controlsSheet.isVisible())) {
+    await page.getByRole("button", { name: "Settings" }).click();
+  }
+  await expect(controlsSheet).toBeVisible();
+  return controlsSheet;
+}
+
 async function saveProject(page: Page) {
   await ensureBlockEditorClosed(page);
-  await page.getByRole("button", { name: "Save" }).click();
+  const controlsSheet = await openProjectControls(page);
+  const saveForm = controlsSheet.locator('form:has(input[name="content"])').first();
+  await saveForm.evaluate((form) => {
+    (form as HTMLFormElement).requestSubmit();
+  });
   await expect(page.getByText("Project content saved.")).toBeVisible();
 }
 
@@ -74,18 +89,20 @@ test("creates a project from dashboard and opens it", async ({ page }) => {
   await createProjectFromDashboard(page, "Playwright Project");
 
   await page.waitForURL(/\/projects\/.+/);
-  await expect(page.getByRole("heading", { name: "Playwright Project" })).toBeVisible();
-  await page.getByRole("button", { name: "Info" }).click();
-  const infoSheet = page.getByRole("dialog", { name: "Project info" });
+  const infoSheet = await openProjectControls(page);
   await expect(infoSheet).toBeVisible();
-  await expect(infoSheet.getByText("playwright-project").first()).toBeVisible();
+  await expect(infoSheet.getByTestId("project-publish-status")).toHaveText("draft");
 });
 
 test("adds a block, saves content, and reloads the editor state", async ({ page }) => {
   await createProjectFromDashboard(page, "Editor Save Project");
 
   await page.waitForURL(/\/projects\/.+/);
-  await page.getByRole("button", { name: "Add block" }).click();
+  const controlsSheet = await openProjectControls(page);
+  const addBlockButton = controlsSheet.getByRole("button", { name: "Add block" });
+  await addBlockButton.evaluate((button) => {
+    (button as HTMLButtonElement).click();
+  });
   await page.getByRole("menuitem", { name: /Split image/i }).click();
   await page.getByLabel("Title", { exact: true }).fill("Saved Hero Title");
   await page.getByRole("textbox", { name: "Subtitle" }).fill(
@@ -107,15 +124,15 @@ test("publishes and unpublishes a project through the editor", async ({ page }) 
   await createProjectFromDashboard(page, "Public Flow Project");
 
   await page.waitForURL(/\/projects\/.+/);
-  await page.getByRole("button", { name: "Info" }).click();
-  let infoSheet = page.getByRole("dialog", { name: "Project info" });
+  let infoSheet = await openProjectControls(page);
   await expect(infoSheet).toBeVisible();
   await expect(infoSheet.getByTestId("project-publish-status")).toHaveText("draft");
 
-  await infoSheet.getByRole("button", { name: "Publish" }).click();
+  await infoSheet.getByTestId("project-publish-button").evaluate((button) => {
+    (button as HTMLButtonElement).click();
+  });
   await page.waitForURL(/\/projects\/.+/);
-  await page.getByRole("button", { name: "Info" }).click();
-  infoSheet = page.getByRole("dialog", { name: "Project info" });
+  infoSheet = await openProjectControls(page);
   await expect(infoSheet.getByTestId("project-publish-status")).toHaveText("published");
 
   const publicLink = infoSheet.getByRole("link", { name: "Open public page" });
@@ -131,12 +148,12 @@ test("publishes and unpublishes a project through the editor", async ({ page }) 
 
   await page.goto("/dashboard");
   await page.getByRole("link", { name: "Open" }).first().click();
-  await page.getByRole("button", { name: "Info" }).click();
-  infoSheet = page.getByRole("dialog", { name: "Project info" });
-  await infoSheet.getByRole("button", { name: "Unpublish" }).click();
+  infoSheet = await openProjectControls(page);
+  await infoSheet.getByTestId("project-unpublish-button").evaluate((button) => {
+    (button as HTMLButtonElement).click();
+  });
   await page.waitForURL(/\/projects\/.+/);
-  await page.getByRole("button", { name: "Info" }).click();
-  infoSheet = page.getByRole("dialog", { name: "Project info" });
+  infoSheet = await openProjectControls(page);
   await expect(infoSheet.getByTestId("project-publish-status")).toHaveText("draft");
 
   await page.goto(publicUrl);

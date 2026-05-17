@@ -310,7 +310,7 @@ export function UISheetClose({ children }: { children: ReactElement }) {
 }
 
 export function UISheetHeader({ className, ...props }: HTMLAttributes<HTMLDivElement>) {
-  return <div className={cx("grid gap-1.5", className)} {...props} />;
+  return <div className={cx("", className)} {...props} />;
 }
 
 export function UISheetTitle({ className, ...props }: HTMLAttributes<HTMLHeadingElement>) {
