@@ -30,6 +30,11 @@ export const projectBorderRadiusPolicyEnum = pgEnum("project_border_radius_polic
   "md",
   "lg",
 ]);
+export const projectSpacingScaleEnum = pgEnum("project_spacing_scale", [
+  "sm",
+  "md",
+  "lg",
+]);
 
 // 1. Users
 export const users = pgTable("users", {
@@ -55,6 +60,7 @@ export const projects = pgTable("projects", {
   borderRadiusPolicy: projectBorderRadiusPolicyEnum("border_radius_policy")
     .default("lg")
     .notNull(),
+  spacingScale: projectSpacingScaleEnum("spacing_scale").default("md").notNull(),
   status: projectStatusEnum("status").default("draft").notNull(),
   publishedAt: timestamp("published_at", { withTimezone: true }),
   createdAt: timestamp("created_at", { withTimezone: true }).defaultNow().notNull(),

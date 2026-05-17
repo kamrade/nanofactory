@@ -10,6 +10,49 @@ import { resolveAssetById } from "@/lib/assets/resolution";
 import type { BlockRenderProps } from "../../shared/types";
 type BorderRadiusPolicy = "none" | "md" | "lg";
 
+type SpacingScale = "sm" | "md" | "lg";
+
+const HERO_CENTERED_SPACING: Record<
+  SpacingScale,
+  {
+    shellClassName: string;
+    contentClassName: string;
+    stackClassName: string;
+    eyebrowClassName: string;
+    headingClassName: string;
+    subtitleClassName: string;
+    buttonClassName: string;
+  }
+> = {
+  sm: {
+    shellClassName: "m-auto flex min-h-[16rem] max-w-2xl flex-col items-center gap-3 py-6 text-center md:min-h-[20rem]",
+    contentClassName: "space-y-3",
+    stackClassName: "",
+    eyebrowClassName: "text-xs font-semibold uppercase tracking-[0.12em]",
+    headingClassName: "break-words text-2xl font-semibold tracking-tight sm:text-4xl",
+    subtitleClassName: "mx-auto max-w-2xl break-words text-sm leading-6",
+    buttonClassName: "px-3 py-2 text-xs",
+  },
+  md: {
+    shellClassName: "m-auto flex min-h-[22rem] max-w-3xl flex-col items-center gap-6 py-12 text-center md:min-h-[28rem]",
+    contentClassName: "space-y-5",
+    stackClassName: "",
+    eyebrowClassName: "text-sm font-semibold uppercase tracking-[0.14em]",
+    headingClassName: "break-words text-4xl font-semibold tracking-tight sm:text-6xl",
+    subtitleClassName: "mx-auto max-w-2xl break-words text-base leading-7",
+    buttonClassName: "px-5 py-3 text-sm",
+  },
+  lg: {
+    shellClassName: "m-auto flex min-h-[26rem] max-w-4xl flex-col items-center gap-8 py-14 text-center md:min-h-[32rem]",
+    contentClassName: "space-y-7",
+    stackClassName: "",
+    eyebrowClassName: "text-base font-semibold uppercase tracking-[0.16em]",
+    headingClassName: "break-words text-5xl font-semibold tracking-tight sm:text-7xl",
+    subtitleClassName: "mx-auto max-w-3xl break-words text-lg leading-8",
+    buttonClassName: "px-7 py-4 text-base",
+  },
+};
+
 function getContentPositionClass(contentPosition: string) {
   if (contentPosition === "top") {
     return "justify-start";
@@ -26,6 +69,7 @@ export function HeroCenteredRender({
   theme,
   mode = "light",
   projectBorderRadiusPolicy,
+  projectSpacingScale,
 }: BlockRenderProps) {
   const sectionRef = useRef<HTMLElement>(null);
   const [observedMode, setObservedMode] = useState<"light" | "dark" | null>(null);
@@ -49,6 +93,11 @@ export function HeroCenteredRender({
   const selectedImageId =
     activeMode === "dark" ? darkImageId ?? defaultImageId : lightImageId ?? defaultImageId;
   const heroImageAsset = resolveAssetById(selectedImageId, assetMap);
+  const effectiveSpacingScale: SpacingScale =
+    projectSpacingScale === "sm" || projectSpacingScale === "md" || projectSpacingScale === "lg"
+      ? projectSpacingScale
+      : "md";
+  const spacing = HERO_CENTERED_SPACING[effectiveSpacingScale];
   const effectiveBorderRadius: BorderRadiusPolicy =
     projectBorderRadiusPolicy === "none" ||
     projectBorderRadiusPolicy === "md" ||
@@ -105,25 +154,25 @@ export function HeroCenteredRender({
       }
     >
       <div
-        className={`m-auto flex min-h-[22rem] max-w-3xl flex-col items-center gap-6 py-12 text-center md:min-h-[28rem] ${getContentPositionClass(contentPosition)}`}
+        className={`${spacing.shellClassName} ${getContentPositionClass(contentPosition)}`}
         
       >
 
-        <div className="space-y-5">
+        <div className={spacing.contentClassName}>
           {eyebrow.trim().length > 0 ? (
-            <p className={`text-sm font-semibold uppercase tracking-[0.14em] ${theme.kicker}`}>
+            <p className={`${spacing.eyebrowClassName} ${theme.kicker}`}>
               {eyebrow}
             </p>
           ) : null}
-          <h1 className="break-words text-4xl font-semibold tracking-tight sm:text-6xl">{title}</h1>
-          <p className={`mx-auto max-w-2xl break-words text-base leading-7 ${theme.muted}`}>
+          <h1 className={spacing.headingClassName}>{title}</h1>
+          <p className={`${spacing.subtitleClassName} ${theme.muted}`}>
             {subtitle}
           </p>
           {buttonAnchor.trim().length > 0 ? (
             <div>
               <a
                 href={`#${buttonAnchor}`}
-                className={theme.button}
+                className={`${theme.buttonTone} ${spacing.buttonClassName}`}
                 style={{ borderRadius: "var(--hero-centered-radius-button)" }}
               >
                 {buttonText}
@@ -132,7 +181,7 @@ export function HeroCenteredRender({
           ) : (
             <div>
               <span
-                className={theme.button}
+                className={`${theme.buttonTone} ${spacing.buttonClassName}`}
                 style={{ borderRadius: "var(--hero-centered-radius-button)" }}
               >
                 {buttonText}

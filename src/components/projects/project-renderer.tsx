@@ -7,6 +7,7 @@ import { DEFAULT_THEME_KEY, isThemeKey } from "@/lib/themes";
 import type { GalleryItemLinkMode } from "@/lib/routing/gallery-link-mode";
 import { type ProjectBorderRadiusPolicy, resolveProjectBorderRadiusPolicy } from "@/lib/projects/border-radius-policy";
 import { type ProjectModePolicy, resolveProjectModePolicy } from "@/lib/projects/mode-policy";
+import { type ProjectSpacingScale, resolveProjectSpacingScale } from "@/lib/projects/spacing-scale";
 import { SectionShell } from "@/components/projects/section-shell";
 import {
   buildEffectivePageAnchors,
@@ -22,6 +23,7 @@ type RenderedProject = {
   mode?: "light" | "dark";
   modePolicy?: ProjectModePolicy;
   borderRadiusPolicy?: ProjectBorderRadiusPolicy;
+  spacingScale?: ProjectSpacingScale;
   content: PageContent;
   assets: ProjectAssetRecord[];
   backgroundScenes?: BackgroundSceneRecord[];
@@ -37,6 +39,8 @@ function getThemeClasses(themeKey: string) {
     default:
       return {
         page: "bg-bg text-text-main",
+        buttonTone:
+          "inline-flex items-center justify-center rounded-2xl bg-primary-300 font-medium text-text-inverted-main transition hover:bg-primary-200",
         button:
           "inline-flex items-center justify-center rounded-2xl bg-primary-300 px-5 py-3 text-sm font-medium text-text-inverted-main transition hover:bg-primary-200",
         muted: "text-text-muted",
@@ -98,6 +102,7 @@ function renderBlock(
   galleryItemLinkMode: GalleryItemLinkMode,
   modePolicy: ProjectModePolicy,
   borderRadiusPolicy: ProjectBorderRadiusPolicy,
+  spacingScale: ProjectSpacingScale,
   anchorId: string | undefined,
   effectiveGalleryItemAnchors: Map<number, string> | undefined,
   assetMap: Map<string, ProjectAssetRecord>,
@@ -148,6 +153,7 @@ function renderBlock(
         mode={fallbackMode}
         modePolicy={modePolicy}
         projectBorderRadiusPolicy={borderRadiusPolicy}
+        projectSpacingScale={spacingScale}
         publicProjectSlug={publicProjectSlug}
         galleryItemLinkMode={galleryItemLinkMode}
         effectiveBlockAnchorId={anchorId}
@@ -164,6 +170,7 @@ export function ProjectRenderer({
   mode = "light",
   modePolicy = "switchable",
   borderRadiusPolicy = "lg",
+  spacingScale = "md",
   content,
   assets,
   backgroundScenes = [],
@@ -179,6 +186,7 @@ export function ProjectRenderer({
   const anchorMap = renderContext.effectiveAnchors.blockAnchors;
   const resolvedModePolicy = resolveProjectModePolicy(modePolicy);
   const resolvedBorderRadiusPolicy = resolveProjectBorderRadiusPolicy(borderRadiusPolicy);
+  const resolvedSpacingScale = resolveProjectSpacingScale(spacingScale);
   const containerClass = "container mx-auto px-4";
 
   return (
@@ -187,6 +195,7 @@ export function ProjectRenderer({
       data-theme={renderContext.resolvedThemeKey}
       data-mode={mode}
       data-border-radius={resolvedBorderRadiusPolicy}
+      data-spacing-scale={resolvedSpacingScale}
       className={`min-h-screen py-4 ${renderContext.theme.page}`}
     >
       <div className="flex w-full flex-col gap-6">
@@ -208,6 +217,7 @@ export function ProjectRenderer({
                 galleryItemLinkMode,
                 resolvedModePolicy,
                 resolvedBorderRadiusPolicy,
+                resolvedSpacingScale,
                 anchorMap.get(block.id),
                 buildGalleryItemAnchorMap(block, renderContext.effectiveAnchors),
                 renderContext.assetMap,

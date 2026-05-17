@@ -50,6 +50,13 @@
       "when": 1778700086482,
       "tag": "0006_shallow_synch",
       "breakpoints": true
+    },
+    {
+      "idx": 7,
+      "version": "7",
+      "when": 1779019088873,
+      "tag": "0007_purple_snowbird",
+      "breakpoints": true
     }
   ]
 }

@@ -60,6 +60,49 @@ function getProjectControlRadiusClass(borderRadiusPolicy: "none" | "md" | "lg") 
   return "rounded-xl";
 }
 
+function getProjectSpacingClasses(spacingScale: "sm" | "md" | "lg") {
+  if (spacingScale === "sm") {
+    return {
+      pageClassName: "min-h-screen bg-bg py-6 text-text-main",
+      containerClassName: "container mx-auto grid max-w-4xl gap-4 px-3",
+      controlClassName: "px-2 py-1.5 text-xs",
+      controlBarClassName: "px-2 py-2",
+      cardClassName: "grid gap-2 border border-line bg-surface p-3",
+      h1ClassName: "text-xl font-semibold tracking-tight text-text-main",
+      bodyClassName: "text-xs leading-5 text-text-muted",
+      priceClassName: "text-xs font-semibold text-text-main",
+      metaClassName: "text-[11px] text-text-muted",
+      imageFallbackClassName: "flex min-h-64 items-center justify-center text-sm text-text-muted",
+    };
+  }
+  if (spacingScale === "lg") {
+    return {
+      pageClassName: "min-h-screen bg-bg py-12 text-text-main",
+      containerClassName: "container mx-auto grid max-w-5xl gap-8 px-6",
+      controlClassName: "px-4 py-3 text-base",
+      controlBarClassName: "px-5 py-4",
+      cardClassName: "grid gap-4 border border-line bg-surface p-6",
+      h1ClassName: "text-3xl font-semibold tracking-tight text-text-main",
+      bodyClassName: "text-base leading-8 text-text-muted",
+      priceClassName: "text-lg font-semibold text-text-main",
+      metaClassName: "text-sm text-text-muted",
+      imageFallbackClassName: "flex min-h-64 items-center justify-center text-base text-text-muted",
+    };
+  }
+  return {
+    pageClassName: "min-h-screen bg-bg py-10 text-text-main",
+    containerClassName: "container mx-auto grid max-w-4xl gap-6 px-4",
+    controlClassName: "px-3 py-2 text-sm",
+    controlBarClassName: "px-4 py-3",
+    cardClassName: "grid gap-2 border border-line bg-surface p-5",
+    h1ClassName: "text-2xl font-semibold tracking-tight text-text-main",
+    bodyClassName: "text-sm leading-7 text-text-muted",
+    priceClassName: "text-base font-semibold text-text-main",
+    metaClassName: "text-xs text-text-muted",
+    imageFallbackClassName: "flex min-h-64 items-center justify-center text-sm text-text-muted",
+  };
+}
+
 async function resolvePublishedProjectsGalleryEntry(
   slug: string,
   projectAnchor: string,
@@ -174,6 +217,7 @@ export default async function ProjectsGalleryEntryPage({
   }
   const previewRadiusClass = getProjectRadiusClass(project.borderRadiusPolicy);
   const controlRadiusClass = getProjectControlRadiusClass(project.borderRadiusPolicy);
+  const spacing = getProjectSpacingClasses(project.spacingScale);
 
   return (
     <main
@@ -181,17 +225,19 @@ export default async function ProjectsGalleryEntryPage({
       data-theme={resolved.projectThemeKey}
       data-mode={resolvedMode}
       data-border-radius={project.borderRadiusPolicy}
-      className="min-h-screen bg-bg py-10 text-text-main"
+      className={spacing.pageClassName}
     >
       <GalleryItemKeyboardNav previousHref={previousHref} nextHref={nextHref} />
 
-      <div className="container mx-auto grid max-w-4xl gap-6 px-4">
+      <div className={spacing.containerClassName}>
         <GalleryItemNav
           backHref={backHref}
           counterText={`Item ${resolved.imageEntryIndex + 1} of ${resolved.totalImageEntries}`}
           previousHref={previousHref}
           nextHref={nextHref}
           radiusClassName={controlRadiusClass}
+          controlClassName={spacing.controlClassName}
+          controlBarClassName={spacing.controlBarClassName}
           testIdPrefix="projects-gallery-entry"
         />
 
@@ -206,28 +252,28 @@ export default async function ProjectsGalleryEntryPage({
               className="h-auto w-full object-contain"
             />
           ) : (
-            <div className="flex min-h-64 items-center justify-center text-sm text-text-muted">
+            <div className={spacing.imageFallbackClassName}>
               No image
             </div>
           )}
         </section>
 
-        <section className={`grid gap-2 border border-line bg-surface p-5 ${previewRadiusClass}`}>
+        <section className={`${spacing.cardClassName} ${previewRadiusClass}`}>
           {resolved.title.trim().length > 0 ? (
-            <h1 className="text-2xl font-semibold tracking-tight text-text-main">{resolved.title}</h1>
+            <h1 className={spacing.h1ClassName}>{resolved.title}</h1>
           ) : (
-            <h1 className="text-2xl font-semibold tracking-tight text-text-main">
+            <h1 className={spacing.h1ClassName}>
               Gallery item
             </h1>
           )}
           {resolved.description.trim().length > 0 ? (
-            <p className="text-sm leading-7 text-text-muted">{resolved.description}</p>
+            <p className={spacing.bodyClassName}>{resolved.description}</p>
           ) : null}
           {resolved.price.trim().length > 0 ? (
-            <p className="text-base font-semibold text-text-main">{resolved.price}</p>
+            <p className={spacing.priceClassName}>{resolved.price}</p>
           ) : null}
           {resolved.meta.trim().length > 0 ? (
-            <p className="text-xs text-text-muted">{resolved.meta}</p>
+            <p className={spacing.metaClassName}>{resolved.meta}</p>
           ) : null}
         </section>
       </div>

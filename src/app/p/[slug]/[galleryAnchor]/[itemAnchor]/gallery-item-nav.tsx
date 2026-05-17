@@ -7,6 +7,8 @@ type GalleryItemNavProps = {
   previousHref?: string;
   nextHref?: string;
   radiusClassName?: string;
+  controlClassName?: string;
+  controlBarClassName?: string;
   /** Overrides default data-testid prefix ("gallery"). */
   testIdPrefix?: string;
 };
@@ -18,6 +20,8 @@ export function GalleryItemNav({
   previousHref,
   nextHref,
   radiusClassName = "rounded-xl",
+  controlClassName = "px-3 py-2 text-sm",
+  controlBarClassName = "px-4 py-3",
   testIdPrefix = "gallery",
 }: GalleryItemNavProps) {
   const backTestId = `${testIdPrefix}-back-link`;
@@ -31,27 +35,27 @@ export function GalleryItemNav({
         <Link
           data-testid={backTestId}
           href={backHref}
-          className={`inline-flex items-center justify-center border border-line bg-surface px-3 py-2 text-sm font-medium text-text-main transition hover:bg-surface-alt ${radiusClassName}`}
+          className={`inline-flex items-center justify-center border border-line bg-surface font-medium text-text-main transition hover:bg-surface-alt ${controlClassName} ${radiusClassName}`}
         >
           {backLabel}
         </Link>
-        <div className={`inline-flex items-center gap-2 border border-line bg-surface px-3 py-2 text-sm text-text-muted ${radiusClassName}`}>
+        <div className={`inline-flex items-center gap-2 border border-line bg-surface text-text-muted ${controlClassName} ${radiusClassName}`}>
           <span data-testid={counterTestId}>{counterText}</span>
         </div>
       </div>
 
       <section className={`overflow-hidden border border-line bg-surface-alt ${radiusClassName}`}>
-        <div className="flex items-center justify-between gap-3 border-b border-line bg-surface px-4 py-3">
+        <div className={`flex items-center justify-between gap-3 border-b border-line bg-surface ${controlBarClassName}`}>
           {previousHref ? (
             <Link
               data-testid={previousTestId}
               href={previousHref}
-              className={`inline-flex items-center justify-center border border-line bg-surface px-3 py-2 text-sm font-medium text-text-main transition hover:bg-surface-alt ${radiusClassName}`}
+              className={`inline-flex items-center justify-center border border-line bg-surface font-medium text-text-main transition hover:bg-surface-alt ${controlClassName} ${radiusClassName}`}
             >
               Previous
             </Link>
           ) : (
-            <span className={`inline-flex items-center justify-center border border-line bg-surface-alt px-3 py-2 text-sm font-medium text-text-placeholder ${radiusClassName}`}>
+            <span className={`inline-flex items-center justify-center border border-line bg-surface-alt font-medium text-text-placeholder ${controlClassName} ${radiusClassName}`}>
               Previous
             </span>
           )}
@@ -60,12 +64,12 @@ export function GalleryItemNav({
             <Link
               data-testid={nextTestId}
               href={nextHref}
-              className={`inline-flex items-center justify-center border border-line bg-surface px-3 py-2 text-sm font-medium text-text-main transition hover:bg-surface-alt ${radiusClassName}`}
+              className={`inline-flex items-center justify-center border border-line bg-surface font-medium text-text-main transition hover:bg-surface-alt ${controlClassName} ${radiusClassName}`}
             >
               Next
             </Link>
           ) : (
-            <span className={`inline-flex items-center justify-center border border-line bg-surface-alt px-3 py-2 text-sm font-medium text-text-placeholder ${radiusClassName}`}>
+            <span className={`inline-flex items-center justify-center border border-line bg-surface-alt font-medium text-text-placeholder ${controlClassName} ${radiusClassName}`}>
               Next
             </span>
           )}

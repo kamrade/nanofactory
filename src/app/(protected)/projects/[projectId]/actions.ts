@@ -24,6 +24,7 @@ import {
   publishProjectForUser,
   saveProjectContentForUser,
   updateProjectBorderRadiusPolicyForUser,
+  updateProjectSpacingScaleForUser,
   unpublishProjectForUser,
   updateProjectModePolicyForUser,
   updateProjectNameForUser,
@@ -37,6 +38,10 @@ import {
   isProjectModePolicy,
   resolveProjectModePolicy,
 } from "@/lib/projects/mode-policy";
+import {
+  isProjectSpacingScale,
+  resolveProjectSpacingScale,
+} from "@/lib/projects/spacing-scale";
 import { isValidProjectSlug } from "@/lib/projects/slug";
 import { isThemeKey } from "@/lib/themes";
 
@@ -102,6 +107,13 @@ type UpdateProjectBorderRadiusPolicyDependencies = {
   redirect: typeof redirect;
 };
 
+type UpdateProjectSpacingScaleDependencies = {
+  requireCurrentUser: typeof requireCurrentUser;
+  updateProjectSpacingScaleForUser: typeof updateProjectSpacingScaleForUser;
+  revalidatePath: typeof revalidatePath;
+  redirect: typeof redirect;
+};
+
 const publishProjectDependencies: PublishProjectDependencies = {
   requireCurrentUser,
   publishProjectForUser,
@@ -140,6 +152,13 @@ const updateProjectModePolicyDependencies: UpdateProjectModePolicyDependencies =
 const updateProjectBorderRadiusPolicyDependencies: UpdateProjectBorderRadiusPolicyDependencies = {
   requireCurrentUser,
   updateProjectBorderRadiusPolicyForUser,
+  revalidatePath,
+  redirect,
+};
+
+const updateProjectSpacingScaleDependencies: UpdateProjectSpacingScaleDependencies = {
+  requireCurrentUser,
+  updateProjectSpacingScaleForUser,
   revalidatePath,
   redirect,
 };
@@ -332,6 +351,17 @@ export async function updateProjectBorderRadiusPolicyAction(
   );
 }
 
+export async function updateProjectSpacingScaleAction(
+  projectId: string,
+  formData: FormData
+) {
+  return updateProjectSpacingScaleActionWithDependencies(
+    projectId,
+    formData,
+    updateProjectSpacingScaleDependencies
+  );
+}
+
 export async function updateProjectThemeActionWithDependencies(
   projectId: string,
   formData: FormData,
@@ -434,6 +464,34 @@ export async function updateProjectBorderRadiusPolicyActionWithDependencies(
     projectId,
     currentUser.id,
     resolveProjectBorderRadiusPolicy(rawPolicy)
+  );
+
+  if (!updatedProject) {
+    dependencies.redirect(`/projects/${projectId}`);
+  }
+
+  dependencies.revalidatePath(`/projects/${projectId}`);
+  dependencies.revalidatePath("/dashboard");
+  dependencies.revalidatePath(`/p/${updatedProject.slug}`);
+  dependencies.redirect(`/projects/${projectId}`);
+}
+
+export async function updateProjectSpacingScaleActionWithDependencies(
+  projectId: string,
+  formData: FormData,
+  dependencies: UpdateProjectSpacingScaleDependencies
+) {
+  const currentUser = await dependencies.requireCurrentUser();
+  const rawScale = String(formData.get("spacingScale") ?? "");
+
+  if (!isProjectSpacingScale(rawScale)) {
+    dependencies.redirect(`/projects/${projectId}`);
+  }
+
+  const updatedProject = await dependencies.updateProjectSpacingScaleForUser(
+    projectId,
+    currentUser.id,
+    resolveProjectSpacingScale(rawScale)
   );
 
   if (!updatedProject) {

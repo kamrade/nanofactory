@@ -92,6 +92,82 @@ function getProjectControlRadiusClass(borderRadiusPolicy: "none" | "md" | "lg") 
   return "rounded-xl";
 }
 
+function getProjectSpacingClasses(spacingScale: "sm" | "md" | "lg") {
+  if (spacingScale === "sm") {
+    return {
+      pageClassName: "min-h-screen bg-bg py-6 text-text-main",
+      containerClassName: "container mx-auto grid max-w-5xl gap-4 px-3",
+      controlClassName: "px-2 py-1.5 text-xs",
+      controlBarClassName: "px-2 py-2",
+      cardClassName: "grid gap-2 border border-line bg-surface p-3",
+      h1ClassName: "text-xl font-semibold tracking-tight text-text-main",
+      h2ClassName: "text-base font-semibold tracking-tight text-text-main",
+      bodyClassName: "text-xs leading-5 text-text-muted",
+      priceClassName: "text-xs font-semibold text-text-main",
+      metaClassName: "text-[11px] text-text-muted",
+      imageClassName: "h-56 w-full object-cover",
+      markdownPreviewClassName: "flex min-h-56 items-start bg-surface p-3",
+      listGridClassName: "grid grid-cols-1 gap-2 md:grid-cols-2 lg:grid-cols-3",
+      itemContentClassName: "space-y-1 p-3",
+      itemTitleClassName: "text-sm font-semibold text-text-main",
+      itemDescriptionClassName: "text-xs leading-5 text-text-muted",
+      itemPriceClassName: "text-xs font-semibold text-text-main",
+      itemMetaClassName: "text-[11px] text-text-muted",
+      itemCountClassName: "text-xs text-text-muted",
+      imageFallbackClassName: "flex h-56 w-full items-center justify-center bg-surface text-sm text-text-muted",
+      singleImageFallbackClassName: "flex min-h-64 items-center justify-center text-sm text-text-muted",
+    };
+  }
+  if (spacingScale === "lg") {
+    return {
+      pageClassName: "min-h-screen bg-bg py-12 text-text-main",
+      containerClassName: "container mx-auto grid max-w-6xl gap-8 px-6",
+      controlClassName: "px-4 py-3 text-base",
+      controlBarClassName: "px-5 py-4",
+      cardClassName: "grid gap-4 border border-line bg-surface p-6",
+      h1ClassName: "text-3xl font-semibold tracking-tight text-text-main",
+      h2ClassName: "text-2xl font-semibold tracking-tight text-text-main",
+      bodyClassName: "text-base leading-8 text-text-muted",
+      priceClassName: "text-lg font-semibold text-text-main",
+      metaClassName: "text-sm text-text-muted",
+      imageClassName: "h-56 w-full object-cover",
+      markdownPreviewClassName: "flex min-h-56 items-start bg-surface p-6",
+      listGridClassName: "grid grid-cols-1 gap-5 md:grid-cols-2 lg:grid-cols-3",
+      itemContentClassName: "space-y-3 p-5",
+      itemTitleClassName: "text-lg font-semibold text-text-main",
+      itemDescriptionClassName: "text-base leading-7 text-text-muted",
+      itemPriceClassName: "text-base font-semibold text-text-main",
+      itemMetaClassName: "text-sm text-text-muted",
+      itemCountClassName: "text-base text-text-muted",
+      imageFallbackClassName: "flex h-56 w-full items-center justify-center bg-surface text-base text-text-muted",
+      singleImageFallbackClassName: "flex min-h-64 items-center justify-center text-base text-text-muted",
+    };
+  }
+  return {
+    pageClassName: "min-h-screen bg-bg py-10 text-text-main",
+    containerClassName: "container mx-auto grid max-w-5xl gap-6 px-4",
+    controlClassName: "px-3 py-2 text-sm",
+    controlBarClassName: "px-4 py-3",
+    cardClassName: "grid gap-3 border border-line bg-surface p-5",
+    h1ClassName: "text-2xl font-semibold tracking-tight text-text-main",
+    h2ClassName: "text-lg font-semibold tracking-tight text-text-main",
+    bodyClassName: "text-sm leading-7 text-text-muted",
+    priceClassName: "text-base font-semibold text-text-main",
+    metaClassName: "text-xs text-text-muted",
+    imageClassName: "h-56 w-full object-cover",
+    markdownPreviewClassName: "flex min-h-56 items-start bg-surface p-4",
+    listGridClassName: "grid grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-3",
+    itemContentClassName: "space-y-2 p-4",
+    itemTitleClassName: "text-base font-semibold text-text-main",
+    itemDescriptionClassName: "text-sm leading-6 text-text-muted",
+    itemPriceClassName: "text-sm font-semibold text-text-main",
+    itemMetaClassName: "text-xs text-text-muted",
+    itemCountClassName: "text-sm text-text-muted",
+    imageFallbackClassName: "flex h-56 w-full items-center justify-center bg-surface text-sm text-text-muted",
+    singleImageFallbackClassName: "flex min-h-64 items-center justify-center text-sm text-text-muted",
+  };
+}
+
 async function resolvePublishedProjectsGalleryProject(
   slug: string,
   projectAnchor: string,
@@ -194,6 +270,7 @@ export default async function PublishedGalleryItemPage({
     const modeQuery = buildModeQuery(resolvedMode);
     const previewRadiusClass = getProjectRadiusClass(project.borderRadiusPolicy);
     const controlRadiusClass = getProjectControlRadiusClass(project.borderRadiusPolicy);
+    const spacing = getProjectSpacingClasses(project.spacingScale);
     const previewImageItems = resolvedProjectGallery.galleryItems.filter(
       (item) => item.kind === "image"
     );
@@ -208,26 +285,26 @@ export default async function PublishedGalleryItemPage({
         data-theme={resolvedProjectGallery.projectThemeKey}
         data-mode={resolvedMode}
         data-border-radius={project.borderRadiusPolicy}
-        className="min-h-screen bg-bg py-10 text-text-main"
+        className={spacing.pageClassName}
       >
-        <div className="container mx-auto grid max-w-5xl gap-6 px-4">
+        <div className={spacing.containerClassName}>
           <div data-testid="project-header" className="flex flex-wrap items-center justify-between gap-3">
             <Link
               data-testid="projects-gallery-back-to-projects"
               href={backHref}
-              className={`inline-flex items-center justify-center border border-line bg-surface px-3 py-2 text-sm font-medium text-text-main transition hover:bg-surface-alt ${controlRadiusClass}`}
+              className={`inline-flex items-center justify-center border border-line bg-surface font-medium text-text-main transition hover:bg-surface-alt ${spacing.controlClassName} ${controlRadiusClass}`}
             >
               Back to projects
             </Link>
-            <div className={`inline-flex items-center gap-2 border border-line bg-surface px-3 py-2 text-sm text-text-muted ${controlRadiusClass}`}>
+            <div className={`inline-flex items-center gap-2 border border-line bg-surface text-text-muted ${spacing.controlClassName} ${controlRadiusClass}`}>
               <span data-testid="projects-gallery-entry-count">
                 {previewImageItems.length} items
               </span>
             </div>
           </div>
 
-          <section className={`grid gap-3 border border-line bg-surface p-5 ${previewRadiusClass}`}>
-            <h1 className="text-2xl font-semibold tracking-tight text-text-main">
+          <section className={`${spacing.cardClassName} ${previewRadiusClass}`}>
+            <h1 className={spacing.h1ClassName}>
               {resolvedProjectGallery.title.trim().length > 0
                 ? resolvedProjectGallery.title
                 : `Project ${resolvedProjectGallery.itemIndex + 1}`}
@@ -235,29 +312,29 @@ export default async function PublishedGalleryItemPage({
             {resolvedProjectGallery.descriptionMd.trim().length > 0 ? (
               <MdRenderer
                 content={resolvedProjectGallery.descriptionMd}
-                className="text-sm text-text-muted"
+                className={spacing.bodyClassName}
               />
             ) : null}
             {resolvedProjectGallery.price.trim().length > 0 ? (
-              <p className="text-base font-semibold text-text-main">{resolvedProjectGallery.price}</p>
+              <p className={spacing.priceClassName}>{resolvedProjectGallery.price}</p>
             ) : null}
             {resolvedProjectGallery.meta.trim().length > 0 ? (
-              <p className="text-xs text-text-muted">{resolvedProjectGallery.meta}</p>
+              <p className={spacing.metaClassName}>{resolvedProjectGallery.meta}</p>
             ) : null}
           </section>
 
           <section
             data-testid="projects-gallery-all-entries"
-            className={`grid gap-3 border border-line bg-surface p-5 ${previewRadiusClass}`}
+            className={`${spacing.cardClassName} ${previewRadiusClass}`}
           >
             <div className="flex items-center justify-between gap-3">
-              <h2 className="text-lg font-semibold tracking-tight text-text-main">All entries</h2>
-              <span className="text-sm text-text-muted">
+              <h2 className={spacing.h2ClassName}>All entries</h2>
+              <span className={spacing.itemCountClassName}>
                 {resolvedProjectGallery.galleryItems.length} total
               </span>
             </div>
 
-            <div className="grid grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-3">
+            <div className={spacing.listGridClassName}>
               {resolvedProjectGallery.galleryItems.map((item, index) => {
                 const asset = resolveAssetById(item.assetId, assetMap);
                 const href =
@@ -278,11 +355,11 @@ export default async function PublishedGalleryItemPage({
                     }`}
                   >
                     {item.kind === "markdown" ? (
-                      <div className="flex min-h-56 items-start bg-surface p-4">
+                      <div className={spacing.markdownPreviewClassName}>
                         {item.contentMd.trim().length > 0 ? (
-                          <MdRenderer content={item.contentMd} className="text-sm text-text-muted" />
+                          <MdRenderer content={item.contentMd} className={spacing.bodyClassName} />
                         ) : (
-                          <p className="text-sm text-text-muted">No markdown content</p>
+                          <p className={spacing.bodyClassName}>No markdown content</p>
                         )}
                       </div>
                     ) : asset ? (
@@ -291,28 +368,28 @@ export default async function PublishedGalleryItemPage({
                         <img
                           src={asset.publicUrl}
                           alt={asset.alt ?? asset.originalFilename}
-                          className="h-56 w-full object-cover"
+                          className={spacing.imageClassName}
                         />
                       </Link>
                     ) : (
-                      <div className="flex h-56 w-full items-center justify-center bg-surface text-sm text-text-muted">
+                      <div className={spacing.imageFallbackClassName}>
                         No image
                       </div>
                     )}
 
                     {(item.title || item.description || item.price || item.meta) ? (
-                      <div className="space-y-2 p-4">
+                      <div className={spacing.itemContentClassName}>
                         {item.title.trim().length > 0 ? (
-                          <p className="text-base font-semibold text-text-main">{item.title}</p>
+                          <p className={spacing.itemTitleClassName}>{item.title}</p>
                         ) : null}
                         {item.description.trim().length > 0 ? (
-                          <p className="text-sm leading-6 text-text-muted">{item.description}</p>
+                          <p className={spacing.itemDescriptionClassName}>{item.description}</p>
                         ) : null}
                         {item.price.trim().length > 0 ? (
-                          <p className="text-sm font-semibold text-text-main">{item.price}</p>
+                          <p className={spacing.itemPriceClassName}>{item.price}</p>
                         ) : null}
                         {item.meta.trim().length > 0 ? (
-                          <p className="text-xs text-text-muted">{item.meta}</p>
+                          <p className={spacing.itemMetaClassName}>{item.meta}</p>
                         ) : null}
                       </div>
                     ) : null}
@@ -353,6 +430,7 @@ export default async function PublishedGalleryItemPage({
   });
   const previewRadiusClass = getProjectRadiusClass(project.borderRadiusPolicy);
   const controlRadiusClass = getProjectControlRadiusClass(project.borderRadiusPolicy);
+  const spacing = getProjectSpacingClasses(project.spacingScale);
 
   return (
     <main
@@ -360,19 +438,21 @@ export default async function PublishedGalleryItemPage({
       data-theme={viewModel.resolvedThemeKey}
       data-mode={resolvedMode}
       data-border-radius={project.borderRadiusPolicy}
-      className="min-h-screen bg-bg py-10 text-text-main"
+      className={spacing.pageClassName}
     >
       <GalleryItemKeyboardNav
         previousHref={viewModel.navigationHrefs.previousHref}
         nextHref={viewModel.navigationHrefs.nextHref}
       />
-      <div className="container mx-auto grid max-w-4xl gap-6 px-4">
+      <div className={spacing.containerClassName}>
         <GalleryItemNav
           backHref={viewModel.navigationHrefs.backHref}
           counterText={`Item ${resolved.itemIndex + 1} of ${resolved.totalItems}`}
           previousHref={viewModel.navigationHrefs.previousHref}
           nextHref={viewModel.navigationHrefs.nextHref}
           radiusClassName={controlRadiusClass}
+          controlClassName={spacing.controlClassName}
+          controlBarClassName={spacing.controlBarClassName}
         />
 
         <section
@@ -386,28 +466,28 @@ export default async function PublishedGalleryItemPage({
               className="h-auto w-full object-contain"
             />
           ) : (
-            <div className="flex min-h-64 items-center justify-center text-sm text-text-muted">
+            <div className={spacing.singleImageFallbackClassName}>
               No image
             </div>
           )}
         </section>
 
-        <section className={`grid gap-2 border border-line bg-surface p-5 ${previewRadiusClass}`}>
+        <section className={`${spacing.cardClassName} ${previewRadiusClass}`}>
           {resolved.title.trim().length > 0 ? (
-            <h1 className="text-2xl font-semibold tracking-tight text-text-main">{resolved.title}</h1>
+            <h1 className={spacing.h1ClassName}>{resolved.title}</h1>
           ) : (
-            <h1 className="text-2xl font-semibold tracking-tight text-text-main">
+            <h1 className={spacing.h1ClassName}>
               Gallery item
             </h1>
           )}
           {resolved.description.trim().length > 0 ? (
-            <p className="text-sm leading-7 text-text-muted">{resolved.description}</p>
+            <p className={spacing.bodyClassName}>{resolved.description}</p>
           ) : null}
           {resolved.price.trim().length > 0 ? (
-            <p className="text-base font-semibold text-text-main">{resolved.price}</p>
+            <p className={spacing.priceClassName}>{resolved.price}</p>
           ) : null}
           {resolved.meta.trim().length > 0 ? (
-            <p className="text-xs text-text-muted">{resolved.meta}</p>
+            <p className={spacing.metaClassName}>{resolved.meta}</p>
           ) : null}
         </section>
 

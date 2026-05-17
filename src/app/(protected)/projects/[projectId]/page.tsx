@@ -10,6 +10,7 @@ import {
   publishProjectAction,
   saveProjectContentAction,
   updateProjectBorderRadiusPolicyAction,
+  updateProjectSpacingScaleAction,
   updateProjectNameAction,
   updateProjectModePolicyAction,
   updateProjectThemeAction,
@@ -65,6 +66,7 @@ export default async function ProjectPage({ params, searchParams }: ProjectPageP
       data-mode={initialMode}
       data-mode-policy={project.modePolicy}
       data-border-radius={project.borderRadiusPolicy}
+      data-spacing-scale={project.spacingScale}
       className="min-h-screen bg-bg pb-4 text-text-main"
     >
       <div className="mx-auto flex w-full flex-col gap-8">
@@ -76,6 +78,7 @@ export default async function ProjectPage({ params, searchParams }: ProjectPageP
             themeKey: project.themeKey,
             modePolicy: project.modePolicy,
             borderRadiusPolicy: project.borderRadiusPolicy,
+            spacingScale: project.spacingScale,
             status: project.status,
             schemaVersion: project.schemaVersion,
             publishedAt: project.publishedAt,
@@ -86,6 +89,7 @@ export default async function ProjectPage({ params, searchParams }: ProjectPageP
           nameAction={nameAction}
           modePolicyAction={modePolicyAction}
           borderRadiusPolicyAction={borderRadiusPolicyAction}
+          spacingScaleAction={updateProjectSpacingScaleAction.bind(null, project.id)}
           saveAction={saveAction}
           contentShape={JSON.stringify(normalizedContent, null, 2)}
         />
@@ -98,6 +102,7 @@ export default async function ProjectPage({ params, searchParams }: ProjectPageP
             themeKey: project.themeKey,
             modePolicy: project.modePolicy,
             borderRadiusPolicy: project.borderRadiusPolicy,
+            spacingScale: project.spacingScale,
             status: project.status,
             contentJson: normalizedContent,
           }}

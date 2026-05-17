@@ -17,6 +17,10 @@ import {
   type ProjectModePolicy,
   resolveProjectModePolicy,
 } from "@/lib/projects/mode-policy";
+import {
+  type ProjectSpacingScale,
+  resolveProjectSpacingScale,
+} from "@/lib/projects/spacing-scale";
 import { DEFAULT_THEME_KEY, type ThemeKey } from "@/lib/themes";
 import { isUuid } from "@/lib/validate";
 
@@ -25,6 +29,7 @@ type CreateProjectInput = {
   themeKey?: ThemeKey;
   modePolicy?: ProjectModePolicy;
   borderRadiusPolicy?: ProjectBorderRadiusPolicy;
+  spacingScale?: ProjectSpacingScale;
 };
 
 async function generateUniqueProjectSlug(baseName: string) {
@@ -56,6 +61,7 @@ export async function getProjectsByUserId(userId: string) {
       themeKey: projects.themeKey,
       modePolicy: projects.modePolicy,
       borderRadiusPolicy: projects.borderRadiusPolicy,
+      spacingScale: projects.spacingScale,
       status: projects.status,
       publishedAt: projects.publishedAt,
       createdAt: projects.createdAt,
@@ -81,6 +87,7 @@ export async function getProjectByIdForUser(projectId: string, userId: string) {
         themeKey: projects.themeKey,
         modePolicy: projects.modePolicy,
         borderRadiusPolicy: projects.borderRadiusPolicy,
+        spacingScale: projects.spacingScale,
         status: projects.status,
         publishedAt: projects.publishedAt,
         createdAt: projects.createdAt,
@@ -129,6 +136,7 @@ export async function getPublishedProjectBySlug(slug: string) {
       themeKey: projects.themeKey,
       modePolicy: projects.modePolicy,
       borderRadiusPolicy: projects.borderRadiusPolicy,
+      spacingScale: projects.spacingScale,
       status: projects.status,
       publishedAt: projects.publishedAt,
       updatedAt: projects.updatedAt,
@@ -353,6 +361,33 @@ export async function updateProjectBorderRadiusPolicyForUser(
   return project ?? null;
 }
 
+export async function updateProjectSpacingScaleForUser(
+  projectId: string,
+  userId: string,
+  spacingScale: ProjectSpacingScale
+) {
+  if (!isUuid(projectId)) {
+    return null;
+  }
+
+  const now = new Date();
+  const [project] = await db
+    .update(projects)
+    .set({
+      spacingScale: resolveProjectSpacingScale(spacingScale),
+      updatedAt: now,
+    })
+    .where(and(eq(projects.id, projectId), eq(projects.userId, userId)))
+    .returning({
+      id: projects.id,
+      slug: projects.slug,
+      spacingScale: projects.spacingScale,
+      updatedAt: projects.updatedAt,
+    });
+
+  return project ?? null;
+}
+
 export async function updateProjectNameForUser(
   projectId: string,
   userId: string,
@@ -416,6 +451,7 @@ export async function createProjectForUser(userId: string, input: CreateProjectI
   const themeKey = input.themeKey ?? DEFAULT_THEME_KEY;
   const modePolicy = resolveProjectModePolicy(input.modePolicy);
   const borderRadiusPolicy = resolveProjectBorderRadiusPolicy(input.borderRadiusPolicy);
+  const spacingScale = resolveProjectSpacingScale(input.spacingScale);
 
   return db.transaction(async (tx) => {
     const [project] = await tx
@@ -427,6 +463,7 @@ export async function createProjectForUser(userId: string, input: CreateProjectI
         themeKey,
         modePolicy,
         borderRadiusPolicy,
+        spacingScale,
         status: "draft",
       })
       .returning({
@@ -437,6 +474,7 @@ export async function createProjectForUser(userId: string, input: CreateProjectI
         themeKey: projects.themeKey,
         modePolicy: projects.modePolicy,
         borderRadiusPolicy: projects.borderRadiusPolicy,
+        spacingScale: projects.spacingScale,
         status: projects.status,
         createdAt: projects.createdAt,
         updatedAt: projects.updatedAt,

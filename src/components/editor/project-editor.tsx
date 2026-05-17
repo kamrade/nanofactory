@@ -47,6 +47,7 @@ type EditorProject = {
   themeKey: string;
   modePolicy: "switchable" | "light-only" | "dark-only";
   borderRadiusPolicy: "none" | "md" | "lg";
+  spacingScale: "sm" | "md" | "lg";
   status: "draft" | "published";
   contentJson: PageContent;
 };
@@ -386,9 +387,12 @@ export function ProjectEditor({
           assetMap={assetMap}
           mode={activeMode}
           projectBorderRadiusPolicy={project.borderRadiusPolicy}
+          projectSpacingScale={project.spacingScale}
           effectiveGalleryItemAnchors={galleryItemAnchors}
           theme={{
             muted: "text-text-muted",
+            buttonTone:
+              "inline-flex items-center justify-center rounded-2xl border border-transparent bg-primary-300 font-medium text-text-inverted-main transition hover:bg-primary-200 active:bg-primary-100",
             button:
               "inline-flex items-center justify-center rounded-2xl border border-transparent bg-primary-300 px-5 py-3 text-sm font-medium text-text-inverted-main transition hover:bg-primary-200 active:bg-primary-100",
             kicker: "text-text-placeholder",

@@ -64,6 +64,110 @@ function getResponsiveClasses(collapseBreakpoint: "sm" | "md" | "lg" | "xl") {
   }
 }
 
+type SpacingScale = "sm" | "md" | "lg";
+
+const APP_HEADER_SPACING: Record<
+  SpacingScale,
+  {
+    sectionClassName: string;
+    emptyStateClassName: string;
+    mobileMenuButtonClassName: string;
+    mobileLogoWrapClassName: string;
+    logoClassName: string;
+    mobileTitleClassName: string;
+    mobilePanelClassName: string;
+    mobilePanelGridClassName: string;
+    mobileNavListClassName: string;
+    mobileNavLinkClassName: string;
+    mobileSocialWrapClassName: string;
+    mobileSocialLinkClassName: string;
+    mobileModeWrapClassName: string;
+    desktopHeaderClassName: string;
+    desktopLeftClassName: string;
+    desktopTitleClassName: string;
+    desktopNavListClassName: string;
+    desktopNavLinkClassName: string;
+    desktopRightClassName: string;
+    desktopSocialLinkClassName: string;
+  }
+> = {
+  sm: {
+    sectionClassName: "p-3 md:py-1 [border-radius:var(--app-header-radius-shell)]",
+    emptyStateClassName:
+      "h-8 w-full border border-dashed border-line bg-surface-alt [border-radius:var(--app-header-radius-control)]",
+    mobileMenuButtonClassName:
+      "absolute left-0 inline-flex h-8 w-8 items-center justify-center border border-line bg-surface-alt text-text-main transition hover:bg-surface [border-radius:var(--app-header-radius-control)]",
+    mobileLogoWrapClassName: "flex min-w-0 items-center justify-center gap-2 px-10",
+    logoClassName: "h-8 w-auto object-contain",
+    mobileTitleClassName: "truncate text-lg font-semibold tracking-tight text-text-main",
+    mobilePanelClassName: "mb-2 border border-line bg-surface p-3 [border-radius:var(--app-header-radius-panel)]",
+    mobilePanelGridClassName: "grid gap-3",
+    mobileNavListClassName: "grid gap-1.5",
+    mobileNavLinkClassName: "text-xs font-medium transition hover:underline",
+    mobileSocialWrapClassName: "flex flex-wrap items-center gap-2 border-t border-line pt-2",
+    mobileSocialLinkClassName: "inline-flex items-center gap-1 text-xs font-medium transition hover:underline",
+    mobileModeWrapClassName: "border-t border-line pt-2",
+    desktopHeaderClassName:
+      "items-center gap-3 grid-cols-[minmax(0,1fr)_auto_minmax(0,1fr)]",
+    desktopLeftClassName: "flex items-center gap-2 md:justify-start",
+    desktopTitleClassName: "text-lg font-semibold tracking-tight text-text-main",
+    desktopNavListClassName: "flex flex-wrap items-center justify-center gap-3",
+    desktopNavLinkClassName: "text-xs font-medium transition hover:underline",
+    desktopRightClassName: "flex items-center justify-start gap-2 md:justify-end",
+    desktopSocialLinkClassName: "inline-flex items-center gap-1 text-xs font-medium transition hover:underline",
+  },
+  md: {
+    sectionClassName: "p-6 md:py-2 [border-radius:var(--app-header-radius-shell)]",
+    emptyStateClassName:
+      "h-10 w-full border border-dashed border-line bg-surface-alt [border-radius:var(--app-header-radius-control)]",
+    mobileMenuButtonClassName:
+      "absolute left-0 inline-flex h-9 w-9 items-center justify-center border border-line bg-surface-alt text-text-main transition hover:bg-surface [border-radius:var(--app-header-radius-control)]",
+    mobileLogoWrapClassName: "flex min-w-0 items-center justify-center gap-3 px-12",
+    logoClassName: "h-10 w-auto object-contain",
+    mobileTitleClassName: "truncate text-xl font-semibold tracking-tight text-text-main",
+    mobilePanelClassName: "mb-4 border border-line bg-surface p-4 [border-radius:var(--app-header-radius-panel)]",
+    mobilePanelGridClassName: "grid gap-4",
+    mobileNavListClassName: "grid gap-2",
+    mobileNavLinkClassName: "text-sm font-medium transition hover:underline",
+    mobileSocialWrapClassName: "flex flex-wrap items-center gap-3 border-t border-line pt-3",
+    mobileSocialLinkClassName: "inline-flex items-center gap-1.5 text-sm font-medium transition hover:underline",
+    mobileModeWrapClassName: "border-t border-line pt-3",
+    desktopHeaderClassName:
+      "items-center gap-4 grid-cols-[minmax(0,1fr)_auto_minmax(0,1fr)]",
+    desktopLeftClassName: "flex items-center gap-3 md:justify-start",
+    desktopTitleClassName: "text-xl font-semibold tracking-tight text-text-main",
+    desktopNavListClassName: "flex flex-wrap items-center justify-center gap-4",
+    desktopNavLinkClassName: "text-sm font-medium transition hover:underline",
+    desktopRightClassName: "flex items-center justify-start gap-3 md:justify-end",
+    desktopSocialLinkClassName: "inline-flex items-center gap-1.5 text-sm font-medium transition hover:underline",
+  },
+  lg: {
+    sectionClassName: "p-8 md:py-3 [border-radius:var(--app-header-radius-shell)]",
+    emptyStateClassName:
+      "h-12 w-full border border-dashed border-line bg-surface-alt [border-radius:var(--app-header-radius-control)]",
+    mobileMenuButtonClassName:
+      "absolute left-0 inline-flex h-10 w-10 items-center justify-center border border-line bg-surface-alt text-text-main transition hover:bg-surface [border-radius:var(--app-header-radius-control)]",
+    mobileLogoWrapClassName: "flex min-w-0 items-center justify-center gap-4 px-14",
+    logoClassName: "h-12 w-auto object-contain",
+    mobileTitleClassName: "truncate text-2xl font-semibold tracking-tight text-text-main",
+    mobilePanelClassName: "mb-5 border border-line bg-surface p-5 [border-radius:var(--app-header-radius-panel)]",
+    mobilePanelGridClassName: "grid gap-5",
+    mobileNavListClassName: "grid gap-3",
+    mobileNavLinkClassName: "text-base font-medium transition hover:underline",
+    mobileSocialWrapClassName: "flex flex-wrap items-center gap-4 border-t border-line pt-4",
+    mobileSocialLinkClassName: "inline-flex items-center gap-2 text-base font-medium transition hover:underline",
+    mobileModeWrapClassName: "border-t border-line pt-4",
+    desktopHeaderClassName:
+      "items-center gap-5 grid-cols-[minmax(0,1fr)_auto_minmax(0,1fr)]",
+    desktopLeftClassName: "flex items-center gap-4 md:justify-start",
+    desktopTitleClassName: "text-2xl font-semibold tracking-tight text-text-main",
+    desktopNavListClassName: "flex flex-wrap items-center justify-center gap-5",
+    desktopNavLinkClassName: "text-base font-medium transition hover:underline",
+    desktopRightClassName: "flex items-center justify-start gap-4 md:justify-end",
+    desktopSocialLinkClassName: "inline-flex items-center gap-2 text-base font-medium transition hover:underline",
+  },
+};
+
 export function AppHeaderDefaultRender({
   block,
   assetMap,
@@ -71,6 +175,7 @@ export function AppHeaderDefaultRender({
   mode = "light",
   modePolicy = "switchable",
   projectBorderRadiusPolicy,
+  projectSpacingScale,
 }: BlockRenderProps) {
   const sectionRef = useRef<HTMLElement>(null);
   const [observedMode, setObservedMode] = useState<"light" | "dark" | null>(null);
@@ -104,6 +209,11 @@ export function AppHeaderDefaultRender({
     socialLinks.length > 0;
   const effectiveModePolicy = observedModePolicy ?? modePolicy;
   const canShowModeSwitcher = showModeSwitcher && effectiveModePolicy === "switchable";
+  const effectiveSpacingScale: SpacingScale =
+    projectSpacingScale === "sm" || projectSpacingScale === "md" || projectSpacingScale === "lg"
+      ? projectSpacingScale
+      : "md";
+  const spacing = APP_HEADER_SPACING[effectiveSpacingScale];
   const effectiveBorderRadius =
     projectBorderRadiusPolicy === "none" ||
     projectBorderRadiusPolicy === "md" ||
@@ -180,13 +290,13 @@ export function AppHeaderDefaultRender({
   return (
     <section
       ref={sectionRef}
-      className="p-6 md:py-2 [border-radius:var(--app-header-radius-shell)]"
+      className={spacing.sectionClassName}
       style={radiusVars as CSSProperties}
     >
       {!hasContent ? (
         <div
           aria-hidden
-          className="h-10 w-full border border-dashed border-line bg-surface-alt [border-radius:var(--app-header-radius-control)]"
+          className={spacing.emptyStateClassName}
         />
       ) : null}
 
@@ -196,13 +306,13 @@ export function AppHeaderDefaultRender({
           type="button"
           aria-label={isMobileMenuOpen ? "Close menu" : "Open menu"}
           aria-expanded={isMobileMenuOpen}
-          className="absolute left-0 inline-flex h-9 w-9 items-center justify-center border border-line bg-surface-alt text-text-main transition hover:bg-surface [border-radius:var(--app-header-radius-control)]"
+          className={spacing.mobileMenuButtonClassName}
           onClick={() => setIsMobileMenuOpen((prev) => !prev)}
         >
           {isMobileMenuOpen ? <FiX aria-hidden className="h-5 w-5" /> : <FiMenu aria-hidden className="h-5 w-5" />}
         </button>
 
-        <div className="flex min-w-0 items-center justify-center gap-3 px-12">
+        <div className={spacing.mobileLogoWrapClassName}>
           {logoAsset ? (
             <Image
               src={logoAsset.publicUrl}
@@ -210,12 +320,12 @@ export function AppHeaderDefaultRender({
               width={120}
               height={48}
               unoptimized
-              className="h-10 w-auto object-contain"
+              className={spacing.logoClassName}
             />
           ) : null}
 
           {title.trim().length > 0 ? (
-            <h2 className="truncate text-xl font-semibold tracking-tight text-text-main">{title}</h2>
+            <h2 className={spacing.mobileTitleClassName}>{title}</h2>
           ) : null}
         </div>
       </div>
@@ -229,16 +339,16 @@ export function AppHeaderDefaultRender({
             : "mt-0 max-h-0 opacity-0 -translate-y-1 pointer-events-none"
         }`}
       >
-        <div className="mb-4 border border-line bg-surface p-4 [border-radius:var(--app-header-radius-panel)]">
-          <div className="grid gap-4">
+        <div className={spacing.mobilePanelClassName}>
+          <div className={spacing.mobilePanelGridClassName}>
             {menuItems.length > 0 ? (
               <nav aria-label="Mobile page sections">
-                <ul className="grid gap-2">
+                <ul className={spacing.mobileNavListClassName}>
                   {menuItems.map((item, index) => (
                     <li key={`${item.anchorId}-${item.label}-mobile-${index}`}>
                       <a
                         href={`#${item.anchorId}`}
-                        className={`text-sm font-medium transition hover:underline ${theme.muted}`}
+                        className={`${spacing.mobileNavLinkClassName} ${theme.muted}`}
                         onClick={(event) => {
                           handleAnchorClick(event, item.anchorId);
                           setIsMobileMenuOpen(false);
@@ -253,14 +363,14 @@ export function AppHeaderDefaultRender({
             ) : null}
 
             {socialLinks.length > 0 ? (
-              <div className="flex flex-wrap items-center gap-3 border-t border-line pt-3">
+              <div className={spacing.mobileSocialWrapClassName}>
                 {socialLinks.map((item, index) => (
                   <a
                     key={`${item.url}-${item.label}-mobile-${index}`}
                     href={item.url}
                     target="_blank"
                     rel="noreferrer"
-                    className={`inline-flex items-center gap-1.5 text-sm font-medium transition hover:underline ${theme.muted}`}
+                    className={`${spacing.mobileSocialLinkClassName} ${theme.muted}`}
                   >
                     {renderSocialIcon(item.icon)}
                     {item.label}
@@ -270,7 +380,7 @@ export function AppHeaderDefaultRender({
             ) : null}
 
             {canShowModeSwitcher ? (
-              <div className="border-t border-line pt-3">
+              <div className={spacing.mobileModeWrapClassName}>
                 <ProjectModeSwitcher
                   initialMode={activeMode}
                   syncSearchParam="mode"
@@ -284,9 +394,9 @@ export function AppHeaderDefaultRender({
 
       <div
         data-testid="DesktopHeader"
-        className={`${desktopOnlyClass} items-center gap-4 grid-cols-[minmax(0,1fr)_auto_minmax(0,1fr)]`}
+        className={`${desktopOnlyClass} ${spacing.desktopHeaderClassName}`}
       >
-        <div className="flex items-center gap-3 md:justify-start">
+        <div className={spacing.desktopLeftClassName}>
           {logoAsset ? (
             <Image
               src={logoAsset.publicUrl}
@@ -294,23 +404,23 @@ export function AppHeaderDefaultRender({
               width={120}
               height={48}
               unoptimized
-              className="h-10 w-auto object-contain"
+              className={spacing.logoClassName}
             />
           ) : null}
 
           {title.trim().length > 0 ? (
-            <h2 className="text-xl font-semibold tracking-tight text-text-main">{title}</h2>
+            <h2 className={spacing.desktopTitleClassName}>{title}</h2>
           ) : null}
         </div>
 
         <nav aria-label="Page sections" className="flex items-center justify-center">
           {menuItems.length > 0 ? (
-            <ul className="flex flex-wrap items-center justify-center gap-4">
+            <ul className={spacing.desktopNavListClassName}>
               {menuItems.map((item, index) => (
                 <li key={`${item.anchorId}-${item.label}-${index}`}>
                   <a
                     href={`#${item.anchorId}`}
-                    className={`text-sm font-medium transition hover:underline ${theme.muted}`}
+                    className={`${spacing.desktopNavLinkClassName} ${theme.muted}`}
                     onClick={(event) => handleAnchorClick(event, item.anchorId)}
                   >
                     {item.label}
@@ -321,7 +431,7 @@ export function AppHeaderDefaultRender({
           ) : null}
         </nav>
 
-        <div className="flex gap-4 items-center justify-start gap-3 md:justify-end">
+        <div className={spacing.desktopRightClassName}>
           {socialLinks.map((item, index) => (
             <a
               key={`${item.url}-${item.label}-${index}`}
@@ -330,7 +440,7 @@ export function AppHeaderDefaultRender({
               rel="noreferrer"
               aria-label={item.label}
               title={item.label}
-              className={`inline-flex items-center gap-1.5 text-sm font-medium transition hover:underline ${theme.muted}`}
+              className={`${spacing.desktopSocialLinkClassName} ${theme.muted}`}
             >
               {renderSocialIcon(item.icon)}
               <span className="sr-only">{item.label}</span>

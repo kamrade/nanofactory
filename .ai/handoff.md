@@ -84,6 +84,36 @@ This is a website/page builder with project-level editing, block-based content, 
     - `src/app/(protected)/projects/[projectId]/page.tsx`
 - Feature block app header mode switcher visibility now follows live DOM mode policy:
   - `src/features/blocks/app-header/default/render.tsx` observes `data-mode-policy` and hides mode switcher when policy is not `switchable`.
+- Added global project spacing scale:
+  - DB: `projects.spacing_scale` with enum `project_spacing_scale` (`sm | md | lg`, default `md`).
+  - wired through domain/actions/page/renderer/editor pipeline as project-level prop (`projectSpacingScale`).
+  - files include:
+    - `db/schema.ts`
+    - `src/lib/projects.ts`
+    - `src/app/(protected)/projects/[projectId]/actions.ts`
+    - `src/app/(protected)/projects/[projectId]/page.tsx`
+    - `src/components/projects/project-renderer.tsx`
+    - `src/components/editor/project-editor.tsx`
+    - `src/features/blocks/shared/types.ts`
+- `ProjectHeader` project settings include immediate apply for spacing scale:
+  - file:
+    - `src/components/projects/project-header.tsx`
+- CTA button supports link + spacing-aware button sizing:
+  - `buttonHref` added to CTA block definition.
+  - CTA render uses link-style button and combines tone classes with spacing classes.
+  - files:
+    - `src/features/blocks/cta/default/definition.ts`
+    - `src/features/blocks/cta/default/render.tsx`
+- Spacing scale support added across block renders:
+  - `features`, `gallery`, `projects-gallery`, `footer`, `app-header`, `hero`.
+  - note: current intent is that spacing scale changes element spacing/typography density; it should not be used to scale image content size.
+- Public preview navigation controls are spacing-aware:
+  - `Back to ...`, `Item X of Y`, `Previous`, `Next` now receive spacing classes from route-level scale config.
+  - `GalleryItemNav` accepts `controlClassName` and `controlBarClassName`.
+  - files:
+    - `src/app/p/[slug]/[galleryAnchor]/[itemAnchor]/gallery-item-nav.tsx`
+    - `src/app/p/[slug]/[galleryAnchor]/[itemAnchor]/page.tsx`
+    - `src/app/p/[slug]/[galleryAnchor]/[itemAnchor]/[entryAnchor]/page.tsx`
 
 5) Recent refactoring (dedup + cleanup)
 - Duplicate `isUuid` extracted from 3 files to shared `src/lib/validate.ts`.

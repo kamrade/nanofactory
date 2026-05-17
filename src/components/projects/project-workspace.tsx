@@ -22,6 +22,7 @@ type EditorProject = {
   themeKey: string;
   modePolicy: "switchable" | "light-only" | "dark-only";
   borderRadiusPolicy: "none" | "md" | "lg";
+  spacingScale: "sm" | "md" | "lg";
   status: "draft" | "published";
   contentJson: PageContent;
 };

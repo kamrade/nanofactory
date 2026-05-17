@@ -51,16 +51,118 @@ function getRightGridColsClass(columnCount: number) {
 }
 
 type BorderRadiusPolicy = "none" | "md" | "lg";
+type SpacingScale = "sm" | "md" | "lg";
+
+const FOOTER_SPACING: Record<
+  SpacingScale,
+  {
+    sectionClassName: string;
+    logoRowClassName: string;
+    logoClassName: string;
+    siteNameClassName: string;
+    contentGridClassName: string;
+    leftColumnClassName: string;
+    leftTitleClassName: string;
+    descriptionClassName: string;
+    socialTitleClassName: string;
+    socialLinksWrapClassName: string;
+    socialLinkClassName: string;
+    scrollTopButtonClassName: string;
+    rightColumnsWrapClassName: string;
+    columnClassName: string;
+    columnTitleClassName: string;
+    linksListClassName: string;
+    linkClassName: string;
+    bottomClassName: string;
+    bottomTextClassName: string;
+  }
+> = {
+  sm: {
+    sectionClassName: "px-3 py-6 md:px-5 md:py-8",
+    logoRowClassName: "mb-2 flex items-center gap-2",
+    logoClassName: "h-8 w-auto object-contain",
+    siteNameClassName: "text-sm font-semibold text-text-main",
+    contentGridClassName: "grid gap-5 border-t border-line pt-5 md:grid-cols-4",
+    leftColumnClassName: "flex flex-col gap-3 md:col-span-1",
+    leftTitleClassName: "text-xs font-semibold uppercase tracking-wide text-text-main",
+    descriptionClassName: "text-xs leading-5",
+    socialTitleClassName: "pt-1 text-xs font-medium text-text-main",
+    socialLinksWrapClassName: "flex flex-wrap items-center gap-2",
+    socialLinkClassName:
+      "inline-flex items-center gap-1.5 border border-line bg-surface px-2 py-1 text-xs transition hover:bg-surface-alt [border-radius:var(--footer-radius-control)]",
+    scrollTopButtonClassName:
+      "mt-auto inline-flex w-fit items-center border border-line bg-surface px-2.5 py-1.5 text-xs font-medium transition hover:bg-surface-alt [border-radius:var(--footer-radius-control)]",
+    rightColumnsWrapClassName: "grid gap-5",
+    columnClassName: "grid gap-2",
+    columnTitleClassName: "text-sm font-semibold text-text-main",
+    linksListClassName: "grid gap-1.5",
+    linkClassName: "text-xs transition hover:underline",
+    bottomClassName: "mt-6 border-t border-line pt-3",
+    bottomTextClassName: "text-[11px]",
+  },
+  md: {
+    sectionClassName: "px-4 py-8 md:px-8 md:py-12",
+    logoRowClassName: "mb-3 flex items-center gap-3",
+    logoClassName: "h-10 w-auto object-contain",
+    siteNameClassName: "text-base font-semibold text-text-main",
+    contentGridClassName: "grid gap-8 border-t border-line pt-8 md:grid-cols-4",
+    leftColumnClassName: "flex flex-col gap-4 md:col-span-1",
+    leftTitleClassName: "text-sm font-semibold uppercase tracking-wide text-text-main",
+    descriptionClassName: "text-sm",
+    socialTitleClassName: "pt-2 text-sm font-medium text-text-main",
+    socialLinksWrapClassName: "flex flex-wrap items-center gap-3",
+    socialLinkClassName:
+      "inline-flex items-center gap-2 border border-line bg-surface px-2 py-1 text-sm transition hover:bg-surface-alt [border-radius:var(--footer-radius-control)]",
+    scrollTopButtonClassName:
+      "mt-auto inline-flex w-fit items-center border border-line bg-surface px-3 py-2 text-sm font-medium transition hover:bg-surface-alt [border-radius:var(--footer-radius-control)]",
+    rightColumnsWrapClassName: "grid gap-8",
+    columnClassName: "grid gap-3",
+    columnTitleClassName: "text-base font-semibold text-text-main",
+    linksListClassName: "grid gap-2",
+    linkClassName: "text-sm transition hover:underline",
+    bottomClassName: "mt-8 border-t border-line pt-4",
+    bottomTextClassName: "text-xs",
+  },
+  lg: {
+    sectionClassName: "px-6 py-10 md:px-10 md:py-14",
+    logoRowClassName: "mb-4 flex items-center gap-4",
+    logoClassName: "h-12 w-auto object-contain",
+    siteNameClassName: "text-lg font-semibold text-text-main",
+    contentGridClassName: "grid gap-10 border-t border-line pt-10 md:grid-cols-4",
+    leftColumnClassName: "flex flex-col gap-5 md:col-span-1",
+    leftTitleClassName: "text-base font-semibold uppercase tracking-wide text-text-main",
+    descriptionClassName: "text-base leading-7",
+    socialTitleClassName: "pt-2 text-base font-medium text-text-main",
+    socialLinksWrapClassName: "flex flex-wrap items-center gap-4",
+    socialLinkClassName:
+      "inline-flex items-center gap-2 border border-line bg-surface px-3 py-2 text-base transition hover:bg-surface-alt [border-radius:var(--footer-radius-control)]",
+    scrollTopButtonClassName:
+      "mt-auto inline-flex w-fit items-center border border-line bg-surface px-4 py-2.5 text-base font-medium transition hover:bg-surface-alt [border-radius:var(--footer-radius-control)]",
+    rightColumnsWrapClassName: "grid gap-10",
+    columnClassName: "grid gap-4",
+    columnTitleClassName: "text-lg font-semibold text-text-main",
+    linksListClassName: "grid gap-3",
+    linkClassName: "text-base transition hover:underline",
+    bottomClassName: "mt-10 border-t border-line pt-5",
+    bottomTextClassName: "text-sm",
+  },
+};
 
 export function FooterDefaultRender({
   block,
   assetMap,
   theme,
   projectBorderRadiusPolicy,
+  projectSpacingScale,
 }: BlockRenderProps) {
   const props = readFooterProps(block.props);
   const logoAsset = resolveAssetById(props.logoAssetId, assetMap);
   const currentYear = new Date().getFullYear();
+  const effectiveSpacingScale: SpacingScale =
+    projectSpacingScale === "sm" || projectSpacingScale === "md" || projectSpacingScale === "lg"
+      ? projectSpacingScale
+      : "md";
+  const spacing = FOOTER_SPACING[effectiveSpacingScale];
   const effectiveBorderRadius: BorderRadiusPolicy =
     projectBorderRadiusPolicy === "none" ||
     projectBorderRadiusPolicy === "md" ||
@@ -88,7 +190,7 @@ export function FooterDefaultRender({
         <li key={`${item.anchorId}-${item.label}-${index}`}>
           <a
             href={`#${item.anchorId}`}
-            className={`text-sm transition hover:underline ${theme.muted}`}
+            className={`${spacing.linkClassName} ${theme.muted}`}
             onClick={(event) => {
               if (typeof document === "undefined") {
                 return;
@@ -120,7 +222,7 @@ export function FooterDefaultRender({
             href={item.url}
             target="_blank"
             rel="noreferrer noopener"
-            className={`text-sm transition hover:underline ${theme.muted}`}
+            className={`${spacing.linkClassName} ${theme.muted}`}
           >
             {item.label}
           </a>
@@ -136,7 +238,7 @@ export function FooterDefaultRender({
             href={item.url}
             target="_blank"
             rel="noreferrer noopener"
-            className={`text-sm transition hover:underline ${theme.muted}`}
+            className={`${spacing.linkClassName} ${theme.muted}`}
           >
             {item.label}
           </a>
@@ -156,10 +258,10 @@ export function FooterDefaultRender({
 
   return (
     <section
-      className="px-4 py-8 md:px-8 md:py-12"
+      className={spacing.sectionClassName}
       style={radiusVars as CSSProperties}
     >
-      <div className="mb-3 flex gap-3 items-center">
+      <div className={spacing.logoRowClassName}>
         {logoAsset ? (
           <Image
             src={logoAsset.publicUrl}
@@ -167,21 +269,21 @@ export function FooterDefaultRender({
             width={140}
             height={56}
             unoptimized
-            className="h-10 w-auto object-contain"
+            className={spacing.logoClassName}
           />
         ) : null}
         {props.siteName.trim().length > 0 ? (
-          <p className="text-base font-semibold text-text-main">{props.siteName}</p>
+          <p className={spacing.siteNameClassName}>{props.siteName}</p>
         ) : null}
 
       </div>
 
-      <div className="grid gap-8 border-t border-line pt-8 md:grid-cols-4">
+      <div className={spacing.contentGridClassName}>
         {hasLeftContent ? (
-          <div className="flex flex-col gap-4 md:col-span-1">
+          <div className={spacing.leftColumnClassName}>
 
             {props.leftTitle.trim().length > 0 ? (
-              <h3 className="text-sm font-semibold uppercase tracking-wide text-text-main">
+              <h3 className={spacing.leftTitleClassName}>
                 {props.leftTitle}
               </h3>
             ) : null}
@@ -189,22 +291,22 @@ export function FooterDefaultRender({
             
 
             {props.siteDescription.trim().length > 0 ? (
-              <p className={`text-sm ${theme.muted}`}>{props.siteDescription}</p>
+              <p className={`${spacing.descriptionClassName} ${theme.muted}`}>{props.siteDescription}</p>
             ) : null}
 
             {props.socialLinksTitle.trim().length > 0 ? (
-              <p className="pt-2 text-sm font-medium text-text-main">{props.socialLinksTitle}</p>
+              <p className={spacing.socialTitleClassName}>{props.socialLinksTitle}</p>
             ) : null}
 
             {props.socialLinks.length > 0 ? (
-              <div className="flex flex-wrap items-center gap-3">
+              <div className={spacing.socialLinksWrapClassName}>
                 {props.socialLinks.map((item, index) => (
                   <a
                     key={`${item.url}-${item.label}-footer-${index}`}
                     href={item.url}
                     target="_blank"
                     rel="noreferrer noopener"
-                    className={`inline-flex items-center gap-2 border border-line bg-surface px-2 py-1 text-sm transition hover:bg-surface-alt ${theme.muted} [border-radius:var(--footer-radius-control)]`}
+                    className={`${spacing.socialLinkClassName} ${theme.muted}`}
                     aria-label={item.label}
                     title={item.label}
                   >
@@ -218,7 +320,7 @@ export function FooterDefaultRender({
             {props.scrollTopLabel.trim().length > 0 ? (
               <button
                 type="button"
-                className={`mt-auto inline-flex w-fit items-center border border-line bg-surface px-3 py-2 text-sm font-medium transition hover:bg-surface-alt ${theme.muted} [border-radius:var(--footer-radius-control)]`}
+                className={`${spacing.scrollTopButtonClassName} ${theme.muted}`}
                 onClick={() => {
                   if (typeof window !== "undefined") {
                     window.scrollTo({ top: 0, behavior: "smooth" });
@@ -233,17 +335,17 @@ export function FooterDefaultRender({
 
         {rightColumns.length > 0 ? (
           <div className="md:col-span-3">
-            <div className={`grid gap-8 ${getRightGridColsClass(rightColumns.length)}`}>
+            <div className={`${spacing.rightColumnsWrapClassName} ${getRightGridColsClass(rightColumns.length)}`}>
               {rightColumns.map((column, columnIndex) => (
-                <div key={`footer-column-${columnIndex}`} className="grid gap-3">
+                <div key={`footer-column-${columnIndex}`} className={spacing.columnClassName}>
                   {column.title.trim().length > 0 ? (
-                    <h3 className="text-base font-semibold text-text-main">
+                    <h3 className={spacing.columnTitleClassName}>
                       {column.title}
                     </h3>
                   ) : null}
 
                   {column.links.length > 0 ? (
-                    <ul className="grid gap-2">
+                    <ul className={spacing.linksListClassName}>
                       {column.links.map((item, linkIndex) =>
                         column.renderLink(item as never, linkIndex)
                       )}
@@ -256,8 +358,8 @@ export function FooterDefaultRender({
         ) : null}
       </div>
 
-      <div className="mt-8 border-t border-line pt-4">
-        <p className={`text-xs ${theme.muted}`}>
+      <div className={spacing.bottomClassName}>
+        <p className={`${spacing.bottomTextClassName} ${theme.muted}`}>
           &copy; {currentYear}
           {props.siteName.trim().length > 0 ? ` ${props.siteName}` : ""}
         </p>

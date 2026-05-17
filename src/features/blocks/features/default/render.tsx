@@ -10,6 +10,55 @@ type FeatureItem = {
 };
 
 type FeatureBorderRadius = "none" | "md" | "lg";
+type SpacingScale = "sm" | "md" | "lg";
+
+const FEATURES_DEFAULT_SPACING: Record<
+  SpacingScale,
+  {
+    sectionClassName: string;
+    titleClassName: string;
+    listClassName: string;
+    cardClassName: string;
+    rowClassName: string;
+    mediaClassName: string;
+    itemTitleClassName: string;
+    itemContentClassName: string;
+  }
+> = {
+  sm: {
+    sectionClassName: "space-y-3 px-3 py-8 md:px-5",
+    titleClassName: "text-xl font-semibold tracking-tight",
+    listClassName: "grid gap-2",
+    cardClassName: "bg-surface-alt px-3 py-2 [border-radius:var(--feature-radius-card)]",
+    rowClassName: "flex items-start gap-2",
+    mediaClassName:
+      "h-8 w-8 shrink-0 overflow-hidden border border-line bg-surface [border-radius:var(--feature-radius-media)]",
+    itemTitleClassName: "break-words text-xs font-medium leading-5 text-text-main",
+    itemContentClassName: "mt-1 break-words text-xs leading-5",
+  },
+  md: {
+    sectionClassName: "space-y-5 px-4 py-12 md:px-8",
+    titleClassName: "text-2xl font-semibold tracking-tight",
+    listClassName: "grid gap-3",
+    cardClassName: "bg-surface-alt px-4 py-3 [border-radius:var(--feature-radius-card)]",
+    rowClassName: "flex items-start gap-3",
+    mediaClassName:
+      "h-10 w-10 shrink-0 overflow-hidden border border-line bg-surface [border-radius:var(--feature-radius-media)]",
+    itemTitleClassName: "break-words text-sm font-medium leading-6 text-text-main",
+    itemContentClassName: "mt-1 break-words text-sm leading-6",
+  },
+  lg: {
+    sectionClassName: "space-y-7 px-6 py-14 md:px-10",
+    titleClassName: "text-3xl font-semibold tracking-tight",
+    listClassName: "grid gap-4",
+    cardClassName: "bg-surface-alt px-5 py-4 [border-radius:var(--feature-radius-card)]",
+    rowClassName: "flex items-start gap-4",
+    mediaClassName:
+      "h-12 w-12 shrink-0 overflow-hidden border border-line bg-surface [border-radius:var(--feature-radius-media)]",
+    itemTitleClassName: "break-words text-base font-medium leading-7 text-text-main",
+    itemContentClassName: "mt-1 break-words text-base leading-7",
+  },
+};
 
 function readItems(input: unknown): FeatureItem[] {
   if (!Array.isArray(input)) {
@@ -60,6 +109,7 @@ export function FeaturesDefaultRender({
   theme,
   assetMap,
   projectBorderRadiusPolicy,
+  projectSpacingScale,
 }: BlockRenderProps) {
   const sectionTitle =
     typeof block.props.sectionTitle === "string" ? block.props.sectionTitle : "";
@@ -69,6 +119,11 @@ export function FeaturesDefaultRender({
       ? block.props.borderRadius
       : "lg";
   const effectiveBorderRadius = projectBorderRadiusPolicy ?? borderRadius;
+  const effectiveSpacingScale: SpacingScale =
+    projectSpacingScale === "sm" || projectSpacingScale === "md" || projectSpacingScale === "lg"
+      ? projectSpacingScale
+      : "md";
+  const spacing = FEATURES_DEFAULT_SPACING[effectiveSpacingScale];
 
   const radiusVars =
     effectiveBorderRadius === "none"
@@ -87,19 +142,19 @@ export function FeaturesDefaultRender({
           };
 
   return (
-    <section className="space-y-5 px-4 py-12 md:px-8" style={radiusVars as CSSProperties}>
-      <h2 className="text-2xl font-semibold tracking-tight">{sectionTitle}</h2>
-      <ul className="grid gap-3">
+    <section className={spacing.sectionClassName} style={radiusVars as CSSProperties}>
+      <h2 className={spacing.titleClassName}>{sectionTitle}</h2>
+      <ul className={spacing.listClassName}>
         {items.map((item) => {
           const itemImage = resolveAssetById(item.imageAssetId, assetMap);
           return (
             <li
               key={`${block.id}-${item.title}`}
-              className="bg-surface-alt px-4 py-3 [border-radius:var(--feature-radius-card)]"
+              className={spacing.cardClassName}
             >
-              <div className="flex items-start gap-3">
+              <div className={spacing.rowClassName}>
                 {itemImage ? (
-                  <div className="h-10 w-10 shrink-0 overflow-hidden border border-line bg-surface [border-radius:var(--feature-radius-media)]">
+                  <div className={spacing.mediaClassName}>
                     <Image
                       src={itemImage.publicUrl}
                       alt={itemImage.originalFilename}
@@ -111,9 +166,9 @@ export function FeaturesDefaultRender({
                   </div>
                 ) : null}
                 <div>
-                  <p className="break-words text-sm font-medium leading-6 text-text-main">{item.title}</p>
+                  <p className={spacing.itemTitleClassName}>{item.title}</p>
                   {item.content.trim().length > 0 ? (
-                    <p className={`mt-1 break-words text-sm leading-6 ${theme.muted}`}>
+                    <p className={`${spacing.itemContentClassName} ${theme.muted}`}>
                       {item.content}
                     </p>
                   ) : null}

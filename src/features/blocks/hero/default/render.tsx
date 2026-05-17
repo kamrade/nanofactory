@@ -9,6 +9,49 @@ import { resolveAssetById } from "@/lib/assets/resolution";
 import type { BlockRenderProps } from "../../shared/types";
 type BorderRadiusPolicy = "none" | "md" | "lg";
 
+type SpacingScale = "sm" | "md" | "lg";
+
+const HERO_DEFAULT_SPACING: Record<
+  SpacingScale,
+  {
+    rootClassName: string;
+    contentPanelClassName: string;
+    contentStackClassName: string;
+    eyebrowClassName: string;
+    headingClassName: string;
+    subtitleClassName: string;
+    buttonClassName: string;
+  }
+> = {
+  sm: {
+    rootClassName: "grid gap-4 lg:grid-cols-[1.05fr_0.95fr]",
+    contentPanelClassName: "flex min-h-[16rem] flex-col p-3 md:min-h-[20rem] md:p-3 justify-center [border-radius:var(--hero-radius-panel)]",
+    contentStackClassName: "space-y-3 py-4",
+    eyebrowClassName: "text-xs font-semibold uppercase tracking-[0.12em]",
+    headingClassName: "break-words text-2xl font-semibold tracking-tight sm:text-3xl",
+    subtitleClassName: "max-w-3xl break-words text-sm leading-6",
+    buttonClassName: "px-3 py-2 text-xs",
+  },
+  md: {
+    rootClassName: "grid gap-8 lg:grid-cols-[1.05fr_0.95fr]",
+    contentPanelClassName: "flex min-h-[20rem] flex-col p-4 md:min-h-[26rem] md:p-4 justify-center [border-radius:var(--hero-radius-panel)]",
+    contentStackClassName: "space-y-5 py-8",
+    eyebrowClassName: "text-sm font-semibold uppercase tracking-[0.14em]",
+    headingClassName: "break-words text-4xl font-semibold tracking-tight sm:text-5xl",
+    subtitleClassName: "max-w-3xl break-words text-base leading-7",
+    buttonClassName: "px-5 py-3 text-sm",
+  },
+  lg: {
+    rootClassName: "grid gap-10 lg:grid-cols-[1.05fr_0.95fr]",
+    contentPanelClassName: "flex min-h-[24rem] flex-col p-6 md:min-h-[30rem] md:p-6 justify-center [border-radius:var(--hero-radius-panel)]",
+    contentStackClassName: "space-y-7 py-10",
+    eyebrowClassName: "text-base font-semibold uppercase tracking-[0.16em]",
+    headingClassName: "break-words text-5xl font-semibold tracking-tight sm:text-6xl",
+    subtitleClassName: "max-w-3xl break-words text-lg leading-8",
+    buttonClassName: "px-7 py-4 text-base",
+  },
+};
+
 function getContentPositionClass(contentPosition: string) {
   if (contentPosition === "top") {
     return "items-start";
@@ -28,6 +71,7 @@ export function HeroDefaultRender({
   theme,
   mode = "light",
   projectBorderRadiusPolicy,
+  projectSpacingScale,
 }: BlockRenderProps) {
   const sectionRef = useRef<HTMLElement>(null);
   const [observedMode, setObservedMode] = useState<"light" | "dark" | null>(null);
@@ -51,6 +95,11 @@ export function HeroDefaultRender({
   const selectedImageId =
     activeMode === "dark" ? darkImageId ?? defaultImageId : lightImageId ?? defaultImageId;
   const heroImageAsset = resolveAssetById(selectedImageId, assetMap);
+  const effectiveSpacingScale: SpacingScale =
+    projectSpacingScale === "sm" || projectSpacingScale === "md" || projectSpacingScale === "lg"
+      ? projectSpacingScale
+      : "md";
+  const spacing = HERO_DEFAULT_SPACING[effectiveSpacingScale];
   const effectiveBorderRadius: BorderRadiusPolicy =
     projectBorderRadiusPolicy === "none" ||
     projectBorderRadiusPolicy === "md" ||
@@ -101,7 +150,7 @@ export function HeroDefaultRender({
     <section
       ref={sectionRef}
       data-component-id="hero:default"
-      className={`grid gap-8 lg:grid-cols-[1.05fr_0.95fr] ${getContentPositionClass(contentPosition)}`}
+      className={`${spacing.rootClassName} ${getContentPositionClass(contentPosition)}`}
       style={radiusVars as CSSProperties}
     >
       
@@ -119,17 +168,17 @@ export function HeroDefaultRender({
       ) : null}
 
       <div
-        className={`flex min-h-[20rem] flex-col p-4 md:min-h-[26rem] md:p-4 justify-center [border-radius:var(--hero-radius-panel)] ${contentPosition === "stretch" ? "h-full" : ""}`}
+        className={`${spacing.contentPanelClassName} ${contentPosition === "stretch" ? "h-full" : ""}`}
       >
-        <div className={`space-y-5 py-8 ${contentPosition === "stretch" ? "h-full flex justify-between flex-col" : ""}`}>
+        <div className={`${spacing.contentStackClassName} ${contentPosition === "stretch" ? "h-full flex justify-between flex-col" : ""}`}>
           {eyebrow.trim().length > 0 ? (
-            <p className={`text-sm font-semibold uppercase tracking-[0.14em] ${theme.kicker}`}>
+            <p className={`${spacing.eyebrowClassName} ${theme.kicker}`}>
               {eyebrow}
             </p>
           ) : null}
           <div className="flex flex-col gap-4">
-            <h1 className="break-words text-4xl font-semibold tracking-tight sm:text-5xl">{title}</h1>
-            <p className={`max-w-3xl break-words text-base leading-7 ${theme.muted}`}>
+            <h1 className={spacing.headingClassName}>{title}</h1>
+            <p className={`${spacing.subtitleClassName} ${theme.muted}`}>
               {subtitle}
             </p>
           </div>
@@ -137,7 +186,7 @@ export function HeroDefaultRender({
             <div>
               <a
                 href={`#${buttonAnchor}`}
-                className={theme.button}
+                className={`${theme.buttonTone} ${spacing.buttonClassName}`}
                 style={{ borderRadius: "var(--hero-radius-button)" }}
               >
                 {buttonText}
@@ -145,7 +194,7 @@ export function HeroDefaultRender({
             </div>
           ) : (
             <div>
-              <span className={theme.button} style={{ borderRadius: "var(--hero-radius-button)" }}>
+              <span className={`${theme.buttonTone} ${spacing.buttonClassName}`} style={{ borderRadius: "var(--hero-radius-button)" }}>
                 {buttonText}
               </span>
             </div>

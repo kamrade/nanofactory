@@ -39,6 +39,10 @@ import {
   PROJECT_MODE_POLICIES,
   type ProjectModePolicy,
 } from "@/lib/projects/mode-policy";
+import {
+  PROJECT_SPACING_SCALES,
+  type ProjectSpacingScale,
+} from "@/lib/projects/spacing-scale";
 import { getBlockTypes, getBlockVariants } from "@/lib/editor/blocks";
 import { useToast } from "@/hooks/use-toast";
 
@@ -50,6 +54,7 @@ type ProjectHeaderProps = {
     themeKey: string;
     modePolicy: ProjectModePolicy;
     borderRadiusPolicy: ProjectBorderRadiusPolicy;
+    spacingScale: ProjectSpacingScale;
     status: "draft" | "published";
     schemaVersion: number;
     publishedAt: Date | null;
@@ -59,6 +64,7 @@ type ProjectHeaderProps = {
   themeAction: (formData: FormData) => void | Promise<void>;
   modePolicyAction: (formData: FormData) => void | Promise<void>;
   borderRadiusPolicyAction: (formData: FormData) => void | Promise<void>;
+  spacingScaleAction: (formData: FormData) => void | Promise<void>;
   nameAction: (formData: FormData) => void | Promise<void>;
   saveAction: (
     state: SaveEditorState,
@@ -74,6 +80,7 @@ export function ProjectHeader({
   themeAction,
   modePolicyAction,
   borderRadiusPolicyAction,
+  spacingScaleAction,
   nameAction,
   saveAction,
   contentShape,
@@ -84,6 +91,9 @@ export function ProjectHeader({
   const [modePolicyValue, setModePolicyValue] = useState<ProjectModePolicy>(project.modePolicy);
   const [borderRadiusValue, setBorderRadiusValue] = useState<ProjectBorderRadiusPolicy>(
     project.borderRadiusPolicy
+  );
+  const [spacingScaleValue, setSpacingScaleValue] = useState<ProjectSpacingScale>(
+    project.spacingScale
   );
   const [liveDraftContentShape, setLiveDraftContentShape] = useState<string | null>(null);
   const initialSaveState: SaveEditorState = {
@@ -107,6 +117,10 @@ export function ProjectHeader({
   useEffect(() => {
     setBorderRadiusValue(project.borderRadiusPolicy);
   }, [project.borderRadiusPolicy]);
+
+  useEffect(() => {
+    setSpacingScaleValue(project.spacingScale);
+  }, [project.spacingScale]);
 
   useEffect(() => {
     return subscribePreviewDraft(() => {
@@ -315,6 +329,39 @@ export function ProjectHeader({
                   />
                 </div>
               </div>
+              <div className="grid gap-1">
+                <label className="text-sm text-text-muted">Spacing scale</label>
+                <div className="flex items-center gap-2">
+                  <UISelect
+                    ariaLabel="Spacing scale"
+                    size="sm"
+                    value={spacingScaleValue}
+                    onValueChange={(nextValue) => {
+                      if (!PROJECT_SPACING_SCALES.includes(nextValue as ProjectSpacingScale)) {
+                        return;
+                      }
+                      const nextScale = nextValue as ProjectSpacingScale;
+                      if (nextScale === spacingScaleValue) {
+                        return;
+                      }
+                      setSpacingScaleValue(nextScale);
+                      document
+                        .querySelector<HTMLElement>("main[data-theme]")
+                        ?.setAttribute("data-spacing-scale", nextScale);
+                      startTransition(() => {
+                        const formData = new FormData();
+                        formData.set("spacingScale", nextScale);
+                        void spacingScaleAction(formData);
+                      });
+                    }}
+                    options={PROJECT_SPACING_SCALES.map((scale) => ({
+                      value: scale,
+                      label: scale,
+                      textValue: scale,
+                    }))}
+                  />
+                </div>
+              </div>
 
               <div className="grid gap-4">
                 <ProjectThemeForm
@@ -388,6 +435,10 @@ export function ProjectHeader({
                 <div className="grid grid-cols-[160px_minmax(0,1fr)] gap-3 border-b border-line px-4 py-3">
                   <span className="font-medium text-text-main">borderRadius</span>
                   <span>{project.borderRadiusPolicy}</span>
+                </div>
+                <div className="grid grid-cols-[160px_minmax(0,1fr)] gap-3 border-b border-line px-4 py-3">
+                  <span className="font-medium text-text-main">spacingScale</span>
+                  <span>{project.spacingScale}</span>
                 </div>
                 <div className="grid grid-cols-[160px_minmax(0,1fr)] gap-3 border-b border-line px-4 py-3">
                   <span className="font-medium text-text-main">schemaVersion</span>
