@@ -63,6 +63,7 @@ export default async function ProjectPage({ params, searchParams }: ProjectPageP
     <main
       data-theme={project.themeKey}
       data-mode={initialMode}
+      data-mode-policy={project.modePolicy}
       data-border-radius={project.borderRadiusPolicy}
       className="min-h-screen bg-bg pb-4 text-text-main"
     >

@@ -74,6 +74,9 @@ export function AppHeaderDefaultRender({
 }: BlockRenderProps) {
   const sectionRef = useRef<HTMLElement>(null);
   const [observedMode, setObservedMode] = useState<"light" | "dark" | null>(null);
+  const [observedModePolicy, setObservedModePolicy] = useState<
+    "switchable" | "light-only" | "dark-only" | null
+  >(null);
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const {
     title,
@@ -99,7 +102,8 @@ export function AppHeaderDefaultRender({
     Boolean(logoAsset) ||
     menuItems.length > 0 ||
     socialLinks.length > 0;
-  const canShowModeSwitcher = showModeSwitcher && modePolicy === "switchable";
+  const effectiveModePolicy = observedModePolicy ?? modePolicy;
+  const canShowModeSwitcher = showModeSwitcher && effectiveModePolicy === "switchable";
   const effectiveBorderRadius =
     projectBorderRadiusPolicy === "none" ||
     projectBorderRadiusPolicy === "md" ||
@@ -152,16 +156,22 @@ export function AppHeaderDefaultRender({
       return;
     }
 
-    const syncMode = () => {
+    const syncModeState = () => {
       const nextMode = host.getAttribute("data-mode");
       setObservedMode(nextMode === "dark" ? "dark" : "light");
+      const nextModePolicy = host.getAttribute("data-mode-policy");
+      setObservedModePolicy(
+        nextModePolicy === "light-only" || nextModePolicy === "dark-only" || nextModePolicy === "switchable"
+          ? nextModePolicy
+          : null
+      );
     };
 
-    syncMode();
-    const observer = new MutationObserver(syncMode);
+    syncModeState();
+    const observer = new MutationObserver(syncModeState);
     observer.observe(host, {
       attributes: true,
-      attributeFilter: ["data-mode"],
+      attributeFilter: ["data-mode", "data-mode-policy"],
     });
 
     return () => observer.disconnect();

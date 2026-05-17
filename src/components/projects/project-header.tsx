@@ -1,6 +1,6 @@
 "use client";
 
-import { useActionState, useEffect, useMemo, useState } from "react";
+import { useActionState, useEffect, useMemo, useState, useTransition } from "react";
 import Link from "next/link";
 import { FiArrowLeft, FiSettings } from "react-icons/fi";
 
@@ -80,6 +80,11 @@ export function ProjectHeader({
 }: ProjectHeaderProps) {
   const { showToast } = useToast();
   const resolvedThemeKey = resolveThemePreference(project.themeKey);
+  const [, startTransition] = useTransition();
+  const [modePolicyValue, setModePolicyValue] = useState<ProjectModePolicy>(project.modePolicy);
+  const [borderRadiusValue, setBorderRadiusValue] = useState<ProjectBorderRadiusPolicy>(
+    project.borderRadiusPolicy
+  );
   const [liveDraftContentShape, setLiveDraftContentShape] = useState<string | null>(null);
   const initialSaveState: SaveEditorState = {
     status: "idle",
@@ -94,6 +99,14 @@ export function ProjectHeader({
       })),
     []
   );
+
+  useEffect(() => {
+    setModePolicyValue(project.modePolicy);
+  }, [project.modePolicy]);
+
+  useEffect(() => {
+    setBorderRadiusValue(project.borderRadiusPolicy);
+  }, [project.borderRadiusPolicy]);
 
   useEffect(() => {
     return subscribePreviewDraft(() => {
@@ -240,12 +253,29 @@ export function ProjectHeader({
               <h3 className="text-base font-semibold text-text-main">Actions</h3>
               <div className="grid gap-1">
                 <label className="text-sm text-text-muted">Mode support</label>
-                <form action={modePolicyAction} className="flex items-center gap-2">
+                <div className="flex items-center gap-2">
                   <UISelect
                     ariaLabel="Mode support"
                     size="sm"
-                    name="modePolicy"
-                    defaultValue={project.modePolicy}
+                    value={modePolicyValue}
+                    onValueChange={(nextValue) => {
+                      if (!PROJECT_MODE_POLICIES.includes(nextValue as ProjectModePolicy)) {
+                        return;
+                      }
+                      const nextPolicy = nextValue as ProjectModePolicy;
+                      if (nextPolicy === modePolicyValue) {
+                        return;
+                      }
+                      setModePolicyValue(nextPolicy);
+                      document
+                        .querySelector<HTMLElement>("main[data-theme]")
+                        ?.setAttribute("data-mode-policy", nextPolicy);
+                      startTransition(() => {
+                        const formData = new FormData();
+                        formData.set("modePolicy", nextPolicy);
+                        void modePolicyAction(formData);
+                      });
+                    }}
                     options={PROJECT_MODE_POLICIES.map((policy) => ({
                       value: policy,
                       label: policy,
@@ -253,30 +283,37 @@ export function ProjectHeader({
                     }))}
                     className="min-w-36"
                   />
-                  <UIButton type="submit" theme="base" variant="outlined" size="sm">
-                    Apply mode
-                  </UIButton>
-                </form>
+                </div>
               </div>
               <div className="grid gap-1">
                 <label className="text-sm text-text-muted">Border radius</label>
-                <form action={borderRadiusPolicyAction} className="flex items-center gap-2">
+                <div className="flex items-center gap-2">
                   <UISelect
                     ariaLabel="Border radius"
                     size="sm"
-                    name="borderRadiusPolicy"
-                    defaultValue={project.borderRadiusPolicy}
+                    value={borderRadiusValue}
+                    onValueChange={(nextValue) => {
+                      if (!PROJECT_BORDER_RADIUS_POLICIES.includes(nextValue as ProjectBorderRadiusPolicy)) {
+                        return;
+                      }
+                      const nextPolicy = nextValue as ProjectBorderRadiusPolicy;
+                      if (nextPolicy === borderRadiusValue) {
+                        return;
+                      }
+                      setBorderRadiusValue(nextPolicy);
+                      startTransition(() => {
+                        const formData = new FormData();
+                        formData.set("borderRadiusPolicy", nextPolicy);
+                        void borderRadiusPolicyAction(formData);
+                      });
+                    }}
                     options={PROJECT_BORDER_RADIUS_POLICIES.map((policy) => ({
                       value: policy,
                       label: policy,
                       textValue: policy,
                     }))}
-                    
                   />
-                  <UIButton type="submit" theme="base" variant="outlined" size="sm">
-                    Apply radius
-                  </UIButton>
-                </form>
+                </div>
               </div>
 
               <div className="grid gap-4">
