@@ -45,6 +45,17 @@ async function openProjectControls(page: Page) {
   return controlsSheet;
 }
 
+async function setSpacingScale(page: Page, nextScale: "sm" | "md" | "lg") {
+  const controlsSheet = await openProjectControls(page);
+  const select = controlsSheet.getByRole("combobox", { name: "Spacing scale" });
+  await expect(select).toBeVisible();
+  await select.evaluate((node) => {
+    (node as HTMLButtonElement).click();
+  });
+  await page.getByRole("option", { name: nextScale }).click();
+  await expect(select).toContainText(nextScale);
+}
+
 async function addBlock(page: Page, descriptionText: string) {
   await ensureBlockEditorClosed(page);
   const blockType = descriptionText.includes("Projects gallery")
@@ -219,4 +230,22 @@ test("projects gallery counter uses image-only sequence when markdown is in the 
 
   await expect(page).toHaveURL(/\/project-1\/gallery-1\/project-1-gallery-1-item-4(?:\?mode=(?:light|dark))?$/);
   await expect(page.getByTestId("projects-gallery-entry-counter")).toHaveText("Item 3 of 3");
+});
+
+test("projects gallery entry nav controls follow project spacing scale", async ({ page }) => {
+  await createProjectFromDashboard(page, "Projects Gallery Spacing Controls");
+  await addBlock(page, "Projects gallery with nested per-project image galleries.");
+  await saveProject(page);
+  await setSpacingScale(page, "sm");
+  await publishProject(page);
+
+  const publicUrl = await getPublicUrl(page);
+  await page.goto(publicUrl);
+  await page.locator('article a[href*="/project-1/gallery-1"]').first().click();
+  await page.locator('article a[href*="/project-1/gallery-1/"]').first().click();
+
+  await expect(page.getByTestId("projects-gallery-entry-back-link")).toHaveClass(/text-xs/);
+  await expect(page.getByTestId("projects-gallery-entry-back-link")).toHaveClass(/px-2/);
+  await expect(page.getByTestId("projects-gallery-entry-nav-next")).toHaveClass(/text-xs/);
+  await expect(page.getByTestId("projects-gallery-entry-nav-next")).toHaveClass(/py-1\.5/);
 });

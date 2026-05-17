@@ -49,6 +49,17 @@ async function openProjectControls(page: Page) {
   return controlsSheet;
 }
 
+async function setSpacingScale(page: Page, nextScale: "sm" | "md" | "lg") {
+  const controlsSheet = await openProjectControls(page);
+  const select = controlsSheet.getByRole("combobox", { name: "Spacing scale" });
+  await expect(select).toBeVisible();
+  await select.evaluate((node) => {
+    (node as HTMLButtonElement).click();
+  });
+  await page.getByRole("option", { name: nextScale }).click();
+  await expect(select).toContainText(nextScale);
+}
+
 async function addBlock(page: Page, descriptionText: string) {
   await ensureBlockEditorClosed(page);
   const blockType = descriptionText.includes("Projects gallery")
@@ -181,4 +192,66 @@ test("preserves dark mode when opening a gallery item", async ({ page }) => {
 
   await expect(page.getByTestId("gallery-entry-mode-container")).toHaveAttribute("data-mode", "dark");
   await expect(page).toHaveURL(/mode=dark/);
+});
+
+test("gallery detail nav controls follow project spacing scale", async ({ page }) => {
+  await createProjectFromDashboard(page, "Gallery Spacing Controls");
+  await addBlock(page, "Image gallery with configurable columns and optional text details.");
+  await saveProject(page);
+  await setSpacingScale(page, "lg");
+  await publishProject(page);
+
+  const publicUrl = await getPublicUrl(page);
+  await page.goto(publicUrl);
+
+  const firstItemLink = page.locator('article[id^="gallery-"] a[href*="/gallery-"]').first();
+  await expect(firstItemLink).toBeVisible();
+  await firstItemLink.click();
+
+  await expect(page.getByTestId("gallery-back-link")).toHaveClass(/text-base/);
+  await expect(page.getByTestId("gallery-back-link")).toHaveClass(/px-4/);
+  await expect(page.getByTestId("gallery-nav-next")).toHaveClass(/text-base/);
+  await expect(page.getByTestId("gallery-nav-next")).toHaveClass(/py-3/);
+});
+
+test("single image preview size class stays stable across spacing scale changes", async ({
+  page,
+}) => {
+  test.setTimeout(90_000);
+
+  await createProjectFromDashboard(page, "Gallery Spacing SM");
+  await addBlock(page, "Image gallery with configurable columns and optional text details.");
+  await saveProject(page);
+  await setSpacingScale(page, "sm");
+  await publishProject(page);
+
+  const smPublicUrl = await getPublicUrl(page);
+  await page.goto(smPublicUrl);
+  await page.locator('article[id^="gallery-"] a[href*="/gallery-"]').first().click();
+  await expect(page).toHaveURL(/\/gallery-[^/]+\/[^/?#]+(?:\?mode=(?:light|dark))?$/);
+  const smContainer = page.getByTestId("gallery-entry-mode-container");
+  await expect(smContainer).toBeVisible();
+  const smPreviewSectionClass = await smContainer
+    .locator(":scope > div > section")
+    .nth(1)
+    .getAttribute("class");
+
+  await createProjectFromDashboard(page, "Gallery Spacing LG");
+  await addBlock(page, "Image gallery with configurable columns and optional text details.");
+  await saveProject(page);
+  await setSpacingScale(page, "lg");
+  await publishProject(page);
+
+  const lgPublicUrl = await getPublicUrl(page);
+  await page.goto(lgPublicUrl);
+  await page.locator('article[id^="gallery-"] a[href*="/gallery-"]').first().click();
+  await expect(page).toHaveURL(/\/gallery-[^/]+\/[^/?#]+(?:\?mode=(?:light|dark))?$/);
+  const lgContainer = page.getByTestId("gallery-entry-mode-container");
+  await expect(lgContainer).toBeVisible();
+  const lgPreviewSectionClass = await lgContainer
+    .locator(":scope > div > section")
+    .nth(1)
+    .getAttribute("class");
+
+  expect(smPreviewSectionClass).toBe(lgPreviewSectionClass);
 });

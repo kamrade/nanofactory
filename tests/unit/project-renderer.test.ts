@@ -86,7 +86,7 @@ function createFeaturesCardsContent(): PageContent {
   };
 }
 
-function createCtaContent(): PageContent {
+function createCtaContent(buttonHref = "#"): PageContent {
   return {
     blocks: [
       {
@@ -95,6 +95,7 @@ function createCtaContent(): PageContent {
         props: {
           title: "Go full width",
           buttonText: "Try now",
+          buttonHref,
         },
       },
     ],
@@ -339,6 +340,23 @@ describe("ProjectRenderer", () => {
 
     expect(html).toContain("Go full width");
     expect(html).toContain('data-testid="SectionShell"');
+  });
+
+  it("renders CTA button as link and combines tone + spacing classes", () => {
+    const html = renderToStaticMarkup(
+      ProjectRenderer({
+        name: "CTA Link Project",
+        themeKey: "sunwash",
+        spacingScale: "lg",
+        content: createCtaContent("https://example.com/pricing"),
+        assets: [],
+      })
+    );
+
+    expect(html).toContain('href="https://example.com/pricing"');
+    expect(html).toContain("bg-primary-300");
+    expect(html).toContain("hover:bg-primary-200");
+    expect(html).toContain("px-7 py-4 text-base");
   });
 
   it("renders a block background from background scene config using CSS gradients", () => {
