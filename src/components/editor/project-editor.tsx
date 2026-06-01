@@ -1,6 +1,8 @@
 "use client";
 
 import { useEffect, useMemo, useReducer } from "react";
+import Link from "next/link";
+import { FiArrowLeft, FiSettings } from "react-icons/fi";
 
 import type { PageContent } from "@/db/schema";
 import type { ProjectAssetRecord } from "@/lib/assets";
@@ -28,6 +30,7 @@ import {
 } from "@/components/editor/project-editor-variants";
 import { setPreviewDraftContent } from "@/components/editor/preview-draft-store";
 import { SectionShell } from "@/components/projects/section-shell";
+import { UIButton } from "@/components/ui/button";
 import type { PageBlock } from "@/features/blocks/shared/content";
 import type { BlockVariantDefinition } from "@/features/blocks/shared/types";
 import { useToast } from "@/hooks/use-toast";
@@ -487,9 +490,36 @@ export function ProjectEditor({
     );
   }, [activeEditorBlock, effectiveAnchors.galleryItemAnchors]);
 
+  function openProjectSettingsSheet() {
+    document
+      .querySelector<HTMLButtonElement>('[data-testid="project-settings-trigger"]')
+      ?.click();
+  }
+
   return (
     <div className="grid gap-6">
-      <section data-testid="ProjectEditorContent" className="space-y-6 px-20">
+      <section data-testid="ProjectEditorContent" className="space-y-6 px-3 md:px-20">
+        <div className="flex items-center justify-between md:hidden py-3">
+          <UIButton asChild theme="base" variant="outlined" size="sm" iconButton className="rounded-full">
+            <Link href="/dashboard" aria-label="Back to dashboard" title="Back to dashboard">
+              <FiArrowLeft aria-hidden className="h-4 w-4" />
+            </Link>
+          </UIButton>
+          <UIButton
+            type="button"
+            theme="base"
+            variant="contained"
+            size="sm"
+            iconButton
+            aria-label="Settings"
+            title="Settings"
+            className="rounded-full"
+            onClick={openProjectSettingsSheet}
+          >
+            <FiSettings aria-hidden className="h-4 w-4" />
+          </UIButton>
+        </div>
+
         <EditorCanvas
           content={state.content}
           lastVariantUndo={state.lastVariantUndo}

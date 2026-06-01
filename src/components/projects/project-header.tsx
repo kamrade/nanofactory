@@ -157,9 +157,16 @@ export function ProjectHeader({
   return (
     <div
       data-testid="ProjectHeader"
-      className="fixed right-4 top-4 z-50 flex flex-col items-end gap-3"
+      className="fixed right-4 top-4 z-50 hidden md:flex flex-col items-end gap-3"
     >
-      <UIButton asChild theme="base" variant="outlined" size="lg" iconButton className="rounded-full">
+      <UIButton
+        asChild
+        theme="base"
+        variant="outlined"
+        size="lg"
+        iconButton
+        className="hidden rounded-full md:inline-flex"
+      >
         <Link href="/dashboard" aria-label="Back to dashboard" title="Back to dashboard">
           <FiArrowLeft aria-hidden className="h-5 w-5" />
         </Link>
@@ -167,6 +174,7 @@ export function ProjectHeader({
       <UISheet>
         <UISheetTrigger>
           <UIButton
+            data-testid="project-settings-trigger"
             type="button"
             theme="base"
             variant="contained"
@@ -174,7 +182,7 @@ export function ProjectHeader({
             iconButton
             aria-label="Settings"
             title="Settings"
-            className="rounded-full"
+            className="hidden rounded-full md:inline-flex"
           >
             <FiSettings aria-hidden className="h-5 w-5" />
           </UIButton>
