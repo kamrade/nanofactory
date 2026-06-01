@@ -498,27 +498,29 @@ export function ProjectEditor({
 
   return (
     <div className="grid gap-6">
-      <section data-testid="ProjectEditorContent" className="space-y-6 px-3 md:px-20">
-        <div className="flex items-center justify-between md:hidden py-3">
-          <UIButton asChild theme="base" variant="outlined" size="sm" iconButton className="rounded-full">
-            <Link href="/dashboard" aria-label="Back to dashboard" title="Back to dashboard">
-              <FiArrowLeft aria-hidden className="h-4 w-4" />
-            </Link>
-          </UIButton>
-          <UIButton
-            type="button"
-            theme="base"
-            variant="contained"
-            size="sm"
-            iconButton
-            aria-label="Settings"
-            title="Settings"
-            className="rounded-full"
-            onClick={openProjectSettingsSheet}
-          >
-            <FiSettings aria-hidden className="h-4 w-4" />
-          </UIButton>
-        </div>
+      <section data-testid="ProjectEditorContent" className="space-y-4 px-3 md:px-20">
+        <div className="mx-auto container">
+          <div className="flex items-center justify-between md:hidden py-3">
+            <UIButton asChild theme="base" variant="outlined" size="sm" iconButton className="rounded-full">
+              <Link href="/dashboard" aria-label="Back to dashboard" title="Back to dashboard">
+                <FiArrowLeft aria-hidden className="h-4 w-4" />
+              </Link>
+            </UIButton>
+            <UIButton
+              type="button"
+              theme="base"
+              variant="contained"
+              size="sm"
+              iconButton
+              aria-label="Settings"
+              title="Settings"
+              className="rounded-full"
+              onClick={openProjectSettingsSheet}
+            >
+              <FiSettings aria-hidden className="h-4 w-4" />
+            </UIButton>
+          </div>
+        </div>  
 
         <EditorCanvas
           content={state.content}
