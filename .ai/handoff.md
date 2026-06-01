@@ -33,6 +33,14 @@ This is a website/page builder with project-level editing, block-based content, 
 - Assets API:
   - `src/app/api/projects/[projectId]/assets/route.ts` (GET/POST)
   - `src/app/api/projects/[projectId]/assets/[assetId]/route.ts` (DELETE)
+- Background scenes (current model):
+  - global library API:
+    - `src/app/api/background-library-scenes/route.ts` (GET/POST)
+    - `src/app/api/background-library-scenes/[sceneId]/route.ts` (PATCH/DELETE)
+  - project-scoped background scenes API is deprecated and returns `410`:
+    - `src/app/api/projects/[projectId]/background-scenes/route.ts`
+  - admin UI for library management:
+    - `src/app/(protected)/background-library/page.tsx`
 - Domain logic:
   - `src/lib/projects.ts`
   - `src/lib/assets.ts`
@@ -114,6 +122,11 @@ This is a website/page builder with project-level editing, block-based content, 
     - `src/app/p/[slug]/[galleryAnchor]/[itemAnchor]/gallery-item-nav.tsx`
     - `src/app/p/[slug]/[galleryAnchor]/[itemAnchor]/page.tsx`
     - `src/app/p/[slug]/[galleryAnchor]/[itemAnchor]/[entryAnchor]/page.tsx`
+- Project preview route is first-class:
+  - editor preview route:
+    - `src/app/(protected)/projects/[projectId]/preview/page.tsx`
+  - supports draft token + temporary theme/mode overrides via query params.
+  - falls back to saved content if draft is missing/expired and enforces mode by policy.
 
 5) Recent refactoring (dedup + cleanup)
 - Duplicate `isUuid` extracted from 3 files to shared `src/lib/validate.ts`.
@@ -131,9 +144,9 @@ This is a website/page builder with project-level editing, block-based content, 
 - `mapPlainObjects<T>` helper extracted in `model.ts` to deduplicate array parsing in `readEntryItems`/`readProjectItems`.
 
 7) Projects gallery behavior (current intent)
-- Project detail page (`/p/[slug]/[projectAnchor]/[galleryAnchor]`):
+- Project detail page (`/p/[slug]/[galleryAnchor]/[itemAnchor]`):
   - image preview list is image-only for opening entry pages.
-- Entry detail page (`/p/[slug]/[projectAnchor]/[galleryAnchor]/[entryAnchor]`):
+- Entry detail page (`/p/[slug]/[galleryAnchor]/[itemAnchor]/[entryAnchor]`):
   - `Next/Previous` navigates by images only.
   - direct open of markdown entry URL should not keep user in markdown-only flow.
 - Counter `Item X of Y` for projects-gallery entry detail is expected to be image-only.
@@ -176,5 +189,7 @@ Run at least:
   - `tests/e2e/projects-gallery-navigation.spec.ts`
 
 12) Practical note for local e2e
-- Playwright webServer may fail in restricted network due to `next/font` fetching Google Fonts (`Onest`).
-- If that happens, run with network-enabled execution in this environment.
+- Onest is now loaded from a local font file via `next/font/local`:
+  - `src/app/fonts/Onest-Variable.ttf`
+  - `src/app/layout.tsx`
+- E2E should not require outbound network for font fetching.

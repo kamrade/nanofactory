@@ -126,56 +126,73 @@ export function AppHeaderDefaultEditor({
 
   return (
     <div className="grid gap-5">
-      <label className="grid gap-1.5 text-sm">
-        <span className="font-medium text-text-main">Title</span>
-        <UITextInput
-          size="sm"
-          value={title}
-          onValueChange={(nextTitle) =>
-            onChange({
-              ...block.props,
-              title: nextTitle,
-            })
-          }
-          placeholder="Optional title"
-        />
-      </label>
+      <div className="grid gap-3">
+        <div className="grid gap-1.5 md:grid-cols-[12rem_minmax(0,1fr)] md:items-center md:gap-4">
+          <label htmlFor="app-header-title" className="text-sm font-medium text-text-main">
+            Title
+          </label>
+          <UITextInput
+            id="app-header-title"
+            size="sm"
+            value={title}
+            onValueChange={(nextTitle) =>
+              onChange({
+                ...block.props,
+                title: nextTitle,
+              })
+            }
+            placeholder="Optional title"
+          />
+        </div>
 
-      <label className="grid gap-1.5 text-sm">
-        <span className="font-medium text-text-main">Collapse breakpoint</span>
-        <UISelect
-          ariaLabel="Header collapse breakpoint"
-          size="sm"
-          value={collapseBreakpoint}
-          onValueChange={(value) =>
-            onChange({
-              ...block.props,
-              collapseBreakpoint: value as AppHeaderCollapseBreakpoint,
-            })
-          }
-          options={breakpointOptions}
-        />
-      </label>
-      <UICheckbox
-        checked={alwaysMobile}
-        onChange={(event) =>
-          onChange({
-            ...block.props,
-            alwaysMobile: event.currentTarget.checked,
-          })
-        }
-        label="Always use mobile layout"
-      />
-      <UICheckbox
-        checked={showModeSwitcher}
-        onChange={(event) =>
-          onChange({
-            ...block.props,
-            showModeSwitcher: event.currentTarget.checked,
-          })
-        }
-        label="Show mode switcher"
-      />
+        <div className="grid gap-1.5 md:grid-cols-[12rem_minmax(0,1fr)] md:items-center md:gap-4">
+          <span className="text-sm font-medium text-text-main">Collapse breakpoint</span>
+          <UISelect
+            ariaLabel="Header collapse breakpoint"
+            size="sm"
+            value={collapseBreakpoint}
+            onValueChange={(value) =>
+              onChange({
+                ...block.props,
+                collapseBreakpoint: value as AppHeaderCollapseBreakpoint,
+              })
+            }
+            options={breakpointOptions}
+          />
+        </div>
+
+        <div className="grid gap-1.5 md:grid-cols-[12rem_minmax(0,1fr)] md:items-center md:gap-4">
+          <label htmlFor="app-header-always-mobile" className="text-sm font-medium text-text-main">
+            Always mobile
+          </label>
+          <UICheckbox
+            id="app-header-always-mobile"
+            checked={alwaysMobile}
+            onChange={(event) =>
+              onChange({
+                ...block.props,
+                alwaysMobile: event.currentTarget.checked,
+              })
+            }
+          />
+        </div>
+
+        <div className="grid gap-1.5 md:grid-cols-[12rem_minmax(0,1fr)] md:items-center md:gap-4">
+          <label htmlFor="app-header-show-mode-switcher" className="text-sm font-medium text-text-main">
+            Mode switcher
+          </label>
+          <UICheckbox
+            id="app-header-show-mode-switcher"
+            checked={showModeSwitcher}
+            onChange={(event) =>
+              onChange({
+                ...block.props,
+                showModeSwitcher: event.currentTarget.checked,
+              })
+            }
+          />
+        </div>
+      </div>
 
       <div className="grid gap-4 rounded-2xl border border-line bg-surface-alt p-4">
         <p className="text-sm font-semibold text-text-main">Left: Logo</p>
@@ -279,17 +296,20 @@ export function AppHeaderDefaultEditor({
         )}
 
         <div className="grid gap-2 rounded-xl border border-line bg-surface p-3">
-          <label className="grid gap-1 text-sm">
-            <span className="font-medium text-text-main">Label</span>
+          <div className="grid gap-1.5 md:grid-cols-[7rem_minmax(0,1fr)] md:items-center md:gap-3">
+            <label htmlFor="app-header-menu-item-label" className="text-sm font-medium text-text-main">
+              Label
+            </label>
             <UITextInput
+              id="app-header-menu-item-label"
               size="sm"
               value={draftLabel}
               onValueChange={setDraftLabel}
               placeholder="Menu label"
             />
-          </label>
-          <label className="grid gap-1 text-sm">
-            <span className="font-medium text-text-main">Anchor</span>
+          </div>
+          <div className="grid gap-1.5 md:grid-cols-[7rem_minmax(0,1fr)] md:items-center md:gap-3">
+            <span className="text-sm font-medium text-text-main">Anchor id</span>
             <UISelect
               ariaLabel="Anchor id"
               size="sm"
@@ -298,7 +318,7 @@ export function AppHeaderDefaultEditor({
               placeholder={availableAnchors.length === 0 ? "No anchors available" : "Select anchor"}
               options={anchorOptions}
             />
-          </label>
+          </div>
           <UIButton
             type="button"
             size="sm"

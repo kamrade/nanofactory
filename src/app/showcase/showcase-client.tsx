@@ -6,6 +6,7 @@ import { DialogDemoCard, MarkdownDemoCard, ModalDemoCard } from "@/app/showcase/
 import {
   ControlsAndMenusSection,
   FeedbackAndSheetSection,
+  FormLayoutSection,
   InputsSection,
   type UiSize,
   TypographyButtonsBadgesSection,
@@ -109,6 +110,7 @@ export function ShowcaseClient({
             <TypographyButtonsBadgesSection uiSize={uiSize} />
             <ControlsAndMenusSection uiSize={uiSize} />
             <InputsSection uiSize={uiSize} />
+            <FormLayoutSection uiSize={uiSize} />
             <FeedbackAndSheetSection uiSize={uiSize} showToast={showToast} clearToasts={clearToasts} />
             <DialogDemoCard uiSize={uiSize} />
             <ModalDemoCard uiSize={uiSize} />

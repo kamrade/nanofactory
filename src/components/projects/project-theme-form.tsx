@@ -15,12 +15,14 @@ type ProjectThemeFormProps = {
   initialThemeKey: string;
   options: ThemeOption[];
   action: (formData: FormData) => void | Promise<void>;
+  showLabel?: boolean;
 };
 
 export function ProjectThemeForm({
   initialThemeKey,
   options,
   action,
+  showLabel = true,
 }: ProjectThemeFormProps) {
   const [themeKey, setThemeKey] = useState(initialThemeKey);
   const containerRef = useRef<HTMLDivElement | null>(null);
@@ -53,27 +55,33 @@ export function ProjectThemeForm({
     });
   }
 
+  const select = (
+    <div ref={containerRef} className="w-full">
+      <UISelect
+        key={initialThemeKey}
+        ariaLabel="Theme"
+        size="sm"
+        value={themeKey}
+        onValueChange={applyTheme}
+        options={options.map((theme) => ({
+          value: theme.key,
+          label: theme.label,
+          textValue: theme.label,
+        }))}
+      />
+    </div>
+  );
+
+  if (!showLabel) {
+    return select;
+  }
+
   return (
-    <div>
-      <div className="flex items-end gap-2">
-        <label className="text-sm text-text-muted w-full">
-          <span>Theme</span>
-          <div ref={containerRef} className="w-full">
-            <UISelect
-              key={initialThemeKey}
-              ariaLabel="Theme"
-              size="sm"
-              value={themeKey}
-              onValueChange={applyTheme}
-              options={options.map((theme) => ({
-                value: theme.key,
-                label: theme.label,
-                textValue: theme.label,
-              }))}
-            />
-          </div>
-        </label>
-      </div>
+    <div className="flex items-end gap-2">
+      <label className="text-sm text-text-muted w-full">
+        <span>Theme</span>
+        {select}
+      </label>
     </div>
   );
 }

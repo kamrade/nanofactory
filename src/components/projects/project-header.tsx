@@ -22,10 +22,8 @@ import {
   UISheet,
   UISheetClose,
   UISheetContent,
-  UISheetDescription,
   UISheetFooter,
   UISheetHeader,
-  UISheetTitle,
   UISheetTrigger,
 } from "@/components/ui/sheet";
 import { THEME_OPTIONS } from "@/lib/themes";
@@ -181,7 +179,7 @@ export function ProjectHeader({
             <FiSettings aria-hidden className="h-5 w-5" />
           </UIButton>
         </UISheetTrigger>
-        <UISheetContent side="right">
+        <UISheetContent side="right" modal={false}>
           <UISheetHeader className="flex-row items-start justify-between gap-3">
             
             <div>
@@ -265,9 +263,9 @@ export function ProjectHeader({
 
             <div className="grid gap-3 rounded-2xl border border-line bg-surface-alt p-4">
               <h3 className="text-base font-semibold text-text-main">Actions</h3>
-              <div className="grid gap-1">
-                <label className="text-sm text-text-muted">Mode support</label>
-                <div className="flex items-center gap-2">
+              <div className="grid gap-3">
+                <div className="grid gap-1.5 md:grid-cols-[10rem_minmax(0,1fr)] md:items-center md:gap-3">
+                  <label className="text-sm text-text-muted">Mode support</label>
                   <UISelect
                     ariaLabel="Mode support"
                     size="sm"
@@ -298,10 +296,9 @@ export function ProjectHeader({
                     className="min-w-36"
                   />
                 </div>
-              </div>
-              <div className="grid gap-1">
-                <label className="text-sm text-text-muted">Border radius</label>
-                <div className="flex items-center gap-2">
+
+                <div className="grid gap-1.5 md:grid-cols-[10rem_minmax(0,1fr)] md:items-center md:gap-3">
+                  <label className="text-sm text-text-muted">Border radius</label>
                   <UISelect
                     ariaLabel="Border radius"
                     size="sm"
@@ -328,10 +325,9 @@ export function ProjectHeader({
                     }))}
                   />
                 </div>
-              </div>
-              <div className="grid gap-1">
-                <label className="text-sm text-text-muted">Spacing scale</label>
-                <div className="flex items-center gap-2">
+
+                <div className="grid gap-1.5 md:grid-cols-[10rem_minmax(0,1fr)] md:items-center md:gap-3">
+                  <label className="text-sm text-text-muted">Spacing scale</label>
                   <UISelect
                     ariaLabel="Spacing scale"
                     size="sm"
@@ -361,24 +357,28 @@ export function ProjectHeader({
                     }))}
                   />
                 </div>
-              </div>
 
-              <div className="grid gap-4">
-                <ProjectThemeForm
-                  initialThemeKey={resolvedThemeKey}
-                  options={THEME_OPTIONS}
-                  action={themeAction}
-                />
-
-                <div className="flex items-center gap-2 text-sm text-text-muted">
-                  <ProjectModeSwitcher
-                    initialMode={initialMode}
-                    inputName="previewMode"
-                    syncSearchParam="mode"
-                    policy={project.modePolicy}
+                <div className="grid gap-1.5 md:grid-cols-[10rem_minmax(0,1fr)] md:items-center md:gap-3">
+                  <label className="text-sm text-text-muted">Theme</label>
+                  <ProjectThemeForm
+                    initialThemeKey={resolvedThemeKey}
+                    options={THEME_OPTIONS}
+                    action={themeAction}
+                    showLabel={false}
                   />
                 </div>
-                
+
+                <div className="grid gap-1.5 md:grid-cols-[10rem_minmax(0,1fr)] md:items-center md:gap-3">
+                  <label className="text-sm text-text-muted">Preview mode</label>
+                  <div className="flex items-center gap-2 text-sm text-text-muted">
+                    <ProjectModeSwitcher
+                      initialMode={initialMode}
+                      inputName="previewMode"
+                      syncSearchParam="mode"
+                      policy={project.modePolicy}
+                    />
+                  </div>
+                </div>
               </div>
 
               <UIDivider></UIDivider>

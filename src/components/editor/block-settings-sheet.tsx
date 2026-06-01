@@ -215,22 +215,27 @@ export function BlockSettingsSheet({
                   </div>
                 ) : null}
 
-                <label className="grid gap-1.5 text-sm">
-                  <span className="font-medium text-text-main">Anchor id</span>
-                  <UITextInput
-                    size="sm"
-                    value={anchorDraft}
-                    onValueChange={setAnchorDraft}
-                    onBlur={handleAnchorBlur}
-                    placeholder={effectiveAnchorId ?? "section-hero"}
-                    invalid={Boolean(anchorError)}
-                    aria-label="Anchor id"
-                  />
-                  <span className={anchorError ? "text-xs text-danger" : "text-xs text-text-muted"}>
-                    {anchorError ??
-                      `Optional. Auto anchor: ${effectiveAnchorId ?? "section-hero"}`}
-                  </span>
-                </label>
+                <div className="grid gap-1.5 md:grid-cols-[8rem_minmax(0,1fr)] md:items-start md:gap-3">
+                  <label htmlFor="block-anchor-id-input" className="pt-1 text-sm font-medium text-text-main">
+                    Anchor id
+                  </label>
+                  <div className="grid gap-1.5">
+                    <UITextInput
+                      id="block-anchor-id-input"
+                      size="sm"
+                      value={anchorDraft}
+                      onValueChange={setAnchorDraft}
+                      onBlur={handleAnchorBlur}
+                      placeholder={effectiveAnchorId ?? "section-hero"}
+                      invalid={Boolean(anchorError)}
+                      aria-label="Anchor id"
+                    />
+                    <span className={anchorError ? "text-xs text-danger" : "text-xs text-text-muted"}>
+                      {anchorError ??
+                        `Optional. Auto anchor: ${effectiveAnchorId ?? "section-hero"}`}
+                    </span>
+                  </div>
+                </div>
 
                 <ScenePicker
                   scenes={backgroundScenes}
