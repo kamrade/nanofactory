@@ -53,16 +53,16 @@ export function ProjectAssetsPanel({
   }
 
   return (
-    <section data-testid="ProjectAssetsPanel" className="py-6 mx-auto container">
+    <section data-testid="ProjectAssetsPanel" className="py-6 mx-auto container px-3 md:px-20">
 
-      <div className="grid gap-4" style={{marginTop: '320px'}}>
+      <div className="grid gap-4" style={{marginTop: '240px'}}>
         <h3 className="text-base font-semibold text-text-main">Background catalog</h3>
         {backgroundScenes.length === 0 ? (
           <p className="rounded-2xl border border-dashed border-line px-4 py-8 text-sm text-text-placeholder">
             No background scenes in catalog.
           </p>
         ) : (
-          <div className="grid grid-cols-8 gap-4">
+          <div className="grid sm:grid-cols-2 lg:grid-cols-6 gap-4">
             {backgroundScenes.map((scene) => (
               <BackgroundSceneCard key={scene.id} scene={scene} />
             ))}
@@ -70,7 +70,7 @@ export function ProjectAssetsPanel({
         )}
       </div>
 
-      <div className="mt-6 grid gap-4">
+      <div className="mt-6 grid gap-4 ">
         <h3 className="text-base font-semibold text-text-main">Image assets</h3>
         {error ? (
           <p className="rounded-2xl border border-danger-line bg-danger-100 px-4 py-3 text-sm text-danger">
@@ -86,7 +86,7 @@ export function ProjectAssetsPanel({
           }}
           onUploadError={(message) => setError(message)}
         />
-        <div className="grid grid-cols-8 gap-4">
+        <div className="grid sm:grid-cols-2 lg:grid-cols-6 gap-4">
           {assets.length === 0 ? (
             <p className="col-span-8 rounded-2xl border border-dashed border-line px-4 py-8 text-sm text-text-placeholder">
               No assets uploaded yet.
