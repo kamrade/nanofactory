@@ -187,7 +187,7 @@ export function ProjectHeader({
             <FiSettings aria-hidden className="h-5 w-5" />
           </UIButton>
         </UISheetTrigger>
-        <UISheetContent side="right" modal={false}>
+        <UISheetContent side="right" closeOnOverlayClick>
           <UISheetHeader className="flex-row items-start justify-between gap-3">
             
             <div>
