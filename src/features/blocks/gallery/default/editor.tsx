@@ -3,6 +3,7 @@
 import { UIButton } from "@/components/ui/button";
 import { UISelect } from "@/components/ui/select";
 import { UITextInput } from "@/components/ui/text-input";
+import { EditorFieldRow } from "@/components/editor/editor-field-row";
 import type { BlockEditorProps } from "../../shared/types";
 import { AssetPicker } from "../../shared/asset-picker";
 
@@ -90,21 +91,22 @@ export function GalleryDefaultEditor({
 
   return (
     <div className="grid gap-5">
-      <label className="grid gap-1.5 text-sm">
-        <span className="font-medium text-text-main">Section title</span>
+      <EditorFieldRow label="Section title" htmlFor="gallery-section-title">
         <UITextInput
+          id="gallery-section-title"
           size="sm"
           value={sectionTitle}
           onValueChange={(value) => update({ sectionTitle: value })}
           placeholder="Gallery"
         />
-      </label>
+      </EditorFieldRow>
 
-      <label className="grid gap-1.5 text-sm">
-        <span className="font-medium text-text-main">Columns</span>
+      <EditorFieldRow label="Columns" htmlFor="gallery-columns">
         <UISelect
+          id="gallery-columns"
           ariaLabel="Gallery columns"
           size="sm"
+          className="w-full"
           value={String(columns)}
           onValueChange={(value) => update({ columns: Number(value) })}
           options={[
@@ -114,13 +116,14 @@ export function GalleryDefaultEditor({
             { value: "4", label: "4 columns", textValue: "4 columns" },
           ]}
         />
-      </label>
+      </EditorFieldRow>
 
-      <label className="grid gap-1.5 text-sm">
-        <span className="font-medium text-text-main">Image height</span>
+      <EditorFieldRow label="Image height" htmlFor="gallery-image-height-mode">
         <UISelect
+          id="gallery-image-height-mode"
           ariaLabel="Gallery image height mode"
           size="sm"
+          className="w-full"
           value={imageHeightMode}
           onValueChange={(value) => update({ imageHeightMode: value })}
           options={[
@@ -128,7 +131,7 @@ export function GalleryDefaultEditor({
             { value: "natural", label: "Natural", textValue: "Natural" },
           ]}
         />
-      </label>
+      </EditorFieldRow>
 
       <div className="grid gap-3 rounded-2xl border border-line bg-surface-alt p-4">
         <div className="flex items-center justify-between gap-3">
@@ -180,9 +183,9 @@ export function GalleryDefaultEditor({
                     </UIButton>
                   </div>
 
-                  <label className="grid gap-1 text-sm">
-                    <span className="font-medium text-text-main">Entry anchor</span>
+                  <EditorFieldRow label="Entry anchor" htmlFor={`gallery-entry-anchor-${index}`}>
                     <UITextInput
+                      id={`gallery-entry-anchor-${index}`}
                       size="sm"
                       value={item.entryAnchor ?? ""}
                       onValueChange={(value) =>
@@ -193,7 +196,7 @@ export function GalleryDefaultEditor({
                       }
                       placeholder={effectiveGalleryItemAnchors?.get(index) ?? `gallery-item-${index + 1}`}
                     />
-                  </label>
+                  </EditorFieldRow>
 
                   <AssetPicker
                     assets={assets}
@@ -220,48 +223,52 @@ export function GalleryDefaultEditor({
                     compact
                   />
 
-                  <label className="grid gap-1 text-sm">
-                    <span className="font-medium text-text-main">Title (optional)</span>
+                  <EditorFieldRow label="Title (optional)" htmlFor={`gallery-item-title-${index}`}>
                     <UITextInput
+                      id={`gallery-item-title-${index}`}
                       size="sm"
                       value={item.title}
                       onValueChange={(value) => updateItem(index, { ...item, title: value })}
                       placeholder="Item title"
                     />
-                  </label>
+                  </EditorFieldRow>
 
-                  <label className="grid gap-1 text-sm">
-                    <span className="font-medium text-text-main">Description (optional)</span>
+                  <div className="grid gap-1.5 md:flex md:items-start md:gap-4">
+                    <span className="pt-1 text-sm font-medium text-text-main md:w-44 md:shrink-0">
+                      Description (optional)
+                    </span>
+                    <div className="min-w-0 flex-1">
                     <textarea
                       value={item.description}
                       rows={3}
                       onChange={(event) =>
                         updateItem(index, { ...item, description: event.target.value })
                       }
-                      className="rounded-xl border border-line bg-surface px-3 py-2 text-sm text-text-main outline-none transition focus:ring-2 focus:ring-focus/50"
+                      className="w-full rounded-xl border border-line bg-surface px-3 py-2 text-sm text-text-main outline-none transition focus:ring-2 focus:ring-focus/50"
                       placeholder="Item description"
                     />
-                  </label>
+                    </div>
+                  </div>
 
-                  <label className="grid gap-1 text-sm">
-                    <span className="font-medium text-text-main">Price (optional)</span>
+                  <EditorFieldRow label="Price (optional)" htmlFor={`gallery-item-price-${index}`}>
                     <UITextInput
+                      id={`gallery-item-price-${index}`}
                       size="sm"
                       value={item.price}
                       onValueChange={(value) => updateItem(index, { ...item, price: value })}
                       placeholder="$120"
                     />
-                  </label>
+                  </EditorFieldRow>
 
-                  <label className="grid gap-1 text-sm">
-                    <span className="font-medium text-text-main">Meta (optional)</span>
+                  <EditorFieldRow label="Meta (optional)" htmlFor={`gallery-item-meta-${index}`}>
                     <UITextInput
+                      id={`gallery-item-meta-${index}`}
                       size="sm"
                       value={item.meta}
                       onValueChange={(value) => updateItem(index, { ...item, meta: value })}
                       placeholder="Limited edition"
                     />
-                  </label>
+                  </EditorFieldRow>
                 </article>
               );
             })}

@@ -22,6 +22,8 @@ import {
   UISheetHeader,
   UISheetTitle,
 } from "@/components/ui/sheet";
+import type { ThemeKey } from "@/lib/themes";
+import type { UiMode } from "@/lib/ui-preferences";
 
 type BlockSettingsSheetProps = {
   open: boolean;
@@ -37,6 +39,8 @@ type BlockSettingsSheetProps = {
   }>;
   effectiveGalleryItemAnchors?: Map<number, string>;
   backgroundScenes: BackgroundSceneRecord[];
+  activeThemeKey: ThemeKey;
+  activeMode: UiMode;
   activeEditorBlockIndex: number;
   totalBlocks: number;
   formatDefinitionLabel: (definition: {
@@ -73,6 +77,8 @@ export function BlockSettingsSheet({
   availableAnchors,
   effectiveGalleryItemAnchors,
   backgroundScenes,
+  activeThemeKey,
+  activeMode,
   activeEditorBlockIndex,
   totalBlocks,
   formatDefinitionLabel,
@@ -172,6 +178,8 @@ export function BlockSettingsSheet({
         ariaLabel="Block editor"
         closeOnOverlayClick
         modal={false}
+        themeKey={activeThemeKey}
+        mode={activeMode}
         className="p-5 sm:p-6"
       >
         {activeEditorBlock && activeEditorDefinition ? (
@@ -193,33 +201,45 @@ export function BlockSettingsSheet({
             <div className="mt-6 grid gap-5">
               <div className="grid gap-4 rounded-2xl border border-neutral-line bg-surface-alt p-4">
                 {activeVariantOptions.length > 1 ? (
-                  <div className="grid gap-1.5">
-                    <p className="text-sm font-medium text-text-main">Variant</p>
-                    <UISelect
-                      ariaLabel="Variant"
-                      size="sm"
-                      value={activeVariant}
-                      onValueChange={(value) =>
-                        onSelectVariant(
-                          activeEditorBlock,
-                          activeEditorDefinition,
-                          value as BlockVariant
-                        )
-                      }
-                      options={activeVariantOptions.map((option) => ({
-                        value: option.variant,
-                        label: option.label,
-                        textValue: option.label,
-                      }))}
-                    />
+                  <div className="grid gap-1.5 md:flex md:items-start md:gap-4">
+                    <label
+                      htmlFor="block-variant-select"
+                      className="pt-1 text-sm font-medium text-text-main md:w-32 md:shrink-0"
+                    >
+                      Variant
+                    </label>
+                    <div className="min-w-0 flex-1">
+                      <UISelect
+                        id="block-variant-select"
+                        ariaLabel="Variant"
+                        size="sm"
+                        className="w-full"
+                        value={activeVariant}
+                        onValueChange={(value) =>
+                          onSelectVariant(
+                            activeEditorBlock,
+                            activeEditorDefinition,
+                            value as BlockVariant
+                          )
+                        }
+                        options={activeVariantOptions.map((option) => ({
+                          value: option.variant,
+                          label: option.label,
+                          textValue: option.label,
+                        }))}
+                      />
+                    </div>
                   </div>
                 ) : null}
 
-                <div className="grid gap-1.5 md:grid-cols-[8rem_minmax(0,1fr)] md:items-start md:gap-3">
-                  <label htmlFor="block-anchor-id-input" className="pt-1 text-sm font-medium text-text-main">
+                <div className="grid gap-1.5 md:flex md:items-start md:gap-4">
+                  <label
+                    htmlFor="block-anchor-id-input"
+                    className="pt-1 text-sm font-medium text-text-main md:w-32 md:shrink-0"
+                  >
                     Anchor id
                   </label>
-                  <div className="grid gap-1.5">
+                  <div className="grid gap-1.5 min-w-0 flex-1">
                     <UITextInput
                       id="block-anchor-id-input"
                       size="sm"
@@ -237,6 +257,9 @@ export function BlockSettingsSheet({
                   </div>
                 </div>
 
+              </div>
+
+              <div className="grid gap-4 rounded-2xl border border-neutral-line bg-surface-alt p-4">
                 <ScenePicker
                   scenes={backgroundScenes}
                   selectedSceneId={activeEditorBlock.backgroundSceneId}

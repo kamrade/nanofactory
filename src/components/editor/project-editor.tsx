@@ -545,6 +545,8 @@ export function ProjectEditor({
         availableAnchors={availableAnchors}
         effectiveGalleryItemAnchors={activeGalleryItemAnchors}
         backgroundScenes={backgroundScenes}
+        activeThemeKey={activeThemeKey}
+        activeMode={activeMode}
         activeEditorBlockIndex={activeEditorBlockIndex}
         totalBlocks={state.content.blocks.length}
         formatDefinitionLabel={formatDefinitionLabel}

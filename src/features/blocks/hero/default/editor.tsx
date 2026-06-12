@@ -2,6 +2,7 @@
 
 import type { BlockEditorProps } from "../../shared/types";
 import { AssetPicker } from "../../shared/asset-picker";
+import { EditorFieldRow } from "@/components/editor/editor-field-row";
 import { UISelect } from "@/components/ui/select";
 import { UITextInput } from "@/components/ui/text-input";
 
@@ -50,52 +51,53 @@ export function HeroDefaultEditor({
 
   return (
     <div className="grid gap-5">
-      <label className="grid gap-1.5 text-sm">
-        <span className="font-medium text-text-main">Eyebrow</span>
+      <EditorFieldRow label="Eyebrow" htmlFor="hero-default-eyebrow">
         <UITextInput
+          id="hero-default-eyebrow"
           size="sm"
           value={eyebrow}
           placeholder="Optional eyebrow text"
           onValueChange={(value) => updateField("eyebrow", value)}
         />
-      </label>
+      </EditorFieldRow>
 
-      <label className="grid gap-1.5 text-sm">
-        <span className="font-medium text-text-main">Title</span>
+      <EditorFieldRow label="Title" htmlFor="hero-default-title">
         <UITextInput
+          id="hero-default-title"
           size="sm"
           value={title}
           placeholder="Launch your next page faster"
           onValueChange={(value) => updateField("title", value)}
         />
-      </label>
+      </EditorFieldRow>
 
-      <label className="grid gap-1.5 text-sm">
-        <span className="font-medium text-text-main">Subtitle</span>
+      <EditorFieldRow label="Subtitle" htmlFor="hero-default-subtitle">
         <textarea
+          id="hero-default-subtitle"
           value={subtitle}
           rows={4}
           placeholder="Describe the core value of the page in one short paragraph."
           onChange={(event) => updateField("subtitle", event.target.value)}
-          className="rounded-2xl border border-line bg-surface px-4 py-3 text-sm text-text-main outline-none transition placeholder:text-text-placeholder focus:ring-2 focus:ring-focus/50"
+          className="min-h-24 w-full rounded-2xl border border-line bg-surface px-4 py-3 text-sm text-text-main outline-none transition placeholder:text-text-placeholder focus:ring-2 focus:ring-focus/50"
         />
-      </label>
+      </EditorFieldRow>
 
-      <label className="grid gap-1.5 text-sm">
-        <span className="font-medium text-text-main">Button text</span>
+      <EditorFieldRow label="Button text" htmlFor="hero-default-button-text">
         <UITextInput
+          id="hero-default-button-text"
           size="sm"
           value={buttonText}
           placeholder="Get started"
           onValueChange={(value) => updateField("buttonText", value)}
         />
-      </label>
+      </EditorFieldRow>
 
-      <label className="grid gap-1.5 text-sm">
-        <span className="font-medium text-text-main">Button anchor</span>
+      <EditorFieldRow label="Button anchor" htmlFor="hero-default-button-anchor">
         <UISelect
+          id="hero-default-button-anchor"
           ariaLabel="Hero button anchor"
           size="sm"
+          className="w-full"
           value={buttonAnchor}
           onValueChange={(value) => updateField("buttonAnchor", String(value))}
           placeholder={availableAnchors.length === 0 ? "No anchors available" : "Select anchor"}
@@ -106,13 +108,14 @@ export function HeroDefaultEditor({
           }))}
           clearable
         />
-      </label>
+      </EditorFieldRow>
 
-      <label className="grid gap-1.5 text-sm">
-        <span className="font-medium text-text-main">Content position</span>
+      <EditorFieldRow label="Content position" htmlFor="hero-default-content-position">
         <UISelect
+          id="hero-default-content-position"
           ariaLabel="Hero content position"
           size="sm"
+          className="w-full"
           value={contentPosition}
           onValueChange={(value) => updateField("contentPosition", String(value))}
           options={[
@@ -122,7 +125,7 @@ export function HeroDefaultEditor({
             { value: "stretch", label: "Stretch", textValue: "Stretch" },
           ]}
         />
-      </label>
+      </EditorFieldRow>
 
       <div className="grid gap-4 py-5">
         <AssetPicker

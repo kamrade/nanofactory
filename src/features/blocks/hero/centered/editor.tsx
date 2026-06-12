@@ -2,6 +2,7 @@
 
 import type { BlockEditorProps } from "../../shared/types";
 import { AssetPicker } from "../../shared/asset-picker";
+import { EditorFieldRow } from "@/components/editor/editor-field-row";
 import { UISelect } from "@/components/ui/select";
 import { UITextInput } from "@/components/ui/text-input";
 
@@ -51,51 +52,52 @@ export function HeroCenteredEditor({
   return (
     <div className="grid gap-5">
       <div className="grid gap-5">
-        <label className="grid gap-1.5 text-sm">
-          <span className="font-medium text-text-main">Eyebrow</span>
+        <EditorFieldRow label="Eyebrow" htmlFor="hero-centered-eyebrow">
           <UITextInput
+            id="hero-centered-eyebrow"
             size="lg"
             value={eyebrow}
             placeholder="Optional eyebrow text"
             onValueChange={(value) => updateField("eyebrow", value)}
           />
-        </label>
+        </EditorFieldRow>
 
-        <label className="grid gap-2 text-sm">
-          <span className="font-medium text-text-main">Headline</span>
+        <EditorFieldRow label="Headline" htmlFor="hero-centered-title">
           <UITextInput
+            id="hero-centered-title"
             size="lg"
             value={title}
             placeholder="Ship a polished launch page this week"
             onValueChange={(value) => updateField("title", value)}
           />
-        </label>
+        </EditorFieldRow>
 
-        <label className="grid gap-1.5 text-sm">
-          <span className="font-medium text-text-main">Supporting copy</span>
+        <EditorFieldRow label="Supporting copy" htmlFor="hero-centered-subtitle">
           <UITextInput
+            id="hero-centered-subtitle"
             size="lg"
             value={subtitle}
             placeholder="Lead with a focused headline, support it with one strong paragraph, and keep the call to action visible."
             onValueChange={(value) => updateField("subtitle", value)}
           />
-        </label>
+        </EditorFieldRow>
 
-        <label className="grid gap-1.5 text-sm">
-          <span className="font-medium text-text-main">CTA label</span>
+        <EditorFieldRow label="CTA label" htmlFor="hero-centered-button-text">
           <UITextInput
+            id="hero-centered-button-text"
             size="lg"
             value={buttonText}
             placeholder="See how it works"
             onValueChange={(value) => updateField("buttonText", value)}
           />
-        </label>
+        </EditorFieldRow>
 
-        <label className="grid gap-1.5 text-sm">
-          <span className="font-medium text-text-main">Button anchor</span>
+        <EditorFieldRow label="Button anchor" htmlFor="hero-centered-button-anchor">
           <UISelect
+            id="hero-centered-button-anchor"
             ariaLabel="Hero button anchor"
             size="sm"
+            className="w-full"
             value={buttonAnchor}
             onValueChange={(value) => updateField("buttonAnchor", String(value))}
             placeholder={availableAnchors.length === 0 ? "No anchors available" : "Select anchor"}
@@ -106,13 +108,14 @@ export function HeroCenteredEditor({
             }))}
             clearable
           />
-        </label>
+        </EditorFieldRow>
 
-        <label className="grid gap-1.5 text-sm">
-          <span className="font-medium text-text-main">Content position</span>
+        <EditorFieldRow label="Content position" htmlFor="hero-centered-content-position">
           <UISelect
+            id="hero-centered-content-position"
             ariaLabel="Hero content position"
             size="sm"
+            className="w-full"
             value={contentPosition}
             onValueChange={(value) => updateField("contentPosition", String(value))}
             options={[
@@ -121,7 +124,7 @@ export function HeroCenteredEditor({
               { value: "bottom", label: "Bottom", textValue: "Bottom" },
             ]}
           />
-        </label>
+        </EditorFieldRow>
       </div>
 
       <div className="grid gap-4 py-5">

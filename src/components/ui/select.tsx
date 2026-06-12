@@ -5,7 +5,6 @@ import { useEffect, useId, useMemo, useRef, useState, type ReactNode } from "rea
 import { UIDropdown } from "@/components/ui/dropdown";
 import { cx } from "@/lib/cn";
 
-
 type UISelectSize = "sm" | "lg";
 type ValidationState = "default" | "error" | "success";
 
@@ -17,6 +16,7 @@ export type UISelectOption = {
 };
 
 export type UISelectProps = {
+  id?: string;
   value?: string;
   defaultValue?: string;
   onValueChange?: (value: string) => void;
@@ -80,6 +80,7 @@ function getFirstEnabledIndex<T extends { disabled?: boolean }>(options: T[]) {
 }
 
 export function UISelect({
+  id,
   value,
   defaultValue,
   onValueChange,
@@ -106,7 +107,8 @@ export function UISelect({
   const [activeIndex, setActiveIndex] = useState<number>(-1);
   const [searchQuery, setSearchQuery] = useState("");
   const triggerId = useId();
-  const listboxId = `${triggerId}-listbox`;
+  const resolvedTriggerId = id ?? triggerId;
+  const listboxId = `${resolvedTriggerId}-listbox`;
   const optionRefs = useRef<Array<HTMLButtonElement | null>>([]);
   const searchInputRef = useRef<HTMLInputElement | null>(null);
   const typeaheadBufferRef = useRef("");
@@ -290,7 +292,7 @@ export function UISelect({
       <UIDropdown
         trigger={
           <button
-            id={triggerId}
+            id={resolvedTriggerId}
             type="button"
             role="combobox"
             aria-label={ariaLabel}

@@ -2,6 +2,7 @@
 
 import type { BlockEditorProps } from "../../shared/types";
 import { AssetPicker } from "../../shared/asset-picker";
+import { EditorFieldRow } from "@/components/editor/editor-field-row";
 import { UIButton } from "@/components/ui/button";
 import { UITextInput } from "@/components/ui/text-input";
 
@@ -129,15 +130,15 @@ export function FeaturesCardsEditor({ block, assets, onChange }: BlockEditorProp
 
   return (
     <div className="grid gap-5">
-      <label className="grid gap-1.5 text-sm">
-        <span className="font-medium text-text-main">Section title</span>
+      <EditorFieldRow label="Section title" htmlFor="features-cards-section-title">
         <UITextInput
+          id="features-cards-section-title"
           size="sm"
           value={sectionTitle}
           placeholder="Why teams choose Nanofactory"
           onValueChange={updateSectionTitle}
         />
-      </label>
+      </EditorFieldRow>
 
       <div className="grid gap-3 rounded-2xl border border-line bg-surface-alt p-4">
         <div className="flex flex-wrap items-center justify-between gap-3">
@@ -179,18 +180,21 @@ export function FeaturesCardsEditor({ block, assets, onChange }: BlockEditorProp
                   </UIButton>
                 </div>
 
-                <label className="grid gap-1.5 text-sm">
-                  <span className="font-medium text-text-main">Card title</span>
+                <EditorFieldRow label="Card title" htmlFor={`features-card-title-${index}`}>
                   <UITextInput
+                    id={`features-card-title-${index}`}
                     size="sm"
                     value={item.title}
                     placeholder={`Feature card ${index + 1}`}
                     onValueChange={(value) => handleUpdateItemTitle(index, value)}
                   />
-                </label>
+                </EditorFieldRow>
 
-                <label className="grid gap-1.5 text-sm">
-                  <span className="font-medium text-text-main">Card content</span>
+                <div className="grid gap-1.5 md:flex md:items-start md:gap-4">
+                  <span className="pt-1 text-sm font-medium text-text-main md:w-44 md:shrink-0">
+                    Card content
+                  </span>
+                  <div className="min-w-0 flex-1">
                   <textarea
                     value={item.content}
                     rows={3}
@@ -198,7 +202,8 @@ export function FeaturesCardsEditor({ block, assets, onChange }: BlockEditorProp
                     onChange={(event) => handleUpdateItemContent(index, event.target.value)}
                     className="rounded-2xl border border-line bg-surface px-4 py-3 text-sm text-text-main outline-none transition placeholder:text-text-placeholder focus:ring-2 focus:ring-focus/50"
                   />
-                </label>
+                  </div>
+                </div>
 
                 <AssetPicker
                   assets={assets}

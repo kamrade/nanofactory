@@ -4,6 +4,7 @@ import { useMemo, useState } from "react";
 
 import type { BlockEditorProps } from "../../shared/types";
 import { AssetPicker } from "../../shared/asset-picker";
+import { EditorFieldRow } from "@/components/editor/editor-field-row";
 import { UIButton } from "@/components/ui/button";
 import { UICheckbox } from "@/components/ui/checkbox";
 import { UISelect } from "@/components/ui/select";
@@ -127,10 +128,7 @@ export function AppHeaderDefaultEditor({
   return (
     <div className="grid gap-5">
       <div className="grid gap-3">
-        <div className="grid gap-1.5 md:grid-cols-[12rem_minmax(0,1fr)] md:items-center md:gap-4">
-          <label htmlFor="app-header-title" className="text-sm font-medium text-text-main">
-            Title
-          </label>
+        <EditorFieldRow label="Title" htmlFor="app-header-title">
           <UITextInput
             id="app-header-title"
             size="sm"
@@ -143,13 +141,14 @@ export function AppHeaderDefaultEditor({
             }
             placeholder="Optional title"
           />
-        </div>
+        </EditorFieldRow>
 
-        <div className="grid gap-1.5 md:grid-cols-[12rem_minmax(0,1fr)] md:items-center md:gap-4">
-          <span className="text-sm font-medium text-text-main">Collapse breakpoint</span>
+        <EditorFieldRow label="Collapse breakpoint" htmlFor="app-header-collapse-breakpoint">
           <UISelect
+            id="app-header-collapse-breakpoint"
             ariaLabel="Header collapse breakpoint"
             size="sm"
+            className="w-full"
             value={collapseBreakpoint}
             onValueChange={(value) =>
               onChange({
@@ -159,12 +158,9 @@ export function AppHeaderDefaultEditor({
             }
             options={breakpointOptions}
           />
-        </div>
+        </EditorFieldRow>
 
-        <div className="grid gap-1.5 md:grid-cols-[12rem_minmax(0,1fr)] md:items-center md:gap-4">
-          <label htmlFor="app-header-always-mobile" className="text-sm font-medium text-text-main">
-            Always mobile
-          </label>
+        <EditorFieldRow label="Always mobile" htmlFor="app-header-always-mobile">
           <UICheckbox
             id="app-header-always-mobile"
             checked={alwaysMobile}
@@ -175,12 +171,9 @@ export function AppHeaderDefaultEditor({
               })
             }
           />
-        </div>
+        </EditorFieldRow>
 
-        <div className="grid gap-1.5 md:grid-cols-[12rem_minmax(0,1fr)] md:items-center md:gap-4">
-          <label htmlFor="app-header-show-mode-switcher" className="text-sm font-medium text-text-main">
-            Mode switcher
-          </label>
+        <EditorFieldRow label="Mode switcher" htmlFor="app-header-show-mode-switcher">
           <UICheckbox
             id="app-header-show-mode-switcher"
             checked={showModeSwitcher}
@@ -191,7 +184,7 @@ export function AppHeaderDefaultEditor({
               })
             }
           />
-        </div>
+        </EditorFieldRow>
       </div>
 
       <div className="grid gap-4 rounded-2xl border border-line bg-surface-alt p-4">
@@ -296,10 +289,7 @@ export function AppHeaderDefaultEditor({
         )}
 
         <div className="grid gap-2 rounded-xl border border-line bg-surface p-3">
-          <div className="grid gap-1.5 md:grid-cols-[7rem_minmax(0,1fr)] md:items-center md:gap-3">
-            <label htmlFor="app-header-menu-item-label" className="text-sm font-medium text-text-main">
-              Label
-            </label>
+          <EditorFieldRow label="Label" htmlFor="app-header-menu-item-label">
             <UITextInput
               id="app-header-menu-item-label"
               size="sm"
@@ -307,18 +297,19 @@ export function AppHeaderDefaultEditor({
               onValueChange={setDraftLabel}
               placeholder="Menu label"
             />
-          </div>
-          <div className="grid gap-1.5 md:grid-cols-[7rem_minmax(0,1fr)] md:items-center md:gap-3">
-            <span className="text-sm font-medium text-text-main">Anchor id</span>
+          </EditorFieldRow>
+          <EditorFieldRow label="Anchor id" htmlFor="app-header-menu-item-anchor">
             <UISelect
+              id="app-header-menu-item-anchor"
               ariaLabel="Anchor id"
               size="sm"
+              className="w-full"
               value={draftAnchorId}
               onValueChange={(value) => setDraftAnchorId(String(value))}
               placeholder={availableAnchors.length === 0 ? "No anchors available" : "Select anchor"}
               options={anchorOptions}
             />
-          </div>
+          </EditorFieldRow>
           <UIButton
             type="button"
             size="sm"
@@ -375,34 +366,35 @@ export function AppHeaderDefaultEditor({
         )}
 
         <div className="grid gap-2 rounded-xl border border-line bg-surface p-3">
-          <label className="grid gap-1 text-sm">
-            <span className="font-medium text-text-main">Label</span>
+          <EditorFieldRow label="Label" htmlFor="app-header-social-label">
             <UITextInput
+              id="app-header-social-label"
               size="sm"
               value={draftSocialLabel}
               onValueChange={setDraftSocialLabel}
               placeholder="Instagram"
             />
-          </label>
-          <label className="grid gap-1 text-sm">
-            <span className="font-medium text-text-main">URL</span>
+          </EditorFieldRow>
+          <EditorFieldRow label="URL" htmlFor="app-header-social-url">
             <UITextInput
+              id="app-header-social-url"
               size="sm"
               value={draftSocialUrl}
               onValueChange={setDraftSocialUrl}
               placeholder="https://..."
             />
-          </label>
-          <label className="grid gap-1 text-sm">
-            <span className="font-medium text-text-main">Icon</span>
+          </EditorFieldRow>
+          <EditorFieldRow label="Icon" htmlFor="app-header-social-icon">
             <UISelect
+              id="app-header-social-icon"
               ariaLabel="Social icon"
               size="sm"
+              className="w-full"
               value={draftSocialIcon}
               onValueChange={(value) => setDraftSocialIcon(value as SocialIconKey)}
               options={socialIconOptions}
             />
-          </label>
+          </EditorFieldRow>
           <UIButton
             type="button"
             size="sm"

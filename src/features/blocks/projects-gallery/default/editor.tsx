@@ -2,6 +2,7 @@
 
 import { UIButton } from "@/components/ui/button";
 import { UITextInput } from "@/components/ui/text-input";
+import { EditorFieldRow } from "@/components/editor/editor-field-row";
 import type { BlockEditorProps } from "../../shared/types";
 import { AssetPicker } from "../../shared/asset-picker";
 import {
@@ -59,19 +60,19 @@ export function ProjectsGalleryDefaultEditor({ block, assets, onChange }: BlockE
 
   return (
     <div className="grid gap-5">
-      <label className="grid gap-1.5 text-sm">
-        <span className="font-medium text-text-main">Section title</span>
+      <EditorFieldRow label="Section title" htmlFor="projects-gallery-section-title">
         <UITextInput
+          id="projects-gallery-section-title"
           size="sm"
           value={props.sectionTitle}
           onValueChange={(value) => update({ sectionTitle: value })}
           placeholder="Projects"
         />
-      </label>
+      </EditorFieldRow>
 
-      <label className="grid gap-1.5 text-sm">
-        <span className="font-medium text-text-main">Gallery anchor</span>
+      <EditorFieldRow label="Gallery anchor" htmlFor="projects-gallery-gallery-anchor">
         <UITextInput
+          id="projects-gallery-gallery-anchor"
           size="sm"
           value={props.galleryAnchor ?? ""}
           onValueChange={(value) =>
@@ -79,7 +80,7 @@ export function ProjectsGalleryDefaultEditor({ block, assets, onChange }: BlockE
           }
           placeholder="projects"
         />
-      </label>
+      </EditorFieldRow>
 
       <div className="grid gap-3 rounded-2xl border border-line bg-surface-alt p-4">
         <div className="flex items-center justify-between gap-3">
@@ -146,9 +147,9 @@ export function ProjectsGalleryDefaultEditor({ block, assets, onChange }: BlockE
                     </UIButton>
                   </div>
 
-                  <label className="grid gap-1 text-sm">
-                    <span className="font-medium text-text-main">Project anchor</span>
+                  <EditorFieldRow label="Project anchor" htmlFor={`projects-gallery-project-anchor-${projectIndex}`}>
                     <UITextInput
+                      id={`projects-gallery-project-anchor-${projectIndex}`}
                       size="sm"
                       value={item.projectAnchor ?? ""}
                       onValueChange={(value) =>
@@ -159,11 +160,14 @@ export function ProjectsGalleryDefaultEditor({ block, assets, onChange }: BlockE
                       }
                       placeholder={fallbackProjectAnchor}
                     />
-                  </label>
+                  </EditorFieldRow>
 
-                  <label className="grid gap-1 text-sm">
-                    <span className="font-medium text-text-main">Nested gallery anchor</span>
+                  <EditorFieldRow
+                    label="Nested gallery anchor"
+                    htmlFor={`projects-gallery-nested-gallery-anchor-${projectIndex}`}
+                  >
                     <UITextInput
+                      id={`projects-gallery-nested-gallery-anchor-${projectIndex}`}
                       size="sm"
                       value={item.galleryAnchor ?? ""}
                       onValueChange={(value) =>
@@ -174,11 +178,14 @@ export function ProjectsGalleryDefaultEditor({ block, assets, onChange }: BlockE
                       }
                       placeholder={fallbackGalleryAnchor}
                     />
-                  </label>
+                  </EditorFieldRow>
 
-                  <label className="grid gap-1 text-sm">
-                    <span className="font-medium text-text-main">Title (optional)</span>
+                  <EditorFieldRow
+                    label="Title (optional)"
+                    htmlFor={`projects-gallery-title-${projectIndex}`}
+                  >
                     <UITextInput
+                      id={`projects-gallery-title-${projectIndex}`}
                       size="sm"
                       value={item.title}
                       onValueChange={(value) =>
@@ -189,10 +196,13 @@ export function ProjectsGalleryDefaultEditor({ block, assets, onChange }: BlockE
                       }
                       placeholder="Project title"
                     />
-                  </label>
+                  </EditorFieldRow>
 
-                  <label className="grid gap-1 text-sm">
-                    <span className="font-medium text-text-main">Description (plain, optional)</span>
+                  <div className="grid gap-1.5 md:flex md:items-start md:gap-4">
+                    <span className="pt-1 text-sm font-medium text-text-main md:w-44 md:shrink-0">
+                      Description (plain, optional)
+                    </span>
+                    <div className="min-w-0 flex-1">
                     <textarea
                       value={item.description}
                       rows={3}
@@ -205,10 +215,14 @@ export function ProjectsGalleryDefaultEditor({ block, assets, onChange }: BlockE
                       className="rounded-xl border border-line bg-surface px-3 py-2 text-sm text-text-main outline-none transition focus:ring-2 focus:ring-focus/50"
                       placeholder="Project card description"
                     />
-                  </label>
+                    </div>
+                  </div>
 
-                  <label className="grid gap-1 text-sm">
-                    <span className="font-medium text-text-main">Description (Markdown, optional)</span>
+                  <div className="grid gap-1.5 md:flex md:items-start md:gap-4">
+                    <span className="pt-1 text-sm font-medium text-text-main md:w-44 md:shrink-0">
+                      Description (Markdown, optional)
+                    </span>
+                    <div className="min-w-0 flex-1">
                     <textarea
                       value={item.descriptionMd}
                       rows={5}
@@ -221,14 +235,15 @@ export function ProjectsGalleryDefaultEditor({ block, assets, onChange }: BlockE
                       className="rounded-xl border border-line bg-surface px-3 py-2 text-sm text-text-main outline-none transition focus:ring-2 focus:ring-focus/50"
                       placeholder="Project details in markdown for inside page"
                     />
-                    <span className="text-xs text-text-muted">
-                      Supports basic markdown: headings (<code>#</code>), lists, links, quotes, and inline/code blocks.
-                    </span>
-                  </label>
+                      <span className="text-xs text-text-muted">
+                        Supports basic markdown: headings (<code>#</code>), lists, links, quotes, and inline/code blocks.
+                      </span>
+                    </div>
+                  </div>
 
-                  <label className="grid gap-1 text-sm">
-                    <span className="font-medium text-text-main">Price (optional)</span>
+                  <EditorFieldRow label="Price (optional)" htmlFor={`projects-gallery-price-${projectIndex}`}>
                     <UITextInput
+                      id={`projects-gallery-price-${projectIndex}`}
                       size="sm"
                       value={item.price}
                       onValueChange={(value) =>
@@ -239,11 +254,11 @@ export function ProjectsGalleryDefaultEditor({ block, assets, onChange }: BlockE
                       }
                       placeholder="$120"
                     />
-                  </label>
+                  </EditorFieldRow>
 
-                  <label className="grid gap-1 text-sm">
-                    <span className="font-medium text-text-main">Meta (optional)</span>
+                  <EditorFieldRow label="Meta (optional)" htmlFor={`projects-gallery-meta-${projectIndex}`}>
                     <UITextInput
+                      id={`projects-gallery-meta-${projectIndex}`}
                       size="sm"
                       value={item.meta}
                       onValueChange={(value) =>
@@ -254,7 +269,7 @@ export function ProjectsGalleryDefaultEditor({ block, assets, onChange }: BlockE
                       }
                       placeholder="Limited edition"
                     />
-                  </label>
+                  </EditorFieldRow>
 
                   <AssetPicker
                     assets={assets}
@@ -335,9 +350,12 @@ export function ProjectsGalleryDefaultEditor({ block, assets, onChange }: BlockE
                               </UIButton>
                             </div>
 
-                            <label className="grid gap-1 text-sm">
-                              <span className="font-medium text-text-main">Item anchor</span>
+                            <EditorFieldRow
+                              label="Item anchor"
+                              htmlFor={`projects-gallery-entry-anchor-${projectIndex}-${entryIndex}`}
+                            >
                               <UITextInput
+                                id={`projects-gallery-entry-anchor-${projectIndex}-${entryIndex}`}
                                 size="sm"
                                 value={galleryItem.entryAnchor ?? ""}
                                 onValueChange={(value) =>
@@ -353,7 +371,7 @@ export function ProjectsGalleryDefaultEditor({ block, assets, onChange }: BlockE
                                   entryIndex
                                 )}
                               />
-                            </label>
+                            </EditorFieldRow>
 
                             {galleryItem.kind === "image" ? (
                               <AssetPicker
@@ -380,8 +398,11 @@ export function ProjectsGalleryDefaultEditor({ block, assets, onChange }: BlockE
                                 compact
                               />
                             ) : (
-                              <label className="grid gap-1 text-sm">
-                                <span className="font-medium text-text-main">Markdown content</span>
+                              <div className="grid gap-1.5 md:flex md:items-start md:gap-4">
+                                <span className="pt-1 text-sm font-medium text-text-main md:w-44 md:shrink-0">
+                                  Markdown content
+                                </span>
+                                <div className="min-w-0 flex-1">
                                 <textarea
                                   value={galleryItem.contentMd}
                                   rows={6}
@@ -394,7 +415,8 @@ export function ProjectsGalleryDefaultEditor({ block, assets, onChange }: BlockE
                                   className="rounded-xl border border-line bg-surface px-3 py-2 text-sm text-text-main outline-none transition focus:ring-2 focus:ring-focus/50"
                                   placeholder="Markdown for this nested item"
                                 />
-                              </label>
+                                </div>
+                              </div>
                             )}
                           </article>
                         ))}

@@ -1,6 +1,7 @@
 "use client";
 
 import type { BlockFieldDefinition, BlockEditorProps } from "./types";
+import { EditorFieldRow } from "@/components/editor/editor-field-row";
 import { AssetPicker } from "./asset-picker";
 
 function readFieldValue(
@@ -48,31 +49,35 @@ export function GenericBlockEditor({
     <div className="grid gap-4">
       {definition.fields.map((field) => {
         const value = readFieldValue(block.props, field);
+        const fieldId = `generic-field-${field.key}`;
 
-        return (
-          <label key={field.key} className="grid gap-1.5 text-sm">
-            <span className="font-medium text-text-main">{field.label}</span>
-            {field.kind === "textarea" || field.kind === "string-list" ? (
+        return field.kind === "textarea" || field.kind === "string-list" ? (
+          <EditorFieldRow key={field.key} label={field.label} htmlFor={fieldId}>
+            <div className="grid gap-1.5">
               <textarea
+                id={fieldId}
                 value={value}
                 rows={field.kind === "string-list" ? 5 : 4}
                 placeholder={field.placeholder}
                 onChange={(event) => handleUpdateField(field, event.target.value)}
-                className="rounded-2xl border border-line bg-surface px-4 py-3 text-sm text-text-main outline-none transition focus:ring-2 focus:ring-focus/50"
+                className="w-full rounded-2xl border border-line bg-surface px-4 py-3 text-sm text-text-main outline-none transition focus:ring-2 focus:ring-focus/50"
               />
-            ) : (
-              <input
-                type="text"
-                value={value}
-                placeholder={field.placeholder}
-                onChange={(event) => handleUpdateField(field, event.target.value)}
-                className="rounded-2xl border border-line bg-surface px-4 py-3 text-sm text-text-main outline-none transition focus:ring-2 focus:ring-focus/50"
-              />
-            )}
-            {field.kind === "string-list" ? (
-              <span className="text-xs text-text-muted">Enter one list item per line.</span>
-            ) : null}
-          </label>
+              {field.kind === "string-list" ? (
+                <span className="text-xs text-text-muted">Enter one list item per line.</span>
+              ) : null}
+            </div>
+          </EditorFieldRow>
+        ) : (
+          <EditorFieldRow key={field.key} label={field.label} htmlFor={fieldId}>
+            <input
+              id={fieldId}
+              type="text"
+              value={value}
+              placeholder={field.placeholder}
+              onChange={(event) => handleUpdateField(field, event.target.value)}
+              className="w-full rounded-2xl border border-line bg-surface px-4 py-3 text-sm text-text-main outline-none transition focus:ring-2 focus:ring-focus/50"
+            />
+          </EditorFieldRow>
         );
       })}
 

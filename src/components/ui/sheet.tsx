@@ -133,6 +133,8 @@ type UISheetContentProps = HTMLAttributes<HTMLDivElement> & {
   closeOnEscape?: boolean;
   modal?: boolean;
   ariaLabel?: string;
+  themeKey?: string;
+  mode?: "light" | "dark";
 };
 
 export function UISheetContent({
@@ -143,6 +145,8 @@ export function UISheetContent({
   closeOnEscape = true,
   modal = true,
   ariaLabel,
+  themeKey,
+  mode,
   ...props
 }: UISheetContentProps) {
   const {
@@ -190,6 +194,14 @@ export function UISheetContent({
       return;
     }
 
+    if (themeKey || mode) {
+      setThemeAttrs({
+        theme: themeKey,
+        mode,
+      });
+      return;
+    }
+
     const sourceElement =
       triggerElement ??
       (document.activeElement instanceof HTMLElement ? document.activeElement : null);
@@ -219,7 +231,7 @@ export function UISheetContent({
     });
 
     return () => observer.disconnect();
-  }, [open, triggerElement]);
+  }, [mode, open, themeKey, triggerElement]);
 
   const panel = (
     <div
