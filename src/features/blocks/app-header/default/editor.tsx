@@ -9,6 +9,7 @@ import { UIButton } from "@/components/ui/button";
 import { UICheckbox } from "@/components/ui/checkbox";
 import { UISelect } from "@/components/ui/select";
 import { UITextInput } from "@/components/ui/text-input";
+import { Card } from "@/components/ui/card";
 import {
   SOCIAL_ICON_OPTIONS,
   type SocialIconKey,
@@ -127,7 +128,7 @@ export function AppHeaderDefaultEditor({
 
   return (
     <div className="grid gap-5">
-      <div className="grid gap-3">
+      <Card>
         <EditorFieldRow label="Title" htmlFor="app-header-title">
           <UITextInput
             id="app-header-title"
@@ -185,9 +186,9 @@ export function AppHeaderDefaultEditor({
             }
           />
         </EditorFieldRow>
-      </div>
+      </Card>
 
-      <div className="grid gap-4 rounded-2xl border border-line bg-surface-alt p-4">
+      <Card>
         <p className="text-sm font-semibold text-text-main">Left: Logo</p>
         <AssetPicker
           assets={assets}
@@ -255,7 +256,7 @@ export function AppHeaderDefaultEditor({
           selectLabel="Use in dark mode"
           compact
         />
-      </div>
+      </Card>
 
       <div className="grid gap-3 rounded-2xl border border-line bg-surface-alt p-4">
         <p className="text-sm font-semibold text-text-main">Center: Menu</p>

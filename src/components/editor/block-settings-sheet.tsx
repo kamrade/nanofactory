@@ -11,6 +11,7 @@ import type { ProjectAssetRecord } from "@/lib/assets";
 import type { BackgroundSceneRecord } from "@/lib/background-scenes/types";
 import { isValidAnchorId, normalizeAnchorId } from "@/lib/editor/anchor-id";
 import { UIButton } from "@/components/ui/button";
+import { Card } from "@/components/ui/card";
 import { UISelect } from "@/components/ui/select";
 import { UITextInput } from "@/components/ui/text-input";
 import {
@@ -199,7 +200,7 @@ export function BlockSettingsSheet({
             </UISheetHeader>
 
             <div className="mt-6 grid gap-5">
-              <div className="grid gap-4 rounded-2xl border border-neutral-line bg-surface-alt p-4">
+              <Card>
                 {activeVariantOptions.length > 1 ? (
                   <div className="grid gap-1.5 md:flex md:items-start md:gap-4">
                     <label
@@ -257,9 +258,7 @@ export function BlockSettingsSheet({
                   </div>
                 </div>
 
-              </div>
-
-              <div className="grid gap-4 rounded-2xl border border-neutral-line bg-surface-alt p-4">
+              
                 <ScenePicker
                   scenes={backgroundScenes}
                   selectedSceneId={activeEditorBlock.backgroundSceneId}
@@ -269,7 +268,7 @@ export function BlockSettingsSheet({
                   description="Attach a reusable background scene to this block shell."
                   emptyMessage="Create a scene in Background Editor first, then select it here."
                 />
-              </div>
+              </Card>
 
               {activePendingSwitch ? (
                 <div className="rounded-2xl border border-line bg-surface-alt px-4 py-3 text-sm text-text-main">

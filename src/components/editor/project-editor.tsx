@@ -448,32 +448,11 @@ export function ProjectEditor({
             )} (${anchorId})`,
           });
         }
-
-        if (block.type === "gallery" && Array.isArray(block.props.items)) {
-          block.props.items.forEach((item, itemIndex) => {
-            const itemAnchorId = getGalleryItemEffectiveAnchor(
-              effectiveAnchors.galleryItemAnchors,
-              block.id,
-              itemIndex
-            );
-            if (!itemAnchorId) {
-              return;
-            }
-            const itemTitle =
-              typeof item === "object" && item !== null && typeof (item as { title?: unknown }).title === "string"
-                ? (item as { title: string }).title
-                : `Item ${itemIndex + 1}`;
-            anchors.push({
-              id: itemAnchorId,
-              label: `${index + 1}. Gallery → ${itemTitle} (${itemAnchorId})`,
-            });
-          });
-        }
       });
 
       return anchors;
     },
-    [effectiveAnchors, state.content.blocks]
+    [effectiveAnchors.blockAnchors, state.content.blocks]
   );
   const activeGalleryItemAnchors = useMemo(() => {
     if (!activeEditorBlock || activeEditorBlock.type !== "gallery" || !Array.isArray(activeEditorBlock.props.items)) {
