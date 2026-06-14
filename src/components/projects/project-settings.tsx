@@ -16,6 +16,7 @@ import { ProjectRenameForm } from "@/components/projects/project-rename-form";
 import { ProjectThemeForm } from "@/components/projects/project-theme-form";
 import { UIButton } from "@/components/ui/button";
 import { UIDivider } from "@/components/ui/divider";
+import { Card } from "@/components/ui/card";
 import { UIMenu, UIMenuItem, UIMenuLabel } from "@/components/ui/menu";
 import { UISelect } from "@/components/ui/select";
 import {
@@ -44,7 +45,7 @@ import {
 import { getBlockTypes, getBlockVariants } from "@/lib/editor/blocks";
 import { useToast } from "@/hooks/use-toast";
 
-type ProjectHeaderProps = {
+type ProjectSettingsProps = {
   project: {
     id: string;
     name: string;
@@ -71,7 +72,7 @@ type ProjectHeaderProps = {
   contentShape: string;
 };
 
-export function ProjectHeader({
+export function ProjectSettings({
   project,
   initialMode,
   publicationAction,
@@ -82,7 +83,7 @@ export function ProjectHeader({
   nameAction,
   saveAction,
   contentShape,
-}: ProjectHeaderProps) {
+}: ProjectSettingsProps) {
   const { showToast } = useToast();
   const resolvedThemeKey = resolveThemePreference(project.themeKey);
   const [, startTransition] = useTransition();
@@ -156,7 +157,7 @@ export function ProjectHeader({
 
   return (
     <div
-      data-testid="ProjectHeader"
+      data-testid="project-settings"
       className="fixed right-4 top-4 z-50 hidden md:flex flex-col items-end gap-3"
     >
       <UIButton
@@ -269,7 +270,7 @@ export function ProjectHeader({
 
             <UIDivider spacing="sm" />
 
-            <div className="grid gap-3 rounded-2xl border border-line bg-surface-alt p-4">
+            <Card>
               <h3 className="text-base font-semibold text-text-main">Actions</h3>
               <div className="grid gap-3">
                 <div className="grid gap-1.5 md:grid-cols-[10rem_minmax(0,1fr)] md:items-center md:gap-3">
@@ -389,8 +390,8 @@ export function ProjectHeader({
                 </div>
               </div>
 
-              <UIDivider></UIDivider>
-                
+              <UIDivider />
+
               <div className="flex flex-wrap items-center gap-3">
                 <form action={publicationAction}>
                   <UIButton
@@ -418,7 +419,7 @@ export function ProjectHeader({
                   </UIButton>
                 ) : null}
               </div>
-            </div>
+            </Card>
 
             {saveState.status === "error" && saveState.message ? (
               <p className="text-sm text-danger-500">{saveState.message}</p>

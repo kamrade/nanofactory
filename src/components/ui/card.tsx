@@ -11,11 +11,20 @@ type UICardProps = {
 
 export function UICard({ title, children, className, titleClassName }: UICardProps) {
   return (
-    <section className={cx("grid gap-4 rounded-3xl border border-line bg-surface p-10", className)}>
+    <section data-testid="UICard" className={cx("grid gap-4 rounded-3xl border border-line bg-surface p-10", className)}>
       <h2 className={cx("mb-6 border-b border-line pb-3 text-lg font-semibold", titleClassName)}>
         {title}
       </h2>
       {children}
     </section>
   );
+}
+
+type CardProps = {
+  children: ReactNode;
+  className?: string;
+};
+
+export function Card({ children, className }: CardProps) {
+  return <div data-testid="Card" className={cx("grid gap-3 rounded-2xl border border-line bg-surface-alt p-4", className)}>{children}</div>;
 }

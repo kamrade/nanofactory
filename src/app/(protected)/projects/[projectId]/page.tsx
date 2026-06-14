@@ -1,5 +1,5 @@
 import { notFound } from "next/navigation";
-import { ProjectHeader } from "@/components/projects/project-header";
+import { ProjectSettings } from "@/components/projects/project-settings";
 import { ProjectWorkspace } from "@/components/projects/project-workspace";
 import { getAssetsByProjectIdForUser } from "@/lib/assets";
 import { requireCurrentUser } from "@/lib/auth/current-user";
@@ -70,7 +70,7 @@ export default async function ProjectPage({ params, searchParams }: ProjectPageP
       className="min-h-screen bg-bg pb-4 text-text-main"
     >
       <div className="mx-auto flex w-full flex-col gap-8">
-        <ProjectHeader
+        <ProjectSettings
           project={{
             id: project.id,
             name: project.name,
