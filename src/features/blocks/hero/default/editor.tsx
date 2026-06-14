@@ -5,6 +5,7 @@ import { AssetPicker } from "../../shared/asset-picker";
 import { EditorFieldRow } from "@/components/editor/editor-field-row";
 import { UISelect } from "@/components/ui/select";
 import { UITextInput } from "@/components/ui/text-input";
+import { Card } from '@/components/ui/card';
 
 function readStringProp(props: Record<string, unknown>, key: string) {
   return typeof props[key] === "string" ? props[key] : "";
@@ -50,82 +51,88 @@ export function HeroDefaultEditor({
   }
 
   return (
-    <div className="grid gap-5">
-      <EditorFieldRow label="Eyebrow" htmlFor="hero-default-eyebrow">
-        <UITextInput
-          id="hero-default-eyebrow"
-          size="sm"
-          value={eyebrow}
-          placeholder="Optional eyebrow text"
-          onValueChange={(value) => updateField("eyebrow", value)}
-        />
-      </EditorFieldRow>
+    <div data-testid="hero-default-editor">
+      <Card>
+        <div className="grid gap-5">
+          <EditorFieldRow label="Eyebrow" htmlFor="hero-default-eyebrow">
+            <UITextInput
+              id="hero-default-eyebrow"
+              size="sm"
+              value={eyebrow}
+              placeholder="Optional eyebrow text"
+              onValueChange={(value) => updateField("eyebrow", value)}
+            />
+          </EditorFieldRow>
 
-      <EditorFieldRow label="Title" htmlFor="hero-default-title">
-        <UITextInput
-          id="hero-default-title"
-          size="sm"
-          value={title}
-          placeholder="Launch your next page faster"
-          onValueChange={(value) => updateField("title", value)}
-        />
-      </EditorFieldRow>
+          <EditorFieldRow label="Title" htmlFor="hero-default-title">
+            <UITextInput
+              id="hero-default-title"
+              size="sm"
+              value={title}
+              placeholder="Launch your next page faster"
+              onValueChange={(value) => updateField("title", value)}
+            />
+          </EditorFieldRow>
 
-      <EditorFieldRow label="Subtitle" htmlFor="hero-default-subtitle">
-        <textarea
-          id="hero-default-subtitle"
-          value={subtitle}
-          rows={4}
-          placeholder="Describe the core value of the page in one short paragraph."
-          onChange={(event) => updateField("subtitle", event.target.value)}
-          className="min-h-24 w-full rounded-2xl border border-line bg-surface px-4 py-3 text-sm text-text-main outline-none transition placeholder:text-text-placeholder focus:ring-2 focus:ring-focus/50"
-        />
-      </EditorFieldRow>
+          <EditorFieldRow label="Subtitle" htmlFor="hero-default-subtitle">
+            <textarea
+              id="hero-default-subtitle"
+              value={subtitle}
+              rows={4}
+              placeholder="Describe the core value of the page in one short paragraph."
+              onChange={(event) => updateField("subtitle", event.target.value)}
+              className="min-h-24 w-full rounded-2xl border border-line bg-surface px-4 py-3 text-sm text-text-main outline-none transition placeholder:text-text-placeholder focus:ring-2 focus:ring-focus/50"
+            />
+          </EditorFieldRow>
 
-      <EditorFieldRow label="Button text" htmlFor="hero-default-button-text">
-        <UITextInput
-          id="hero-default-button-text"
-          size="sm"
-          value={buttonText}
-          placeholder="Get started"
-          onValueChange={(value) => updateField("buttonText", value)}
-        />
-      </EditorFieldRow>
+          <EditorFieldRow label="Button text" htmlFor="hero-default-button-text">
+            <UITextInput
+              id="hero-default-button-text"
+              size="sm"
+              value={buttonText}
+              placeholder="Get started"
+              onValueChange={(value) => updateField("buttonText", value)}
+            />
+          </EditorFieldRow>
 
-      <EditorFieldRow label="Button anchor" htmlFor="hero-default-button-anchor">
-        <UISelect
-          id="hero-default-button-anchor"
-          ariaLabel="Hero button anchor"
-          size="sm"
-          className="w-full"
-          value={buttonAnchor}
-          onValueChange={(value) => updateField("buttonAnchor", String(value))}
-          placeholder={availableAnchors.length === 0 ? "No anchors available" : "Select anchor"}
-          options={availableAnchors.map((anchor) => ({
-            value: anchor.id,
-            label: anchor.label,
-            textValue: anchor.label,
-          }))}
-          clearable
-        />
-      </EditorFieldRow>
+          <EditorFieldRow label="Button anchor" htmlFor="hero-default-button-anchor">
+            <UISelect
+              id="hero-default-button-anchor"
+              ariaLabel="Hero button anchor"
+              size="sm"
+              className="w-full"
+              value={buttonAnchor}
+              onValueChange={(value) => updateField("buttonAnchor", String(value))}
+              placeholder={availableAnchors.length === 0 ? "No anchors available" : "Select anchor"}
+              options={availableAnchors.map((anchor) => ({
+                value: anchor.id,
+                label: anchor.label,
+                textValue: anchor.label,
+              }))}
+              clearable
+            />
+          </EditorFieldRow>
 
-      <EditorFieldRow label="Content position" htmlFor="hero-default-content-position">
-        <UISelect
-          id="hero-default-content-position"
-          ariaLabel="Hero content position"
-          size="sm"
-          className="w-full"
-          value={contentPosition}
-          onValueChange={(value) => updateField("contentPosition", String(value))}
-          options={[
-            { value: "top", label: "Top", textValue: "Top" },
-            { value: "centered", label: "Centered", textValue: "Centered" },
-            { value: "bottom", label: "Bottom", textValue: "Bottom" },
-            { value: "stretch", label: "Stretch", textValue: "Stretch" },
-          ]}
-        />
-      </EditorFieldRow>
+          <EditorFieldRow label="Content position" htmlFor="hero-default-content-position">
+            <UISelect
+              id="hero-default-content-position"
+              ariaLabel="Hero content position"
+              size="sm"
+              className="w-full"
+              value={contentPosition}
+              onValueChange={(value) => updateField("contentPosition", String(value))}
+              options={[
+                { value: "top", label: "Top", textValue: "Top" },
+                { value: "centered", label: "Centered", textValue: "Centered" },
+                { value: "bottom", label: "Bottom", textValue: "Bottom" },
+                { value: "stretch", label: "Stretch", textValue: "Stretch" },
+              ]}
+            />
+          </EditorFieldRow>
+
+          
+        </div>
+      </Card>
 
       <div className="grid gap-4 py-5">
         <AssetPicker
