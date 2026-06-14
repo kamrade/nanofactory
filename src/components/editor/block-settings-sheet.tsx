@@ -187,7 +187,7 @@ export function BlockSettingsSheet({
           <>
             <UISheetHeader>
               <UISheetClose>
-                <div className="mb-3">
+                <div className="mb-6">
                   <UIButton type="button" size="sm" theme="base" variant="outlined">
                     Close
                   </UIButton>

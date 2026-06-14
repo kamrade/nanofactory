@@ -188,75 +188,73 @@ export function AppHeaderDefaultEditor({
         </EditorFieldRow>
       </Card>
 
-      <Card>
-        <p className="text-sm font-semibold text-text-main">Left: Logo</p>
-        <AssetPicker
-          assets={assets}
-          selectedAssetId={selectedLogoAssetId}
-          onSelect={(assetId) =>
-            onChange({
-              ...block.props,
-              logoAssetId: assetId,
-            })
-          }
-          onClear={() =>
-            onChange({
-              ...block.props,
-              logoAssetId: undefined,
-            })
-          }
-          title="Logo image"
-          description="Select a project asset to render as the header logo."
-          emptyMessage="Upload an image in Project assets first."
-          clearLabel="Remove logo"
-          selectLabel="Use as logo"
-          compact
-        />
-        <AssetPicker
-          assets={assets}
-          selectedAssetId={selectedLogoLightAssetId}
-          onSelect={(assetId) =>
-            onChange({
-              ...block.props,
-              logoLightAssetId: assetId,
-            })
-          }
-          onClear={() =>
-            onChange({
-              ...block.props,
-              logoLightAssetId: undefined,
-            })
-          }
-          title="Light mode logo"
-          description="Optional override for light mode."
-          emptyMessage="Upload an image in Project assets first."
-          clearLabel="Remove light logo"
-          selectLabel="Use in light mode"
-          compact
-        />
-        <AssetPicker
-          assets={assets}
-          selectedAssetId={selectedLogoDarkAssetId}
-          onSelect={(assetId) =>
-            onChange({
-              ...block.props,
-              logoDarkAssetId: assetId,
-            })
-          }
-          onClear={() =>
-            onChange({
-              ...block.props,
-              logoDarkAssetId: undefined,
-            })
-          }
-          title="Dark mode logo"
-          description="Optional override for dark mode."
-          emptyMessage="Upload an image in Project assets first."
-          clearLabel="Remove dark logo"
-          selectLabel="Use in dark mode"
-          compact
-        />
-      </Card>
+    
+      <AssetPicker
+        assets={assets}
+        selectedAssetId={selectedLogoAssetId}
+        onSelect={(assetId) =>
+          onChange({
+            ...block.props,
+            logoAssetId: assetId,
+          })
+        }
+        onClear={() =>
+          onChange({
+            ...block.props,
+            logoAssetId: undefined,
+          })
+        }
+        title="Left: Logo"
+        emptyMessage="Upload an image in Project assets first."
+        clearLabel="Remove logo"
+        selectLabel="Use as logo"
+        compact
+      />
+      <AssetPicker
+        assets={assets}
+        selectedAssetId={selectedLogoLightAssetId}
+        onSelect={(assetId) =>
+          onChange({
+            ...block.props,
+            logoLightAssetId: assetId,
+          })
+        }
+        onClear={() =>
+          onChange({
+            ...block.props,
+            logoLightAssetId: undefined,
+          })
+        }
+        title="Light mode logo"
+        description="Optional override for light mode."
+        emptyMessage="Upload an image in Project assets first."
+        clearLabel="Remove light logo"
+        selectLabel="Use in light mode"
+        compact
+      />
+      <AssetPicker
+        assets={assets}
+        selectedAssetId={selectedLogoDarkAssetId}
+        onSelect={(assetId) =>
+          onChange({
+            ...block.props,
+            logoDarkAssetId: assetId,
+          })
+        }
+        onClear={() =>
+          onChange({
+            ...block.props,
+            logoDarkAssetId: undefined,
+          })
+        }
+        title="Dark mode logo"
+        description="Optional override for dark mode."
+        emptyMessage="Upload an image in Project assets first."
+        clearLabel="Remove dark logo"
+        selectLabel="Use in dark mode"
+        compact
+      />
+    
 
       <div className="grid gap-3 rounded-2xl border border-line bg-surface-alt p-4">
         <p className="text-sm font-semibold text-text-main">Center: Menu</p>
