@@ -3,6 +3,8 @@
 import type { BlockFieldDefinition, BlockEditorProps } from "./types";
 import { EditorFieldRow } from "@/components/editor/editor-field-row";
 import { AssetPicker } from "./asset-picker";
+import { UITextInput } from "@/components/ui/text-input";
+import { Card } from "@/components/ui/card";
 
 function readFieldValue(
   props: Record<string, unknown>,
@@ -46,54 +48,55 @@ export function GenericBlockEditor({
   }
 
   return (
-    <div className="grid gap-4">
-      {definition.fields.map((field) => {
-        const value = readFieldValue(block.props, field);
-        const fieldId = `generic-field-${field.key}`;
+    <Card>
+      <div className="grid gap-4">
+        {definition.fields.map((field) => {
+          const value = readFieldValue(block.props, field);
+          const fieldId = `generic-field-${field.key}`;
 
-        return field.kind === "textarea" || field.kind === "string-list" ? (
-          <EditorFieldRow key={field.key} label={field.label} htmlFor={fieldId}>
-            <div className="grid gap-1.5">
-              <textarea
+          return field.kind === "textarea" || field.kind === "string-list" ? (
+            <EditorFieldRow key={field.key} label={field.label} htmlFor={fieldId}>
+              <div className="grid gap-1.5">
+                <textarea
+                  id={fieldId}
+                  value={value}
+                  rows={field.kind === "string-list" ? 5 : 4}
+                  placeholder={field.placeholder}
+                  onChange={(event) => handleUpdateField(field, event.target.value)}
+                  className="w-full rounded-2xl border border-line bg-surface px-4 py-3 text-sm text-text-main outline-none transition focus:ring-2 focus:ring-focus/50"
+                />
+                {field.kind === "string-list" ? (
+                  <span className="text-xs text-text-muted">Enter one list item per line.</span>
+                ) : null}
+              </div>
+            </EditorFieldRow>
+          ) : (
+            <EditorFieldRow key={field.key} label={field.label} htmlFor={fieldId}>
+              <UITextInput
                 id={fieldId}
+                size="sm"
                 value={value}
-                rows={field.kind === "string-list" ? 5 : 4}
                 placeholder={field.placeholder}
-                onChange={(event) => handleUpdateField(field, event.target.value)}
-                className="w-full rounded-2xl border border-line bg-surface px-4 py-3 text-sm text-text-main outline-none transition focus:ring-2 focus:ring-focus/50"
+                onValueChange={(nextValue) => handleUpdateField(field, nextValue)}
               />
-              {field.kind === "string-list" ? (
-                <span className="text-xs text-text-muted">Enter one list item per line.</span>
-              ) : null}
-            </div>
-          </EditorFieldRow>
-        ) : (
-          <EditorFieldRow key={field.key} label={field.label} htmlFor={fieldId}>
-            <input
-              id={fieldId}
-              type="text"
-              value={value}
-              placeholder={field.placeholder}
-              onChange={(event) => handleUpdateField(field, event.target.value)}
-              className="w-full rounded-2xl border border-line bg-surface px-4 py-3 text-sm text-text-main outline-none transition focus:ring-2 focus:ring-focus/50"
-            />
-          </EditorFieldRow>
-        );
-      })}
+            </EditorFieldRow>
+          );
+        })}
 
-      {definition.supportsAssetSelection ? (
-        <AssetPicker
-          assets={assets}
-          selectedAssetId={
-            typeof block.props.imageAssetId === "string" ? block.props.imageAssetId : undefined
-          }
-          onSelect={handleSelectAsset}
-          onClear={() => handleSelectAsset(undefined)}
-          title="Hero image asset"
-          description="Select one of the uploaded project assets. The editor stores only the asset id in `content_json`."
-          emptyMessage="Upload an asset in the project assets panel below to use it in this block."
-        />
-      ) : null}
-    </div>
+        {definition.supportsAssetSelection ? (
+          <AssetPicker
+            assets={assets}
+            selectedAssetId={
+              typeof block.props.imageAssetId === "string" ? block.props.imageAssetId : undefined
+            }
+            onSelect={handleSelectAsset}
+            onClear={() => handleSelectAsset(undefined)}
+            title="Hero image asset"
+            description="Select one of the uploaded project assets. The editor stores only the asset id in `content_json`."
+            emptyMessage="Upload an asset in the project assets panel below to use it in this block."
+          />
+        ) : null}
+      </div>
+    </Card>
   );
 }

@@ -1,5 +1,6 @@
 import { notFound } from "next/navigation";
 import { ProjectSettings } from "@/components/projects/project-settings";
+import { ThemeRootSync } from "@/components/projects/theme-root-sync";
 import { ProjectWorkspace } from "@/components/projects/project-workspace";
 import { getAssetsByProjectIdForUser } from "@/lib/assets";
 import { requireCurrentUser } from "@/lib/auth/current-user";
@@ -69,6 +70,7 @@ export default async function ProjectPage({ params, searchParams }: ProjectPageP
       data-spacing-scale={project.spacingScale}
       className="min-h-screen bg-bg pb-4 text-text-main"
     >
+      <ThemeRootSync />
       <div className="mx-auto flex w-full flex-col gap-8">
         <ProjectSettings
           project={{

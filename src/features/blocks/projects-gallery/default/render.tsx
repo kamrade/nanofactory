@@ -135,7 +135,7 @@ export function ProjectsGalleryDefaultRender({
           return (
             <article
               key={`${block.id}-project-gallery-${index}`}
-              className="relative overflow-hidden border border-line bg-surface-alt [border-radius:var(--projects-gallery-radius-card)]"
+              className="relative overflow-hidden p-3 border border-line bg-surface-alt [border-radius:var(--projects-gallery-radius-card)]"
             >
               {imageAsset ? resolvedHref ? (
                 <Link href={resolvedHref} className="block transition hover:opacity-95">

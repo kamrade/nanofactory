@@ -2,6 +2,7 @@
 
 import { UIButton } from "@/components/ui/button";
 import { UITextInput } from "@/components/ui/text-input";
+import { Card } from "@/components/ui/card";
 import { EditorFieldRow } from "@/components/editor/editor-field-row";
 import type { BlockEditorProps } from "../../shared/types";
 import { AssetPicker } from "../../shared/asset-picker";
@@ -60,375 +61,376 @@ export function ProjectsGalleryDefaultEditor({ block, assets, onChange }: BlockE
 
   return (
     <div className="grid gap-5">
-      <EditorFieldRow label="Section title" htmlFor="projects-gallery-section-title">
-        <UITextInput
-          id="projects-gallery-section-title"
-          size="sm"
-          value={props.sectionTitle}
-          onValueChange={(value) => update({ sectionTitle: value })}
-          placeholder="Projects"
-        />
-      </EditorFieldRow>
-
-      <EditorFieldRow label="Gallery anchor" htmlFor="projects-gallery-gallery-anchor">
-        <UITextInput
-          id="projects-gallery-gallery-anchor"
-          size="sm"
-          value={props.galleryAnchor ?? ""}
-          onValueChange={(value) =>
-            update({ galleryAnchor: value.trim().length > 0 ? value : undefined })
-          }
-          placeholder="projects"
-        />
-      </EditorFieldRow>
-
-      <div className="grid gap-3 rounded-2xl border border-line bg-surface-alt p-4">
-        <div className="flex items-center justify-between gap-3">
-          <p className="text-sm font-semibold text-text-main">Projects</p>
-          <UIButton
-            type="button"
+      <Card>
+        <EditorFieldRow label="Section title" htmlFor="projects-gallery-section-title">
+          <UITextInput
+            id="projects-gallery-section-title"
             size="sm"
-            theme="base"
-            variant="contained"
-            onClick={() =>
-              update({
-                items: [
-                  ...props.items,
-                  {
-                    projectAnchor: undefined,
-                    galleryAnchor: undefined,
-                    title: "",
-                    description: "",
-                    descriptionMd: "",
-                    price: "",
-                    meta: "",
-                    imageAssetId: undefined,
-                    galleryItems: [],
-                  },
-                ],
-              })
+            value={props.sectionTitle}
+            onValueChange={(value) => update({ sectionTitle: value })}
+            placeholder="Projects"
+          />
+        </EditorFieldRow>
+
+        <EditorFieldRow label="Gallery anchor" htmlFor="projects-gallery-gallery-anchor">
+          <UITextInput
+            id="projects-gallery-gallery-anchor"
+            size="sm"
+            value={props.galleryAnchor ?? ""}
+            onValueChange={(value) =>
+              update({ galleryAnchor: value.trim().length > 0 ? value : undefined })
             }
-          >
-            Add project
-          </UIButton>
-        </div>
+            placeholder="projects"
+          />
+        </EditorFieldRow>
+      </Card>
 
-        {props.items.length === 0 ? (
-          <p className="rounded-xl border border-dashed border-line bg-surface px-4 py-6 text-sm text-text-muted">
-            No projects yet. Add the first project card.
-          </p>
-        ) : (
-          <div className="grid gap-3">
-            {props.items.map((item, projectIndex) => {
-              const fallbackProjectAnchor = buildFallbackProjectAnchor(projectIndex);
-              const fallbackGalleryAnchor = buildFallbackGalleryAnchor(projectIndex);
-              const effectiveProjectAnchor = item.projectAnchor ?? fallbackProjectAnchor;
-              const effectiveGalleryAnchor = item.galleryAnchor ?? fallbackGalleryAnchor;
-
-              return (
-                <article
-                  key={`${block.id}-project-item-${projectIndex}`}
-                  className="grid gap-3 rounded-xl border border-line bg-surface p-3"
-                >
-                  <div className="flex items-center justify-between gap-3">
-                    <p className="text-sm font-medium text-text-main">Project {projectIndex + 1}</p>
-                    <UIButton
-                      type="button"
-                      size="sm"
-                      theme="danger"
-                      variant="outlined"
-                      onClick={() =>
-                        update({
-                          items: props.items.filter((_, idx) => idx !== projectIndex),
-                        })
-                      }
-                    >
-                      Remove
-                    </UIButton>
-                  </div>
-
-                  <EditorFieldRow label="Project anchor" htmlFor={`projects-gallery-project-anchor-${projectIndex}`}>
-                    <UITextInput
-                      id={`projects-gallery-project-anchor-${projectIndex}`}
-                      size="sm"
-                      value={item.projectAnchor ?? ""}
-                      onValueChange={(value) =>
-                        updateProjectItem(projectIndex, {
-                          ...item,
-                          projectAnchor: value.trim().length > 0 ? value : undefined,
-                        })
-                      }
-                      placeholder={fallbackProjectAnchor}
-                    />
-                  </EditorFieldRow>
-
-                  <EditorFieldRow
-                    label="Nested gallery anchor"
-                    htmlFor={`projects-gallery-nested-gallery-anchor-${projectIndex}`}
-                  >
-                    <UITextInput
-                      id={`projects-gallery-nested-gallery-anchor-${projectIndex}`}
-                      size="sm"
-                      value={item.galleryAnchor ?? ""}
-                      onValueChange={(value) =>
-                        updateProjectItem(projectIndex, {
-                          ...item,
-                          galleryAnchor: value.trim().length > 0 ? value : undefined,
-                        })
-                      }
-                      placeholder={fallbackGalleryAnchor}
-                    />
-                  </EditorFieldRow>
-
-                  <EditorFieldRow
-                    label="Title (optional)"
-                    htmlFor={`projects-gallery-title-${projectIndex}`}
-                  >
-                    <UITextInput
-                      id={`projects-gallery-title-${projectIndex}`}
-                      size="sm"
-                      value={item.title}
-                      onValueChange={(value) =>
-                        updateProjectItem(projectIndex, {
-                          ...item,
-                          title: value,
-                        })
-                      }
-                      placeholder="Project title"
-                    />
-                  </EditorFieldRow>
-
-                  <div className="grid gap-1.5 md:flex md:items-start md:gap-4">
-                    <span className="pt-1 text-sm font-medium text-text-main md:w-44 md:shrink-0">
-                      Description (plain, optional)
-                    </span>
-                    <div className="min-w-0 flex-1">
-                    <textarea
-                      value={item.description}
-                      rows={3}
-                      onChange={(event) =>
-                        updateProjectItem(projectIndex, {
-                          ...item,
-                          description: event.target.value,
-                        })
-                      }
-                      className="rounded-xl border border-line bg-surface px-3 py-2 text-sm text-text-main outline-none transition focus:ring-2 focus:ring-focus/50"
-                      placeholder="Project card description"
-                    />
-                    </div>
-                  </div>
-
-                  <div className="grid gap-1.5 md:flex md:items-start md:gap-4">
-                    <span className="pt-1 text-sm font-medium text-text-main md:w-44 md:shrink-0">
-                      Description (Markdown, optional)
-                    </span>
-                    <div className="min-w-0 flex-1">
-                    <textarea
-                      value={item.descriptionMd}
-                      rows={5}
-                      onChange={(event) =>
-                        updateProjectItem(projectIndex, {
-                          ...item,
-                          descriptionMd: event.target.value,
-                        })
-                      }
-                      className="rounded-xl border border-line bg-surface px-3 py-2 text-sm text-text-main outline-none transition focus:ring-2 focus:ring-focus/50"
-                      placeholder="Project details in markdown for inside page"
-                    />
-                      <span className="text-xs text-text-muted">
-                        Supports basic markdown: headings (<code>#</code>), lists, links, quotes, and inline/code blocks.
-                      </span>
-                    </div>
-                  </div>
-
-                  <EditorFieldRow label="Price (optional)" htmlFor={`projects-gallery-price-${projectIndex}`}>
-                    <UITextInput
-                      id={`projects-gallery-price-${projectIndex}`}
-                      size="sm"
-                      value={item.price}
-                      onValueChange={(value) =>
-                        updateProjectItem(projectIndex, {
-                          ...item,
-                          price: value,
-                        })
-                      }
-                      placeholder="$120"
-                    />
-                  </EditorFieldRow>
-
-                  <EditorFieldRow label="Meta (optional)" htmlFor={`projects-gallery-meta-${projectIndex}`}>
-                    <UITextInput
-                      id={`projects-gallery-meta-${projectIndex}`}
-                      size="sm"
-                      value={item.meta}
-                      onValueChange={(value) =>
-                        updateProjectItem(projectIndex, {
-                          ...item,
-                          meta: value,
-                        })
-                      }
-                      placeholder="Limited edition"
-                    />
-                  </EditorFieldRow>
-
-                  <AssetPicker
-                    assets={assets}
-                    selectedAssetId={item.imageAssetId}
-                    onSelect={(assetId) =>
-                      updateProjectItem(projectIndex, {
-                        ...item,
-                        imageAssetId: assetId,
-                      })
-                    }
-                    onClear={() =>
-                      updateProjectItem(projectIndex, {
-                        ...item,
-                        imageAssetId: undefined,
-                      })
-                    }
-                    title="Project cover image"
-                    description="Image for project card preview."
-                    emptyMessage="Upload an image in Project assets first."
-                    clearLabel="Remove image"
-                    selectLabel="Use image"
-                    layout="grid"
-                    compact
-                  />
-
-                  <div className="grid gap-3 rounded-xl border border-line bg-surface-alt p-3">
-                    <div className="flex items-center justify-between gap-3">
-                      <p className="text-sm font-medium text-text-main">Nested gallery entries</p>
-                      <div className="flex items-center gap-2">
-                        <UIButton
-                          type="button"
-                          size="sm"
-                          theme="base"
-                          variant="outlined"
-                          onClick={() =>
-                            updateProjectItem(projectIndex, addMarkdownEntry(item))
-                          }
-                        >
-                          Add markdown
-                        </UIButton>
-                        <UIButton
-                          type="button"
-                          size="sm"
-                          theme="base"
-                          variant="contained"
-                          onClick={() =>
-                            updateProjectItem(projectIndex, addImageEntry(item))
-                          }
-                        >
-                          Add entry (image)
-                        </UIButton>
-                      </div>
-                    </div>
-
-                    {item.galleryItems.length === 0 ? (
-                      <p className="text-sm text-text-muted">No nested gallery items yet.</p>
-                    ) : (
-                      <div className="grid gap-3">
-                        {item.galleryItems.map((galleryItem, entryIndex) => (
-                          <article
-                            key={`${block.id}-project-${projectIndex}-entry-${entryIndex}`}
-                            className="grid gap-2 rounded-lg border border-line bg-surface p-3"
-                          >
-                            <div className="flex items-center justify-between gap-3">
-                              <p className="text-sm font-medium text-text-main">
-                                {galleryItem.kind === "markdown" ? "Markdown entry" : "Image entry"} {entryIndex + 1}
-                              </p>
-                              <UIButton
-                                type="button"
-                                size="sm"
-                                theme="danger"
-                                variant="outlined"
-                                onClick={() =>
-                                  updateProjectItem(projectIndex, removeEntry(item, entryIndex))
-                                }
-                              >
-                                Remove
-                              </UIButton>
-                            </div>
-
-                            <EditorFieldRow
-                              label="Item anchor"
-                              htmlFor={`projects-gallery-entry-anchor-${projectIndex}-${entryIndex}`}
-                            >
-                              <UITextInput
-                                id={`projects-gallery-entry-anchor-${projectIndex}-${entryIndex}`}
-                                size="sm"
-                                value={galleryItem.entryAnchor ?? ""}
-                                onValueChange={(value) =>
-                                  updateGalleryItem(projectIndex, entryIndex, {
-                                    ...galleryItem,
-                                    entryAnchor:
-                                      value.trim().length > 0 ? value : undefined,
-                                  })
-                                }
-                                placeholder={buildFallbackEntryAnchor(
-                                  effectiveProjectAnchor,
-                                  effectiveGalleryAnchor,
-                                  entryIndex
-                                )}
-                              />
-                            </EditorFieldRow>
-
-                            {galleryItem.kind === "image" ? (
-                              <AssetPicker
-                                assets={assets}
-                                selectedAssetId={galleryItem.assetId}
-                                onSelect={(assetId) =>
-                                  updateGalleryItem(projectIndex, entryIndex, {
-                                    ...galleryItem,
-                                    assetId,
-                                  })
-                                }
-                                onClear={() =>
-                                  updateGalleryItem(projectIndex, entryIndex, {
-                                    ...galleryItem,
-                                    assetId: undefined,
-                                  })
-                                }
-                                title="Entry image"
-                                description="Choose image for nested gallery entry."
-                                emptyMessage="Upload an image in Project assets first."
-                                clearLabel="Remove image"
-                                selectLabel="Use image"
-                                layout="grid"
-                                compact
-                              />
-                            ) : (
-                              <div className="grid gap-1.5 md:flex md:items-start md:gap-4">
-                                <span className="pt-1 text-sm font-medium text-text-main md:w-44 md:shrink-0">
-                                  Markdown content
-                                </span>
-                                <div className="min-w-0 flex-1">
-                                <textarea
-                                  value={galleryItem.contentMd}
-                                  rows={6}
-                                  onChange={(event) =>
-                                    updateGalleryItem(projectIndex, entryIndex, {
-                                      ...galleryItem,
-                                      contentMd: event.target.value,
-                                    })
-                                  }
-                                  className="rounded-xl border border-line bg-surface px-3 py-2 text-sm text-text-main outline-none transition focus:ring-2 focus:ring-focus/50"
-                                  placeholder="Markdown for this nested item"
-                                />
-                                </div>
-                              </div>
-                            )}
-                          </article>
-                        ))}
-                      </div>
-                    )}
-                  </div>
-                </article>
-              );
-            })}
-          </div>
-        )}
+    
+      <div className="flex items-center justify-between gap-3">
+        <p className="text-sm font-semibold text-text-main">Projects</p>
+        <UIButton
+          type="button"
+          size="sm"
+          theme="base"
+          variant="contained"
+          onClick={() =>
+            update({
+              items: [
+                ...props.items,
+                {
+                  projectAnchor: undefined,
+                  galleryAnchor: undefined,
+                  title: "",
+                  description: "",
+                  descriptionMd: "",
+                  price: "",
+                  meta: "",
+                  imageAssetId: undefined,
+                  galleryItems: [],
+                },
+              ],
+            })
+          }
+        >
+          Add project
+        </UIButton>
       </div>
+
+      {props.items.length === 0 ? (
+        <p className="rounded-xl border border-dashed border-line bg-surface px-4 py-6 text-sm text-text-muted">
+          No projects yet. Add the first project card.
+        </p>
+      ) : (
+        <div className="grid gap-3">
+          {props.items.map((item, projectIndex) => {
+            const fallbackProjectAnchor = buildFallbackProjectAnchor(projectIndex);
+            const fallbackGalleryAnchor = buildFallbackGalleryAnchor(projectIndex);
+            const effectiveProjectAnchor = item.projectAnchor ?? fallbackProjectAnchor;
+            const effectiveGalleryAnchor = item.galleryAnchor ?? fallbackGalleryAnchor;
+
+            return (
+              <article
+                key={`${block.id}-project-item-${projectIndex}`}
+                className="grid gap-3 rounded-xl border border-line bg-surface p-3"
+              >
+                <div className="flex items-center justify-between gap-3">
+                  <p className="text-sm font-medium text-text-main">Project {projectIndex + 1}</p>
+                  <UIButton
+                    type="button"
+                    size="sm"
+                    theme="danger"
+                    variant="outlined"
+                    onClick={() =>
+                      update({
+                        items: props.items.filter((_, idx) => idx !== projectIndex),
+                      })
+                    }
+                  >
+                    Remove
+                  </UIButton>
+                </div>
+
+                <EditorFieldRow label="Project anchor" htmlFor={`projects-gallery-project-anchor-${projectIndex}`}>
+                  <UITextInput
+                    id={`projects-gallery-project-anchor-${projectIndex}`}
+                    size="sm"
+                    value={item.projectAnchor ?? ""}
+                    onValueChange={(value) =>
+                      updateProjectItem(projectIndex, {
+                        ...item,
+                        projectAnchor: value.trim().length > 0 ? value : undefined,
+                      })
+                    }
+                    placeholder={fallbackProjectAnchor}
+                  />
+                </EditorFieldRow>
+
+                <EditorFieldRow
+                  label="Nested gallery anchor"
+                  htmlFor={`projects-gallery-nested-gallery-anchor-${projectIndex}`}
+                >
+                  <UITextInput
+                    id={`projects-gallery-nested-gallery-anchor-${projectIndex}`}
+                    size="sm"
+                    value={item.galleryAnchor ?? ""}
+                    onValueChange={(value) =>
+                      updateProjectItem(projectIndex, {
+                        ...item,
+                        galleryAnchor: value.trim().length > 0 ? value : undefined,
+                      })
+                    }
+                    placeholder={fallbackGalleryAnchor}
+                  />
+                </EditorFieldRow>
+
+                <EditorFieldRow
+                  label="Title (optional)"
+                  htmlFor={`projects-gallery-title-${projectIndex}`}
+                >
+                  <UITextInput
+                    id={`projects-gallery-title-${projectIndex}`}
+                    size="sm"
+                    value={item.title}
+                    onValueChange={(value) =>
+                      updateProjectItem(projectIndex, {
+                        ...item,
+                        title: value,
+                      })
+                    }
+                    placeholder="Project title"
+                  />
+                </EditorFieldRow>
+
+                <div className="grid gap-1.5 md:flex md:items-start md:gap-4">
+                  <span className="pt-1 text-sm font-medium text-text-main md:w-44 md:shrink-0">
+                    Description (plain, optional)
+                  </span>
+                  <div className="min-w-0 flex-1">
+                  <textarea
+                    value={item.description}
+                    rows={3}
+                    onChange={(event) =>
+                      updateProjectItem(projectIndex, {
+                        ...item,
+                        description: event.target.value,
+                      })
+                    }
+                    className="w-full rounded-xl border border-line bg-surface px-3 py-2 text-sm text-text-main outline-none transition focus:ring-2 focus:ring-focus/50"
+                    placeholder="Project card description"
+                  />
+                  </div>
+                </div>
+
+                <div className="grid gap-1.5 md:flex md:items-start md:gap-4">
+                  <span className="pt-1 text-sm font-medium text-text-main md:w-44 md:shrink-0">
+                    Description (Markdown, optional)
+                  </span>
+                  <div className="min-w-0 flex-1">
+                  <textarea
+                    value={item.descriptionMd}
+                    rows={5}
+                    onChange={(event) =>
+                      updateProjectItem(projectIndex, {
+                        ...item,
+                        descriptionMd: event.target.value,
+                      })
+                    }
+                    className="w-full rounded-xl border border-line bg-surface px-3 py-2 text-sm text-text-main outline-none transition focus:ring-2 focus:ring-focus/50"
+                    placeholder="Project details in markdown for inside page"
+                  />
+                    <span className="text-xs text-text-muted">
+                      Supports basic markdown: headings (<code>#</code>), lists, links, quotes, and inline/code blocks.
+                    </span>
+                  </div>
+                </div>
+
+                <EditorFieldRow label="Price (optional)" htmlFor={`projects-gallery-price-${projectIndex}`}>
+                  <UITextInput
+                    id={`projects-gallery-price-${projectIndex}`}
+                    size="sm"
+                    value={item.price}
+                    onValueChange={(value) =>
+                      updateProjectItem(projectIndex, {
+                        ...item,
+                        price: value,
+                      })
+                    }
+                    placeholder="$120"
+                  />
+                </EditorFieldRow>
+
+                <EditorFieldRow label="Meta (optional)" htmlFor={`projects-gallery-meta-${projectIndex}`}>
+                  <UITextInput
+                    id={`projects-gallery-meta-${projectIndex}`}
+                    size="sm"
+                    value={item.meta}
+                    onValueChange={(value) =>
+                      updateProjectItem(projectIndex, {
+                        ...item,
+                        meta: value,
+                      })
+                    }
+                    placeholder="Limited edition"
+                  />
+                </EditorFieldRow>
+
+                <AssetPicker
+                  assets={assets}
+                  selectedAssetId={item.imageAssetId}
+                  onSelect={(assetId) =>
+                    updateProjectItem(projectIndex, {
+                      ...item,
+                      imageAssetId: assetId,
+                    })
+                  }
+                  onClear={() =>
+                    updateProjectItem(projectIndex, {
+                      ...item,
+                      imageAssetId: undefined,
+                    })
+                  }
+                  title="Project cover image"
+                  description="Image for project card preview."
+                  emptyMessage="Upload an image in Project assets first."
+                  clearLabel="Remove image"
+                  selectLabel="Use image"
+                  layout="grid"
+                  compact
+                />
+
+                <div className="grid gap-3 rounded-xl border border-line bg-surface-alt p-3">
+                  <div className="flex items-center justify-between gap-3">
+                    <p className="text-sm font-medium text-text-main">Nested gallery entries</p>
+                    <div className="flex items-center gap-2">
+                      <UIButton
+                        type="button"
+                        size="sm"
+                        theme="base"
+                        variant="outlined"
+                        onClick={() =>
+                          updateProjectItem(projectIndex, addMarkdownEntry(item))
+                        }
+                      >
+                        Add markdown
+                      </UIButton>
+                      <UIButton
+                        type="button"
+                        size="sm"
+                        theme="base"
+                        variant="contained"
+                        onClick={() =>
+                          updateProjectItem(projectIndex, addImageEntry(item))
+                        }
+                      >
+                        Add entry (image)
+                      </UIButton>
+                    </div>
+                  </div>
+
+                  {item.galleryItems.length === 0 ? (
+                    <p className="text-sm text-text-muted">No nested gallery items yet.</p>
+                  ) : (
+                    <div className="grid gap-3">
+                      {item.galleryItems.map((galleryItem, entryIndex) => (
+                        <article
+                          key={`${block.id}-project-${projectIndex}-entry-${entryIndex}`}
+                          className="grid gap-2 rounded-lg border border-line bg-surface p-3"
+                        >
+                          <div className="flex items-center justify-between gap-3">
+                            <p className="text-sm font-medium text-text-main">
+                              {galleryItem.kind === "markdown" ? "Markdown entry" : "Image entry"} {entryIndex + 1}
+                            </p>
+                            <UIButton
+                              type="button"
+                              size="sm"
+                              theme="danger"
+                              variant="outlined"
+                              onClick={() =>
+                                updateProjectItem(projectIndex, removeEntry(item, entryIndex))
+                              }
+                            >
+                              Remove
+                            </UIButton>
+                          </div>
+
+                          <EditorFieldRow
+                            label="Item anchor"
+                            htmlFor={`projects-gallery-entry-anchor-${projectIndex}-${entryIndex}`}
+                          >
+                            <UITextInput
+                              id={`projects-gallery-entry-anchor-${projectIndex}-${entryIndex}`}
+                              size="sm"
+                              value={galleryItem.entryAnchor ?? ""}
+                              onValueChange={(value) =>
+                                updateGalleryItem(projectIndex, entryIndex, {
+                                  ...galleryItem,
+                                  entryAnchor:
+                                    value.trim().length > 0 ? value : undefined,
+                                })
+                              }
+                              placeholder={buildFallbackEntryAnchor(
+                                effectiveProjectAnchor,
+                                effectiveGalleryAnchor,
+                                entryIndex
+                              )}
+                            />
+                          </EditorFieldRow>
+
+                          {galleryItem.kind === "image" ? (
+                            <AssetPicker
+                              assets={assets}
+                              selectedAssetId={galleryItem.assetId}
+                              onSelect={(assetId) =>
+                                updateGalleryItem(projectIndex, entryIndex, {
+                                  ...galleryItem,
+                                  assetId,
+                                })
+                              }
+                              onClear={() =>
+                                updateGalleryItem(projectIndex, entryIndex, {
+                                  ...galleryItem,
+                                  assetId: undefined,
+                                })
+                              }
+                              title="Entry image"
+                              description="Choose image for nested gallery entry."
+                              emptyMessage="Upload an image in Project assets first."
+                              clearLabel="Remove image"
+                              selectLabel="Use image"
+                              layout="grid"
+                              compact
+                            />
+                          ) : (
+                            <div className="grid gap-1.5 md:flex md:items-start md:gap-4">
+                              <span className="pt-1 text-sm font-medium text-text-main md:w-44 md:shrink-0">
+                                Markdown content
+                              </span>
+                              <div className="min-w-0 flex-1">
+                              <textarea
+                                value={galleryItem.contentMd}
+                                rows={6}
+                                onChange={(event) =>
+                                  updateGalleryItem(projectIndex, entryIndex, {
+                                    ...galleryItem,
+                                    contentMd: event.target.value,
+                                  })
+                                }
+                                className="rounded-xl border border-line bg-surface px-3 py-2 text-sm text-text-main outline-none transition focus:ring-2 focus:ring-focus/50"
+                                placeholder="Markdown for this nested item"
+                              />
+                              </div>
+                            </div>
+                          )}
+                        </article>
+                      ))}
+                    </div>
+                  )}
+                </div>
+              </article>
+            );
+          })}
+        </div>
+      )}
     </div>
   );
 }
