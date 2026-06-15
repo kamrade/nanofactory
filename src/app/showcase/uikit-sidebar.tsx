@@ -89,10 +89,7 @@ function UikitSidebarList({
 }
 
 export function UikitSidebar({ sections }: UikitSidebarProps) {
-  const [activeSectionId, setActiveSectionId] = useState(() => {
-    const hash = typeof window !== "undefined" ? window.location.hash.slice(1) : "";
-    return hash && sections.some((section) => section.id === hash) ? hash : sections[0]?.id ?? "";
-  });
+  const [activeSectionId, setActiveSectionId] = useState(() => sections[0]?.id ?? "");
   const [mobileOpen, setMobileOpen] = useState(false);
 
   const sectionIds = useMemo(() => sections.map((section) => section.id), [sections]);
@@ -109,6 +106,7 @@ export function UikitSidebar({ sections }: UikitSidebarProps) {
     const currentHash = window.location.hash.slice(1);
     if (currentHash && sectionIds.includes(currentHash)) {
       window.requestAnimationFrame(() => {
+        setActiveSectionId(currentHash);
         document.getElementById(currentHash)?.scrollIntoView({ behavior: "auto", block: "start" });
       });
     }

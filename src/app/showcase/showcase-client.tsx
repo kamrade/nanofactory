@@ -5,6 +5,7 @@ import { useEffect, useState } from "react";
 import { DialogDemoCard, MarkdownDemoCard, ModalDemoCard } from "@/app/showcase/demo-cards";
 import {
   ControlsAndMenusSection,
+  BorderlessFormLayoutSection,
   FeedbackAndSheetSection,
   FormLayoutSection,
   InputsSection,
@@ -116,6 +117,7 @@ export function ShowcaseClient({
                 <ControlsAndMenusSection uiSize={uiSize} />
                 <InputsSection uiSize={uiSize} />
                 <FormLayoutSection uiSize={uiSize} />
+                <BorderlessFormLayoutSection uiSize={uiSize} />
                 <FeedbackAndSheetSection uiSize={uiSize} showToast={showToast} clearToasts={clearToasts} />
                 <DialogDemoCard uiSize={uiSize} />
                 <ModalDemoCard uiSize={uiSize} />

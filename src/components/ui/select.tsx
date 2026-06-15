@@ -27,6 +27,7 @@ export type UISelectProps = {
   clearable?: boolean;
   invalid?: boolean;
   validationState?: ValidationState;
+  borderless?: boolean;
   size?: UISelectSize;
   prefix?: ReactNode;
   suffix?: ReactNode;
@@ -91,6 +92,7 @@ export function UISelect({
   clearable = false,
   invalid = false,
   validationState = "default",
+  borderless = false,
   size = "lg",
   prefix,
   suffix,
@@ -131,7 +133,7 @@ export function UISelect({
   const sizeClasses =
     size === "sm"
       ? {
-          container: "h-7 rounded-lg px-2 gap-1.5",
+          container: borderless ? "h-7 rounded-lg gap-1.5" : "h-7 rounded-lg px-2 gap-1.5",
           icon: "h-3.5 w-3.5",
           clear: "h-5 w-5",
           text: "text-sm",
@@ -140,7 +142,7 @@ export function UISelect({
           searchInput: "h-7 text-sm",
         }
       : {
-          container: "h-10 rounded-xl px-3 gap-2",
+          container: borderless ? "h-10 rounded-xl gap-2" : "h-10 rounded-xl px-3 gap-2",
           icon: "h-4 w-4",
           clear: "h-6 w-6",
           text: "text-sm",
@@ -306,17 +308,21 @@ export function UISelect({
                 : undefined
             }
             className={cx(
-              "flex w-full items-center border text-text-main outline-none transition",
-              "focus:ring-2 focus:ring-focus/50 focus:ring-offset-0 focus:ring-offset-bg",
+              "flex w-full items-center text-text-main outline-none transition",
+              !borderless && "focus:ring-2 focus:ring-focus/50 focus:ring-offset-0 focus:ring-offset-bg",
               "focus:outline-none focus-visible:outline-none",
               sizeClasses.container,
               sizeClasses.text,
               disabled && "cursor-not-allowed opacity-60",
-              isInvalid
-                ? "border-danger-line bg-danger-100"
-                : isSuccess
-                  ? "border-primary-line bg-surface"
-                  : "border-neutral-line bg-surface",
+              borderless
+                ? isInvalid
+                  ? "bg-danger-100"
+                  : "bg-surface"
+                : isInvalid
+                  ? "border border-danger-line bg-danger-100"
+                  : isSuccess
+                    ? "border border-primary-line bg-surface"
+                    : "border border-neutral-line bg-surface",
               !isInvalid && readOnly && "bg-surface-alt",
               className
             )}
@@ -476,7 +482,8 @@ export function UISelect({
           role="listbox"
           aria-label={ariaLabel}
           className={cx(
-            "flex min-w-44 max-h-[min(24rem,calc(100vh-2rem))] flex-col gap-[2px] overflow-y-auto rounded-xl border border-neutral-line bg-surface shadow-[0_10px_30px_rgba(0,0,0,0.12)]",
+            "flex min-w-44 max-h-[min(24rem,calc(100vh-2rem))] flex-col gap-[2px] overflow-y-auto rounded-xl bg-surface shadow-[0_10px_30px_rgba(0,0,0,0.12)]",
+            !borderless && "border border-neutral-line",
             sizeClasses.listPadding
           )}
           onKeyDown={(event) => {

@@ -61,6 +61,15 @@ export function InputsSection({ uiSize }: { uiSize: UiSize }) {
             <div className="max-w-xl">
               <UITextInput
                 size={uiSize}
+                placeholder="Borderless input"
+                defaultValue="Borderless example"
+                borderless
+              />
+            </div>
+
+            <div className="max-w-xl">
+              <UITextInput
+                size={uiSize}
                 type="email"
                 value={emailValue}
                 onValueChange={setEmailValue}
@@ -112,6 +121,20 @@ export function InputsSection({ uiSize }: { uiSize: UiSize }) {
                   { value: "svelte", label: "Svelte", textValue: "svelte" },
                   { value: "vue", label: "Vue", textValue: "vue" },
                   { value: "solid", label: "Solid", textValue: "solid", disabled: true },
+                ]}
+              />
+            </div>
+
+            <div className="max-w-xl">
+              <UISelect
+                size={uiSize}
+                defaultValue="nextjs"
+                placeholder="Borderless select"
+                borderless
+                options={[
+                  { value: "react", label: "React", textValue: "react" },
+                  { value: "nextjs", label: "Next.js", textValue: "next js" },
+                  { value: "svelte", label: "Svelte", textValue: "svelte" },
                 ]}
               />
             </div>

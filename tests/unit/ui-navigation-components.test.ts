@@ -43,4 +43,23 @@ describe("UI navigation components", () => {
     expect(html).toContain("Light");
     expect(html).toContain("Dark");
   });
+
+  it("renders borderless segmented control without outer border", () => {
+    const html = renderToStaticMarkup(
+      createElement(UISegmentedControl, {
+        ariaLabel: "Mode",
+        value: "light",
+        borderless: true,
+        onValueChange: () => undefined,
+        options: [
+          { value: "light", label: "Light" },
+          { value: "dark", label: "Dark" },
+        ],
+      })
+    );
+
+    expect(html).not.toContain("border-line");
+    expect(html).not.toContain("focus:ring-2");
+    expect(html).toContain("bg-neutral-100");
+  });
 });

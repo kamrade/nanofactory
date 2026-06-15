@@ -61,6 +61,22 @@ describe("UISelect", () => {
     expect(html).toContain("bg-danger-100");
   });
 
+  it("renders without borders when borderless is enabled", () => {
+    const html = renderToStaticMarkup(
+      createElement(UISelect, {
+        borderless: true,
+        defaultValue: "react",
+        options: [{ value: "react", label: "React" }],
+      })
+    );
+
+    expect(html).not.toContain("px-2");
+    expect(html).not.toContain("px-3");
+    expect(html).not.toContain("border-neutral-line");
+    expect(html).not.toContain("border-danger-line");
+    expect(html).not.toContain("border-primary-line");
+  });
+
   it("renders clear button slot when clearable is enabled", () => {
     const html = renderToStaticMarkup(
       createElement(UISelect, {

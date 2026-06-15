@@ -17,6 +17,7 @@ export const uikitSectionNavItems: UikitSectionNavItem[] = [
   { id: "inputs-multiselect-dropdown", label: "Inputs / MultiSelect Dropdown" },
   { id: "inputs-autocomplete", label: "Inputs / Autocomplete" },
   { id: "form-layout", label: "Form Layout" },
+  { id: "form-layout-borderless-inputs", label: "Form Layout / Borderless Inputs" },
   { id: "feedback-toast", label: "Feedback / Toast" },
   { id: "feedback-sheet", label: "Feedback / Sheet" },
   { id: "dialog", label: "Dialog" },

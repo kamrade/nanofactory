@@ -5,6 +5,7 @@ import { cx } from "@/lib/cn";
 
 export type UICheckboxProps = Omit<InputHTMLAttributes<HTMLInputElement>, "size" | "type"> & {
   label?: ReactNode;
+  size?: "sm" | "lg";
 };
 
 export function UICheckbox({
@@ -12,6 +13,7 @@ export function UICheckbox({
   className,
   label,
   disabled,
+  size = "lg",
   ...props
 }: UICheckboxProps) {
   const generatedId = useId();
@@ -31,14 +33,14 @@ export function UICheckbox({
         className={cx(
           "inline-flex shrink-0 items-center justify-center border transition",
           "peer-focus-visible:ring-2 peer-focus-visible:ring-focus peer-focus-visible:ring-offset-0 peer-focus-visible:ring-offset-bg",
-          "h-5 w-5 rounded-lg",
+          size === "sm" ? "h-4 w-4 rounded-md" : "h-5 w-5 rounded-lg",
           "border-neutral-line bg-surface text-transparent peer-checked:border-transparent peer-checked:bg-primary-100 peer-checked:text-text-inverted-main"
         )}
         aria-hidden
       >
         <svg
           viewBox="0 0 16 16"
-          className="h-3 w-3 transition"
+          className={cx("transition", size === "sm" ? "h-2.5 w-2.5" : "h-3 w-3")}
           fill="none"
           stroke="currentColor"
           strokeWidth="2.25"

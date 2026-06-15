@@ -26,6 +26,18 @@ describe("UITextInput", () => {
     expect(html).toContain("border-danger-line");
   });
 
+  it("renders without borders when borderless is enabled", () => {
+    const html = renderToStaticMarkup(
+      createElement(UITextInput, { borderless: true, defaultValue: "borderless" })
+    );
+
+    expect(html).not.toContain("px-2");
+    expect(html).not.toContain("px-3");
+    expect(html).not.toContain("border-line");
+    expect(html).not.toContain("border-danger-line");
+    expect(html).not.toContain("border-primary-line");
+  });
+
   it("renders clear button slot when clearable is enabled", () => {
     const html = renderToStaticMarkup(
       createElement(UITextInput, { clearable: true, defaultValue: "abc" })

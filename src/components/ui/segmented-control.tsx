@@ -13,6 +13,7 @@ export type UISegmentedControlProps<T extends string> = {
   options: UISegmentedControlOption<T>[];
   onValueChange?: (value: T) => void;
   size?: "sm" | "lg";
+  borderless?: boolean;
   ariaLabel?: string;
   className?: string;
 };
@@ -22,6 +23,7 @@ export function UISegmentedControl<T extends string>({
   options,
   onValueChange,
   size = "sm",
+  borderless = false,
   ariaLabel = "Segmented control",
   className,
 }: UISegmentedControlProps<T>) {
@@ -70,7 +72,8 @@ export function UISegmentedControl<T extends string>({
       role="radiogroup"
       aria-label={ariaLabel}
       className={cx(
-        "inline-flex items-center gap-1 border border-line bg-surface",
+        "inline-flex items-center gap-1",
+        borderless ? "bg-transparent" : "border border-line bg-surface",
         sizeClasses.group,
         className
       )}
@@ -94,11 +97,14 @@ export function UISegmentedControl<T extends string>({
             className={cx(
               "inline-flex h-full items-center justify-center font-medium transition outline-none",
               sizeClasses.item,
-              "focus:ring-2 focus:ring-focus/50 focus:ring-offset-0 focus:ring-offset-bg",
-              "focus-visible:ring-2 focus-visible:ring-focus/50 focus-visible:ring-offset-0 focus-visible:ring-offset-bg",
+              !borderless && "focus:ring-2 focus:ring-focus/50 focus:ring-offset-0 focus:ring-offset-bg",
+              !borderless &&
+                "focus-visible:ring-2 focus-visible:ring-focus/50 focus-visible:ring-offset-0 focus-visible:ring-offset-bg",
               option.disabled && "cursor-not-allowed opacity-50",
               active
-                ? "border border-transparent bg-surface-alt text-text-main"
+                ? borderless
+                  ? "border border-transparent bg-neutral-100 text-text-main"
+                  : "border border-transparent bg-surface-alt text-text-main"
                 : "border border-transparent text-text-muted hover:bg-surface-alt hover:text-text-main active:bg-neutral-100"
             )}
           >

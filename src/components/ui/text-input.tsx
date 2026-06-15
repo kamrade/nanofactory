@@ -19,6 +19,7 @@ export type UITextInputProps = Omit<InputHTMLAttributes<HTMLInputElement>, "size
   size?: UITextInputSize;
   invalid?: boolean;
   validationState?: ValidationState;
+  borderless?: boolean;
   prefix?: ReactNode;
   suffix?: ReactNode;
   clearable?: boolean;
@@ -41,6 +42,7 @@ export const UITextInput = forwardRef<HTMLInputElement, UITextInputProps>(functi
     readOnly,
     invalid = false,
     validationState = "default",
+    borderless = false,
     prefix,
     suffix,
     clearable = false,
@@ -117,7 +119,7 @@ export const UITextInput = forwardRef<HTMLInputElement, UITextInputProps>(functi
   const sizeClasses =
     size === "sm"
       ? {
-          container: "h-7 rounded-lg px-2",
+          container: borderless ? "h-7 rounded-lg" : "h-7 rounded-lg px-2",
           icon: "h-3.5 w-3.5",
           clearButton: "h-5 w-5",
           toggleButton: "h-5 min-w-10 px-1.5 text-[11px]",
@@ -125,7 +127,7 @@ export const UITextInput = forwardRef<HTMLInputElement, UITextInputProps>(functi
           gap: "gap-1.5",
         }
       : {
-          container: "h-10 rounded-xl px-3",
+          container: borderless ? "h-10 rounded-xl" : "h-10 rounded-xl px-3",
           icon: "h-4 w-4",
           clearButton: "h-6 w-6",
           toggleButton: "h-6 min-w-12 px-2 text-xs",
@@ -137,16 +139,22 @@ export const UITextInput = forwardRef<HTMLInputElement, UITextInputProps>(functi
     <div className="w-full">
       <div
         className={cx(
-          "flex w-full items-center border transition",
+          "flex w-full items-center transition",
           sizeClasses.container,
           sizeClasses.gap,
-          "focus-within:ring-2 focus-within:ring-focus/50 focus-within:ring-offset-0 focus-within:ring-offset-bg",
+          !borderless && "focus-within:ring-2 focus-within:ring-focus/50 focus-within:ring-offset-0 focus-within:ring-offset-bg",
           disabled && "cursor-not-allowed opacity-60",
-          isInvalid
-            ? "border-danger-line bg-danger-100"
-            : isSuccess
-              ? "border-primary-line bg-surface"
-              : "border-line bg-surface",
+          borderless
+            ? isInvalid
+              ? "bg-danger-100"
+              : isSuccess
+                ? "bg-surface"
+                : "bg-surface"
+            : isInvalid
+              ? "border border-danger-line bg-danger-100"
+              : isSuccess
+                ? "border border-primary-line bg-surface"
+                : "border border-line bg-surface",
           !isInvalid && readOnly && "bg-surface-alt",
           className
         )}
@@ -162,7 +170,6 @@ export const UITextInput = forwardRef<HTMLInputElement, UITextInputProps>(functi
           ref={inputRef}
           type={resolvedType}
           value={isControlled ? value : uncontrolledValue}
-          defaultValue={isControlled ? undefined : defaultValue}
           disabled={disabled}
           readOnly={readOnly}
           aria-invalid={isInvalid || undefined}

@@ -6,6 +6,7 @@ export type UISwitcherProps = Omit<ButtonHTMLAttributes<HTMLButtonElement>, "onC
   checked: boolean;
   onCheckedChange?: (checked: boolean) => void;
   label?: ReactNode;
+  size?: "sm" | "lg";
 };
 
 export function UISwitcher({
@@ -14,6 +15,7 @@ export function UISwitcher({
   label,
   className,
   disabled,
+  size = "lg",
   onClick,
   ...props
 }: UISwitcherProps) {
@@ -41,7 +43,7 @@ export function UISwitcher({
         className={cx(
           "inline-flex shrink-0 items-center rounded-full border p-[3px] transition",
           "focus-visible:ring-2 focus-visible:ring-focus focus-visible:ring-offset-0 focus-visible:ring-offset-bg",
-          "h-[22px] w-[34px]",
+          size === "sm" ? "h-[18px] w-[28px]" : "h-[22px] w-[36px]",
           checked ? "border-transparent bg-primary-100" : "border-neutral-line bg-surface"
         )}
         aria-hidden
@@ -49,9 +51,9 @@ export function UISwitcher({
         <span
           className={cx(
             "rounded-full transition-transform",
-            "h-4 w-4",
+            size === "sm" ? "h-3 w-3" : "h-4 w-4",
             checked ? "bg-text-inverted-main" : "bg-text-main",
-            checked && "translate-x-3"
+            checked && (size === "sm" ? "translate-x-2" : "translate-x-3")
           )}
         />
       </span>

@@ -17,6 +17,7 @@ import { UISegmentedControl } from "@/components/ui/segmented-control";
 import { UISelect } from "@/components/ui/select";
 import { UISwitcher } from "@/components/ui/switcher";
 import { UITextInput } from "@/components/ui/text-input";
+import { cx } from "@/lib/cn";
 
 import { UikitSectionAnchor } from "./section-anchor";
 import type { UiSize } from "./types";
@@ -28,26 +29,41 @@ type FormRowProps = {
   onLabelClick?: () => void;
   error?: string;
   children: React.ReactNode;
+  underline?: boolean;
+  contentClassName?: string;
 };
 
-function FormRow({ label, labelId, htmlFor, onLabelClick, error, children }: FormRowProps) {
+function FormRow({
+  label,
+  labelId,
+  htmlFor,
+  onLabelClick,
+  error,
+  children,
+  underline = true,
+  contentClassName,
+}: FormRowProps) {
   return (
-    <div className="grid gap-1.5 md:grid-cols-[12rem_minmax(0,1fr)] md:items-start md:gap-4">
+    <div
+      className={cx(
+        "grid gap-1.5 md:grid-cols-[12rem_minmax(0,1fr)] md:items-start md:gap-4",
+        underline && "border-b py-1 border-line transition-colors focus-within:border-neutral-400"
+      )}
+    >
       {htmlFor ? (
-        <label id={labelId} htmlFor={htmlFor} className="text-sm font-medium text-text-muted">
+        <label id={labelId} htmlFor={htmlFor} className="text-sm font-medium text-text-muted py-1">
           {label}
         </label>
       ) : (
-        <button
-          type="button"
+        <label
           id={labelId}
           onClick={onLabelClick}
-          className="text-left text-sm font-medium text-text-muted"
+          className="text-sm font-medium text-text-muted py-1"
         >
           {label}
-        </button>
+        </label>
       )}
-      <div className="max-w-xl">
+      <div className={cx("w-full", contentClassName)}>
         {children}
         {error ? <p className="mt-1 text-xs text-danger">{error}</p> : null}
       </div>
@@ -55,7 +71,7 @@ function FormRow({ label, labelId, htmlFor, onLabelClick, error, children }: For
   );
 }
 
-export function FormLayoutSection({ uiSize }: { uiSize: UiSize }) {
+export function BorderlessFormLayoutSection({ uiSize }: { uiSize: UiSize }) {
   const selectContainerRef = useRef<HTMLDivElement | null>(null);
   const segmentedContainerRef = useRef<HTMLDivElement | null>(null);
   const [selectValue, setSelectValue] = useState("react");
@@ -96,14 +112,15 @@ export function FormLayoutSection({ uiSize }: { uiSize: UiSize }) {
 
   return (
     <>
-      <UikitSectionAnchor id="form-layout">
-        <UICard title="UIKit · Form Layout (Label Left)">
-          <form className="grid gap-4" onSubmit={handleSubmit}>
+      <UikitSectionAnchor id="form-layout-borderless-inputs">
+        <UICard title="UIKit · Form Layout (Label Left, Borderless Inputs)">
+          <form className="grid" onSubmit={handleSubmit}>
             <FormRow
               label="Framework"
-              labelId="framework-label"
+              labelId="framework-label-borderless"
               onLabelClick={() => focusFirstButton(selectContainerRef.current)}
               error={showErrors ? frameworkError : undefined}
+              contentClassName="max-w-none"
             >
               <div ref={selectContainerRef}>
                 <UISelect
@@ -112,6 +129,7 @@ export function FormLayoutSection({ uiSize }: { uiSize: UiSize }) {
                   onValueChange={setSelectValue}
                   invalid={showErrors && !!frameworkError}
                   validationState={showErrors && frameworkError ? "error" : "default"}
+                  borderless
                   placeholder="Select framework"
                   options={[
                     { value: "react", label: "React", textValue: "react" },
@@ -125,30 +143,32 @@ export function FormLayoutSection({ uiSize }: { uiSize: UiSize }) {
 
             <FormRow
               label="Project name"
-              labelId="project-name-label"
-              htmlFor="project-name-field"
+              labelId="project-name-label-borderless"
+              htmlFor="project-name-field-borderless"
               error={showErrors ? projectNameError : undefined}
+              contentClassName="max-w-none"
             >
               <UITextInput
-                id="project-name-field"
+                id="project-name-field-borderless"
                 size={uiSize}
                 value={nameValue}
                 onValueChange={setNameValue}
                 invalid={showErrors && !!projectNameError}
                 validationState={showErrors && projectNameError ? "error" : "default"}
+                borderless
                 placeholder="Type project name"
               />
             </FormRow>
 
             <FormRow
               label="Published"
-              labelId="published-label"
-              htmlFor="published-field"
+              labelId="published-label-borderless"
+              htmlFor="published-field-borderless"
               error={showErrors ? publishedError : undefined}
             >
               <UICheckbox
                 size={uiSize}
-                id="published-field"
+                id="published-field-borderless"
                 checked={isPublished}
                 onChange={(event) => setIsPublished(event.currentTarget.checked)}
                 aria-label="Published"
@@ -157,14 +177,14 @@ export function FormLayoutSection({ uiSize }: { uiSize: UiSize }) {
 
             <FormRow
               label="Live mode"
-              labelId="live-mode-label"
-              htmlFor="live-mode-field"
+              labelId="live-mode-label-borderless"
+              htmlFor="live-mode-field-borderless"
               error={showErrors ? liveModeError : undefined}
             >
               <UISwitcher
                 size={uiSize}
-                id="live-mode-field"
-                aria-labelledby="live-mode-label"
+                id="live-mode-field-borderless"
+                aria-labelledby="live-mode-label-borderless"
                 checked={switcherEnabled}
                 onCheckedChange={setSwitcherEnabled}
                 aria-label="Live mode"
@@ -173,7 +193,7 @@ export function FormLayoutSection({ uiSize }: { uiSize: UiSize }) {
 
             <FormRow
               label="Appearance"
-              labelId="appearance-label"
+              labelId="appearance-label-borderless"
               onLabelClick={() => focusFirstButton(segmentedContainerRef.current)}
               error={showErrors ? appearanceError : undefined}
             >
@@ -183,6 +203,7 @@ export function FormLayoutSection({ uiSize }: { uiSize: UiSize }) {
                   size={uiSize}
                   value={appearance}
                   onValueChange={setAppearance}
+                  borderless
                   options={[
                     { value: "light", label: "Light" },
                     { value: "dark", label: "Dark" },
