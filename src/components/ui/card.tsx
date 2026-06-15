@@ -23,8 +23,20 @@ export function UICard({ title, children, className, titleClassName }: UICardPro
 type CardProps = {
   children: ReactNode;
   className?: string;
+  tone?: "surface" | "alt";
 };
 
-export function Card({ children, className }: CardProps) {
-  return <div data-testid="Card" className={cx("grid gap-3 rounded-2xl border border-line bg-surface-alt p-4", className)}>{children}</div>;
+export function Card({ children, className, tone = "surface" }: CardProps) {
+  return (
+    <div
+      data-testid="Card"
+      className={cx(
+        "grid gap-3 rounded-2xl border border-line p-4",
+        tone === "surface" ? "bg-surface" : "bg-surface-alt",
+        className
+      )}
+    >
+      {children}
+    </div>
+  );
 }

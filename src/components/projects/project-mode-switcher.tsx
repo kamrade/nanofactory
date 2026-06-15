@@ -1,8 +1,7 @@
 "use client";
 
-import { useEffect, useRef, useState } from "react";
+import { useRef, useState } from "react";
 import { UISegmentedControl } from "@/components/ui/segmented-control";
-import { useThemeModeFromDom } from "@/hooks/use-theme-mode-from-dom";
 import { UI_COOKIE_MAX_AGE, UI_MODE_COOKIE } from "@/lib/ui-preferences";
 import {
   enforceModeByPolicy,
@@ -22,6 +21,7 @@ type ProjectModeSwitcherProps = {
   inputName?: string;
   syncSearchParam?: string;
   policy?: ProjectModePolicy;
+  borderless?: boolean;
 };
 
 export function syncModeToUrl(paramName: string, mode: ThemeMode) {
@@ -47,13 +47,10 @@ export function ProjectModeSwitcher({
   inputName,
   syncSearchParam,
   policy = "switchable",
+  borderless = false,
 }: ProjectModeSwitcherProps = {}) {
   const containerRef = useRef<HTMLDivElement>(null);
   const resolvedPolicy = resolveProjectModePolicy(policy);
-  const { mode: domMode } = useThemeModeFromDom({
-    rootSelector: "main[data-theme][data-mode]",
-    fallbackMode: initialMode ?? "light",
-  });
   const [mode, setMode] = useState<ThemeMode>(() =>
     enforceModeByPolicy(
       resolvedPolicy,
@@ -77,29 +74,6 @@ export function ProjectModeSwitcher({
     }
   }
 
-  useEffect(() => {
-    const enforcedMode = enforceModeByPolicy(resolvedPolicy, mode);
-    if (enforcedMode !== mode) {
-      setMode(enforcedMode);
-      applyModeToRoot(containerRef.current, enforcedMode);
-      syncModeToCookie(enforcedMode);
-      if (syncSearchParam) {
-        syncModeToUrl(syncSearchParam, enforcedMode);
-      }
-    }
-  }, [mode, resolvedPolicy, syncSearchParam]);
-
-  useEffect(() => {
-    const nextMode = enforceModeByPolicy(resolvedPolicy, initialMode ?? "light");
-    setMode((currentMode) => (currentMode === nextMode ? currentMode : nextMode));
-    applyModeToRoot(containerRef.current, nextMode);
-  }, [initialMode, resolvedPolicy]);
-
-  useEffect(() => {
-    const nextMode = enforceModeByPolicy(resolvedPolicy, domMode);
-    setMode((currentMode) => (currentMode === nextMode ? currentMode : nextMode));
-  }, [domMode, resolvedPolicy]);
-
   const options: Array<{ value: ThemeMode; label: string }> =
     resolvedPolicy === "switchable"
       ? [
@@ -117,6 +91,7 @@ export function ProjectModeSwitcher({
         size="sm"
         value={mode}
         onValueChange={applyMode}
+        borderless={borderless}
         options={options}
       />
       {inputName ? <input type="hidden" name={inputName} value={mode} /> : null}

@@ -18,7 +18,7 @@ describe("UI form controls", () => {
     const smallHtml = renderToStaticMarkup(createElement(UISwitcher, { size: "sm", checked: false }));
     const largeHtml = renderToStaticMarkup(createElement(UISwitcher, { size: "lg", checked: false }));
 
-    expect(smallHtml).toContain("h-[18px] w-[30px]");
-    expect(largeHtml).toContain("h-[22px] w-[34px]");
+    expect(smallHtml).toContain("h-[18px] w-[28px]");
+    expect(largeHtml).toContain("h-[22px] w-[36px]");
   });
 });

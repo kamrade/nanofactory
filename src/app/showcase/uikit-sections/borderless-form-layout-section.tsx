@@ -16,60 +16,11 @@ import {
 import { UISegmentedControl } from "@/components/ui/segmented-control";
 import { UISelect } from "@/components/ui/select";
 import { UISwitcher } from "@/components/ui/switcher";
+import { UIFormRow } from "@/components/ui/form-row";
 import { UITextInput } from "@/components/ui/text-input";
-import { cx } from "@/lib/cn";
 
 import { UikitSectionAnchor } from "./section-anchor";
 import type { UiSize } from "./types";
-
-type FormRowProps = {
-  label: string;
-  labelId?: string;
-  htmlFor?: string;
-  onLabelClick?: () => void;
-  error?: string;
-  children: React.ReactNode;
-  underline?: boolean;
-  contentClassName?: string;
-};
-
-function FormRow({
-  label,
-  labelId,
-  htmlFor,
-  onLabelClick,
-  error,
-  children,
-  underline = true,
-  contentClassName,
-}: FormRowProps) {
-  return (
-    <div
-      className={cx(
-        "grid gap-1.5 md:grid-cols-[12rem_minmax(0,1fr)] md:items-start md:gap-4",
-        underline && "border-b py-1 border-line transition-colors focus-within:border-neutral-400"
-      )}
-    >
-      {htmlFor ? (
-        <label id={labelId} htmlFor={htmlFor} className="text-sm font-medium text-text-muted py-1">
-          {label}
-        </label>
-      ) : (
-        <label
-          id={labelId}
-          onClick={onLabelClick}
-          className="text-sm font-medium text-text-muted py-1"
-        >
-          {label}
-        </label>
-      )}
-      <div className={cx("w-full", contentClassName)}>
-        {children}
-        {error ? <p className="mt-1 text-xs text-danger">{error}</p> : null}
-      </div>
-    </div>
-  );
-}
 
 export function BorderlessFormLayoutSection({ uiSize }: { uiSize: UiSize }) {
   const selectContainerRef = useRef<HTMLDivElement | null>(null);
@@ -115,11 +66,12 @@ export function BorderlessFormLayoutSection({ uiSize }: { uiSize: UiSize }) {
       <UikitSectionAnchor id="form-layout-borderless-inputs">
         <UICard title="UIKit · Form Layout (Label Left, Borderless Inputs)">
           <form className="grid" onSubmit={handleSubmit}>
-            <FormRow
+            <UIFormRow
               label="Framework"
               labelId="framework-label-borderless"
               onLabelClick={() => focusFirstButton(selectContainerRef.current)}
               error={showErrors ? frameworkError : undefined}
+              underline
               contentClassName="max-w-none"
             >
               <div ref={selectContainerRef}>
@@ -139,13 +91,14 @@ export function BorderlessFormLayoutSection({ uiSize }: { uiSize: UiSize }) {
                   ]}
                 />
               </div>
-            </FormRow>
+            </UIFormRow>
 
-            <FormRow
+            <UIFormRow
               label="Project name"
               labelId="project-name-label-borderless"
               htmlFor="project-name-field-borderless"
               error={showErrors ? projectNameError : undefined}
+              underline
               contentClassName="max-w-none"
             >
               <UITextInput
@@ -158,13 +111,14 @@ export function BorderlessFormLayoutSection({ uiSize }: { uiSize: UiSize }) {
                 borderless
                 placeholder="Type project name"
               />
-            </FormRow>
+            </UIFormRow>
 
-            <FormRow
+            <UIFormRow
               label="Published"
               labelId="published-label-borderless"
               htmlFor="published-field-borderless"
               error={showErrors ? publishedError : undefined}
+              underline
             >
               <UICheckbox
                 size={uiSize}
@@ -173,13 +127,14 @@ export function BorderlessFormLayoutSection({ uiSize }: { uiSize: UiSize }) {
                 onChange={(event) => setIsPublished(event.currentTarget.checked)}
                 aria-label="Published"
               />
-            </FormRow>
+            </UIFormRow>
 
-            <FormRow
+            <UIFormRow
               label="Live mode"
               labelId="live-mode-label-borderless"
               htmlFor="live-mode-field-borderless"
               error={showErrors ? liveModeError : undefined}
+              underline
             >
               <UISwitcher
                 size={uiSize}
@@ -189,13 +144,14 @@ export function BorderlessFormLayoutSection({ uiSize }: { uiSize: UiSize }) {
                 onCheckedChange={setSwitcherEnabled}
                 aria-label="Live mode"
               />
-            </FormRow>
+            </UIFormRow>
 
-            <FormRow
+            <UIFormRow
               label="Appearance"
               labelId="appearance-label-borderless"
               onLabelClick={() => focusFirstButton(segmentedContainerRef.current)}
               error={showErrors ? appearanceError : undefined}
+              underline
             >
               <div ref={segmentedContainerRef}>
                 <UISegmentedControl
@@ -210,7 +166,7 @@ export function BorderlessFormLayoutSection({ uiSize }: { uiSize: UiSize }) {
                   ]}
                 />
               </div>
-            </FormRow>
+            </UIFormRow>
 
             <div className="pt-2">
               <UIButton type="submit" size={uiSize} theme="primary" variant="contained">

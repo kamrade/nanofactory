@@ -17,6 +17,7 @@ import { ProjectThemeForm } from "@/components/projects/project-theme-form";
 import { UIButton } from "@/components/ui/button";
 import { UIDivider } from "@/components/ui/divider";
 import { Card } from "@/components/ui/card";
+import { UIFormRow } from "@/components/ui/form-row";
 import { UIMenu, UIMenuItem, UIMenuLabel } from "@/components/ui/menu";
 import { UISelect } from "@/components/ui/select";
 import {
@@ -108,18 +109,6 @@ export function ProjectSettings({
       })),
     []
   );
-
-  useEffect(() => {
-    setModePolicyValue(project.modePolicy);
-  }, [project.modePolicy]);
-
-  useEffect(() => {
-    setBorderRadiusValue(project.borderRadiusPolicy);
-  }, [project.borderRadiusPolicy]);
-
-  useEffect(() => {
-    setSpacingScaleValue(project.spacingScale);
-  }, [project.spacingScale]);
 
   useEffect(() => {
     return subscribePreviewDraft(() => {
@@ -272,13 +261,13 @@ export function ProjectSettings({
 
             <Card>
               <h3 className="text-base font-semibold text-text-main">Actions</h3>
-              <div className="grid gap-3">
-                <div className="grid gap-1.5 md:grid-cols-[10rem_minmax(0,1fr)] md:items-center md:gap-3">
-                  <label className="text-sm text-text-muted">Mode support</label>
+              <div className="grid">
+                <UIFormRow label="Mode support" underline contentClassName="max-w-none">
                   <UISelect
                     ariaLabel="Mode support"
                     size="sm"
                     value={modePolicyValue}
+                    borderless
                     onValueChange={(nextValue) => {
                       if (!PROJECT_MODE_POLICIES.includes(nextValue as ProjectModePolicy)) {
                         return;
@@ -304,14 +293,14 @@ export function ProjectSettings({
                     }))}
                     className="min-w-36"
                   />
-                </div>
+                </UIFormRow>
 
-                <div className="grid gap-1.5 md:grid-cols-[10rem_minmax(0,1fr)] md:items-center md:gap-3">
-                  <label className="text-sm text-text-muted">Border radius</label>
+                <UIFormRow label="Border radius" underline contentClassName="max-w-none">
                   <UISelect
                     ariaLabel="Border radius"
                     size="sm"
                     value={borderRadiusValue}
+                    borderless
                     onValueChange={(nextValue) => {
                       if (!PROJECT_BORDER_RADIUS_POLICIES.includes(nextValue as ProjectBorderRadiusPolicy)) {
                         return;
@@ -333,14 +322,14 @@ export function ProjectSettings({
                       textValue: policy,
                     }))}
                   />
-                </div>
+                </UIFormRow>
 
-                <div className="grid gap-1.5 md:grid-cols-[10rem_minmax(0,1fr)] md:items-center md:gap-3">
-                  <label className="text-sm text-text-muted">Spacing scale</label>
+                <UIFormRow label="Spacing scale" underline contentClassName="max-w-none">
                   <UISelect
                     ariaLabel="Spacing scale"
                     size="sm"
                     value={spacingScaleValue}
+                    borderless
                     onValueChange={(nextValue) => {
                       if (!PROJECT_SPACING_SCALES.includes(nextValue as ProjectSpacingScale)) {
                         return;
@@ -365,29 +354,27 @@ export function ProjectSettings({
                       textValue: scale,
                     }))}
                   />
-                </div>
+                </UIFormRow>
 
-                <div className="grid gap-1.5 md:grid-cols-[10rem_minmax(0,1fr)] md:items-center md:gap-3">
-                  <label className="text-sm text-text-muted">Theme</label>
+                <UIFormRow label="Theme" underline contentClassName="max-w-none">
                   <ProjectThemeForm
                     initialThemeKey={resolvedThemeKey}
                     options={THEME_OPTIONS}
                     action={themeAction}
                     showLabel={false}
+                    borderless
                   />
-                </div>
+                </UIFormRow>
 
-                <div className="grid gap-1.5 md:grid-cols-[10rem_minmax(0,1fr)] md:items-center md:gap-3">
-                  <label className="text-sm text-text-muted">Preview mode</label>
-                  <div className="flex items-center gap-2 text-sm text-text-muted">
-                    <ProjectModeSwitcher
-                      initialMode={initialMode}
-                      inputName="previewMode"
-                      syncSearchParam="mode"
-                      policy={project.modePolicy}
-                    />
-                  </div>
-                </div>
+                <UIFormRow label="Preview mode" underline contentClassName="max-w-none">
+                  <ProjectModeSwitcher
+                    initialMode={initialMode}
+                    inputName="previewMode"
+                    syncSearchParam="mode"
+                    policy={project.modePolicy}
+                    borderless
+                  />
+                </UIFormRow>
               </div>
 
               <UIDivider />

@@ -16,6 +16,7 @@ type ProjectThemeFormProps = {
   options: ThemeOption[];
   action: (formData: FormData) => void | Promise<void>;
   showLabel?: boolean;
+  borderless?: boolean;
 };
 
 export function ProjectThemeForm({
@@ -23,6 +24,7 @@ export function ProjectThemeForm({
   options,
   action,
   showLabel = true,
+  borderless = false,
 }: ProjectThemeFormProps) {
   const [themeKey, setThemeKey] = useState(initialThemeKey);
   const containerRef = useRef<HTMLDivElement | null>(null);
@@ -63,6 +65,7 @@ export function ProjectThemeForm({
         size="sm"
         value={themeKey}
         onValueChange={applyTheme}
+        borderless={borderless}
         options={options.map((theme) => ({
           value: theme.key,
           label: theme.label,
