@@ -11,6 +11,8 @@ import {
   type UiSize,
   TypographyButtonsBadgesSection,
 } from "@/app/showcase/uikit-sections";
+import { uikitSectionNavItems } from "@/app/showcase/uikit-sections/nav";
+import { UikitSidebar } from "@/app/showcase/uikit-sidebar";
 import { AppStickyHeader } from "@/components/navigation/app-sticky-header";
 import { ProjectRenderer } from "@/components/projects/project-renderer";
 import { UISegmentedControl } from "@/components/ui/segmented-control";
@@ -106,15 +108,20 @@ export function ShowcaseClient({
 
       {activeTab === "uikit" ? (
         <section className="bg-bg py-8 text-text-main">
-          <div className="mx-auto grid container px-4 gap-8">
-            <TypographyButtonsBadgesSection uiSize={uiSize} />
-            <ControlsAndMenusSection uiSize={uiSize} />
-            <InputsSection uiSize={uiSize} />
-            <FormLayoutSection uiSize={uiSize} />
-            <FeedbackAndSheetSection uiSize={uiSize} showToast={showToast} clearToasts={clearToasts} />
-            <DialogDemoCard uiSize={uiSize} />
-            <ModalDemoCard uiSize={uiSize} />
-            <MarkdownDemoCard />
+          <div className="mx-auto container px-4">
+            <div className="grid gap-8 lg:grid-cols-[18rem_minmax(0,1fr)] lg:items-start">
+              <UikitSidebar sections={uikitSectionNavItems} />
+              <div className="grid gap-8">
+                <TypographyButtonsBadgesSection uiSize={uiSize} />
+                <ControlsAndMenusSection uiSize={uiSize} />
+                <InputsSection uiSize={uiSize} />
+                <FormLayoutSection uiSize={uiSize} />
+                <FeedbackAndSheetSection uiSize={uiSize} showToast={showToast} clearToasts={clearToasts} />
+                <DialogDemoCard uiSize={uiSize} />
+                <ModalDemoCard uiSize={uiSize} />
+                <MarkdownDemoCard />
+              </div>
+            </div>
           </div>
         </section>
       ) : null}

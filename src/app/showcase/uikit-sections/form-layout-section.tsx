@@ -19,6 +19,7 @@ import { UISelect } from "@/components/ui/select";
 import { UISwitcher } from "@/components/ui/switcher";
 import { UITextInput } from "@/components/ui/text-input";
 
+import { UikitSectionAnchor } from "./section-anchor";
 import type { UiSize } from "./types";
 
 type FormRowProps = {
@@ -96,132 +97,134 @@ export function FormLayoutSection({ uiSize }: { uiSize: UiSize }) {
 
   return (
     <>
-      <UICard title="UIKit · Form Layout (Label Left)">
-        <form className="grid gap-4" onSubmit={handleSubmit}>
-          <FormRow
-            label="Framework"
-            labelId="framework-label"
-            onLabelClick={() => focusFirstButton(selectContainerRef.current)}
-            error={showErrors ? errors.framework : undefined}
-          >
-            <div ref={selectContainerRef}>
-              <UISelect
+      <UikitSectionAnchor id="form-layout">
+        <UICard title="UIKit · Form Layout (Label Left)">
+          <form className="grid gap-4" onSubmit={handleSubmit}>
+            <FormRow
+              label="Framework"
+              labelId="framework-label"
+              onLabelClick={() => focusFirstButton(selectContainerRef.current)}
+              error={showErrors ? errors.framework : undefined}
+            >
+              <div ref={selectContainerRef}>
+                <UISelect
+                  size={uiSize}
+                  value={selectValue}
+                  onValueChange={setSelectValue}
+                  invalid={showErrors && !!errors.framework}
+                  validationState={showErrors && errors.framework ? "error" : "default"}
+                  placeholder="Select framework"
+                  options={[
+                    { value: "react", label: "React", textValue: "react" },
+                    { value: "nextjs", label: "Next.js", textValue: "next js" },
+                    { value: "svelte", label: "Svelte", textValue: "svelte" },
+                    { value: "vue", label: "Vue", textValue: "vue" },
+                  ]}
+                />
+              </div>
+            </FormRow>
+
+            <FormRow
+              label="Project name"
+              labelId="project-name-label"
+              htmlFor="project-name-field"
+              error={showErrors ? errors.projectName : undefined}
+            >
+              <UITextInput
+                id="project-name-field"
                 size={uiSize}
-                value={selectValue}
-                onValueChange={setSelectValue}
-                invalid={showErrors && !!errors.framework}
-                validationState={showErrors && errors.framework ? "error" : "default"}
-                placeholder="Select framework"
-                options={[
-                  { value: "react", label: "React", textValue: "react" },
-                  { value: "nextjs", label: "Next.js", textValue: "next js" },
-                  { value: "svelte", label: "Svelte", textValue: "svelte" },
-                  { value: "vue", label: "Vue", textValue: "vue" },
-                ]}
+                value={nameValue}
+                onValueChange={setNameValue}
+                invalid={showErrors && !!errors.projectName}
+                validationState={showErrors && errors.projectName ? "error" : "default"}
+                placeholder="Type project name"
               />
-            </div>
-          </FormRow>
+            </FormRow>
 
-          <FormRow
-            label="Project name"
-            labelId="project-name-label"
-            htmlFor="project-name-field"
-            error={showErrors ? errors.projectName : undefined}
-          >
-            <UITextInput
-              id="project-name-field"
-              size={uiSize}
-              value={nameValue}
-              onValueChange={setNameValue}
-              invalid={showErrors && !!errors.projectName}
-              validationState={showErrors && errors.projectName ? "error" : "default"}
-              placeholder="Type project name"
-            />
-          </FormRow>
-
-          <FormRow
-            label="Published"
-            labelId="published-label"
-            htmlFor="published-field"
-            error={showErrors ? errors.published : undefined}
-          >
-            <UICheckbox
-              id="published-field"
-              checked={isPublished}
-              onChange={(event) => setIsPublished(event.currentTarget.checked)}
-              aria-label="Published"
-            />
-          </FormRow>
-
-          <FormRow
-            label="Live mode"
-            labelId="live-mode-label"
-            htmlFor="live-mode-field"
-            error={showErrors ? errors.liveMode : undefined}
-          >
-            <UISwitcher
-              id="live-mode-field"
-              aria-labelledby="live-mode-label"
-              checked={switcherEnabled}
-              onCheckedChange={setSwitcherEnabled}
-              aria-label="Live mode"
-            />
-          </FormRow>
-
-          <FormRow
-            label="Appearance"
-            labelId="appearance-label"
-            onLabelClick={() => focusFirstButton(segmentedContainerRef.current)}
-            error={showErrors ? errors.appearance : undefined}
-          >
-            <div ref={segmentedContainerRef}>
-              <UISegmentedControl
-                ariaLabel="Appearance"
-                size={uiSize}
-                value={appearance}
-                onValueChange={setAppearance}
-                options={[
-                  { value: "light", label: "Light" },
-                  { value: "dark", label: "Dark" },
-                ]}
+            <FormRow
+              label="Published"
+              labelId="published-label"
+              htmlFor="published-field"
+              error={showErrors ? errors.published : undefined}
+            >
+              <UICheckbox
+                id="published-field"
+                checked={isPublished}
+                onChange={(event) => setIsPublished(event.currentTarget.checked)}
+                aria-label="Published"
               />
-            </div>
-          </FormRow>
+            </FormRow>
 
-          <FormRow
-            label="Tags"
-            labelId="tags-label"
-            onLabelClick={() => focusFirstButton(multiSelectContainerRef.current)}
-            error={showErrors ? errors.tags : undefined}
-          >
-            <div ref={multiSelectContainerRef}>
-              <UIMultiSelect
-                ariaLabel="Tags"
-                size={uiSize}
-                searchable
-                clearable
-                invalid={showErrors && !!errors.tags}
-                validationState={showErrors && errors.tags ? "error" : "default"}
-                searchPlaceholder="Search tags..."
-                value={tags}
-                onValueChange={setTags}
-                options={[
-                  { value: "nextjs", label: "Next.js", textValue: "next js" },
-                  { value: "typescript", label: "TypeScript", textValue: "typescript" },
-                  { value: "tailwind", label: "Tailwind CSS", textValue: "tailwind" },
-                  { value: "drizzle", label: "Drizzle ORM", textValue: "drizzle" },
-                ]}
+            <FormRow
+              label="Live mode"
+              labelId="live-mode-label"
+              htmlFor="live-mode-field"
+              error={showErrors ? errors.liveMode : undefined}
+            >
+              <UISwitcher
+                id="live-mode-field"
+                aria-labelledby="live-mode-label"
+                checked={switcherEnabled}
+                onCheckedChange={setSwitcherEnabled}
+                aria-label="Live mode"
               />
-            </div>
-          </FormRow>
+            </FormRow>
 
-          <div className="pt-2">
-            <UIButton type="submit" size={uiSize} theme="primary" variant="contained">
-              Submit
-            </UIButton>
-          </div>
-        </form>
-      </UICard>
+            <FormRow
+              label="Appearance"
+              labelId="appearance-label"
+              onLabelClick={() => focusFirstButton(segmentedContainerRef.current)}
+              error={showErrors ? errors.appearance : undefined}
+            >
+              <div ref={segmentedContainerRef}>
+                <UISegmentedControl
+                  ariaLabel="Appearance"
+                  size={uiSize}
+                  value={appearance}
+                  onValueChange={setAppearance}
+                  options={[
+                    { value: "light", label: "Light" },
+                    { value: "dark", label: "Dark" },
+                  ]}
+                />
+              </div>
+            </FormRow>
+
+            <FormRow
+              label="Tags"
+              labelId="tags-label"
+              onLabelClick={() => focusFirstButton(multiSelectContainerRef.current)}
+              error={showErrors ? errors.tags : undefined}
+            >
+              <div ref={multiSelectContainerRef}>
+                <UIMultiSelect
+                  ariaLabel="Tags"
+                  size={uiSize}
+                  searchable
+                  clearable
+                  invalid={showErrors && !!errors.tags}
+                  validationState={showErrors && errors.tags ? "error" : "default"}
+                  searchPlaceholder="Search tags..."
+                  value={tags}
+                  onValueChange={setTags}
+                  options={[
+                    { value: "nextjs", label: "Next.js", textValue: "next js" },
+                    { value: "typescript", label: "TypeScript", textValue: "typescript" },
+                    { value: "tailwind", label: "Tailwind CSS", textValue: "tailwind" },
+                    { value: "drizzle", label: "Drizzle ORM", textValue: "drizzle" },
+                  ]}
+                />
+              </div>
+            </FormRow>
+
+            <div className="pt-2">
+              <UIButton type="submit" size={uiSize} theme="primary" variant="contained">
+                Submit
+              </UIButton>
+            </div>
+          </form>
+        </UICard>
+      </UikitSectionAnchor>
 
       <UIDialog open={isResultOpen} onOpenChange={setIsResultOpen}>
         <UIDialogContent className="max-w-xl" ariaLabel="Submitted form data">
