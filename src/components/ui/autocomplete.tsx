@@ -17,6 +17,7 @@ export type UIAutocompleteItem = {
 };
 
 export type UIAutocompleteProps = {
+  id?: string;
   value?: string;
   defaultValue?: string;
   onValueChange?: (value: string) => void;
@@ -29,6 +30,7 @@ export type UIAutocompleteProps = {
   loading?: boolean;
   invalid?: boolean;
   validationState?: ValidationState;
+  borderless?: boolean;
   size?: UIAutocompleteSize;
   emptyLabel?: ReactNode;
   ariaLabel?: string;
@@ -71,6 +73,7 @@ function findNextEnabledIndex<T extends { disabled?: boolean }>(
 }
 
 export function UIAutocomplete({
+  id,
   value,
   defaultValue,
   onValueChange,
@@ -83,6 +86,7 @@ export function UIAutocomplete({
   loading = false,
   invalid = false,
   validationState = "default",
+  borderless = false,
   size = "lg",
   emptyLabel = "No results",
   ariaLabel = "Autocomplete",
@@ -94,7 +98,8 @@ export function UIAutocomplete({
   const [open, setOpen] = useState(false);
   const [activeIndex, setActiveIndex] = useState(-1);
   const inputId = useId();
-  const listboxId = `${inputId}-listbox`;
+  const resolvedInputId = id ?? inputId;
+  const listboxId = `${resolvedInputId}-listbox`;
 
   const currentValue = isControlled ? String(value ?? "") : uncontrolledValue;
   const normalizedValue = currentValue.trim().toLowerCase();
@@ -112,6 +117,7 @@ export function UIAutocomplete({
     size === "sm"
       ? {
           container: "h-7 rounded-lg px-2",
+          borderlessContainer: "h-7 rounded-lg",
           icon: "h-3.5 w-3.5",
           clear: "h-5 w-5",
           input: "text-sm",
@@ -121,6 +127,7 @@ export function UIAutocomplete({
         }
       : {
           container: "h-10 rounded-xl px-3",
+          borderlessContainer: "h-10 rounded-xl",
           icon: "h-4 w-4",
           clear: "h-6 w-6",
           input: "text-sm",
@@ -165,22 +172,27 @@ export function UIAutocomplete({
         trigger={
           <div
             className={cx(
-              "flex w-full items-center border outline-none transition",
-              sizeClasses.container,
+              "flex w-full items-center outline-none transition",
+              borderless ? sizeClasses.borderlessContainer : sizeClasses.container,
               sizeClasses.gap,
-              "focus-within:ring-2 focus-within:ring-focus/50 focus-within:ring-offset-0",
+              !borderless && "border",
+              !borderless && "focus-within:ring-2 focus-within:ring-focus/50 focus-within:ring-offset-0",
               disabled && "cursor-not-allowed opacity-60",
-              isInvalid
-                ? "border-danger-line bg-danger-100"
-                : isSuccess
-                  ? "border-primary-line bg-surface"
-                  : "border-line bg-surface",
+              borderless
+                ? isInvalid
+                  ? "bg-danger-100"
+                  : "bg-surface"
+                : isInvalid
+                  ? "border-danger-line bg-danger-100"
+                  : isSuccess
+                    ? "border-primary-line bg-surface"
+                    : "border-line bg-surface",
               !isInvalid && readOnly && "bg-surface-alt",
               className
             )}
           >
             <input
-              id={inputId}
+              id={resolvedInputId}
               name={name}
               type="text"
               role="combobox"
@@ -393,4 +405,3 @@ export function UIAutocomplete({
     </div>
   );
 }
-

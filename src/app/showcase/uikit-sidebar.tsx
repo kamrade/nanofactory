@@ -81,7 +81,7 @@ function UikitSidebarList({
           section={section}
           active={section.id === activeSectionId}
           onSelect={onSelect}
-          className={compact ? "text-[12px] leading-4" : "text-[13px] leading-5"}
+          className={compact ? "text-xs leading-4" : "text-sm leading-5"}
         />
       ))}
     </div>

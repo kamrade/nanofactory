@@ -5,6 +5,7 @@ import { useRef, useState } from "react";
 import { UIButton } from "@/components/ui/button";
 import { UICard } from "@/components/ui/card";
 import { UICheckbox } from "@/components/ui/checkbox";
+import { UIAutocomplete } from "@/components/ui/autocomplete";
 import {
   UIDialog,
   UIDialogContent,
@@ -18,14 +19,20 @@ import { UISelect } from "@/components/ui/select";
 import { UISwitcher } from "@/components/ui/switcher";
 import { UIFormRow } from "@/components/ui/form-row";
 import { UITextInput } from "@/components/ui/text-input";
+import { UIMultiSelect } from "@/components/ui/multi-select";
 
 import { UikitSectionAnchor } from "./section-anchor";
 import type { UiSize } from "./types";
 
 export function BorderlessFormLayoutSection({ uiSize }: { uiSize: UiSize }) {
   const selectContainerRef = useRef<HTMLDivElement | null>(null);
+  const autocompleteContainerRef = useRef<HTMLDivElement | null>(null);
+  const multiSelectContainerRef = useRef<HTMLDivElement | null>(null);
   const segmentedContainerRef = useRef<HTMLDivElement | null>(null);
   const [selectValue, setSelectValue] = useState("react");
+  const [autocompleteValue, setAutocompleteValue] = useState("");
+  const [autocompleteSelection, setAutocompleteSelection] = useState("none");
+  const [multiSelectValue, setMultiSelectValue] = useState<string[]>(["react"]);
   const [nameValue, setNameValue] = useState("");
   const [isPublished, setIsPublished] = useState(false);
   const [switcherEnabled, setSwitcherEnabled] = useState(true);
@@ -66,6 +73,8 @@ export function BorderlessFormLayoutSection({ uiSize }: { uiSize: UiSize }) {
       <UikitSectionAnchor id="form-layout-borderless-inputs">
         <UICard title="UIKit · Form Layout (Label Left, Borderless Inputs)">
           <form className="grid" onSubmit={handleSubmit}>
+            
+            {/* SELECT */}
             <UIFormRow
               label="Framework"
               labelId="framework-label-borderless"
@@ -94,6 +103,65 @@ export function BorderlessFormLayoutSection({ uiSize }: { uiSize: UiSize }) {
             </UIFormRow>
 
             <UIFormRow
+              label="Framework search"
+              labelId="framework-search-label-borderless"
+              onLabelClick={() => focusFirstButton(autocompleteContainerRef.current)}
+              error={undefined}
+              underline
+              contentClassName="max-w-none"
+            >
+              <div ref={autocompleteContainerRef}>
+                <UIAutocomplete
+                  size={uiSize}
+                  value={autocompleteValue}
+                  onValueChange={setAutocompleteValue}
+                  onSelect={(item) => setAutocompleteSelection(item.value)}
+                  borderless
+                  clearable
+                  placeholder="Type to filter frameworks..."
+                  ariaLabel="Framework autocomplete borderless"
+                  items={[
+                    { value: "react", label: "React" },
+                    { value: "nextjs", label: "Next.js", textValue: "next js" },
+                    { value: "svelte", label: "Svelte" },
+                    { value: "vue", label: "Vue" },
+                    { value: "solid", label: "Solid", disabled: true },
+                  ]}
+                />
+              </div>
+            </UIFormRow>
+
+            <UIFormRow
+              label="Framework tags"
+              labelId="framework-tags-label-borderless"
+              onLabelClick={() => focusFirstButton(multiSelectContainerRef.current)}
+              error={undefined}
+              underline
+              contentClassName="max-w-none"
+            >
+              <div ref={multiSelectContainerRef}>
+                <UIMultiSelect
+                  size={uiSize}
+                  value={multiSelectValue}
+                  onValueChange={setMultiSelectValue}
+                  borderless
+                  searchable
+                  clearable
+                  searchPlaceholder="Search options..."
+                  ariaLabel="Framework multi select borderless"
+                  options={[
+                    { value: "react", label: "React" },
+                    { value: "nextjs", label: "Next.js", textValue: "next js" },
+                    { value: "typescript", label: "TypeScript" },
+                    { value: "tailwind", label: "Tailwind CSS" },
+                    { value: "drizzle", label: "Drizzle ORM", disabled: true },
+                  ]}
+                />
+              </div>
+            </UIFormRow>
+
+            {/* TEXTINPUT */}
+            <UIFormRow
               label="Project name"
               labelId="project-name-label-borderless"
               htmlFor="project-name-field-borderless"
@@ -113,6 +181,7 @@ export function BorderlessFormLayoutSection({ uiSize }: { uiSize: UiSize }) {
               />
             </UIFormRow>
 
+            {/* CHECKBOX */}
             <UIFormRow
               label="Published"
               labelId="published-label-borderless"
@@ -129,6 +198,7 @@ export function BorderlessFormLayoutSection({ uiSize }: { uiSize: UiSize }) {
               />
             </UIFormRow>
 
+            {/* SWITCHER */}
             <UIFormRow
               label="Live mode"
               labelId="live-mode-label-borderless"
@@ -146,6 +216,7 @@ export function BorderlessFormLayoutSection({ uiSize }: { uiSize: UiSize }) {
               />
             </UIFormRow>
 
+            {/* SEGMENTED CONTROL */}
             <UIFormRow
               label="Appearance"
               labelId="appearance-label-borderless"
@@ -188,6 +259,9 @@ export function BorderlessFormLayoutSection({ uiSize }: { uiSize: UiSize }) {
               {JSON.stringify(
                 {
                   framework: selectValue,
+                  frameworkSearch: autocompleteValue,
+                  frameworkSearchSelected: autocompleteSelection,
+                  frameworkTags: multiSelectValue,
                   projectName: nameValue,
                   published: isPublished,
                   liveMode: switcherEnabled,

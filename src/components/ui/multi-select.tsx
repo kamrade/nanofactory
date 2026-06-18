@@ -24,6 +24,7 @@ export type UIMultiSelectProps = {
   readOnly?: boolean;
   invalid?: boolean;
   validationState?: ValidationState;
+  borderless?: boolean;
   searchable?: boolean;
   searchPlaceholder?: string;
   emptyLabel?: string;
@@ -44,6 +45,7 @@ export function UIMultiSelect({
   readOnly,
   invalid = false,
   validationState = "default",
+  borderless = false,
   searchable = false,
   searchPlaceholder = "Search...",
   emptyLabel = "No options",
@@ -67,12 +69,14 @@ export function UIMultiSelect({
     size === "sm"
       ? {
           container: "h-7 rounded-lg px-2 gap-1.5",
+          borderlessContainer: "h-7 rounded-lg gap-1.5",
           icon: "h-3.5 w-3.5",
           clear: "h-5 w-5",
           text: "text-sm",
         }
       : {
           container: "h-10 rounded-xl px-3 gap-2",
+          borderlessContainer: "h-10 rounded-xl gap-2",
           icon: "h-4 w-4",
           clear: "h-6 w-6",
           text: "text-sm",
@@ -124,17 +128,22 @@ export function UIMultiSelect({
             type="button"
             disabled={disabled}
             className={cx(
-              "flex w-full items-center border outline-none transition",
-              "focus:ring-2 focus:ring-focus/50 focus:ring-offset-0 focus:ring-offset-bg",
+              "flex w-full items-center outline-none transition",
+              !borderless && "border",
+              !borderless && "focus:ring-2 focus:ring-focus/50 focus:ring-offset-0 focus:ring-offset-bg",
               "focus:outline-none focus-visible:outline-none",
-              sizeClasses.container,
+              borderless ? sizeClasses.borderlessContainer : sizeClasses.container,
               sizeClasses.text,
               disabled && "cursor-not-allowed opacity-60",
-              isInvalid
-                ? "border-danger-line bg-danger-100"
-                : isSuccess
-                  ? "border-primary-line bg-surface"
-                  : "border-line bg-surface",
+              borderless
+                ? isInvalid
+                  ? "bg-danger-100"
+                  : "bg-surface"
+                : isInvalid
+                  ? "border-danger-line bg-danger-100"
+                  : isSuccess
+                    ? "border-primary-line bg-surface"
+                    : "border-line bg-surface",
               !isInvalid && readOnly && "bg-surface-alt"
             )}
             onKeyDown={(event) => {

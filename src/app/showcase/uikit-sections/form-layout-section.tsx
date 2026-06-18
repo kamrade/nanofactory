@@ -5,6 +5,7 @@ import { useRef, useState } from "react";
 import { UIButton } from "@/components/ui/button";
 import { UICard } from "@/components/ui/card";
 import { UICheckbox } from "@/components/ui/checkbox";
+import { UIAutocomplete } from "@/components/ui/autocomplete";
 import {
   UIDialog,
   UIDialogContent,
@@ -14,6 +15,7 @@ import {
   UIDialogTitle,
 } from "@/components/ui/dialog";
 import { UISegmentedControl } from "@/components/ui/segmented-control";
+import { UIMultiSelect } from "@/components/ui/multi-select";
 import { UISelect } from "@/components/ui/select";
 import { UISwitcher } from "@/components/ui/switcher";
 import { UITextInput } from "@/components/ui/text-input";
@@ -57,8 +59,12 @@ function FormRow({ label, labelId, htmlFor, onLabelClick, error, children }: For
 
 export function FormLayoutSection({ uiSize }: { uiSize: UiSize }) {
   const selectContainerRef = useRef<HTMLDivElement | null>(null);
+  const multiSelectContainerRef = useRef<HTMLDivElement | null>(null);
   const segmentedContainerRef = useRef<HTMLDivElement | null>(null);
   const [selectValue, setSelectValue] = useState("react");
+  const [autocompleteValue, setAutocompleteValue] = useState("");
+  const [autocompleteSelection, setAutocompleteSelection] = useState("none");
+  const [multiSelectValue, setMultiSelectValue] = useState<string[]>(["react", "typescript"]);
   const [nameValue, setNameValue] = useState("");
   const [isPublished, setIsPublished] = useState(false);
   const [switcherEnabled, setSwitcherEnabled] = useState(true);
@@ -94,6 +100,10 @@ export function FormLayoutSection({ uiSize }: { uiSize: UiSize }) {
     container?.querySelector<HTMLButtonElement>("button")?.focus();
   }
 
+  function focusFirstFocusable(container: HTMLDivElement | null) {
+    container?.querySelector<HTMLElement>("input, button")?.focus();
+  }
+
   return (
     <>
       <UikitSectionAnchor id="form-layout">
@@ -118,6 +128,56 @@ export function FormLayoutSection({ uiSize }: { uiSize: UiSize }) {
                     { value: "nextjs", label: "Next.js", textValue: "next js" },
                     { value: "svelte", label: "Svelte", textValue: "svelte" },
                     { value: "vue", label: "Vue", textValue: "vue" },
+                  ]}
+                />
+              </div>
+            </FormRow>
+
+            <FormRow
+              label="Framework search"
+              labelId="framework-search-label"
+              htmlFor="framework-search-field"
+              error={undefined}
+            >
+              <UIAutocomplete
+                id="framework-search-field"
+                size={uiSize}
+                value={autocompleteValue}
+                onValueChange={setAutocompleteValue}
+                onSelect={(item) => setAutocompleteSelection(item.value)}
+                placeholder="Type to filter frameworks..."
+                clearable
+                items={[
+                  { value: "react", label: "React" },
+                  { value: "nextjs", label: "Next.js", textValue: "next js" },
+                  { value: "svelte", label: "Svelte" },
+                  { value: "vue", label: "Vue" },
+                  { value: "solid", label: "Solid", disabled: true },
+                ]}
+              />
+            </FormRow>
+
+            <FormRow
+              label="Framework tags"
+              labelId="framework-tags-label"
+              onLabelClick={() => focusFirstFocusable(multiSelectContainerRef.current)}
+              error={undefined}
+            >
+              <div ref={multiSelectContainerRef}>
+                <UIMultiSelect
+                  size={uiSize}
+                  value={multiSelectValue}
+                  onValueChange={setMultiSelectValue}
+                  searchable
+                  clearable
+                  searchPlaceholder="Search options..."
+                  ariaLabel="Framework multi select"
+                  options={[
+                    { value: "react", label: "React" },
+                    { value: "nextjs", label: "Next.js", textValue: "next js" },
+                    { value: "typescript", label: "TypeScript" },
+                    { value: "tailwind", label: "Tailwind CSS" },
+                    { value: "drizzle", label: "Drizzle ORM", disabled: true },
                   ]}
                 />
               </div>
@@ -211,6 +271,9 @@ export function FormLayoutSection({ uiSize }: { uiSize: UiSize }) {
               {JSON.stringify(
                 {
                   framework: selectValue,
+                  frameworkSearch: autocompleteValue,
+                  frameworkSearchSelected: autocompleteSelection,
+                  frameworkTags: multiSelectValue,
                   projectName: nameValue,
                   published: isPublished,
                   liveMode: switcherEnabled,

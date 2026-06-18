@@ -61,5 +61,61 @@ export const showcaseContent: PageContent = {
         buttonText: "Start building",
       },
     },
+    {
+      id: "showcase-footer-social-icons",
+      type: "footer",
+      variant: "default",
+      props: {
+        leftTitle: "Social icons",
+        logoAssetId: undefined,
+        siteName: "",
+        siteDescription: "All social network icons available in this project.",
+        socialLinksTitle: "Available icons",
+        socialLinks: [
+          {
+            label: "Instagram",
+            url: "https://instagram.com",
+            icon: "instagram",
+          },
+          {
+            label: "X",
+            url: "https://x.com",
+            icon: "x",
+          },
+          {
+            label: "LinkedIn",
+            url: "https://linkedin.com",
+            icon: "linkedin",
+          },
+          {
+            label: "YouTube",
+            url: "https://youtube.com",
+            icon: "youtube",
+          },
+          {
+            label: "Facebook",
+            url: "https://facebook.com",
+            icon: "facebook",
+          },
+          {
+            label: "Telegram",
+            url: "https://telegram.org",
+            icon: "telegram",
+          },
+          {
+            label: "TikTok",
+            url: "https://tiktok.com",
+            icon: "tiktok",
+          },
+        ],
+        scrollTopLabel: "",
+        navColumnTitle: "",
+        navLinks: [],
+        linksColumnOneTitle: "",
+        linksColumnOne: [],
+        linksColumnTwoTitle: "",
+        linksColumnTwo: [],
+      },
+    },
   ],
 };

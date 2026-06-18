@@ -22,8 +22,11 @@ export function InputsSection({ uiSize }: { uiSize: UiSize }) {
   const [selectLongValue, setSelectLongValue] = useState("item-18");
   const [autocompleteValue, setAutocompleteValue] = useState("");
   const [autocompleteSelection, setAutocompleteSelection] = useState("none");
+  const [borderlessAutocompleteValue, setBorderlessAutocompleteValue] = useState("");
+  const [borderlessAutocompleteSelection, setBorderlessAutocompleteSelection] = useState("none");
   const [multiSelectValue, setMultiSelectValue] = useState<string[]>(["react", "typescript"]);
   const [multiSelectDropdownValue, setMultiSelectDropdownValue] = useState<string[]>(["nextjs"]);
+  const [borderlessMultiSelectDropdownValue, setBorderlessMultiSelectDropdownValue] = useState<string[]>(["react"]);
   const [keyboardEventLog, setKeyboardEventLog] = useState("none");
 
   const longListOptions = useMemo(
@@ -242,6 +245,26 @@ export function InputsSection({ uiSize }: { uiSize: UiSize }) {
 
             <div className="max-w-xl">
               <UIMultiSelect
+                ariaLabel="Borderless frameworks and tools dropdown"
+                searchable
+                clearable
+                searchPlaceholder="Search options..."
+                size={uiSize}
+                borderless
+                value={borderlessMultiSelectDropdownValue}
+                onValueChange={setBorderlessMultiSelectDropdownValue}
+                options={[
+                  { value: "react", label: "React" },
+                  { value: "nextjs", label: "Next.js", textValue: "next js" },
+                  { value: "typescript", label: "TypeScript" },
+                  { value: "tailwind", label: "Tailwind CSS" },
+                  { value: "drizzle", label: "Drizzle ORM", disabled: true },
+                ]}
+              />
+            </div>
+
+            <div className="max-w-xl">
+              <UIMultiSelect
                 ariaLabel="Long list multi select"
                 searchable
                 clearable
@@ -282,6 +305,26 @@ export function InputsSection({ uiSize }: { uiSize: UiSize }) {
 
             <div className="max-w-xl">
               <UIAutocomplete
+                ariaLabel="Borderless framework autocomplete"
+                size={uiSize}
+                borderless
+                value={borderlessAutocompleteValue}
+                onValueChange={setBorderlessAutocompleteValue}
+                onSelect={(item) => setBorderlessAutocompleteSelection(item.value)}
+                placeholder="Borderless autocomplete..."
+                clearable
+                items={[
+                  { value: "react", label: "React" },
+                  { value: "nextjs", label: "Next.js", textValue: "next js" },
+                  { value: "svelte", label: "Svelte" },
+                  { value: "vue", label: "Vue" },
+                  { value: "solid", label: "Solid", disabled: true },
+                ]}
+              />
+            </div>
+
+            <div className="max-w-xl">
+              <UIAutocomplete
                 ariaLabel="Autocomplete invalid"
                 size={uiSize}
                 placeholder="Invalid state"
@@ -295,7 +338,8 @@ export function InputsSection({ uiSize }: { uiSize: UiSize }) {
             </div>
 
             <p className="text-sm text-text-muted">
-              Input: {autocompleteValue || "empty"} · Last selected: {autocompleteSelection}
+              Input: {autocompleteValue || "empty"} · Last selected: {autocompleteSelection} · Borderless input:{" "}
+              {borderlessAutocompleteValue || "empty"} · Borderless selected: {borderlessAutocompleteSelection}
             </p>
           </div>
         </UICard>
