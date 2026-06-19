@@ -4,9 +4,10 @@ import { useMemo, useState } from "react";
 
 import type { BlockEditorProps } from "../../shared/types";
 import { AssetPicker } from "../../shared/asset-picker";
-import { EditorFieldRow } from "@/components/editor/editor-field-row";
 import { UIButton } from "@/components/ui/button";
 import { UICheckbox } from "@/components/ui/checkbox";
+import { UIFormRow } from "@/components/ui/form-row";
+import { UIModalForm } from "@/components/ui/modal";
 import { UISelect } from "@/components/ui/select";
 import { UITextInput } from "@/components/ui/text-input";
 import { Card } from "@/components/ui/card";
@@ -42,6 +43,9 @@ export function AppHeaderDefaultEditor({
   } = appHeaderProps;
   const [draftLabel, setDraftLabel] = useState("");
   const [draftAnchorId, setDraftAnchorId] = useState("");
+  const [editingMenuIndex, setEditingMenuIndex] = useState<number | null>(null);
+  const [editingLabel, setEditingLabel] = useState("");
+  const [editingAnchorId, setEditingAnchorId] = useState("");
   const [draftSocialLabel, setDraftSocialLabel] = useState("");
   const [draftSocialUrl, setDraftSocialUrl] = useState("");
   const [draftSocialIcon, setDraftSocialIcon] = useState<SocialIconKey>("link");
@@ -100,6 +104,48 @@ export function AppHeaderDefaultEditor({
     setDraftAnchorId("");
   }
 
+  function openMenuItemEditor(index: number) {
+    const item = menuItems[index];
+    if (!item) {
+      return;
+    }
+
+    setEditingMenuIndex(index);
+    setEditingLabel(item.label);
+    setEditingAnchorId(item.anchorId);
+  }
+
+  function closeMenuItemEditor() {
+    setEditingMenuIndex(null);
+    setEditingLabel("");
+    setEditingAnchorId("");
+  }
+
+  function saveMenuItemEdit() {
+    if (editingMenuIndex === null) {
+      return;
+    }
+
+    const label = editingLabel.trim();
+    const anchorId = editingAnchorId.trim();
+    if (!label || !anchorId) {
+      return;
+    }
+
+    updateMenuItems(
+      menuItems.map((item, index) =>
+        index === editingMenuIndex
+          ? {
+              ...item,
+              label,
+              anchorId,
+            }
+          : item
+      )
+    );
+    closeMenuItemEditor();
+  }
+
   function handleAddSocialLink() {
     const label = draftSocialLabel.trim();
     const url = draftSocialUrl.trim();
@@ -126,66 +172,73 @@ export function AppHeaderDefaultEditor({
     );
   }
 
+  const editingMenuItem =
+    editingMenuIndex !== null ? menuItems[editingMenuIndex] ?? null : null;
+
   return (
-    <div className="grid gap-5">
+    <div className="grid gap-3">
       <Card>
-        <EditorFieldRow label="Title" htmlFor="app-header-title">
-          <UITextInput
-            id="app-header-title"
-            size="sm"
-            value={title}
-            onValueChange={(nextTitle) =>
-              onChange({
-                ...block.props,
-                title: nextTitle,
-              })
-            }
-            placeholder="Optional title"
-          />
-        </EditorFieldRow>
+        <div>
+          <UIFormRow label="Title" htmlFor="app-header-title" borderless>
+            <UITextInput
+              id="app-header-title"
+              size="sm"
+              value={title}
+              borderless
+              onValueChange={(nextTitle) =>
+                onChange({
+                  ...block.props,
+                  title: nextTitle,
+                })
+              }
+              placeholder="Optional title"
+            />
+          </UIFormRow>
 
-        <EditorFieldRow label="Collapse breakpoint" htmlFor="app-header-collapse-breakpoint">
-          <UISelect
-            id="app-header-collapse-breakpoint"
-            ariaLabel="Header collapse breakpoint"
-            size="sm"
-            className="w-full"
-            value={collapseBreakpoint}
-            onValueChange={(value) =>
-              onChange({
-                ...block.props,
-                collapseBreakpoint: value as AppHeaderCollapseBreakpoint,
-              })
-            }
-            options={breakpointOptions}
-          />
-        </EditorFieldRow>
+          <UIFormRow label="Collapse breakpoint" htmlFor="app-header-collapse-breakpoint" borderless>
+            <UISelect
+              id="app-header-collapse-breakpoint"
+              ariaLabel="Header collapse breakpoint"
+              size="sm"
+              borderless
+              className="w-full"
+              value={collapseBreakpoint}
+              onValueChange={(value) =>
+                onChange({
+                  ...block.props,
+                  collapseBreakpoint: value as AppHeaderCollapseBreakpoint,
+                })
+              }
+              options={breakpointOptions}
+            />
+          </UIFormRow>
 
-        <EditorFieldRow label="Always mobile" htmlFor="app-header-always-mobile">
-          <UICheckbox
-            id="app-header-always-mobile"
-            checked={alwaysMobile}
-            onChange={(event) =>
-              onChange({
-                ...block.props,
-                alwaysMobile: event.currentTarget.checked,
-              })
-            }
-          />
-        </EditorFieldRow>
+          <UIFormRow label="Always mobile" htmlFor="app-header-always-mobile" borderless>
+            <UICheckbox
+              id="app-header-always-mobile"
+              checked={alwaysMobile}
+              onChange={(event) =>
+                onChange({
+                  ...block.props,
+                  alwaysMobile: event.currentTarget.checked,
+                })
+              }
+            />
+          </UIFormRow>
 
-        <EditorFieldRow label="Mode switcher" htmlFor="app-header-show-mode-switcher">
-          <UICheckbox
-            id="app-header-show-mode-switcher"
-            checked={showModeSwitcher}
-            onChange={(event) =>
-              onChange({
-                ...block.props,
-                showModeSwitcher: event.currentTarget.checked,
-              })
-            }
-          />
-        </EditorFieldRow>
+          <UIFormRow label="Mode switcher" htmlFor="app-header-show-mode-switcher" borderless>
+            <UICheckbox
+              id="app-header-show-mode-switcher"
+              checked={showModeSwitcher}
+              onChange={(event) =>
+                onChange({
+                  ...block.props,
+                  showModeSwitcher: event.currentTarget.checked,
+                })
+              }
+            />
+          </UIFormRow>
+        </div>
       </Card>
 
     
@@ -271,44 +324,57 @@ export function AppHeaderDefaultEditor({
                   <p className="truncate text-sm font-medium text-text-main">{item.label}</p>
                   <p className="truncate text-xs text-text-muted">{item.anchorId}</p>
                 </div>
-                <UIButton
-                  type="button"
-                  size="sm"
-                  theme="danger"
-                  variant="outlined"
-                  onClick={() =>
-                    updateMenuItems(menuItems.filter((_, itemIndex) => itemIndex !== index))
-                  }
-                >
-                  Remove
-                </UIButton>
+                <div className="flex shrink-0 items-center gap-2">
+                  <UIButton
+                    type="button"
+                    size="sm"
+                    theme="base"
+                    variant="outlined"
+                    onClick={() => openMenuItemEditor(index)}
+                  >
+                    Edit
+                  </UIButton>
+                  <UIButton
+                    type="button"
+                    size="sm"
+                    theme="danger"
+                    variant="outlined"
+                    onClick={() =>
+                      updateMenuItems(menuItems.filter((_, itemIndex) => itemIndex !== index))
+                    }
+                  >
+                    Remove
+                  </UIButton>
+                </div>
               </div>
             ))}
           </div>
         )}
 
-        <div className="grid gap-2 rounded-xl border border-line bg-surface p-3">
-          <EditorFieldRow label="Label" htmlFor="app-header-menu-item-label">
+        <div className="grid rounded-xl border border-line bg-surface p-3">
+          <UIFormRow label="Label" htmlFor="app-header-menu-item-label" borderless>
             <UITextInput
               id="app-header-menu-item-label"
               size="sm"
               value={draftLabel}
               onValueChange={setDraftLabel}
+              borderless
               placeholder="Menu label"
             />
-          </EditorFieldRow>
-          <EditorFieldRow label="Anchor id" htmlFor="app-header-menu-item-anchor">
+          </UIFormRow>
+          <UIFormRow label="Anchor id" htmlFor="app-header-menu-item-anchor" borderless className="mb-3">
             <UISelect
               id="app-header-menu-item-anchor"
               ariaLabel="Anchor id"
               size="sm"
+              borderless
               className="w-full"
               value={draftAnchorId}
               onValueChange={(value) => setDraftAnchorId(String(value))}
               placeholder={availableAnchors.length === 0 ? "No anchors available" : "Select anchor"}
               options={anchorOptions}
             />
-          </EditorFieldRow>
+          </UIFormRow>
           <UIButton
             type="button"
             size="sm"
@@ -321,6 +387,53 @@ export function AppHeaderDefaultEditor({
           </UIButton>
         </div>
       </div>
+
+      <UIModalForm
+        open={editingMenuIndex !== null}
+        onOpenChange={(nextOpen) => {
+          if (!nextOpen) {
+            closeMenuItemEditor();
+          }
+        }}
+        trigger={<button type="button" className="hidden" aria-hidden tabIndex={-1} />}
+        title="Edit menu item"
+        description={
+          editingMenuItem ? `Editing ${editingMenuItem.label} · ${editingMenuItem.anchorId}` : "Edit menu item"
+        }
+        submitLabel="Save changes"
+        cancelLabel="Cancel"
+        size="md"
+        onSubmit={(event) => {
+          event.preventDefault();
+          saveMenuItemEdit();
+        }}
+      >
+        <div className="grid gap-3">
+          <UIFormRow label="Label" htmlFor="app-header-menu-item-edit-label" borderless>
+            <UITextInput
+              id="app-header-menu-item-edit-label"
+              size="sm"
+              value={editingLabel}
+              onValueChange={setEditingLabel}
+              borderless
+              placeholder="Menu label"
+            />
+          </UIFormRow>
+          <UIFormRow label="Anchor id" htmlFor="app-header-menu-item-edit-anchor" borderless>
+            <UISelect
+              id="app-header-menu-item-edit-anchor"
+              ariaLabel="Anchor id"
+              size="sm"
+              borderless
+              className="w-full"
+              value={editingAnchorId}
+              onValueChange={(value) => setEditingAnchorId(String(value))}
+              placeholder={availableAnchors.length === 0 ? "No anchors available" : "Select anchor"}
+              options={anchorOptions}
+            />
+          </UIFormRow>
+        </div>
+      </UIModalForm>
 
       <div className="grid gap-3 rounded-2xl border border-line bg-surface-alt p-4">
         <p className="text-sm font-semibold text-text-main">Right: Social links</p>
@@ -365,7 +478,7 @@ export function AppHeaderDefaultEditor({
         )}
 
         <div className="grid gap-2 rounded-xl border border-line bg-surface p-3">
-          <EditorFieldRow label="Label" htmlFor="app-header-social-label">
+          <UIFormRow label="Label" htmlFor="app-header-social-label" borderless>
             <UITextInput
               id="app-header-social-label"
               size="sm"
@@ -373,8 +486,8 @@ export function AppHeaderDefaultEditor({
               onValueChange={setDraftSocialLabel}
               placeholder="Instagram"
             />
-          </EditorFieldRow>
-          <EditorFieldRow label="URL" htmlFor="app-header-social-url">
+          </UIFormRow>
+          <UIFormRow label="URL" htmlFor="app-header-social-url" borderless>
             <UITextInput
               id="app-header-social-url"
               size="sm"
@@ -382,8 +495,8 @@ export function AppHeaderDefaultEditor({
               onValueChange={setDraftSocialUrl}
               placeholder="https://..."
             />
-          </EditorFieldRow>
-          <EditorFieldRow label="Icon" htmlFor="app-header-social-icon">
+          </UIFormRow>
+          <UIFormRow label="Icon" htmlFor="app-header-social-icon" borderless>
             <UISelect
               id="app-header-social-icon"
               ariaLabel="Social icon"
@@ -393,7 +506,7 @@ export function AppHeaderDefaultEditor({
               onValueChange={(value) => setDraftSocialIcon(value as SocialIconKey)}
               options={socialIconOptions}
             />
-          </EditorFieldRow>
+          </UIFormRow>
           <UIButton
             type="button"
             size="sm"

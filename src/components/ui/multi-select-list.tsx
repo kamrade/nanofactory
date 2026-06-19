@@ -59,6 +59,10 @@ function findNextEnabledIndex<T extends { disabled?: boolean }>(
   return -1;
 }
 
+function focusWithoutScroll(element: HTMLElement | null | undefined) {
+  element?.focus({ preventScroll: true });
+}
+
 export function UIMultiSelectList({
   value,
   defaultValue,
@@ -137,7 +141,7 @@ export function UIMultiSelectList({
       return;
     }
     setActiveIndex(index);
-    optionRefs.current[index]?.focus();
+    focusWithoutScroll(optionRefs.current[index]);
   }
 
   function moveSelection(direction: 1 | -1) {

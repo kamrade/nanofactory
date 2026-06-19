@@ -60,7 +60,7 @@ export function UIModal({
           <UIDialogTitle>{title}</UIDialogTitle>
           {description ? <UIDialogDescription>{description}</UIDialogDescription> : null}
         </UIDialogHeader>
-        <div className="mt-4 max-h-[calc(100vh-16rem)] overflow-y-auto overflow-x-visible p-1">
+        <div className="mt-4 max-h-[calc(100vh-16rem)] p-1">
           {children}
         </div>
         {footer ? <UIDialogFooter>{footer}</UIDialogFooter> : null}
@@ -125,7 +125,7 @@ export function UIModalForm({
             <UIDialogTitle>{title}</UIDialogTitle>
             {description ? <UIDialogDescription>{description}</UIDialogDescription> : null}
           </UIDialogHeader>
-          <div className="mt-4 max-h-[calc(100vh-16rem)] overflow-y-auto overflow-x-visible p-1">
+          <div className="mt-4 max-h-[calc(100vh-16rem)] p-1">
             {children}
           </div>
           <UIDialogFooter>

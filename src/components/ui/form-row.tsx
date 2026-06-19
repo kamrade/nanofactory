@@ -13,6 +13,7 @@ type UIFormRowProps = {
   contentClassName?: string;
   className?: string;
   labelClassName?: string;
+  borderless?: boolean;
 };
 
 export function UIFormRow({
@@ -26,6 +27,7 @@ export function UIFormRow({
   contentClassName,
   className,
   labelClassName,
+  borderless = false,
 }: UIFormRowProps) {
   const labelNode = htmlFor ? (
     <label
@@ -54,7 +56,7 @@ export function UIFormRow({
     <div
       className={cx(
         "grid gap-1.5 md:grid-cols-[12rem_minmax(0,1fr)] md:items-start md:gap-4",
-        underline && "border-b border-line py-1 transition-colors focus-within:border-neutral-400",
+        (underline || borderless) && "border-b border-line py-1 transition-colors focus-within:border-neutral-400",
         className
       )}
     >

@@ -80,6 +80,10 @@ function getFirstEnabledIndex<T extends { disabled?: boolean }>(options: T[]) {
   return options.findIndex((option) => !option.disabled);
 }
 
+function focusWithoutScroll(element: HTMLElement | null | undefined) {
+  element?.focus({ preventScroll: true });
+}
+
 export function UISelect({
   id,
   value,
@@ -169,7 +173,7 @@ export function UISelect({
       return;
     }
     setActiveIndex(index);
-    optionRefs.current[index]?.focus();
+    focusWithoutScroll(optionRefs.current[index]);
   }
 
   function openDropdown(initialIndex?: number) {
@@ -262,12 +266,12 @@ export function UISelect({
 
     const frame = window.requestAnimationFrame(() => {
       if (searchable && searchInputRef.current) {
-        searchInputRef.current.focus();
+        focusWithoutScroll(searchInputRef.current);
         return;
       }
 
       if (activeIndex >= 0) {
-        optionRefs.current[activeIndex]?.focus();
+        focusWithoutScroll(optionRefs.current[activeIndex]);
       }
     });
 

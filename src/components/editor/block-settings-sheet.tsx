@@ -13,6 +13,7 @@ import { isValidAnchorId, normalizeAnchorId } from "@/lib/editor/anchor-id";
 import { UIButton } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import { UISelect } from "@/components/ui/select";
+import { UIFormRow } from "@/components/ui/form-row";
 import { UITextInput } from "@/components/ui/text-input";
 import {
   UISheet,
@@ -234,28 +235,26 @@ export function BlockSettingsSheet({
                 ) : null}
 
                 <div className="grid gap-1.5 md:flex md:items-start md:gap-4">
-                  <label
-                    htmlFor="block-anchor-id-input"
-                    className="pt-1 text-sm font-medium text-text-main md:w-32 md:shrink-0"
-                  >
-                    Anchor id
-                  </label>
-                  <div className="grid gap-1.5 min-w-0 flex-1">
-                    <UITextInput
-                      id="block-anchor-id-input"
-                      size="sm"
-                      value={anchorDraft}
-                      onValueChange={setAnchorDraft}
-                      onBlur={handleAnchorBlur}
-                      placeholder={effectiveAnchorId ?? "section-hero"}
-                      invalid={Boolean(anchorError)}
-                      aria-label="Anchor id"
-                    />
-                    <span className={anchorError ? "text-xs text-danger" : "text-xs text-text-muted"}>
-                      {anchorError ??
-                        `Optional. Auto anchor: ${effectiveAnchorId ?? "section-hero"}`}
-                    </span>
-                  </div>
+
+                  <UIFormRow label="Anchor id" htmlFor="block-anchor-id-input" borderless>
+                    <div className="grid gap-1.5 min-w-0 flex-1">
+                      <UITextInput
+                        id="block-anchor-id-input"
+                        size="sm"
+                        borderless
+                        value={anchorDraft}
+                        onValueChange={setAnchorDraft}
+                        onBlur={handleAnchorBlur}
+                        placeholder={effectiveAnchorId ?? "section-hero"}
+                        invalid={Boolean(anchorError)}
+                        aria-label="Anchor id"
+                      />
+                      <span className={anchorError ? "text-xs text-danger" : "text-xs text-text-muted"}>
+                        {anchorError ??
+                          `Optional. Auto anchor: ${effectiveAnchorId ?? "section-hero"}`}
+                      </span>
+                    </div>    
+                  </UIFormRow>
                 </div>
 
               
