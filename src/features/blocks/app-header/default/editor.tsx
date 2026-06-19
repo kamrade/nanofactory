@@ -12,10 +12,6 @@ import { UISelect } from "@/components/ui/select";
 import { UITextInput } from "@/components/ui/text-input";
 import { Card } from "@/components/ui/card";
 import {
-  SOCIAL_ICON_OPTIONS,
-  type SocialIconKey,
-} from "./social-icons";
-import {
   APP_HEADER_BREAKPOINTS,
   type AppHeaderCollapseBreakpoint,
   readAppHeaderProps,
@@ -48,7 +44,9 @@ export function AppHeaderDefaultEditor({
   const [editingAnchorId, setEditingAnchorId] = useState("");
   const [draftSocialLabel, setDraftSocialLabel] = useState("");
   const [draftSocialUrl, setDraftSocialUrl] = useState("");
-  const [draftSocialIcon, setDraftSocialIcon] = useState<SocialIconKey>("link");
+  const [editingSocialIndex, setEditingSocialIndex] = useState<number | null>(null);
+  const [editingSocialLabel, setEditingSocialLabel] = useState("");
+  const [editingSocialUrl, setEditingSocialUrl] = useState("");
 
   const anchorOptions = useMemo(
     () =>
@@ -58,15 +56,6 @@ export function AppHeaderDefaultEditor({
         textValue: anchor.label,
       })),
     [availableAnchors]
-  );
-  const socialIconOptions = useMemo(
-    () =>
-      SOCIAL_ICON_OPTIONS.map((option) => ({
-        value: option.value,
-        label: option.label,
-        textValue: option.label,
-      })),
-    []
   );
   const breakpointOptions = useMemo(
     () =>
@@ -153,27 +142,57 @@ export function AppHeaderDefaultEditor({
       return;
     }
 
-    updateSocialLinks([...socialLinks, { label, url, icon: draftSocialIcon }]);
+    updateSocialLinks([...socialLinks, { label, url, icon: "link" }]);
     setDraftSocialLabel("");
     setDraftSocialUrl("");
-    setDraftSocialIcon("link");
   }
 
-  function handleUpdateSocialIcon(index: number, nextIcon: SocialIconKey) {
-    updateSocialLinks(
-      socialLinks.map((item, itemIndex) =>
-        itemIndex === index
-          ? {
-              ...item,
-              icon: nextIcon,
-            }
-          : item
-      )
-    );
+  function openSocialLinkEditor(index: number) {
+    const item = socialLinks[index];
+    if (!item) {
+      return;
+    }
+
+    setEditingSocialIndex(index);
+    setEditingSocialLabel(item.label);
+    setEditingSocialUrl(item.url);
+  }
+
+  function closeSocialLinkEditor() {
+    setEditingSocialIndex(null);
+    setEditingSocialLabel("");
+    setEditingSocialUrl("");
+  }
+
+  function saveSocialLinkEdit() {
+    if (editingSocialIndex === null) {
+      return;
+    }
+
+    const label = editingSocialLabel.trim();
+    const url = editingSocialUrl.trim();
+    if (!label || !url) {
+      return;
+    }
+
+      updateSocialLinks(
+        socialLinks.map((item, index) =>
+          index === editingSocialIndex
+            ? {
+                ...item,
+                label,
+                url,
+              }
+            : item
+        )
+      );
+    closeSocialLinkEditor();
   }
 
   const editingMenuItem =
     editingMenuIndex !== null ? menuItems[editingMenuIndex] ?? null : null;
+  const editingSocialItem =
+    editingSocialIndex !== null ? socialLinks[editingSocialIndex] ?? null : null;
 
   return (
     <div className="grid gap-3">
@@ -309,7 +328,7 @@ export function AppHeaderDefaultEditor({
       />
     
 
-      <div className="grid gap-3 rounded-2xl border border-line bg-surface-alt p-4">
+      <Card className="bg-surface-alt">
         <p className="text-sm font-semibold text-text-main">Center: Menu</p>
         {menuItems.length === 0 ? (
           <p className="text-sm text-text-muted">No menu items yet.</p>
@@ -351,7 +370,7 @@ export function AppHeaderDefaultEditor({
           </div>
         )}
 
-        <div className="grid rounded-xl border border-line bg-surface p-3">
+        <div className="grid rounded-xl bg-surface border border-line p-3">
           <UIFormRow label="Label" htmlFor="app-header-menu-item-label" borderless>
             <UITextInput
               id="app-header-menu-item-label"
@@ -386,7 +405,7 @@ export function AppHeaderDefaultEditor({
             Add item
           </UIButton>
         </div>
-      </div>
+      </Card>
 
       <UIModalForm
         open={editingMenuIndex !== null}
@@ -435,7 +454,7 @@ export function AppHeaderDefaultEditor({
         </div>
       </UIModalForm>
 
-      <div className="grid gap-3 rounded-2xl border border-line bg-surface-alt p-4">
+      <Card className="bg-surface-alt">
         <p className="text-sm font-semibold text-text-main">Right: Social links</p>
         {socialLinks.length === 0 ? (
           <p className="text-sm text-text-muted">No social links yet.</p>
@@ -450,28 +469,28 @@ export function AppHeaderDefaultEditor({
                   <p className="truncate text-sm font-medium text-text-main">{item.label}</p>
                   <p className="truncate text-xs text-text-muted">{item.url}</p>
                 </div>
-                <div className="min-w-[170px]">
-                  <UISelect
-                    ariaLabel="Social icon"
+                <div className="flex shrink-0 items-center gap-2">
+                  <UIButton
+                    type="button"
                     size="sm"
-                    value={item.icon}
-                    onValueChange={(value) =>
-                      handleUpdateSocialIcon(index, value as SocialIconKey)
+                    theme="base"
+                    variant="outlined"
+                    onClick={() => openSocialLinkEditor(index)}
+                  >
+                    Edit
+                  </UIButton>
+                  <UIButton
+                    type="button"
+                    size="sm"
+                    theme="danger"
+                    variant="outlined"
+                    onClick={() =>
+                      updateSocialLinks(socialLinks.filter((_, itemIndex) => itemIndex !== index))
                     }
-                    options={socialIconOptions}
-                  />
+                  >
+                    Remove
+                  </UIButton>
                 </div>
-                <UIButton
-                  type="button"
-                  size="sm"
-                  theme="danger"
-                  variant="outlined"
-                  onClick={() =>
-                    updateSocialLinks(socialLinks.filter((_, itemIndex) => itemIndex !== index))
-                  }
-                >
-                  Remove
-                </UIButton>
               </div>
             ))}
           </div>
@@ -485,6 +504,7 @@ export function AppHeaderDefaultEditor({
               value={draftSocialLabel}
               onValueChange={setDraftSocialLabel}
               placeholder="Instagram"
+              borderless
             />
           </UIFormRow>
           <UIFormRow label="URL" htmlFor="app-header-social-url" borderless>
@@ -494,17 +514,7 @@ export function AppHeaderDefaultEditor({
               value={draftSocialUrl}
               onValueChange={setDraftSocialUrl}
               placeholder="https://..."
-            />
-          </UIFormRow>
-          <UIFormRow label="Icon" htmlFor="app-header-social-icon" borderless>
-            <UISelect
-              id="app-header-social-icon"
-              ariaLabel="Social icon"
-              size="sm"
-              className="w-full"
-              value={draftSocialIcon}
-              onValueChange={(value) => setDraftSocialIcon(value as SocialIconKey)}
-              options={socialIconOptions}
+              borderless
             />
           </UIFormRow>
           <UIButton
@@ -518,7 +528,51 @@ export function AppHeaderDefaultEditor({
             Add social link
           </UIButton>
         </div>
-      </div>
+      </Card>
+
+      <UIModalForm
+        open={editingSocialIndex !== null}
+        onOpenChange={(nextOpen) => {
+          if (!nextOpen) {
+            closeSocialLinkEditor();
+          }
+        }}
+        trigger={<button type="button" className="hidden" aria-hidden tabIndex={-1} />}
+        title="Edit social link"
+        description={
+          editingSocialItem ? `Editing ${editingSocialItem.label} · ${editingSocialItem.url}` : "Edit social link"
+        }
+        submitLabel="Save changes"
+        cancelLabel="Cancel"
+        size="md"
+        onSubmit={(event) => {
+          event.preventDefault();
+          saveSocialLinkEdit();
+        }}
+      >
+        <div className="grid gap-3">
+          <UIFormRow label="Label" htmlFor="app-header-social-edit-label" borderless>
+            <UITextInput
+              id="app-header-social-edit-label"
+              size="sm"
+              value={editingSocialLabel}
+              onValueChange={setEditingSocialLabel}
+              borderless
+              placeholder="Instagram"
+            />
+          </UIFormRow>
+          <UIFormRow label="URL" htmlFor="app-header-social-edit-url" borderless>
+            <UITextInput
+              id="app-header-social-edit-url"
+              size="sm"
+              value={editingSocialUrl}
+              onValueChange={setEditingSocialUrl}
+              borderless
+              placeholder="https://..."
+            />
+          </UIFormRow>
+        </div>
+      </UIModalForm>
     </div>
   );
 }
