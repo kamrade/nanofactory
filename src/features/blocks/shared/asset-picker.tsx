@@ -55,7 +55,7 @@ export function AssetPicker({
   const selectedAsset = assets.find((asset) => asset.id === selectedAssetId) ?? null;
 
   return (
-    <Card>
+    <Card className="bg-surface-alt">
       <div className="grid gap-3">
         <div className="space-y-1">
           <h4 className="text-lg font-semibold text-text-main">{title}</h4>
@@ -162,8 +162,8 @@ export function AssetPicker({
 
         {selectedAsset ? (
           <div>
-            <p className="text-sm font-medium text-text-main">{selectedStateTitle}</p>
-            <div className="w-full overflow-hidden rounded-2xl border border-line bg-surface">
+            <p className="text-sm font-medium text-text-main mb-2">{selectedStateTitle}</p>
+            <div className="w-full overflow-hidden rounded-2xl bg-surface">
               <Image
                 src={selectedAsset.publicUrl}
                 alt={selectedAsset.alt ?? selectedAsset.originalFilename}

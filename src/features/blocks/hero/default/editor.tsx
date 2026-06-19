@@ -2,10 +2,10 @@
 
 import type { BlockEditorProps } from "../../shared/types";
 import { AssetPicker } from "../../shared/asset-picker";
-import { EditorFieldRow } from "@/components/editor/editor-field-row";
+import { UIFormRow } from "@/components/ui/form-row";
 import { UISelect } from "@/components/ui/select";
 import { UITextInput } from "@/components/ui/text-input";
-import { Card } from '@/components/ui/card';
+import { Card } from "@/components/ui/card";
 
 function readStringProp(props: Record<string, unknown>, key: string) {
   return typeof props[key] === "string" ? props[key] : "";
@@ -52,54 +52,58 @@ export function HeroDefaultEditor({
 
   return (
     <div data-testid="hero-default-editor">
-      <Card>
-        <div className="grid gap-5">
-          <EditorFieldRow label="Eyebrow" htmlFor="hero-default-eyebrow">
+      <Card className="bg-surface">
+        <div className="grid gap-0">
+          <UIFormRow label="Eyebrow" htmlFor="hero-default-eyebrow" borderless>
             <UITextInput
               id="hero-default-eyebrow"
               size="sm"
               value={eyebrow}
+              borderless
               placeholder="Optional eyebrow text"
               onValueChange={(value) => updateField("eyebrow", value)}
             />
-          </EditorFieldRow>
+          </UIFormRow>
 
-          <EditorFieldRow label="Title" htmlFor="hero-default-title">
+          <UIFormRow label="Title" htmlFor="hero-default-title" borderless>
             <UITextInput
               id="hero-default-title"
               size="sm"
               value={title}
+              borderless
               placeholder="Launch your next page faster"
               onValueChange={(value) => updateField("title", value)}
             />
-          </EditorFieldRow>
+          </UIFormRow>
 
-          <EditorFieldRow label="Subtitle" htmlFor="hero-default-subtitle">
+          <UIFormRow label="Subtitle" htmlFor="hero-default-subtitle" borderless>
             <textarea
               id="hero-default-subtitle"
               value={subtitle}
               rows={4}
               placeholder="Describe the core value of the page in one short paragraph."
               onChange={(event) => updateField("subtitle", event.target.value)}
-              className="min-h-24 w-full rounded-2xl border border-line bg-surface px-4 py-3 text-sm text-text-main outline-none transition placeholder:text-text-placeholder focus:ring-2 focus:ring-focus/50"
+              className="min-h-24 w-full rounded-xl bg-surface px-4 py-3 text-sm text-text-main outline-none transition placeholder:text-text-placeholder focus:ring-2 focus:ring-focus/50"
             />
-          </EditorFieldRow>
+          </UIFormRow>
 
-          <EditorFieldRow label="Button text" htmlFor="hero-default-button-text">
+          <UIFormRow label="Button text" htmlFor="hero-default-button-text" borderless>
             <UITextInput
               id="hero-default-button-text"
               size="sm"
               value={buttonText}
+              borderless
               placeholder="Get started"
               onValueChange={(value) => updateField("buttonText", value)}
             />
-          </EditorFieldRow>
+          </UIFormRow>
 
-          <EditorFieldRow label="Button anchor" htmlFor="hero-default-button-anchor">
+          <UIFormRow label="Button anchor" htmlFor="hero-default-button-anchor" borderless>
             <UISelect
               id="hero-default-button-anchor"
               ariaLabel="Hero button anchor"
               size="sm"
+              borderless
               className="w-full"
               value={buttonAnchor}
               onValueChange={(value) => updateField("buttonAnchor", String(value))}
@@ -111,13 +115,14 @@ export function HeroDefaultEditor({
               }))}
               clearable
             />
-          </EditorFieldRow>
+          </UIFormRow>
 
-          <EditorFieldRow label="Content position" htmlFor="hero-default-content-position">
+          <UIFormRow label="Content position" htmlFor="hero-default-content-position" borderless>
             <UISelect
               id="hero-default-content-position"
               ariaLabel="Hero content position"
               size="sm"
+              borderless
               className="w-full"
               value={contentPosition}
               onValueChange={(value) => updateField("contentPosition", String(value))}
@@ -128,9 +133,7 @@ export function HeroDefaultEditor({
                 { value: "stretch", label: "Stretch", textValue: "Stretch" },
               ]}
             />
-          </EditorFieldRow>
-
-          
+          </UIFormRow>
         </div>
       </Card>
 

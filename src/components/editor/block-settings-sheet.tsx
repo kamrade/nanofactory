@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useState } from "react";
 
 import type { BlockVariant } from "@/lib/editor/blocks";
 import type { PendingVariantSwitch } from "@/components/editor/project-editor-variants";
@@ -68,6 +68,77 @@ type BlockSettingsSheetProps = {
   onAnchorIdRejected?: (message: string) => void;
 };
 
+function BlockAnchorIdField({
+  blockId,
+  initialAnchorId,
+  effectiveAnchorId,
+  allBlocks,
+  onChangeAnchorId,
+}: {
+  blockId: string;
+  initialAnchorId?: string;
+  effectiveAnchorId?: string;
+  allBlocks: PageBlock[];
+  onChangeAnchorId: (blockId: string, nextAnchorId?: string) => void;
+}) {
+  const [anchorDraft, setAnchorDraft] = useState(initialAnchorId ?? "");
+  const [anchorError, setAnchorError] = useState<string | null>(null);
+
+  function validateAnchorId(nextAnchorId: string) {
+    const normalizedAnchorId = normalizeAnchorId(nextAnchorId);
+
+    if (normalizedAnchorId.length === 0) {
+      setAnchorError(null);
+      onChangeAnchorId(blockId, undefined);
+      return;
+    }
+
+    if (!isValidAnchorId(normalizedAnchorId)) {
+      setAnchorError(
+        "Use lowercase Latin letters, numbers, and hyphens only. Must start with a letter."
+      );
+      return;
+    }
+
+    const hasDuplicate = allBlocks.some(
+      (block) =>
+        block.id !== blockId &&
+        typeof block.anchorId === "string" &&
+        normalizeAnchorId(block.anchorId) === normalizedAnchorId
+    );
+
+    if (hasDuplicate) {
+      setAnchorError("This anchor id is already used by another block.");
+      return;
+    }
+
+    setAnchorError(null);
+    setAnchorDraft(normalizedAnchorId);
+    onChangeAnchorId(blockId, normalizedAnchorId);
+  }
+
+  return (
+    <UIFormRow label="Anchor id" htmlFor={`block-anchor-id-input-${blockId}`} borderless>
+      <UITextInput
+        id={`block-anchor-id-input-${blockId}`}
+        size="sm"
+        borderless
+        value={anchorDraft}
+        onValueChange={(value) => {
+          setAnchorDraft(value);
+          if (anchorError) {
+            setAnchorError(null);
+          }
+        }}
+        onBlur={(event) => validateAnchorId(event.currentTarget.value)}
+        placeholder={effectiveAnchorId ?? "section-hero"}
+        invalid={Boolean(anchorError)}
+        aria-label="Anchor id"
+      />
+    </UIFormRow>
+  );
+}
+
 export function BlockSettingsSheet({
   open,
   activeEditorBlock,
@@ -95,81 +166,11 @@ export function BlockSettingsSheet({
   onDeleteBlock,
   allBlocks,
   effectiveAnchorId,
-  onAnchorIdRejected,
 }: BlockSettingsSheetProps) {
   const canMoveActiveBlockUp = activeEditorBlockIndex > 0;
   const canMoveActiveBlockDown = activeEditorBlockIndex >= 0 && activeEditorBlockIndex < totalBlocks - 1;
-  const [anchorDraft, setAnchorDraft] = useState("");
-  const [anchorError, setAnchorError] = useState<string | null>(null);
-
-  useEffect(() => {
-    setAnchorDraft(activeEditorBlock?.anchorId ?? "");
-    setAnchorError(null);
-  }, [activeEditorBlock?.id, activeEditorBlock?.anchorId]);
-
-  function handleAnchorBlur() {
-    if (!activeEditorBlock) {
-      return;
-    }
-
-    const normalizedAnchorId = normalizeAnchorId(anchorDraft);
-
-    if (normalizedAnchorId.length === 0) {
-      setAnchorError(null);
-      onChangeAnchorId(activeEditorBlock.id, undefined);
-      return;
-    }
-
-    if (!isValidAnchorId(normalizedAnchorId)) {
-      setAnchorError(
-        "Use lowercase Latin letters, numbers, and hyphens only. Must start with a letter."
-      );
-      return;
-    }
-
-    const hasDuplicate = allBlocks.some(
-      (block) =>
-        block.id !== activeEditorBlock.id &&
-        typeof block.anchorId === "string" &&
-        normalizeAnchorId(block.anchorId) === normalizedAnchorId
-    );
-
-    if (hasDuplicate) {
-      setAnchorError("This anchor id is already used by another block.");
-      return;
-    }
-
-    setAnchorError(null);
-    setAnchorDraft(normalizedAnchorId);
-    onChangeAnchorId(activeEditorBlock.id, normalizedAnchorId);
-  }
-
-  function isAnchorDraftInvalidForCurrentBlock() {
-    if (!activeEditorBlock) {
-      return false;
-    }
-
-    const normalizedAnchorId = normalizeAnchorId(anchorDraft);
-    if (normalizedAnchorId.length === 0) {
-      return false;
-    }
-
-    if (!isValidAnchorId(normalizedAnchorId)) {
-      return true;
-    }
-
-    return allBlocks.some(
-      (block) =>
-        block.id !== activeEditorBlock.id &&
-        typeof block.anchorId === "string" &&
-        normalizeAnchorId(block.anchorId) === normalizedAnchorId
-    );
-  }
 
   function handleSheetOpenChange(nextOpen: boolean) {
-    if (!nextOpen && isAnchorDraftInvalidForCurrentBlock()) {
-      onAnchorIdRejected?.("Anchor id is invalid, value was not saved.");
-    }
     onOpenChange(nextOpen);
   }
 
@@ -202,19 +203,14 @@ export function BlockSettingsSheet({
 
             <div className="mt-6 grid gap-5">
               <Card>
-                {activeVariantOptions.length > 1 ? (
-                  <div className="grid gap-1.5 md:flex md:items-start md:gap-4">
-                    <label
-                      htmlFor="block-variant-select"
-                      className="pt-1 text-sm font-medium text-text-main md:w-32 md:shrink-0"
-                    >
-                      Variant
-                    </label>
-                    <div className="min-w-0 flex-1">
+                <div className="grid gap-0">
+                  {activeVariantOptions.length > 1 ? (
+                    <UIFormRow label="Variant" htmlFor="block-variant-select" borderless>
                       <UISelect
                         id="block-variant-select"
                         ariaLabel="Variant"
                         size="sm"
+                        borderless
                         className="w-full"
                         value={activeVariant}
                         onValueChange={(value) =>
@@ -230,34 +226,22 @@ export function BlockSettingsSheet({
                           textValue: option.label,
                         }))}
                       />
-                    </div>
-                  </div>
-                ) : null}
+                    </UIFormRow>
+                  ) : null}
 
-                <div className="grid gap-1.5 md:flex md:items-start md:gap-4">
+                  <BlockAnchorIdField
+                    key={activeEditorBlock.id}
+                    blockId={activeEditorBlock.id}
+                    initialAnchorId={activeEditorBlock.anchorId}
+                    effectiveAnchorId={effectiveAnchorId}
+                    allBlocks={allBlocks}
+                    onChangeAnchorId={onChangeAnchorId}
+                  />
 
-                  <UIFormRow label="Anchor id" htmlFor="block-anchor-id-input" borderless>
-                    <div className="grid gap-1.5 min-w-0 flex-1">
-                      <UITextInput
-                        id="block-anchor-id-input"
-                        size="sm"
-                        borderless
-                        value={anchorDraft}
-                        onValueChange={setAnchorDraft}
-                        onBlur={handleAnchorBlur}
-                        placeholder={effectiveAnchorId ?? "section-hero"}
-                        invalid={Boolean(anchorError)}
-                        aria-label="Anchor id"
-                      />
-                      <span className={anchorError ? "text-xs text-danger" : "text-xs text-text-muted"}>
-                        {anchorError ??
-                          `Optional. Auto anchor: ${effectiveAnchorId ?? "section-hero"}`}
-                      </span>
-                    </div>    
-                  </UIFormRow>
                 </div>
+              </Card>
 
-              
+              <Card className="bg-surface-alt">
                 <ScenePicker
                   scenes={backgroundScenes}
                   selectedSceneId={activeEditorBlock.backgroundSceneId}
