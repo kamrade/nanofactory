@@ -3,6 +3,7 @@
 import { UIButton } from "@/components/ui/button";
 import { UISelect } from "@/components/ui/select";
 import { UITextInput } from "@/components/ui/text-input";
+import { UITextArea } from "@/components/ui/textarea";
 import { UIFormRow } from "@/components/ui/form-row";
 import type { BlockEditorProps } from "../../shared/types";
 import { AssetPicker } from "../../shared/asset-picker";
@@ -242,14 +243,15 @@ export function GalleryDefaultEditor({
 
                   <UIFormRow label="Description (optional)" htmlFor={`gallery-item-description-${index}`} borderless>
                     <div className="min-w-0 flex-1">
-                    <textarea
+                    <UITextArea
                       id={`gallery-item-description-${index}`}
+                      size="sm"
+                      borderless
                       value={item.description}
                       rows={3}
                       onChange={(event) =>
                         updateItem(index, { ...item, description: event.target.value })
                       }
-                      className="w-full rounded-xl bg-surface px-3 py-2 text-sm text-text-main outline-none transition placeholder:text-text-placeholder focus:ring-2 focus:ring-focus/50"
                       placeholder="Item description"
                     />
                     </div>

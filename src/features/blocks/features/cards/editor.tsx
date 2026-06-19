@@ -2,9 +2,10 @@
 
 import type { BlockEditorProps } from "../../shared/types";
 import { AssetPicker } from "../../shared/asset-picker";
-import { EditorFieldRow } from "@/components/editor/editor-field-row";
 import { UIButton } from "@/components/ui/button";
+import { UIFormRow } from "@/components/ui/form-row";
 import { UITextInput } from "@/components/ui/text-input";
+import { UITextArea } from "@/components/ui/textarea";
 import { Card } from "@/components/ui/card";
 
 type FeatureCardItem = {
@@ -132,18 +133,20 @@ export function FeaturesCardsEditor({ block, assets, onChange }: BlockEditorProp
   return (
     <div className="grid gap-5">
       <Card>
-        <EditorFieldRow label="Section title" htmlFor="features-cards-section-title">
-          <UITextInput
-            id="features-cards-section-title"
-            size="sm"
-            value={sectionTitle}
-            placeholder="Why teams choose Nanofactory"
-            onValueChange={updateSectionTitle}
-          />
-        </EditorFieldRow>
+        <div className="grid gap-0">
+          <UIFormRow label="Section title" htmlFor="features-cards-section-title" borderless>
+            <UITextInput
+              id="features-cards-section-title"
+              size="sm"
+              borderless
+              value={sectionTitle}
+              placeholder="Why teams choose Nanofactory"
+              onValueChange={updateSectionTitle}
+            />
+          </UIFormRow>
+        </div>
       </Card>
 
-    
       <div className="flex flex-wrap items-center justify-between gap-3">
         <div className="space-y-1">
           <h4 className="text-sm font-semibold text-text-main">Cards</h4>
@@ -168,12 +171,9 @@ export function FeaturesCardsEditor({ block, assets, onChange }: BlockEditorProp
       ) : (
         <div className="grid gap-3">
           {items.map((item, index) => (
-            <article
-              key={`${block.id}-card-${index}-${item.title}`}
-              className="grid gap-3 rounded-2xl border border-line bg-surface p-4"
-            >
+            <Card key={`${block.id}-card-${index}-${item.title}`}>
               <div className="flex flex-wrap items-center justify-between gap-3">
-                <p className="text-sm font-medium text-text-main">Card {index + 1}</p>
+                <p className="text-sm font-bold text-text-main">Card {index + 1}</p>
                 <UIButton
                   type="button"
                   onClick={() => handleRemoveItem(index)}
@@ -183,30 +183,28 @@ export function FeaturesCardsEditor({ block, assets, onChange }: BlockEditorProp
                 </UIButton>
               </div>
 
-              <EditorFieldRow label="Card title" htmlFor={`features-card-title-${index}`}>
+              <UIFormRow label="Card title" htmlFor={`features-card-title-${index}`} borderless>
                 <UITextInput
                   id={`features-card-title-${index}`}
                   size="sm"
+                  borderless
                   value={item.title}
                   placeholder={`Feature card ${index + 1}`}
                   onValueChange={(value) => handleUpdateItemTitle(index, value)}
                 />
-              </EditorFieldRow>
+              </UIFormRow>
 
-              <div className="grid gap-1.5 md:flex md:items-start md:gap-4">
-                <span className="pt-1 text-sm font-medium text-text-main md:w-44 md:shrink-0">
-                  Card content
-                </span>
-                <div className="min-w-0 flex-1">
-                <textarea
+              <UIFormRow label="Card content" htmlFor={`features-card-content-${index}`} borderless>
+                <UITextArea
+                  id={`features-card-content-${index}`}
+                  size="lg"
+                  borderless
                   value={item.content}
                   rows={3}
                   placeholder="Card supporting content"
                   onChange={(event) => handleUpdateItemContent(index, event.target.value)}
-                  className="w-full rounded-2xl border border-line bg-surface px-4 py-3 text-sm text-text-main outline-none transition placeholder:text-text-placeholder focus:ring-2 focus:ring-focus/50"
                 />
-                </div>
-              </div>
+              </UIFormRow>
 
               <AssetPicker
                 assets={assets}
@@ -220,7 +218,7 @@ export function FeaturesCardsEditor({ block, assets, onChange }: BlockEditorProp
                 selectLabel="Use image"
                 compact
               />
-            </article>
+            </Card>
           ))}
         </div>
       )}

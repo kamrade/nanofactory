@@ -1,9 +1,10 @@
 "use client";
 
 import type { BlockFieldDefinition, BlockEditorProps } from "./types";
-import { EditorFieldRow } from "@/components/editor/editor-field-row";
 import { AssetPicker } from "./asset-picker";
+import { UIFormRow } from "@/components/ui/form-row";
 import { UITextInput } from "@/components/ui/text-input";
+import { UITextArea } from "@/components/ui/textarea";
 import { Card } from "@/components/ui/card";
 
 function readFieldValue(
@@ -49,37 +50,39 @@ export function GenericBlockEditor({
 
   return (
     <Card>
-      <div className="grid gap-4">
+      <div className="grid gap-0">
         {definition.fields.map((field) => {
           const value = readFieldValue(block.props, field);
           const fieldId = `generic-field-${field.key}`;
 
           return field.kind === "textarea" || field.kind === "string-list" ? (
-            <EditorFieldRow key={field.key} label={field.label} htmlFor={fieldId}>
+            <UIFormRow key={field.key} label={field.label} htmlFor={fieldId} borderless>
               <div className="grid gap-1.5">
-                <textarea
+                <UITextArea
                   id={fieldId}
+                  size="lg"
+                  borderless
                   value={value}
                   rows={field.kind === "string-list" ? 5 : 4}
                   placeholder={field.placeholder}
                   onChange={(event) => handleUpdateField(field, event.target.value)}
-                  className="w-full rounded-2xl border border-line bg-surface px-4 py-3 text-sm text-text-main outline-none transition focus:ring-2 focus:ring-focus/50"
                 />
                 {field.kind === "string-list" ? (
                   <span className="text-xs text-text-muted">Enter one list item per line.</span>
                 ) : null}
               </div>
-            </EditorFieldRow>
+            </UIFormRow>
           ) : (
-            <EditorFieldRow key={field.key} label={field.label} htmlFor={fieldId}>
+            <UIFormRow key={field.key} label={field.label} htmlFor={fieldId} borderless>
               <UITextInput
                 id={fieldId}
                 size="sm"
+                borderless
                 value={value}
                 placeholder={field.placeholder}
                 onValueChange={(nextValue) => handleUpdateField(field, nextValue)}
               />
-            </EditorFieldRow>
+            </UIFormRow>
           );
         })}
 

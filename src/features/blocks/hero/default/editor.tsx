@@ -5,6 +5,7 @@ import { AssetPicker } from "../../shared/asset-picker";
 import { UIFormRow } from "@/components/ui/form-row";
 import { UISelect } from "@/components/ui/select";
 import { UITextInput } from "@/components/ui/text-input";
+import { UITextArea } from "@/components/ui/textarea";
 import { Card } from "@/components/ui/card";
 
 function readStringProp(props: Record<string, unknown>, key: string) {
@@ -77,13 +78,13 @@ export function HeroDefaultEditor({
           </UIFormRow>
 
           <UIFormRow label="Subtitle" htmlFor="hero-default-subtitle" borderless>
-            <textarea
+            <UITextArea
               id="hero-default-subtitle"
+              size="lg"
+              borderless
               value={subtitle}
-              rows={4}
               placeholder="Describe the core value of the page in one short paragraph."
               onChange={(event) => updateField("subtitle", event.target.value)}
-              className="min-h-24 w-full rounded-xl bg-surface px-4 py-3 text-sm text-text-main outline-none transition placeholder:text-text-placeholder focus:ring-2 focus:ring-focus/50"
             />
           </UIFormRow>
 
