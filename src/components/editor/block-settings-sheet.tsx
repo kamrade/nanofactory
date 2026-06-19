@@ -175,7 +175,7 @@ export function BlockSettingsSheet({
   }
 
   return (
-    <UISheet open={open} onOpenChange={handleSheetOpenChange}>
+    <UISheet open={open} onOpenChange={handleSheetOpenChange} className="feature-component-editor-wrapper">
       <UISheetContent
         side="right"
         ariaLabel="Block editor"

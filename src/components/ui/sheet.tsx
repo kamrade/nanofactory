@@ -37,6 +37,7 @@ type UISheetContextValue = {
   setHasTitle: (value: boolean) => void;
   hasDescription: boolean;
   setHasDescription: (value: boolean) => void;
+  sheetClassName?: string;
 };
 
 const UISheetContext = createContext<UISheetContextValue | null>(null);
@@ -46,6 +47,7 @@ type UISheetProps = {
   defaultOpen?: boolean;
   onOpenChange?: (nextOpen: boolean) => void;
   children: ReactNode;
+  className?: string;
 };
 
 export function UISheet({
@@ -53,6 +55,7 @@ export function UISheet({
   defaultOpen = false,
   onOpenChange,
   children,
+  className: sheetClassName,
 }: UISheetProps) {
   const isControlled = open !== undefined;
   const [uncontrolledOpen, setUncontrolledOpen] = useState(defaultOpen);
@@ -86,6 +89,7 @@ export function UISheet({
         setHasTitle,
         hasDescription,
         setHasDescription,
+        sheetClassName,
       }}
     >
       {children}
@@ -157,9 +161,11 @@ export function UISheetContent({
     descriptionId,
     hasTitle,
     hasDescription,
+    sheetClassName,
   } = useSheetContext();
   const panelRef = useRef<HTMLDivElement | null>(null);
   const [themeAttrs, setThemeAttrs] = useState<ThemeAttrs>({});
+  const resolvedThemeAttrs = themeKey || mode ? { theme: themeKey, mode } : themeAttrs;
 
   useEffect(() => {
     if (!open) {
@@ -195,10 +201,6 @@ export function UISheetContent({
     }
 
     if (themeKey || mode) {
-      setThemeAttrs({
-        theme: themeKey,
-        mode,
-      });
       return;
     }
 
@@ -211,7 +213,9 @@ export function UISheetContent({
       document.querySelector<HTMLElement>("[data-theme][data-mode]");
 
     if (!scope) {
-      setThemeAttrs({});
+      queueMicrotask(() => {
+        setThemeAttrs({});
+      });
       return;
     }
 
@@ -239,8 +243,8 @@ export function UISheetContent({
         "fixed inset-0 z-50",
         open ? (modal ? "pointer-events-auto" : "pointer-events-none") : "pointer-events-none"
       )}
-      data-theme={themeAttrs.theme}
-      data-mode={themeAttrs.mode}
+      data-theme={resolvedThemeAttrs.theme}
+      data-mode={resolvedThemeAttrs.mode}
       onKeyDown={(event) => {
         if (closeOnEscape && event.key === "Escape") {
           event.preventDefault();
@@ -284,7 +288,7 @@ export function UISheetContent({
           aria-labelledby={ariaLabel ? undefined : hasTitle ? titleId : undefined}
           aria-describedby={hasDescription ? descriptionId : undefined}
           tabIndex={-1}
-          className={cx("h-full overflow-y-auto p-6", className)}
+          className={cx("h-full overflow-y-auto p-6", sheetClassName, className)}
           {...props}
         >
           {children}

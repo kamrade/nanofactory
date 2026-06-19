@@ -161,7 +161,7 @@ export function ProjectSettings({
           <FiArrowLeft aria-hidden className="h-5 w-5" />
         </Link>
       </UIButton>
-      <UISheet>
+      <UISheet data-testid="project-settings-sheet">
         <UISheetTrigger>
           <UIButton
             data-testid="project-settings-trigger"
@@ -177,7 +177,7 @@ export function ProjectSettings({
             <FiSettings aria-hidden className="h-5 w-5" />
           </UIButton>
         </UISheetTrigger>
-        <UISheetContent side="right" closeOnOverlayClick>
+        <UISheetContent side="right" closeOnOverlayClick data-testid="project-settings-sheet-content">
           <UISheetHeader className="flex-row items-start justify-between gap-3">
             
             <div>
