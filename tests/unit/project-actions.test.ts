@@ -42,59 +42,40 @@ describe("saveProjectContentForUserWithDependencies", () => {
       status: "success",
       message: "Project content saved.",
     });
+    const expectedContent = {
+      blocks: [
+        {
+          id: "hero-1",
+          type: "hero",
+          variant: "default",
+          anchorId: undefined,
+          backgroundSceneId: undefined,
+          props: {
+            eyebrow: "",
+            title: "Saved hero",
+            subtitle:
+              "Write the core message, add a call to action, and publish a focused landing page without a long setup.",
+            buttonText: "Start now",
+            buttonAnchor: "",
+            contentPosition: "centered",
+            imageAssetId: undefined,
+            imageLightAssetId: undefined,
+            imageDarkAssetId: undefined,
+            animateMainText: false,
+            animateContent: false,
+          },
+        },
+      ],
+    };
     expect(validateHeroAssetReferencesForProject).toHaveBeenCalledWith(
       "550e8400-e29b-41d4-a716-446655440000",
       "7e3b7a0c-7a8c-4b1e-bc27-8a0a1f5c4c2a",
-      {
-        blocks: [
-          {
-            id: "hero-1",
-            type: "hero",
-            variant: "default",
-            anchorId: undefined,
-            backgroundSceneId: undefined,
-            props: {
-              eyebrow: "",
-              title: "Saved hero",
-              subtitle:
-                "Write the core message, add a call to action, and publish a focused landing page without a long setup.",
-              buttonText: "Start now",
-              buttonAnchor: "",
-              contentPosition: "centered",
-              imageAssetId: undefined,
-              imageLightAssetId: undefined,
-              imageDarkAssetId: undefined,
-            },
-          },
-        ],
-      }
+      expectedContent
     );
     expect(saveProjectContentForUser).toHaveBeenCalledWith(
       "550e8400-e29b-41d4-a716-446655440000",
       "7e3b7a0c-7a8c-4b1e-bc27-8a0a1f5c4c2a",
-      {
-        blocks: [
-          {
-            id: "hero-1",
-            type: "hero",
-            variant: "default",
-            anchorId: undefined,
-            backgroundSceneId: undefined,
-            props: {
-              eyebrow: "",
-              title: "Saved hero",
-              subtitle:
-                "Write the core message, add a call to action, and publish a focused landing page without a long setup.",
-              buttonText: "Start now",
-              buttonAnchor: "",
-              contentPosition: "centered",
-              imageAssetId: undefined,
-              imageLightAssetId: undefined,
-              imageDarkAssetId: undefined,
-            },
-          },
-        ],
-      }
+      expectedContent
     );
     expect(revalidatePath).toHaveBeenCalledWith(
       "/projects/550e8400-e29b-41d4-a716-446655440000"

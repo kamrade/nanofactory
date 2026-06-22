@@ -1,22 +1,25 @@
 "use client";
 
-import { useEffect, useRef, useState } from "react";
 import type { CSSProperties } from "react";
 
-import styles from './render.module.css';
+import styles from "./render.module.css";
 
-import { TypewriterText } from "@/components/ui/typewriter-text";
-import { OffsetRevealText } from "@/components/ui/offset-reveal-text";
-import { resolveAssetById } from "@/lib/assets/resolution";
-import { useVisibleOnce } from "@/hooks/use-visible-once";
+import type { ProjectSpacingScale } from "@/lib/projects/spacing-scale";
 
 import type { BlockRenderProps } from "../../shared/types";
-type BorderRadiusPolicy = "none" | "md" | "lg";
-
-type SpacingScale = "sm" | "md" | "lg";
+import { HeroCta, HeroEyebrow, HeroHeadline, HeroSubtitle } from "../shared/content";
+import {
+  createHeroRadiusVars,
+  readHeroRenderContent,
+  resolveHeroBorderRadiusPolicy,
+  resolveHeroImageAsset,
+  resolveHeroSpacingScale,
+  useHeroAnimationState,
+  useHeroObservedMode,
+} from "../shared/render";
 
 const HERO_CENTERED_SPACING: Record<
-  SpacingScale,
+  ProjectSpacingScale,
   {
     shellClassName: string;
     contentClassName: string;
@@ -74,90 +77,36 @@ export function HeroCenteredRender({
   projectBorderRadiusPolicy,
   projectSpacingScale,
 }: BlockRenderProps) {
-  const sectionRef = useRef<HTMLElement>(null);
-  const [observedMode, setObservedMode] = useState<"light" | "dark" | null>(null);
-  const eyebrow = typeof block.props.eyebrow === "string" ? block.props.eyebrow : "";
-  const title = typeof block.props.title === "string" ? block.props.title : "";
-  const subtitle =
-    typeof block.props.subtitle === "string" ? block.props.subtitle : "";
-  const buttonText =
-    typeof block.props.buttonText === "string" ? block.props.buttonText : "";
-  const buttonAnchor =
-    typeof block.props.buttonAnchor === "string" ? block.props.buttonAnchor : "";
-  const contentPosition =
-    typeof block.props.contentPosition === "string" ? block.props.contentPosition : "centered";
-  const animateMainText = block.props.animateMainText === true;
-  const animateContent = block.props.animateContent === true;
-  const { ref: visibleRef, visible } = useVisibleOnce();
+  const {
+    eyebrow,
+    title,
+    subtitle,
+    buttonText,
+    buttonAnchor,
+    contentPosition,
+    animateMainText,
+    animateContent,
+  } = readHeroRenderContent(block);
+  const { sectionRef, activeMode } = useHeroObservedMode(mode);
+  const { visibleRef, visible, eyebrowDelay, titleDelay, subtitleDelay, buttonDelay } =
+    useHeroAnimationState(eyebrow, animateContent);
 
   const DURATION = 3000;
-  const STAGGER = 100;
-  const hasEyebrow = eyebrow.trim().length > 0;
-  const D = (idx: number) => (animateContent && visible ? idx * STAGGER : 10_000_000);
-  const eyebrowDelay = D(0);
-  const titleDelay = D(hasEyebrow ? 1 : 0);
-  const subtitleDelay = D(hasEyebrow ? 2 : 1);
-  const buttonDelay = D(hasEyebrow ? 3 : 2);
-  const defaultImageId =
-    typeof block.props.imageAssetId === "string" ? block.props.imageAssetId : undefined;
-  const lightImageId =
-    typeof block.props.imageLightAssetId === "string" ? block.props.imageLightAssetId : undefined;
-  const darkImageId =
-    typeof block.props.imageDarkAssetId === "string" ? block.props.imageDarkAssetId : undefined;
-  const activeMode = observedMode ?? mode;
-  const selectedImageId =
-    activeMode === "dark" ? darkImageId ?? defaultImageId : lightImageId ?? defaultImageId;
-  const heroImageAsset = resolveAssetById(selectedImageId, assetMap);
-  const effectiveSpacingScale: SpacingScale =
-    projectSpacingScale === "sm" || projectSpacingScale === "md" || projectSpacingScale === "lg"
-      ? projectSpacingScale
-      : "md";
+  const heroImageAsset = resolveHeroImageAsset({
+    block,
+    assetMap,
+    mode: activeMode,
+  });
+  const effectiveSpacingScale = resolveHeroSpacingScale(projectSpacingScale);
   const spacing = HERO_CENTERED_SPACING[effectiveSpacingScale];
-  const effectiveBorderRadius: BorderRadiusPolicy =
-    projectBorderRadiusPolicy === "none" ||
-    projectBorderRadiusPolicy === "md" ||
-    projectBorderRadiusPolicy === "lg"
-      ? projectBorderRadiusPolicy
-      : "lg";
-  const radiusVars =
-    effectiveBorderRadius === "none"
-      ? {
-          "--hero-centered-radius-shell": "0px",
-          "--hero-centered-radius-button": "0px",
-        }
-      : effectiveBorderRadius === "md"
-        ? {
-            "--hero-centered-radius-shell": "0.75rem",
-            "--hero-centered-radius-button": "0.75rem",
-          }
-        : {
-            "--hero-centered-radius-shell": "1rem",
-            "--hero-centered-radius-button": "1rem",
-          };
-
-  useEffect(() => {
-    const host = sectionRef.current?.closest("main[data-theme]");
-    if (!host) {
-      return;
-    }
-
-    const syncMode = () => {
-      const nextMode = host.getAttribute("data-mode");
-      setObservedMode(nextMode === "dark" ? "dark" : "light");
-    };
-
-    syncMode();
-    const observer = new MutationObserver(syncMode);
-    observer.observe(host, {
-      attributes: true,
-      attributeFilter: ["data-mode"],
-    });
-
-    return () => observer.disconnect();
-  }, []);
+  const effectiveBorderRadius = resolveHeroBorderRadiusPolicy(projectBorderRadiusPolicy);
+  const radiusVars = createHeroRadiusVars(effectiveBorderRadius, [
+    "--hero-centered-radius-shell",
+    "--hero-centered-radius-button",
+  ]);
 
   return (
-    <section 
+    <section
       ref={sectionRef}
       data-testid="HeroCenteredComponent"
       className={`${styles.backgroundImage} overflow-hidden [border-radius:var(--hero-centered-radius-shell)]`}
@@ -168,59 +117,44 @@ export function HeroCenteredRender({
         } as CSSProperties
       }
     >
-      <div
-        className={`${spacing.shellClassName} ${getContentPositionClass(contentPosition)}`}
-        
-      >
-
+      <div className={`${spacing.shellClassName} ${getContentPositionClass(contentPosition)}`}>
         <div ref={visibleRef} className={spacing.contentClassName}>
-          {eyebrow.trim().length > 0 ? (
-            <p className={`${spacing.eyebrowClassName} ${theme.kicker}`}>
-              {animateContent ? (
-                <OffsetRevealText text={eyebrow} direction="up" duration={DURATION} fade startDelay={eyebrowDelay} restartKey={visible ? 1 : 0} />
-              ) : eyebrow}
-            </p>
-          ) : null}
-          <h1 className={spacing.headingClassName}>
-            {animateContent ? (
-              <OffsetRevealText text={title} direction="up" duration={DURATION} fade startDelay={titleDelay} restartKey={visible ? 1 : 0} />
-            ) : animateMainText ? (
-              <TypewriterText
-                text={title}
-                startDelay={visible ? 0 : 10_000_000}
-                restartKey={visible ? 1 : 0}
-                loop={false}
-                showCursor
-              />
-            ) : title}
-          </h1>
-          <p className={`${spacing.subtitleClassName} ${theme.muted}`}>
-            {animateContent ? (
-              <OffsetRevealText text={subtitle} direction="up" duration={DURATION} fade startDelay={subtitleDelay} restartKey={visible ? 1 : 0} />
-            ) : subtitle}
-          </p>
+          <HeroEyebrow
+            text={eyebrow}
+            className={`${spacing.eyebrowClassName} ${theme.kicker}`}
+            animateContent={animateContent}
+            startDelay={eyebrowDelay}
+            visible={visible}
+            duration={DURATION}
+          />
+          <HeroHeadline
+            text={title}
+            className={spacing.headingClassName}
+            animateContent={animateContent}
+            animateMainText={animateMainText}
+            startDelay={titleDelay}
+            visible={visible}
+            duration={DURATION}
+          />
+          <HeroSubtitle
+            text={subtitle}
+            className={`${spacing.subtitleClassName} ${theme.muted}`}
+            animateContent={animateContent}
+            startDelay={subtitleDelay}
+            visible={visible}
+            duration={DURATION}
+          />
           <div>
-            {animateContent ? (
-              <OffsetRevealText text={buttonText} direction="up" duration={DURATION} fade startDelay={buttonDelay} restartKey={visible ? 1 : 0}>
-                {buttonAnchor.trim().length > 0 ? (
-                  <a href={`#${buttonAnchor}`} className={`${theme.buttonTone} ${spacing.buttonClassName}`} style={{ borderRadius: "var(--hero-centered-radius-button)" }}>
-                    {buttonText}
-                  </a>
-                ) : (
-                  <span className={`${theme.buttonTone} ${spacing.buttonClassName}`} style={{ borderRadius: "var(--hero-centered-radius-button)" }}>
-                    {buttonText}
-                  </span>
-                )}
-              </OffsetRevealText>
-            ) : buttonAnchor.trim().length > 0 ? (
-              <a href={`#${buttonAnchor}`} className={`${theme.buttonTone} ${spacing.buttonClassName}`} style={{ borderRadius: "var(--hero-centered-radius-button)" }}>
-                {buttonText}
-              </a>
-            ) : (
-              <span className={`${theme.buttonTone} ${spacing.buttonClassName}`} style={{ borderRadius: "var(--hero-centered-radius-button)" }}>
-                {buttonText}
-              </span>
-            )}
+            <HeroCta
+              buttonText={buttonText}
+              buttonAnchor={buttonAnchor}
+              buttonClassName={`${theme.buttonTone} ${spacing.buttonClassName}`}
+              buttonRadiusVar="--hero-centered-radius-button"
+              animateContent={animateContent}
+              startDelay={buttonDelay}
+              visible={visible}
+              duration={DURATION}
+            />
           </div>
         </div>
       </div>

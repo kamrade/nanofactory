@@ -1,17 +1,16 @@
-import { readOptionalString, readString, isPlainObject } from "../../shared/base";
 import type { BlockVariantDefinition } from "../../shared/types";
+import {
+  createHeroDefaultProps,
+  HERO_STANDARD_CONTENT_POSITIONS,
+  normalizeHeroProps,
+} from "../shared/model";
 import { HeroDefaultEditor } from "./editor";
 import { HeroDefaultRender } from "./render";
 
-const HERO_CONTENT_POSITIONS = ["top", "bottom", "centered"] as const;
-type HeroContentPosition = (typeof HERO_CONTENT_POSITIONS)[number];
-
-function readContentPosition(input: unknown): HeroContentPosition {
-  return typeof input === "string" &&
-    (HERO_CONTENT_POSITIONS as readonly string[]).includes(input)
-    ? (input as HeroContentPosition)
-    : "centered";
-}
+const HERO_DEFAULT_TITLE = "Build a page that ships this afternoon";
+const HERO_DEFAULT_SUBTITLE =
+  "Write the core message, add a call to action, and publish a focused landing page without a long setup.";
+const HERO_DEFAULT_BUTTON_TEXT = "Start now";
 
 export const heroDefaultDefinition: BlockVariantDefinition = {
   type: "hero",
@@ -59,39 +58,18 @@ export const heroDefaultDefinition: BlockVariantDefinition = {
     },
   ],
   Editor: HeroDefaultEditor,
-  createDefaultProps: () => ({
-    eyebrow: "",
-    title: "Build a page that ships this afternoon",
-    subtitle:
-      "Write the core message, add a call to action, and publish a focused landing page without a long setup.",
-    buttonText: "Start now",
-    buttonAnchor: "",
-    contentPosition: "centered",
-    imageAssetId: undefined,
-    imageLightAssetId: undefined,
-    imageDarkAssetId: undefined,
-    animateMainText: false,
-    animateContent: false,
-  }),
-  normalizeProps: (input) => {
-    const props = isPlainObject(input) ? input : {};
-
-    return {
-      eyebrow: readString(props.eyebrow, ""),
-      title: readString(props.title, "Build a page that ships this afternoon"),
-      subtitle: readString(
-        props.subtitle,
-        "Write the core message, add a call to action, and publish a focused landing page without a long setup."
-      ),
-      buttonText: readString(props.buttonText, "Start now"),
-      buttonAnchor: readString(props.buttonAnchor, ""),
-      contentPosition: readContentPosition(props.contentPosition),
-      imageAssetId: readOptionalString(props.imageAssetId),
-      imageLightAssetId: readOptionalString(props.imageLightAssetId),
-      imageDarkAssetId: readOptionalString(props.imageDarkAssetId),
-      animateMainText: props.animateMainText === true,
-      animateContent: props.animateContent === true,
-    };
-  },
+  createDefaultProps: () =>
+    createHeroDefaultProps({
+      title: HERO_DEFAULT_TITLE,
+      subtitle: HERO_DEFAULT_SUBTITLE,
+      buttonText: HERO_DEFAULT_BUTTON_TEXT,
+    }),
+  normalizeProps: (input) =>
+    normalizeHeroProps(input, {
+      title: HERO_DEFAULT_TITLE,
+      subtitle: HERO_DEFAULT_SUBTITLE,
+      buttonText: HERO_DEFAULT_BUTTON_TEXT,
+      contentPositions: HERO_STANDARD_CONTENT_POSITIONS,
+    }),
   Renderer: HeroDefaultRender,
 };

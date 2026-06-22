@@ -1,17 +1,16 @@
-import { readOptionalString, readString, isPlainObject } from "../../shared/base";
 import type { BlockVariantDefinition } from "../../shared/types";
+import {
+  createHeroDefaultProps,
+  HERO_STANDARD_CONTENT_POSITIONS,
+  normalizeHeroProps,
+} from "../shared/model";
 import { HeroCenteredEditor } from "./editor";
 import { HeroCenteredRender } from "./render";
 
-const HERO_CONTENT_POSITIONS = ["top", "bottom", "centered"] as const;
-type HeroContentPosition = (typeof HERO_CONTENT_POSITIONS)[number];
-
-function readContentPosition(input: unknown): HeroContentPosition {
-  return typeof input === "string" &&
-    (HERO_CONTENT_POSITIONS as readonly string[]).includes(input)
-    ? (input as HeroContentPosition)
-    : "centered";
-}
+const HERO_CENTERED_TITLE = "Ship a polished launch page this week";
+const HERO_CENTERED_SUBTITLE =
+  "Lead with a focused headline, support it with one strong paragraph, and keep the call to action visible.";
+const HERO_CENTERED_BUTTON_TEXT = "See how it works";
 
 export const heroCenteredDefinition: BlockVariantDefinition = {
   type: "hero",
@@ -59,39 +58,18 @@ export const heroCenteredDefinition: BlockVariantDefinition = {
     },
   ],
   Editor: HeroCenteredEditor,
-  createDefaultProps: () => ({
-    eyebrow: "",
-    title: "Ship a polished launch page this week",
-    subtitle:
-      "Lead with a focused headline, support it with one strong paragraph, and keep the call to action visible.",
-    buttonText: "See how it works",
-    buttonAnchor: "",
-    contentPosition: "centered",
-    imageAssetId: undefined,
-    imageLightAssetId: undefined,
-    imageDarkAssetId: undefined,
-    animateMainText: false,
-    animateContent: false,
-  }),
-  normalizeProps: (input) => {
-    const props = isPlainObject(input) ? input : {};
-
-    return {
-      eyebrow: readString(props.eyebrow, ""),
-      title: readString(props.title, "Ship a polished launch page this week"),
-      subtitle: readString(
-        props.subtitle,
-        "Lead with a focused headline, support it with one strong paragraph, and keep the call to action visible."
-      ),
-      buttonText: readString(props.buttonText, "See how it works"),
-      buttonAnchor: readString(props.buttonAnchor, ""),
-      contentPosition: readContentPosition(props.contentPosition),
-      imageAssetId: readOptionalString(props.imageAssetId),
-      imageLightAssetId: readOptionalString(props.imageLightAssetId),
-      imageDarkAssetId: readOptionalString(props.imageDarkAssetId),
-      animateMainText: props.animateMainText === true,
-      animateContent: props.animateContent === true,
-    };
-  },
+  createDefaultProps: () =>
+    createHeroDefaultProps({
+      title: HERO_CENTERED_TITLE,
+      subtitle: HERO_CENTERED_SUBTITLE,
+      buttonText: HERO_CENTERED_BUTTON_TEXT,
+    }),
+  normalizeProps: (input) =>
+    normalizeHeroProps(input, {
+      title: HERO_CENTERED_TITLE,
+      subtitle: HERO_CENTERED_SUBTITLE,
+      buttonText: HERO_CENTERED_BUTTON_TEXT,
+      contentPositions: HERO_STANDARD_CONTENT_POSITIONS,
+    }),
   Renderer: HeroCenteredRender,
 };
