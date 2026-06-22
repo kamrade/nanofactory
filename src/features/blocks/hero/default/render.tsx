@@ -4,7 +4,9 @@ import { useEffect, useRef, useState } from "react";
 import type { CSSProperties } from "react";
 import Image from "next/image";
 
+import { TypewriterText } from "@/components/ui/typewriter-text";
 import { resolveAssetById } from "@/lib/assets/resolution";
+import { useVisibleOnce } from "@/hooks/use-visible-once";
 
 import type { BlockRenderProps } from "../../shared/types";
 type BorderRadiusPolicy = "none" | "md" | "lg";
@@ -85,6 +87,8 @@ export function HeroDefaultRender({
     typeof block.props.buttonAnchor === "string" ? block.props.buttonAnchor : "";
   const contentPosition =
     typeof block.props.contentPosition === "string" ? block.props.contentPosition : "centered";
+  const animateMainText = block.props.animateMainText === true;
+  const { ref: visibleRef, visible } = useVisibleOnce();
   const defaultImageId =
     typeof block.props.imageAssetId === "string" ? block.props.imageAssetId : undefined;
   const lightImageId =
@@ -176,8 +180,18 @@ export function HeroDefaultRender({
               {eyebrow}
             </p>
           ) : null}
-          <div className="flex flex-col gap-4">
-            <h1 className={spacing.headingClassName}>{title}</h1>
+          <div ref={visibleRef} className="flex flex-col gap-4">
+            <h1 className={spacing.headingClassName}>
+              {animateMainText ? (
+                <TypewriterText
+                  text={title}
+                  startDelay={visible ? 0 : 10_000_000}
+                  restartKey={visible ? 1 : 0}
+                  loop={false}
+                  showCursor
+                />
+              ) : title}
+            </h1>
             <p className={`${spacing.subtitleClassName} ${theme.muted}`}>
               {subtitle}
             </p>

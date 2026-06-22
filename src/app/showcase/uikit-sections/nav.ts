@@ -23,4 +23,6 @@ export const uikitSectionNavItems: UikitSectionNavItem[] = [
   { id: "dialog", label: "Dialog" },
   { id: "modal", label: "Modal" },
   { id: "markdown", label: "Markdown" },
+  { id: "typewriter", label: "TypewriterText" },
+  { id: "typewriter-scroll", label: "TypewriterText / Scroll Trigger" },
 ];

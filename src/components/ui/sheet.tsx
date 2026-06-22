@@ -255,7 +255,7 @@ export function UISheetContent({
       <div
         className={cx(
           "absolute inset-0 bg-black/35 transition-opacity duration-200 ease-out",
-          modal && open ? "pointer-events-auto" : "pointer-events-none",
+          (modal || closeOnOverlayClick) && open ? "pointer-events-auto" : "pointer-events-none",
           open ? "opacity-100" : "opacity-0"
         )}
         onMouseDown={() => {

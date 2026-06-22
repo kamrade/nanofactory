@@ -2,6 +2,7 @@
 
 import type { BlockEditorProps } from "../../shared/types";
 import { AssetPicker } from "../../shared/asset-picker";
+import { UICheckbox } from "@/components/ui/checkbox";
 import { UIFormRow } from "@/components/ui/form-row";
 import { UISelect } from "@/components/ui/select";
 import { UITextInput } from "@/components/ui/text-input";
@@ -23,6 +24,7 @@ export function HeroCenteredEditor({
   const buttonText = readStringProp(block.props, "buttonText");
   const buttonAnchor = readStringProp(block.props, "buttonAnchor");
   const contentPosition = readStringProp(block.props, "contentPosition") || "centered";
+  const animateMainText = block.props.animateMainText === true;
 
   function updateField(
     key:
@@ -114,6 +116,16 @@ export function HeroCenteredEditor({
                 textValue: anchor.label,
               }))}
               clearable
+            />
+          </UIFormRow>
+
+          <UIFormRow label="Animate title" htmlFor="hero-centered-animate-main-text" borderless>
+            <UICheckbox
+              id="hero-centered-animate-main-text"
+              checked={animateMainText}
+              onChange={(event) =>
+                onChange({ ...block.props, animateMainText: event.currentTarget.checked })
+              }
             />
           </UIFormRow>
 

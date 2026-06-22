@@ -180,7 +180,7 @@ export function BlockSettingsSheet({
         side="right"
         ariaLabel="Block editor"
         closeOnOverlayClick
-        modal={false}
+        modal
         themeKey={activeThemeKey}
         mode={activeMode}
         className="p-5 sm:p-6"
