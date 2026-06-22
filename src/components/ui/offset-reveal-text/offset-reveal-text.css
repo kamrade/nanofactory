@@ -1,0 +1,31 @@
+.ort-root {
+  display: inline-block;
+  will-change: transform, opacity, filter;
+  transform: translate3d(var(--ort-tx, 0), var(--ort-ty, 0), 0);
+  opacity: var(--ort-opacity, 1);
+  filter: var(--ort-filter, none);
+  transition:
+    transform var(--ort-duration, 900ms) cubic-bezier(0.22, 1, 0.36, 1) var(--ort-delay, 0ms),
+    opacity var(--ort-duration, 900ms) cubic-bezier(0.22, 1, 0.36, 1) var(--ort-delay, 0ms),
+    filter var(--ort-duration, 900ms) cubic-bezier(0.22, 1, 0.36, 1) var(--ort-delay, 0ms);
+}
+
+.ort-root.ort-priming {
+  transition: none !important;
+}
+
+.ort-root.ort-static {
+  transition: none;
+  transform: none;
+  opacity: 1;
+  filter: none;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .ort-root {
+    transition: none !important;
+    transform: none !important;
+    opacity: 1 !important;
+    filter: none !important;
+  }
+}

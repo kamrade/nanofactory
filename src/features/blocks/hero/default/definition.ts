@@ -71,6 +71,7 @@ export const heroDefaultDefinition: BlockVariantDefinition = {
     imageLightAssetId: undefined,
     imageDarkAssetId: undefined,
     animateMainText: false,
+    animateContent: false,
   }),
   normalizeProps: (input) => {
     const props = isPlainObject(input) ? input : {};
@@ -89,6 +90,7 @@ export const heroDefaultDefinition: BlockVariantDefinition = {
       imageLightAssetId: readOptionalString(props.imageLightAssetId),
       imageDarkAssetId: readOptionalString(props.imageDarkAssetId),
       animateMainText: props.animateMainText === true,
+      animateContent: props.animateContent === true,
     };
   },
   Renderer: HeroDefaultRender,

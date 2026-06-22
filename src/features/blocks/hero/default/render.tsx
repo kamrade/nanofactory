@@ -5,6 +5,7 @@ import type { CSSProperties } from "react";
 import Image from "next/image";
 
 import { TypewriterText } from "@/components/ui/typewriter-text";
+import { OffsetRevealText } from "@/components/ui/offset-reveal-text";
 import { resolveAssetById } from "@/lib/assets/resolution";
 import { useVisibleOnce } from "@/hooks/use-visible-once";
 
@@ -88,7 +89,17 @@ export function HeroDefaultRender({
   const contentPosition =
     typeof block.props.contentPosition === "string" ? block.props.contentPosition : "centered";
   const animateMainText = block.props.animateMainText === true;
+  const animateContent = block.props.animateContent === true;
   const { ref: visibleRef, visible } = useVisibleOnce();
+
+  const DURATION = 3000;
+  const STAGGER = 100;
+  const hasEyebrow = eyebrow.trim().length > 0;
+  const D = (idx: number) => (animateContent && visible ? idx * STAGGER : 10_000_000);
+  const eyebrowDelay = D(0);
+  const titleDelay = D(hasEyebrow ? 1 : 0);
+  const subtitleDelay = D(hasEyebrow ? 2 : 1);
+  const buttonDelay = D(hasEyebrow ? 3 : 2);
   const defaultImageId =
     typeof block.props.imageAssetId === "string" ? block.props.imageAssetId : undefined;
   const lightImageId =
@@ -174,15 +185,19 @@ export function HeroDefaultRender({
       <div
         className={`${spacing.contentPanelClassName} ${contentPosition === "stretch" ? "h-full" : ""}`}
       >
-        <div className={`${spacing.contentStackClassName} ${contentPosition === "stretch" ? "h-full flex justify-between flex-col" : ""}`}>
+        <div ref={visibleRef} className={`${spacing.contentStackClassName} ${contentPosition === "stretch" ? "h-full flex justify-between flex-col" : ""}`}>
           {eyebrow.trim().length > 0 ? (
             <p className={`${spacing.eyebrowClassName} ${theme.kicker}`}>
-              {eyebrow}
+              {animateContent ? (
+                <OffsetRevealText text={eyebrow} direction="up" duration={DURATION} fade startDelay={eyebrowDelay} restartKey={visible ? 1 : 0} />
+              ) : eyebrow}
             </p>
           ) : null}
-          <div ref={visibleRef} className="flex flex-col gap-4">
+          <div className="flex flex-col gap-4">
             <h1 className={spacing.headingClassName}>
-              {animateMainText ? (
+              {animateContent ? (
+                <OffsetRevealText text={title} direction="up" duration={DURATION} fade startDelay={titleDelay} restartKey={visible ? 1 : 0} />
+              ) : animateMainText ? (
                 <TypewriterText
                   text={title}
                   startDelay={visible ? 0 : 10_000_000}
@@ -193,26 +208,34 @@ export function HeroDefaultRender({
               ) : title}
             </h1>
             <p className={`${spacing.subtitleClassName} ${theme.muted}`}>
-              {subtitle}
+              {animateContent ? (
+                <OffsetRevealText text={subtitle} direction="up" duration={DURATION} fade startDelay={subtitleDelay} restartKey={visible ? 1 : 0} />
+              ) : subtitle}
             </p>
           </div>
-          {buttonAnchor.trim().length > 0 ? (
-            <div>
-              <a
-                href={`#${buttonAnchor}`}
-                className={`${theme.buttonTone} ${spacing.buttonClassName}`}
-                style={{ borderRadius: "var(--hero-radius-button)" }}
-              >
+          <div>
+            {animateContent ? (
+              <OffsetRevealText text={buttonText} direction="up" duration={DURATION} fade startDelay={buttonDelay} restartKey={visible ? 1 : 0}>
+                {buttonAnchor.trim().length > 0 ? (
+                  <a href={`#${buttonAnchor}`} className={`${theme.buttonTone} ${spacing.buttonClassName}`} style={{ borderRadius: "var(--hero-radius-button)" }}>
+                    {buttonText}
+                  </a>
+                ) : (
+                  <span className={`${theme.buttonTone} ${spacing.buttonClassName}`} style={{ borderRadius: "var(--hero-radius-button)" }}>
+                    {buttonText}
+                  </span>
+                )}
+              </OffsetRevealText>
+            ) : buttonAnchor.trim().length > 0 ? (
+              <a href={`#${buttonAnchor}`} className={`${theme.buttonTone} ${spacing.buttonClassName}`} style={{ borderRadius: "var(--hero-radius-button)" }}>
                 {buttonText}
               </a>
-            </div>
-          ) : (
-            <div>
+            ) : (
               <span className={`${theme.buttonTone} ${spacing.buttonClassName}`} style={{ borderRadius: "var(--hero-radius-button)" }}>
                 {buttonText}
               </span>
-            </div>
-          )}
+            )}
+          </div>
         </div>
       </div>
     </section>

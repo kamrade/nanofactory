@@ -105,6 +105,7 @@ export function TypewriterSection({ uiSize }: { uiSize: UiSize }) {
           <UIFormRow label="Mode" borderless>
             <UISegmentedControl
               ariaLabel="Typewriter text mode"
+              borderless
               size="sm"
               value={mode}
               onValueChange={setMode}

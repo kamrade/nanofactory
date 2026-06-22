@@ -26,6 +26,7 @@ export function HeroDefaultEditor({
   const buttonAnchor = readStringProp(block.props, "buttonAnchor");
   const contentPosition = readStringProp(block.props, "contentPosition") || "centered";
   const animateMainText = block.props.animateMainText === true;
+  const animateContent = block.props.animateContent === true;
 
   function updateField(
     key:
@@ -117,6 +118,16 @@ export function HeroDefaultEditor({
                 textValue: anchor.label,
               }))}
               clearable
+            />
+          </UIFormRow>
+
+          <UIFormRow label="Animate content" htmlFor="hero-default-animate-content" borderless>
+            <UICheckbox
+              id="hero-default-animate-content"
+              checked={animateContent}
+              onChange={(event) =>
+                onChange({ ...block.props, animateContent: event.currentTarget.checked })
+              }
             />
           </UIFormRow>
 

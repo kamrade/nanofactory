@@ -6,3 +6,5 @@ export { FeedbackAndSheetSection } from "./feedback-sheet-section";
 export { FormLayoutSection } from "./form-layout-section";
 export { BorderlessFormLayoutSection } from "./borderless-form-layout-section";
 export { TypewriterSection } from "./typewriter-section";
+export { HighlightSweepSection } from "./highlight-sweep-section";
+export { OffsetRevealSection } from "./offset-reveal-section";

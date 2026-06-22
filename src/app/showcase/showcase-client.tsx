@@ -12,6 +12,8 @@ import {
   type UiSize,
   TypographyButtonsBadgesSection,
   TypewriterSection,
+  HighlightSweepSection,
+  OffsetRevealSection,
 } from "@/app/showcase/uikit-sections";
 import { uikitSectionNavItems } from "@/app/showcase/uikit-sections/nav";
 import { UikitSidebar } from "@/app/showcase/uikit-sidebar";
@@ -124,6 +126,8 @@ export function ShowcaseClient({
                 <ModalDemoCard uiSize={uiSize} />
                 <MarkdownDemoCard />
                 <TypewriterSection uiSize={uiSize} />
+                <HighlightSweepSection uiSize={uiSize} />
+                <OffsetRevealSection uiSize={uiSize} />
               </div>
             </div>
           </div>
