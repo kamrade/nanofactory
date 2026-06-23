@@ -49,9 +49,9 @@ This is a website/page builder with project-level editing, block-based content, 
 
 4) Recent important changes (latest)
 - Project editor primary actions moved to header:
-  - `Add block` and `Save` now render in `ProjectHeader` (`size="sm"`).
-  - `Save` is handled in header via `useActionState` and uses draft content from preview-draft store.
-  - save success/error toasts are triggered from `ProjectHeader`.
+  - `Add block` and `Save` now render in `ProjectSettings` (`size="sm"`).
+  - `Save` is handled in `ProjectSettings` via `useActionState` and uses draft content from preview-draft store.
+  - save success/error toasts are triggered from `ProjectSettings`.
 - Editor action wiring update:
   - `ProjectEditor` no longer renders toolbar save/add controls.
   - add-block flow is now bridged via event (`src/components/editor/editor-events.ts`).
@@ -80,14 +80,14 @@ This is a website/page builder with project-level editing, block-based content, 
   - demo cards extracted: `src/app/showcase/demo-cards.tsx`
   - UIKit sections split into modular files:
     - `src/app/showcase/uikit-sections/*`
-- Project settings `Actions` in `ProjectHeader` now apply immediately on selection (no `Apply` buttons):
+- Project settings `Actions` in `ProjectSettings` now apply immediately on selection (no `Apply` buttons):
   - `modePolicy`, `borderRadiusPolicy`, and `theme` updates are triggered from client `onValueChange` via server actions.
   - files:
-    - `src/components/projects/project-header.tsx`
+    - `src/components/projects/project-settings.tsx`
     - `src/components/projects/project-theme-form.tsx`
 - Mode policy is mirrored to DOM for live UI behavior:
   - `main` now carries `data-mode-policy` on project page render.
-  - `ProjectHeader` updates `data-mode-policy` on change before server roundtrip.
+  - `ProjectSettings` updates `data-mode-policy` on change before server roundtrip.
   - file:
     - `src/app/(protected)/projects/[projectId]/page.tsx`
 - Feature block app header mode switcher visibility now follows live DOM mode policy:
@@ -103,9 +103,9 @@ This is a website/page builder with project-level editing, block-based content, 
     - `src/components/projects/project-renderer.tsx`
     - `src/components/editor/project-editor.tsx`
     - `src/features/blocks/shared/types.ts`
-- `ProjectHeader` project settings include immediate apply for spacing scale:
+- `ProjectSettings` project settings include immediate apply for spacing scale:
   - file:
-    - `src/components/projects/project-header.tsx`
+    - `src/components/projects/project-settings.tsx`
 - CTA button supports link + spacing-aware button sizing:
   - `buttonHref` added to CTA block definition.
   - CTA render uses link-style button and combines tone classes with spacing classes.
