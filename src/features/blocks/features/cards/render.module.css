@@ -29,7 +29,7 @@
 /* ── Section title ───────────────────────────────────────── */
 
 .title {
-  font-weight: 600;
+  font-weight: 400;
   letter-spacing: -0.025em;
   overflow-wrap: break-word;
 }
@@ -88,7 +88,7 @@
 
 .itemTitle {
   overflow-wrap: break-word;
-  font-weight: 500;
+  font-weight: 400;
   color: var(--color-text-main);
 }
 

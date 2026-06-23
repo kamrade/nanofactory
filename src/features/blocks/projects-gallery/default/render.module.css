@@ -1,0 +1,164 @@
+/* ── Root section ────────────────────────────────────────── */
+
+.root {
+  display: flex;
+  flex-direction: column;
+}
+
+.root[data-spacing-scale="sm"] { gap: 1rem;   padding: 0.75rem; }
+.root[data-spacing-scale="md"] { gap: 1.5rem; padding: 1rem; }
+.root[data-spacing-scale="lg"] { gap: 2rem;   padding: 1.5rem; }
+
+@media (min-width: 768px) {
+  .root[data-spacing-scale="sm"] { padding: 1.25rem; }
+  .root[data-spacing-scale="md"] { padding: 2rem; }
+  .root[data-spacing-scale="lg"] { padding: 2.5rem; }
+}
+
+/* ── Section title ───────────────────────────────────────── */
+
+.title {
+  font-weight: 400;
+  letter-spacing: -0.025em;
+  color: var(--color-text-main);
+}
+
+.root[data-spacing-scale="sm"] .title { font-size: 1.25rem; }
+.root[data-spacing-scale="md"] .title { font-size: 1.5rem; }
+.root[data-spacing-scale="lg"] .title { font-size: 1.875rem; }
+
+/* ── Grid ────────────────────────────────────────────────── */
+
+.grid {
+  display: grid;
+  grid-template-columns: 1fr;
+}
+
+.root[data-spacing-scale="sm"] .grid { gap: 0.5rem; }
+.root[data-spacing-scale="md"] .grid { gap: 1rem; }
+.root[data-spacing-scale="lg"] .grid { gap: 1.25rem; }
+
+@media (min-width: 768px) {
+  .grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+}
+
+@media (min-width: 1024px) {
+  .grid { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+}
+
+/* ── Card ────────────────────────────────────────────────── */
+
+.card {
+  position: relative;
+  overflow: hidden;
+  padding: 0.75rem;
+  border: 1px solid var(--color-line);
+  background-color: var(--color-surface-alt);
+  border-radius: var(--projects-gallery-radius-card);
+}
+
+/* ── Image link wrapper ──────────────────────────────────── */
+
+.imageLink {
+  display: block;
+  transition: opacity 150ms;
+}
+
+.imageLink:hover { opacity: 0.95; }
+
+/* ── Media image ─────────────────────────────────────────── */
+
+.media {
+  width: 100%;
+  height: 14rem;
+  object-fit: cover;
+  border-radius: var(--projects-gallery-radius-media);
+}
+
+/* ── Media placeholder ───────────────────────────────────── */
+
+.mediaPlaceholder {
+  display: flex;
+  width: 100%;
+  height: 14rem;
+  align-items: center;
+  justify-content: center;
+  background-color: var(--color-surface);
+  color: var(--color-text-muted);
+  border-radius: var(--projects-gallery-radius-media);
+}
+
+.root[data-spacing-scale="sm"] .mediaPlaceholder { font-size: 0.875rem; }
+.root[data-spacing-scale="md"] .mediaPlaceholder { font-size: 0.875rem; }
+.root[data-spacing-scale="lg"] .mediaPlaceholder { font-size: 1rem; }
+
+/* ── Card content ────────────────────────────────────────── */
+
+.cardContent {
+  display: flex;
+  flex-direction: column;
+}
+
+.root[data-spacing-scale="sm"] .cardContent { gap: 0.25rem; padding: 0.75rem; }
+.root[data-spacing-scale="md"] .cardContent { gap: 0.5rem;  padding: 1rem; }
+.root[data-spacing-scale="lg"] .cardContent { gap: 0.75rem; padding: 1.25rem; }
+
+/* ── Card title ──────────────────────────────────────────── */
+
+.cardTitle {
+  font-weight: 600;
+  color: var(--color-text-main);
+}
+
+.root[data-spacing-scale="sm"] .cardTitle { font-size: 0.875rem; }
+.root[data-spacing-scale="md"] .cardTitle { font-size: 1rem; }
+.root[data-spacing-scale="lg"] .cardTitle { font-size: 1.125rem; }
+
+/* ── Card description ────────────────────────────────────── */
+
+.cardDescription {
+  color: var(--color-text-muted);
+}
+
+.root[data-spacing-scale="sm"] .cardDescription { font-size: 0.75rem;  line-height: 1.25rem; }
+.root[data-spacing-scale="md"] .cardDescription { font-size: 0.875rem; line-height: 1.5rem; }
+.root[data-spacing-scale="lg"] .cardDescription { font-size: 1rem;     line-height: 1.75rem; }
+
+/* ── Card price ──────────────────────────────────────────── */
+
+.cardPrice {
+  font-weight: 600;
+  color: var(--color-text-main);
+}
+
+.root[data-spacing-scale="sm"] .cardPrice { font-size: 0.75rem; }
+.root[data-spacing-scale="md"] .cardPrice { font-size: 0.875rem; }
+.root[data-spacing-scale="lg"] .cardPrice { font-size: 1rem; }
+
+/* ── Card meta ───────────────────────────────────────────── */
+
+.cardMeta {
+  color: var(--color-text-muted);
+}
+
+.root[data-spacing-scale="sm"] .cardMeta { font-size: 0.6875rem; }
+.root[data-spacing-scale="md"] .cardMeta { font-size: 0.75rem; }
+.root[data-spacing-scale="lg"] .cardMeta { font-size: 0.875rem; }
+
+/* ── Nested gallery count ────────────────────────────────── */
+
+.nestedCount {
+  color: var(--color-text-muted);
+}
+
+.root[data-spacing-scale="sm"] .nestedCount { padding-top: 0.25rem; font-size: 0.6875rem; }
+.root[data-spacing-scale="md"] .nestedCount { padding-top: 0.25rem; font-size: 0.75rem; }
+.root[data-spacing-scale="lg"] .nestedCount { padding-top: 0.25rem; font-size: 0.875rem; }
+
+/* ── Overlay link (full-card clickable area) ─────────────── */
+
+.overlayLink {
+  position: absolute;
+  inset: 0;
+  z-index: 20;
+}
