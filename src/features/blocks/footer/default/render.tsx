@@ -1,5 +1,3 @@
-"use client";
-
 import Image from "next/image";
 import {
   FaFacebook,
@@ -15,7 +13,6 @@ import type { IconType } from "react-icons";
 import type { CSSProperties } from "react";
 
 import type { BlockRenderProps } from "../../shared/types";
-import { normalizeAnchorId } from "@/lib/editor/anchor-id";
 import { resolveAssetById } from "@/lib/assets/resolution";
 import { readFooterProps } from "./model";
 import type { SocialIconKey } from "@/features/blocks/app-header/default/social-icons";
@@ -75,26 +72,7 @@ export function FooterDefaultRender({
       links: props.navLinks,
       renderLink: (item: { label: string; anchorId: string }, index: number) => (
         <li key={`${item.anchorId}-${item.label}-${index}`}>
-          <a
-            href={`#${item.anchorId}`}
-            className={styles.link}
-            onClick={(event) => {
-              if (typeof document === "undefined") {
-                return;
-              }
-              const normalized = normalizeAnchorId(item.anchorId);
-              const target =
-                document.getElementById(item.anchorId) ?? document.getElementById(normalized);
-              if (!target) {
-                return;
-              }
-              event.preventDefault();
-              target.scrollIntoView({ behavior: "smooth", block: "start" });
-              if (typeof window !== "undefined") {
-                window.history.replaceState(null, "", `#${normalized || item.anchorId}`);
-              }
-            }}
-          >
+          <a href={`#${item.anchorId}`} className={styles.link}>
             {item.label}
           </a>
         </li>
@@ -200,17 +178,9 @@ export function FooterDefaultRender({
             ) : null}
 
             {props.scrollTopLabel.trim().length > 0 ? (
-              <button
-                type="button"
-                className={styles.scrollTopButton}
-                onClick={() => {
-                  if (typeof window !== "undefined") {
-                    window.scrollTo({ top: 0, behavior: "smooth" });
-                  }
-                }}
-              >
+              <a href="#" className={styles.scrollTopButton}>
                 {props.scrollTopLabel}
-              </button>
+              </a>
             ) : null}
           </div>
         ) : null}

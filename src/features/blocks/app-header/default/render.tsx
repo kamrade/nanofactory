@@ -1,43 +1,13 @@
-"use client";
-
-import { useEffect, useRef, useState, type MouseEvent } from "react";
-import type { CSSProperties } from "react";
 import Image from "next/image";
-import {
-  FaFacebook,
-  FaInstagram,
-  FaLinkedin,
-  FaTelegram,
-  FaTiktok,
-  FaXTwitter,
-  FaYoutube,
-} from "react-icons/fa6";
-import { FiLink, FiMenu, FiX } from "react-icons/fi";
-import type { IconType } from "react-icons";
+import type { CSSProperties } from "react";
 
 import { resolveAssetById } from "@/lib/assets/resolution";
 import { ProjectModeSwitcher } from "@/components/projects/project-mode-switcher";
 import type { BlockRenderProps } from "../../shared/types";
-import type { SocialIconKey } from "./social-icons";
 import { readAppHeaderProps } from "./model";
-import { normalizeAnchorId } from "@/lib/editor/anchor-id";
+import { renderSocialIcon } from "./social-icon-components";
+import { MobileMenu } from "./mobile-menu";
 import styles from "./render.module.css";
-
-const SOCIAL_ICON_COMPONENTS: Record<SocialIconKey, IconType> = {
-  link: FiLink,
-  instagram: FaInstagram,
-  x: FaXTwitter,
-  linkedin: FaLinkedin,
-  youtube: FaYoutube,
-  facebook: FaFacebook,
-  telegram: FaTelegram,
-  tiktok: FaTiktok,
-};
-
-function renderSocialIcon(icon: SocialIconKey) {
-  const Icon = SOCIAL_ICON_COMPONENTS[icon] ?? FiLink;
-  return <Icon aria-hidden className="h-4 w-4" />;
-}
 
 export function AppHeaderDefaultRender({
   block,
@@ -47,12 +17,6 @@ export function AppHeaderDefaultRender({
   projectBorderRadiusPolicy,
   projectSpacingScale,
 }: BlockRenderProps) {
-  const sectionRef = useRef<HTMLElement>(null);
-  const [observedMode, setObservedMode] = useState<"light" | "dark" | null>(null);
-  const [observedModePolicy, setObservedModePolicy] = useState<
-    "switchable" | "light-only" | "dark-only" | null
-  >(null);
-  const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const {
     title,
     logoAssetId,
@@ -65,17 +29,19 @@ export function AppHeaderDefaultRender({
     socialLinks,
   } = readAppHeaderProps(block.props);
 
-  const activeMode = observedMode ?? mode;
-  const selectedLogoId =
-    activeMode === "dark" ? logoDarkAssetId ?? logoAssetId : logoLightAssetId ?? logoAssetId;
-  const logoAsset = resolveAssetById(selectedLogoId, assetMap);
+  const lightLogoAsset = resolveAssetById(logoLightAssetId ?? logoAssetId, assetMap);
+  const darkLogoAsset = resolveAssetById(logoDarkAssetId ?? logoAssetId, assetMap);
+  const sameLogos = !lightLogoAsset || !darkLogoAsset || lightLogoAsset.id === darkLogoAsset.id;
+
   const hasContent =
     title.trim().length > 0 ||
-    Boolean(logoAsset) ||
+    Boolean(lightLogoAsset) ||
+    Boolean(darkLogoAsset) ||
     menuItems.length > 0 ||
     socialLinks.length > 0;
-  const effectiveModePolicy = observedModePolicy ?? modePolicy;
-  const canShowModeSwitcher = showModeSwitcher && effectiveModePolicy === "switchable";
+
+  const canShowModeSwitcher = showModeSwitcher && modePolicy === "switchable";
+
   const effectiveSpacingScale =
     projectSpacingScale === "sm" || projectSpacingScale === "md" || projectSpacingScale === "lg"
       ? projectSpacingScale
@@ -106,56 +72,52 @@ export function AppHeaderDefaultRender({
             "--app-header-radius-control": "0.75rem",
           };
 
-  function handleAnchorClick(event: MouseEvent<HTMLAnchorElement>, anchorId: string) {
-    if (typeof document === "undefined") {
-      return;
-    }
-
-    const normalizedAnchorId = normalizeAnchorId(anchorId);
-    const target =
-      document.getElementById(anchorId) ??
-      document.getElementById(normalizedAnchorId);
-    if (!target) {
-      return;
-    }
-
-    event.preventDefault();
-    target.scrollIntoView({ behavior: "smooth", block: "start" });
-    if (typeof window !== "undefined") {
-      window.history.replaceState(null, "", `#${normalizedAnchorId || anchorId}`);
-    }
-  }
-
-  useEffect(() => {
-    const host = sectionRef.current?.closest("main[data-theme]");
-    if (!host) {
-      return;
-    }
-
-    const syncModeState = () => {
-      const nextMode = host.getAttribute("data-mode");
-      setObservedMode(nextMode === "dark" ? "dark" : "light");
-      const nextModePolicy = host.getAttribute("data-mode-policy");
-      setObservedModePolicy(
-        nextModePolicy === "light-only" || nextModePolicy === "dark-only" || nextModePolicy === "switchable"
-          ? nextModePolicy
-          : null
-      );
-    };
-
-    syncModeState();
-    const observer = new MutationObserver(syncModeState);
-    observer.observe(host, {
-      attributes: true,
-      attributeFilter: ["data-mode", "data-mode-policy"],
-    });
-
-    return () => observer.disconnect();
-  }, []);
+  const logoContent = sameLogos ? (
+    <>
+      {lightLogoAsset ? (
+        <Image
+          src={lightLogoAsset.publicUrl}
+          alt={lightLogoAsset.id}
+          width={120}
+          height={48}
+          unoptimized
+          className={styles.logo}
+        />
+      ) : null}
+      {title.trim().length > 0 ? (
+        <h2 className={styles.title}>{title}</h2>
+      ) : null}
+    </>
+  ) : (
+    <>
+      {lightLogoAsset ? (
+        <Image
+          src={lightLogoAsset.publicUrl}
+          alt={lightLogoAsset.id}
+          width={120}
+          height={48}
+          unoptimized
+          className={styles.logoLight}
+        />
+      ) : null}
+      {darkLogoAsset ? (
+        <Image
+          src={darkLogoAsset.publicUrl}
+          alt={darkLogoAsset.id}
+          width={120}
+          height={48}
+          unoptimized
+          className={styles.logoDark}
+        />
+      ) : null}
+      {title.trim().length > 0 ? (
+        <h2 className={styles.title}>{title}</h2>
+      ) : null}
+    </>
+  );
 
   return (
     <section
-      ref={sectionRef}
       data-spacing-scale={effectiveSpacingScale}
       data-collapse-breakpoint={collapseBreakpoint}
       data-always-mobile={alwaysMobile ? "" : undefined}
@@ -166,113 +128,19 @@ export function AppHeaderDefaultRender({
         <div aria-hidden className={styles.emptyState} />
       ) : null}
 
-      <div data-testid="MobileHeader" className={styles.mobileHeader}>
-        <button
-          type="button"
-          aria-label={isMobileMenuOpen ? "Close menu" : "Open menu"}
-          aria-expanded={isMobileMenuOpen}
-          className={styles.mobileMenuButton}
-          onClick={() => setIsMobileMenuOpen((prev) => !prev)}
-        >
-          {isMobileMenuOpen ? <FiX aria-hidden className="h-5 w-5" /> : <FiMenu aria-hidden className="h-5 w-5" />}
-        </button>
-
-        <div className={styles.mobileLogoWrap}>
-          {logoAsset ? (
-            <Image
-              src={logoAsset.publicUrl}
-              alt={logoAsset.id}
-              width={120}
-              height={48}
-              unoptimized
-              className={styles.logo}
-            />
-          ) : null}
-
-          {title.trim().length > 0 ? (
-            <h2 className={styles.title}>{title}</h2>
-          ) : null}
-        </div>
-      </div>
-
-      <div
-        data-testid="MobileMenu"
-        data-open={isMobileMenuOpen ? "true" : "false"}
-        aria-hidden={!isMobileMenuOpen}
-        className={styles.mobileMenu}
+      <MobileMenu
+        menuItems={menuItems}
+        socialLinks={socialLinks}
+        canShowModeSwitcher={canShowModeSwitcher}
+        initialMode={mode}
+        modePolicy={modePolicy}
       >
-        <div className={styles.mobilePanel}>
-          <div className={styles.mobilePanelGrid}>
-            {menuItems.length > 0 ? (
-              <nav aria-label="Mobile page sections">
-                <ul className={styles.mobileNavList}>
-                  {menuItems.map((item, index) => (
-                    <li key={`${item.anchorId}-${item.label}-mobile-${index}`}>
-                      <a
-                        href={`#${item.anchorId}`}
-                        className={styles.navLink}
-                        onClick={(event) => {
-                          handleAnchorClick(event, item.anchorId);
-                          setIsMobileMenuOpen(false);
-                        }}
-                      >
-                        {item.label}
-                      </a>
-                    </li>
-                  ))}
-                </ul>
-              </nav>
-            ) : null}
+        {logoContent}
+      </MobileMenu>
 
-            {socialLinks.length > 0 ? (
-              <div className={styles.mobileSocialWrap}>
-                {socialLinks.map((item, index) => (
-                  <a
-                    key={`${item.url}-${item.label}-mobile-${index}`}
-                    href={item.url}
-                    target="_blank"
-                    rel="noreferrer"
-                    className={styles.socialLink}
-                  >
-                    {renderSocialIcon(item.icon)}
-                    {item.label}
-                  </a>
-                ))}
-              </div>
-            ) : null}
-
-            {canShowModeSwitcher ? (
-              <div className={styles.mobileModeWrap}>
-                <ProjectModeSwitcher
-                  initialMode={activeMode}
-                  syncSearchParam="mode"
-                  policy={modePolicy}
-                />
-              </div>
-            ) : null}
-          </div>
-        </div>
-      </div>
-
-      <div
-        data-testid="DesktopHeader"
-        className={styles.desktopHeader}
-      >
+      <div data-testid="DesktopHeader" className={styles.desktopHeader}>
         <div className={styles.desktopLeft}>
-          {logoAsset ? (
-            <Image
-              src={logoAsset.publicUrl}
-              alt={logoAsset.id}
-              width={120}
-              height={48}
-              unoptimized
-              className={styles.logo}
-            />
-          ) : null}
-
-          {title.trim().length > 0 ? (
-            <h2 className={styles.title}>{title}</h2>
-          ) : null}
+          {logoContent}
         </div>
 
         <nav aria-label="Page sections" className="flex items-center justify-center">
@@ -280,11 +148,7 @@ export function AppHeaderDefaultRender({
             <ul className={styles.desktopNavList}>
               {menuItems.map((item, index) => (
                 <li key={`${item.anchorId}-${item.label}-${index}`}>
-                  <a
-                    href={`#${item.anchorId}`}
-                    className={styles.navLink}
-                    onClick={(event) => handleAnchorClick(event, item.anchorId)}
-                  >
+                  <a href={`#${item.anchorId}`} className={styles.navLink}>
                     {item.label}
                   </a>
                 </li>
@@ -310,7 +174,7 @@ export function AppHeaderDefaultRender({
           ))}
           {canShowModeSwitcher ? (
             <ProjectModeSwitcher
-              initialMode={activeMode}
+              initialMode={mode}
               syncSearchParam="mode"
               policy={modePolicy}
             />

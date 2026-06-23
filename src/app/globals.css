@@ -1,5 +1,9 @@
 @import "tailwindcss";
 
+html {
+  scroll-behavior: smooth;
+}
+
 :root {
   /* Fallback tokens (same as sunwash light) */
   --primary-100: #303029;

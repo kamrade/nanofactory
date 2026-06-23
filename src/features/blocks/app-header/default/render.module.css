@@ -86,14 +86,29 @@
 
 /* ── Logo image ──────────────────────────────────────────── */
 
-.logo {
+.logo,
+.logoLight,
+.logoDark {
   width: auto;
   object-fit: contain;
 }
 
-.root[data-spacing-scale="sm"] .logo { height: 2rem; }
-.root[data-spacing-scale="md"] .logo { height: 2.5rem; }
-.root[data-spacing-scale="lg"] .logo { height: 3rem; }
+.root[data-spacing-scale="sm"] .logo,
+.root[data-spacing-scale="sm"] .logoLight,
+.root[data-spacing-scale="sm"] .logoDark { height: 2rem; }
+
+.root[data-spacing-scale="md"] .logo,
+.root[data-spacing-scale="md"] .logoLight,
+.root[data-spacing-scale="md"] .logoDark { height: 2.5rem; }
+
+.root[data-spacing-scale="lg"] .logo,
+.root[data-spacing-scale="lg"] .logoLight,
+.root[data-spacing-scale="lg"] .logoDark { height: 3rem; }
+
+/* Dual-logo dark/light mode switching via CSS — no JS needed */
+.logoDark { display: none; }
+:global([data-mode="dark"]) .logoDark  { display: block; }
+:global([data-mode="dark"]) .logoLight { display: none; }
 
 /* ── Title (shared mobile + desktop) ────────────────────── */
 

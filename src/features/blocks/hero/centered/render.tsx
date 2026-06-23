@@ -1,24 +1,22 @@
-
 import type { CSSProperties } from "react";
+import Image from "next/image";
 
 import styles from "./render.module.css";
 
 import type { BlockRenderProps } from "../../shared/types";
-import { HeroCta, HeroEyebrow, HeroHeadline, HeroSubtitle } from "../shared/content";
+import { resolveAssetById } from "@/lib/assets/resolution";
 import {
   createHeroRadiusVars,
+  readHeroImageIds,
   readHeroRenderContent,
   resolveHeroBorderRadiusPolicy,
-  resolveHeroImageAsset,
   resolveHeroSpacingScale,
-  useHeroAnimationState,
-  useHeroObservedMode,
-} from "../shared/render";
+} from "../shared/helpers";
+import { HeroContent } from "../shared/hero-content";
 
 export function HeroCenteredRender({
   block,
   assetMap,
-  mode = "light",
   projectBorderRadiusPolicy,
   projectSpacingScale,
 }: BlockRenderProps) {
@@ -32,12 +30,12 @@ export function HeroCenteredRender({
     animateMainText,
     animateContent,
   } = readHeroRenderContent(block);
-  const { sectionRef, activeMode } = useHeroObservedMode(mode);
-  const { visibleRef, visible, eyebrowDelay, titleDelay, subtitleDelay, buttonDelay } =
-    useHeroAnimationState(eyebrow, animateContent);
 
-  const DURATION = 3000;
-  const heroImageAsset = resolveHeroImageAsset({ block, assetMap, mode: activeMode });
+  const { defaultImageId, lightImageId, darkImageId } = readHeroImageIds(block);
+  const lightAsset = resolveAssetById(lightImageId ?? defaultImageId, assetMap);
+  const darkAsset = resolveAssetById(darkImageId ?? defaultImageId, assetMap);
+  const sameImages = !lightAsset || !darkAsset || lightAsset.id === darkAsset.id;
+
   const effectiveSpacingScale = resolveHeroSpacingScale(projectSpacingScale);
   const effectiveBorderRadius = resolveHeroBorderRadiusPolicy(projectBorderRadiusPolicy);
   const radiusVars = createHeroRadiusVars(effectiveBorderRadius, [
@@ -47,58 +45,67 @@ export function HeroCenteredRender({
 
   return (
     <section
-      ref={sectionRef}
       data-testid="HeroCenteredComponent"
       data-spacing-scale={effectiveSpacingScale}
       data-content-position={contentPosition}
       className={styles.root}
-      style={
-        {
-          ...radiusVars,
-          ...(heroImageAsset ? { backgroundImage: `url(${heroImageAsset.publicUrl})` } : {}),
-        } as CSSProperties
-      }
+      style={radiusVars as CSSProperties}
     >
-      <div className={styles.shell}>
-        <div ref={visibleRef} className={styles.content}>
-          <HeroEyebrow
-            text={eyebrow}
-            className={styles.eyebrow}
-            animateContent={animateContent}
-            startDelay={eyebrowDelay}
-            visible={visible}
-            duration={DURATION}
-          />
-          <HeroHeadline
-            text={title}
-            className={styles.heading}
-            animateContent={animateContent}
-            animateMainText={animateMainText}
-            startDelay={titleDelay}
-            visible={visible}
-            duration={DURATION}
-          />
-          <HeroSubtitle
-            text={subtitle}
-            className={styles.subtitle}
-            animateContent={animateContent}
-            startDelay={subtitleDelay}
-            visible={visible}
-            duration={DURATION}
-          />
-          <div>
-            <HeroCta
-              buttonText={buttonText}
-              buttonAnchor={buttonAnchor}
-              buttonClassName={styles.button}
-              buttonRadiusVar="--hero-centered-radius-button"
-              animateContent={animateContent}
-              startDelay={buttonDelay}
-              visible={visible}
-              duration={DURATION}
-            />
-          </div>
+      {lightAsset || darkAsset ? (
+        <div className={styles.mediaBg} aria-hidden>
+          {sameImages ? (
+            lightAsset ? (
+              <Image
+                src={lightAsset.publicUrl}
+                alt=""
+                fill
+                unoptimized
+                style={{ objectFit: "cover" }}
+              />
+            ) : null
+          ) : (
+            <>
+              {lightAsset ? (
+                <Image
+                  src={lightAsset.publicUrl}
+                  alt=""
+                  fill
+                  unoptimized
+                  style={{ objectFit: "cover" }}
+                  className={styles.imageLight}
+                />
+              ) : null}
+              {darkAsset ? (
+                <Image
+                  src={darkAsset.publicUrl}
+                  alt=""
+                  fill
+                  unoptimized
+                  style={{ objectFit: "cover" }}
+                  className={styles.imageDark}
+                />
+              ) : null}
+            </>
+          )}
         </div>
+      ) : null}
+
+      <div className={styles.shell}>
+        <HeroContent
+          eyebrow={eyebrow}
+          title={title}
+          subtitle={subtitle}
+          buttonText={buttonText}
+          buttonAnchor={buttonAnchor}
+          animateMainText={animateMainText}
+          animateContent={animateContent}
+          contentStackClassName={styles.content}
+          eyebrowClassName={styles.eyebrow}
+          headingClassName={styles.heading}
+          subtitleClassName={styles.subtitle}
+          buttonClassName={styles.button}
+          buttonRadiusVar="--hero-centered-radius-button"
+        />
       </div>
     </section>
   );
