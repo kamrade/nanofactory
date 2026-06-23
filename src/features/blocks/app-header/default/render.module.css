@@ -1,0 +1,298 @@
+/* ── Root section ────────────────────────────────────────── */
+
+.root {
+  border-radius: var(--app-header-radius-shell);
+}
+
+.root[data-spacing-scale="sm"] { padding: 0.75rem; }
+.root[data-spacing-scale="md"] { padding: 1.5rem; }
+.root[data-spacing-scale="lg"] { padding: 2rem; }
+
+@media (min-width: 768px) {
+  .root[data-spacing-scale="sm"] { padding-top: 0.25rem; padding-bottom: 0.25rem; }
+  .root[data-spacing-scale="md"] { padding-top: 0.5rem;  padding-bottom: 0.5rem; }
+  .root[data-spacing-scale="lg"] { padding-top: 0.75rem; padding-bottom: 0.75rem; }
+}
+
+/* ── Empty state ─────────────────────────────────────────── */
+
+.emptyState {
+  width: 100%;
+  border: 1px dashed var(--color-line);
+  background-color: var(--color-surface-alt);
+  border-radius: var(--app-header-radius-control);
+}
+
+.root[data-spacing-scale="sm"] .emptyState { height: 2rem; }
+.root[data-spacing-scale="md"] .emptyState { height: 2.5rem; }
+.root[data-spacing-scale="lg"] .emptyState { height: 3rem; }
+
+/* ── Mobile header ───────────────────────────────────────── */
+
+.mobileHeader {
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+/* Hide mobile at collapse breakpoint (unless alwaysMobile) */
+@media (min-width: 640px) {
+  .root[data-collapse-breakpoint="sm"]:not([data-always-mobile]) .mobileHeader { display: none; }
+}
+@media (min-width: 768px) {
+  .root[data-collapse-breakpoint="md"]:not([data-always-mobile]) .mobileHeader { display: none; }
+}
+@media (min-width: 1024px) {
+  .root[data-collapse-breakpoint="lg"]:not([data-always-mobile]) .mobileHeader { display: none; }
+}
+@media (min-width: 1280px) {
+  .root[data-collapse-breakpoint="xl"]:not([data-always-mobile]) .mobileHeader { display: none; }
+}
+
+/* ── Mobile menu button ──────────────────────────────────── */
+
+.mobileMenuButton {
+  position: absolute;
+  left: 0;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  border: 1px solid var(--color-line);
+  background-color: var(--color-surface-alt);
+  color: var(--color-text-main);
+  transition: background-color 150ms;
+  border-radius: var(--app-header-radius-control);
+}
+
+.mobileMenuButton:hover { background-color: var(--color-surface); }
+
+.root[data-spacing-scale="sm"] .mobileMenuButton { height: 2rem;    width: 2rem; }
+.root[data-spacing-scale="md"] .mobileMenuButton { height: 2.25rem; width: 2.25rem; }
+.root[data-spacing-scale="lg"] .mobileMenuButton { height: 2.5rem;  width: 2.5rem; }
+
+/* ── Mobile logo wrap ────────────────────────────────────── */
+
+.mobileLogoWrap {
+  display: flex;
+  min-width: 0;
+  align-items: center;
+  justify-content: center;
+}
+
+.root[data-spacing-scale="sm"] .mobileLogoWrap { gap: 0.5rem;  padding-left: 2.5rem;  padding-right: 2.5rem; }
+.root[data-spacing-scale="md"] .mobileLogoWrap { gap: 0.75rem; padding-left: 3rem;    padding-right: 3rem; }
+.root[data-spacing-scale="lg"] .mobileLogoWrap { gap: 1rem;    padding-left: 3.5rem;  padding-right: 3.5rem; }
+
+/* ── Logo image ──────────────────────────────────────────── */
+
+.logo {
+  width: auto;
+  object-fit: contain;
+}
+
+.root[data-spacing-scale="sm"] .logo { height: 2rem; }
+.root[data-spacing-scale="md"] .logo { height: 2.5rem; }
+.root[data-spacing-scale="lg"] .logo { height: 3rem; }
+
+/* ── Title (shared mobile + desktop) ────────────────────── */
+
+.title {
+  font-weight: 600;
+  letter-spacing: -0.025em;
+  color: var(--color-text-main);
+}
+
+.root[data-spacing-scale="sm"] .title { font-size: 1.125rem; }
+.root[data-spacing-scale="md"] .title { font-size: 1.25rem; }
+.root[data-spacing-scale="lg"] .title { font-size: 1.5rem; }
+
+/* ── Mobile menu (animated) ──────────────────────────────── */
+
+.mobileMenu {
+  overflow: hidden;
+  transition:
+    max-height 300ms ease-out,
+    opacity 300ms ease-out,
+    margin-top 300ms ease-out,
+    transform 300ms ease-out;
+  max-height: 0;
+  opacity: 0;
+  margin-top: 0;
+  transform: translateY(-0.25rem);
+  pointer-events: none;
+}
+
+.mobileMenu[data-open="true"] {
+  max-height: 24rem;
+  opacity: 1;
+  margin-top: 1rem;
+  transform: translateY(0);
+  pointer-events: auto;
+}
+
+/* Hide mobile menu at collapse breakpoint (unless alwaysMobile) */
+@media (min-width: 640px) {
+  .root[data-collapse-breakpoint="sm"]:not([data-always-mobile]) .mobileMenu { display: none; }
+}
+@media (min-width: 768px) {
+  .root[data-collapse-breakpoint="md"]:not([data-always-mobile]) .mobileMenu { display: none; }
+}
+@media (min-width: 1024px) {
+  .root[data-collapse-breakpoint="lg"]:not([data-always-mobile]) .mobileMenu { display: none; }
+}
+@media (min-width: 1280px) {
+  .root[data-collapse-breakpoint="xl"]:not([data-always-mobile]) .mobileMenu { display: none; }
+}
+
+/* ── Mobile panel (menu content wrapper) ─────────────────── */
+
+.mobilePanel {
+  border: 1px solid var(--color-line);
+  background-color: var(--color-surface);
+  border-radius: var(--app-header-radius-panel);
+}
+
+.root[data-spacing-scale="sm"] .mobilePanel { margin-bottom: 0.5rem;  padding: 0.75rem; }
+.root[data-spacing-scale="md"] .mobilePanel { margin-bottom: 1rem;    padding: 1rem; }
+.root[data-spacing-scale="lg"] .mobilePanel { margin-bottom: 1.25rem; padding: 1.25rem; }
+
+/* ── Mobile panel grid ───────────────────────────────────── */
+
+.mobilePanelGrid {
+  display: grid;
+}
+
+.root[data-spacing-scale="sm"] .mobilePanelGrid { gap: 0.75rem; }
+.root[data-spacing-scale="md"] .mobilePanelGrid { gap: 1rem; }
+.root[data-spacing-scale="lg"] .mobilePanelGrid { gap: 1.25rem; }
+
+/* ── Mobile nav list ─────────────────────────────────────── */
+
+.mobileNavList {
+  display: grid;
+}
+
+.root[data-spacing-scale="sm"] .mobileNavList { gap: 0.375rem; }
+.root[data-spacing-scale="md"] .mobileNavList { gap: 0.5rem; }
+.root[data-spacing-scale="lg"] .mobileNavList { gap: 0.75rem; }
+
+/* ── Nav link (shared mobile + desktop) ──────────────────── */
+
+.navLink {
+  font-weight: 500;
+  color: var(--color-text-muted);
+  transition: text-decoration 150ms;
+}
+
+.navLink:hover { text-decoration: underline; }
+
+.root[data-spacing-scale="sm"] .navLink { font-size: 0.75rem; }
+.root[data-spacing-scale="md"] .navLink { font-size: 0.875rem; }
+.root[data-spacing-scale="lg"] .navLink { font-size: 1rem; }
+
+/* ── Mobile social wrap ──────────────────────────────────── */
+
+.mobileSocialWrap {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  border-top: 1px solid var(--color-line);
+}
+
+.root[data-spacing-scale="sm"] .mobileSocialWrap { gap: 0.5rem;  padding-top: 0.5rem; }
+.root[data-spacing-scale="md"] .mobileSocialWrap { gap: 0.75rem; padding-top: 0.75rem; }
+.root[data-spacing-scale="lg"] .mobileSocialWrap { gap: 1rem;    padding-top: 1rem; }
+
+/* ── Social link (shared mobile + desktop) ───────────────── */
+
+.socialLink {
+  display: inline-flex;
+  align-items: center;
+  font-weight: 500;
+  color: var(--color-text-muted);
+  transition: text-decoration 150ms;
+}
+
+.socialLink:hover { text-decoration: underline; }
+
+.root[data-spacing-scale="sm"] .socialLink { gap: 0.25rem;  font-size: 0.75rem; }
+.root[data-spacing-scale="md"] .socialLink { gap: 0.375rem; font-size: 0.875rem; }
+.root[data-spacing-scale="lg"] .socialLink { gap: 0.5rem;   font-size: 1rem; }
+
+/* ── Mobile mode wrap ────────────────────────────────────── */
+
+.mobileModeWrap {
+  border-top: 1px solid var(--color-line);
+}
+
+.root[data-spacing-scale="sm"] .mobileModeWrap { padding-top: 0.5rem; }
+.root[data-spacing-scale="md"] .mobileModeWrap { padding-top: 0.75rem; }
+.root[data-spacing-scale="lg"] .mobileModeWrap { padding-top: 1rem; }
+
+/* ── Desktop header ──────────────────────────────────────── */
+
+.desktopHeader {
+  display: none;
+  align-items: center;
+  grid-template-columns: minmax(0, 1fr) auto minmax(0, 1fr);
+}
+
+/* Show at collapse breakpoint (unless alwaysMobile) */
+@media (min-width: 640px) {
+  .root[data-collapse-breakpoint="sm"]:not([data-always-mobile]) .desktopHeader { display: grid; }
+}
+@media (min-width: 768px) {
+  .root[data-collapse-breakpoint="md"]:not([data-always-mobile]) .desktopHeader { display: grid; }
+}
+@media (min-width: 1024px) {
+  .root[data-collapse-breakpoint="lg"]:not([data-always-mobile]) .desktopHeader { display: grid; }
+}
+@media (min-width: 1280px) {
+  .root[data-collapse-breakpoint="xl"]:not([data-always-mobile]) .desktopHeader { display: grid; }
+}
+
+.root[data-spacing-scale="sm"] .desktopHeader { gap: 0.75rem; }
+.root[data-spacing-scale="md"] .desktopHeader { gap: 1rem; }
+.root[data-spacing-scale="lg"] .desktopHeader { gap: 1.25rem; }
+
+/* ── Desktop left ────────────────────────────────────────── */
+
+.desktopLeft {
+  display: flex;
+  align-items: center;
+  justify-content: flex-start;
+}
+
+.root[data-spacing-scale="sm"] .desktopLeft { gap: 0.5rem; }
+.root[data-spacing-scale="md"] .desktopLeft { gap: 0.75rem; }
+.root[data-spacing-scale="lg"] .desktopLeft { gap: 1rem; }
+
+/* ── Desktop nav list ────────────────────────────────────── */
+
+.desktopNavList {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: center;
+}
+
+.root[data-spacing-scale="sm"] .desktopNavList { gap: 0.75rem; }
+.root[data-spacing-scale="md"] .desktopNavList { gap: 1rem; }
+.root[data-spacing-scale="lg"] .desktopNavList { gap: 1.25rem; }
+
+/* ── Desktop right ───────────────────────────────────────── */
+
+.desktopRight {
+  display: flex;
+  align-items: center;
+  justify-content: flex-start;
+}
+
+@media (min-width: 768px) {
+  .desktopRight { justify-content: flex-end; }
+}
+
+.root[data-spacing-scale="sm"] .desktopRight { gap: 0.5rem; }
+.root[data-spacing-scale="md"] .desktopRight { gap: 0.75rem; }
+.root[data-spacing-scale="lg"] .desktopRight { gap: 1rem; }
