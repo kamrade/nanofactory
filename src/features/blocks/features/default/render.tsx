@@ -2,6 +2,7 @@ import Image from "next/image";
 import type { CSSProperties } from "react";
 import type { BlockRenderProps } from "../../shared/types";
 import { resolveAssetById } from "@/lib/assets/resolution";
+import { BlockSectionTitle } from "../../shared/components/block-section-title/block-section-title";
 import styles from "./render.module.css";
 
 type FeatureItem = {
@@ -96,7 +97,7 @@ export function FeaturesDefaultRender({
       className={styles.root}
       style={radiusVars as CSSProperties}
     >
-      <h2 className={styles.title}>{sectionTitle}</h2>
+      <BlockSectionTitle title={sectionTitle} fontWeight={600} />
       <ul className={styles.list}>
         {items.map((item) => {
           const itemImage = resolveAssetById(item.imageAssetId, assetMap);

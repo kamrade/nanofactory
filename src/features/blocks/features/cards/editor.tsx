@@ -1,7 +1,7 @@
 "use client";
 
 import type { BlockEditorProps } from "../../shared/types";
-import { AssetPicker } from "../../shared/asset-picker";
+import { AssetPicker } from "../../shared/editor/asset-picker";
 import { UIButton } from "@/components/ui/button";
 import { UIFormRow } from "@/components/ui/form-row";
 import { UITextInput } from "@/components/ui/text-input";

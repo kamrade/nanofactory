@@ -1,28 +1,24 @@
 "use client";
 
+import { useVisibleOnce } from "@/hooks/use-visible-once";
 import { OffsetRevealText } from "@/components/ui/offset-reveal-text";
 import { TypewriterText } from "@/components/ui/typewriter-text";
 
-type HeroAnimatedTextProps = {
+type HeroHeadlineProps = {
   text: string;
-  animateContent: boolean;
-  animateMainText?: boolean;
-  startDelay: number;
-  visible: boolean;
-  duration: number;
-};
-
-type HeroTextBlockProps = HeroAnimatedTextProps & {
   className: string;
+  animateContent?: boolean;
+  animateMainText?: boolean;
 };
 
 type HeroEyebrowProps = {
   text: string;
   className: string;
-  animateContent: boolean;
-  startDelay: number;
-  visible: boolean;
-  duration: number;
+};
+
+type HeroSubtitleProps = {
+  text: string;
+  className: string;
 };
 
 type HeroCtaProps = {
@@ -30,155 +26,68 @@ type HeroCtaProps = {
   buttonAnchor: string;
   buttonClassName: string;
   buttonRadiusVar: string;
-  animateContent: boolean;
-  startDelay: number;
-  visible: boolean;
-  duration: number;
 };
 
-function renderAnimatedText({
-  text,
-  animateContent,
-  animateMainText = false,
-  startDelay,
-  visible,
-  duration,
-}: HeroAnimatedTextProps) {
-  if (animateContent) {
-    return (
-      <OffsetRevealText
-        text={text}
-        direction="up"
-        duration={duration}
-        fade
-        startDelay={startDelay}
-        restartKey={visible ? 1 : 0}
-      />
-    );
-  }
-
-  if (animateMainText) {
-    return (
-      <TypewriterText
-        text={text}
-        startDelay={visible ? 0 : 10_000_000}
-        restartKey={visible ? 1 : 0}
-        loop={false}
-        showCursor
-      />
-    );
-  }
-
-  return text;
-}
-
-export function HeroEyebrow({
-  text,
-  className,
-  animateContent,
-  startDelay,
-  visible,
-  duration,
-}: HeroEyebrowProps) {
+export function HeroEyebrow({ text, className }: HeroEyebrowProps) {
   if (text.trim().length === 0) {
     return null;
   }
-
-  return (
-    <p className={className}>
-      {renderAnimatedText({
-        text,
-        animateContent,
-        startDelay,
-        visible,
-        duration,
-      })}
-    </p>
-  );
+  return <p className={className}>{text}</p>;
 }
 
 export function HeroHeadline({
   text,
   className,
-  animateContent,
+  animateContent = false,
   animateMainText = false,
-  startDelay,
-  visible,
-  duration,
-}: HeroTextBlockProps) {
+}: HeroHeadlineProps) {
+  const { ref, visible } = useVisibleOnce();
+
   return (
-    <h1 className={className}>
-      {renderAnimatedText({
-        text,
-        animateContent,
-        animateMainText,
-        startDelay,
-        visible,
-        duration,
-      })}
+    <h1 ref={ref} className={className}>
+      {animateContent ? (
+        <OffsetRevealText
+          text={text}
+          direction="up"
+          duration={3000}
+          fade
+          startDelay={visible ? 0 : 10_000_000}
+          restartKey={visible ? 1 : 0}
+        />
+      ) : animateMainText ? (
+        <TypewriterText
+          text={text}
+          startDelay={visible ? 0 : 10_000_000}
+          restartKey={visible ? 1 : 0}
+          loop={false}
+          showCursor
+        />
+      ) : (
+        text
+      )}
     </h1>
   );
 }
 
-export function HeroSubtitle({
-  text,
-  className,
-  animateContent,
-  startDelay,
-  visible,
-  duration,
-}: HeroTextBlockProps) {
-  return (
-    <p className={className}>
-      {renderAnimatedText({
-        text,
-        animateContent,
-        startDelay,
-        visible,
-        duration,
-      })}
-    </p>
-  );
+export function HeroSubtitle({ text, className }: HeroSubtitleProps) {
+  return <p className={className}>{text}</p>;
 }
 
-export function HeroCta({
-  buttonText,
-  buttonAnchor,
-  buttonClassName,
-  buttonRadiusVar,
-  animateContent,
-  startDelay,
-  visible,
-  duration,
-}: HeroCtaProps) {
-  const button = buttonAnchor.trim().length > 0 ? (
-    <a
-      href={`#${buttonAnchor}`}
-      className={buttonClassName}
-      style={{ borderRadius: `var(${buttonRadiusVar})` }}
-    >
-      {buttonText}
-    </a>
-  ) : (
+export function HeroCta({ buttonText, buttonAnchor, buttonClassName, buttonRadiusVar }: HeroCtaProps) {
+  if (buttonAnchor.trim().length > 0) {
+    return (
+      <a
+        href={`#${buttonAnchor}`}
+        className={buttonClassName}
+        style={{ borderRadius: `var(${buttonRadiusVar})` }}
+      >
+        {buttonText}
+      </a>
+    );
+  }
+  return (
     <span className={buttonClassName} style={{ borderRadius: `var(${buttonRadiusVar})` }}>
       {buttonText}
     </span>
-  );
-
-  if (!animateContent) {
-    return button;
-  }
-
-  return (
-    <OffsetRevealText
-      text={buttonText}
-      direction="up"
-      duration={duration}
-      fade
-      startDelay={startDelay}
-      restartKey={visible ? 1 : 0}
-    >
-      {button}
-    </OffsetRevealText>
   );
 }

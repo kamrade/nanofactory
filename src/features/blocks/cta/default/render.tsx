@@ -1,5 +1,6 @@
 import type { CSSProperties } from "react";
 import type { BlockRenderProps } from "../../shared/types";
+import { BlockSectionTitle } from "../../shared/components/block-section-title/block-section-title";
 import styles from "./render.module.css";
 
 export function CtaDefaultRender({
@@ -38,7 +39,7 @@ export function CtaDefaultRender({
       className={styles.root}
       style={radiusVars as CSSProperties}
     >
-      <h2 className={styles.title}>{title}</h2>
+      <BlockSectionTitle title={title} />
       <div>
         <a
           href={buttonHref}

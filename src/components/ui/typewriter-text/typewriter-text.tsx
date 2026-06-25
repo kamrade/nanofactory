@@ -94,7 +94,7 @@ export function TypewriterText({
     ? { whiteSpace: "pre-wrap" }
     : undefined;
 
-  const cursorEl = showCursor ? (
+  const cursorEl = showCursor && phase !== "done" ? (
     <span
       aria-hidden="true"
       className={`typewriter-cursor${

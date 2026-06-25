@@ -2,6 +2,7 @@ import Image from "next/image";
 import type { CSSProperties } from "react";
 import type { BlockRenderProps } from "../../shared/types";
 import { resolveAssetById } from "@/lib/assets/resolution";
+import { BlockSectionTitle } from "../../shared/components/block-section-title/block-section-title";
 import styles from "./render.module.css";
 
 type FeatureCardItem = {
@@ -97,7 +98,7 @@ export function FeaturesCardsRender({
       style={radiusVars as CSSProperties}
     >
       <div className={styles.sectionHeader}>
-        <h2 className={styles.title}>{sectionTitle}</h2>
+        <BlockSectionTitle title={sectionTitle} />
       </div>
 
       <div className={styles.grid}>

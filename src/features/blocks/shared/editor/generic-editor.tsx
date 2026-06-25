@@ -1,6 +1,6 @@
 "use client";
 
-import type { BlockFieldDefinition, BlockEditorProps } from "./types";
+import type { BlockFieldDefinition, BlockEditorProps } from "../types";
 import { AssetPicker } from "./asset-picker";
 import { UIFormRow } from "@/components/ui/form-row";
 import { UITextInput } from "@/components/ui/text-input";

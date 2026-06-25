@@ -7,7 +7,7 @@ import { UISelect } from "@/components/ui/select";
 import { UITextInput } from "@/components/ui/text-input";
 import { EditorFieldRow } from "@/components/editor/editor-field-row";
 import type { BlockEditorProps } from "../../shared/types";
-import { AssetPicker } from "../../shared/asset-picker";
+import { AssetPicker } from "../../shared/editor/asset-picker";
 import {
   SOCIAL_ICON_OPTIONS,
   type SocialIconKey,

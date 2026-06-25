@@ -1,6 +1,3 @@
-"use client";
-
-import { useHeroAnimationState } from "./render";
 import { HeroCta, HeroEyebrow, HeroHeadline, HeroSubtitle } from "./content";
 
 type HeroContentProps = {
@@ -11,7 +8,6 @@ type HeroContentProps = {
   buttonAnchor: string;
   animateMainText: boolean;
   animateContent: boolean;
-  duration?: number;
   contentStackClassName: string;
   eyebrowClassName: string;
   headingGroupClassName?: string;
@@ -29,7 +25,6 @@ export function HeroContent({
   buttonAnchor,
   animateMainText,
   animateContent,
-  duration = 3000,
   contentStackClassName,
   eyebrowClassName,
   headingGroupClassName,
@@ -38,9 +33,6 @@ export function HeroContent({
   buttonClassName,
   buttonRadiusVar,
 }: HeroContentProps) {
-  const { visibleRef, visible, eyebrowDelay, titleDelay, subtitleDelay, buttonDelay } =
-    useHeroAnimationState(eyebrow, animateContent);
-
   const headingAndSubtitle = (
     <>
       <HeroHeadline
@@ -48,31 +40,14 @@ export function HeroContent({
         className={headingClassName}
         animateContent={animateContent}
         animateMainText={animateMainText}
-        startDelay={titleDelay}
-        visible={visible}
-        duration={duration}
       />
-      <HeroSubtitle
-        text={subtitle}
-        className={subtitleClassName}
-        animateContent={animateContent}
-        startDelay={subtitleDelay}
-        visible={visible}
-        duration={duration}
-      />
+      <HeroSubtitle text={subtitle} className={subtitleClassName} />
     </>
   );
 
   return (
-    <div ref={visibleRef} className={contentStackClassName}>
-      <HeroEyebrow
-        text={eyebrow}
-        className={eyebrowClassName}
-        animateContent={animateContent}
-        startDelay={eyebrowDelay}
-        visible={visible}
-        duration={duration}
-      />
+    <div className={contentStackClassName}>
+      <HeroEyebrow text={eyebrow} className={eyebrowClassName} />
       {headingGroupClassName ? (
         <div className={headingGroupClassName}>{headingAndSubtitle}</div>
       ) : (
@@ -84,10 +59,6 @@ export function HeroContent({
           buttonAnchor={buttonAnchor}
           buttonClassName={buttonClassName}
           buttonRadiusVar={buttonRadiusVar}
-          animateContent={animateContent}
-          startDelay={buttonDelay}
-          visible={visible}
-          duration={duration}
         />
       </div>
     </div>

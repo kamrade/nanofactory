@@ -26,18 +26,6 @@
 .root[data-spacing-scale="md"] .sectionHeader { gap: 0.5rem; }
 .root[data-spacing-scale="lg"] .sectionHeader { gap: 0.75rem; }
 
-/* ── Section title ───────────────────────────────────────── */
-
-.title {
-  font-weight: 400;
-  letter-spacing: -0.025em;
-  overflow-wrap: break-word;
-}
-
-.root[data-spacing-scale="sm"] .title { font-size: 1.25rem; }
-.root[data-spacing-scale="md"] .title { font-size: 1.5rem; }
-.root[data-spacing-scale="lg"] .title { font-size: 1.875rem; }
-
 /* ── Cards grid ──────────────────────────────────────────── */
 
 .grid {

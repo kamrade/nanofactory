@@ -10,6 +10,7 @@ import {
   getEffectiveProjectAnchor,
   readProjectsGalleryProps,
 } from "./model";
+import { BlockSectionTitle } from "../../shared/components/block-section-title/block-section-title";
 import styles from "./render.module.css";
 
 export function ProjectsGalleryDefaultRender({
@@ -57,9 +58,7 @@ export function ProjectsGalleryDefaultRender({
       className={styles.root}
       style={radiusVars as CSSProperties}
     >
-      {props.sectionTitle.trim().length > 0 ? (
-        <h2 className={styles.title}>{props.sectionTitle}</h2>
-      ) : null}
+      <BlockSectionTitle title={props.sectionTitle} />
 
       <div className={styles.grid}>
         {props.items.map((item, index) => {

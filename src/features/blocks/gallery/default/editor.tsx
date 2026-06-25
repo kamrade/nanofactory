@@ -6,7 +6,7 @@ import { UITextInput } from "@/components/ui/text-input";
 import { UITextArea } from "@/components/ui/textarea";
 import { UIFormRow } from "@/components/ui/form-row";
 import type { BlockEditorProps } from "../../shared/types";
-import { AssetPicker } from "../../shared/asset-picker";
+import { AssetPicker } from "../../shared/editor/asset-picker";
 import { Card } from "@/components/ui/card";
 
 type GalleryItem = {

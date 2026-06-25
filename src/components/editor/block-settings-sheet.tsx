@@ -6,7 +6,7 @@ import type { BlockVariant } from "@/lib/editor/blocks";
 import type { PendingVariantSwitch } from "@/components/editor/project-editor-variants";
 import type { BlockVariantDefinition } from "@/features/blocks/shared/types";
 import type { PageBlock } from "@/features/blocks/shared/content";
-import { ScenePicker } from "@/features/blocks/shared/scene-picker";
+import { ScenePicker } from "@/features/blocks/shared/editor/scene-picker";
 import type { ProjectAssetRecord } from "@/lib/assets";
 import type { BackgroundSceneRecord } from "@/lib/background-scenes/types";
 import { isValidAnchorId, normalizeAnchorId } from "@/lib/editor/anchor-id";

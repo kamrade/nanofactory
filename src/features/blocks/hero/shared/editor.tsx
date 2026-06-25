@@ -7,7 +7,7 @@ import { UISelect } from "@/components/ui/select";
 import { UITextArea } from "@/components/ui/textarea";
 import { UITextInput } from "@/components/ui/text-input";
 
-import { AssetPicker } from "../../shared/asset-picker";
+import { AssetPicker } from "../../shared/editor/asset-picker";
 import type { BlockEditorProps } from "../../shared/types";
 
 type HeroFieldKey =

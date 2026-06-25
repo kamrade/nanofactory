@@ -17,18 +17,6 @@
   .root[data-spacing-scale="lg"] { padding: 2.5rem; }
 }
 
-/* ── Title ───────────────────────────────────────────────── */
-
-.title {
-  overflow-wrap: break-word;
-  font-weight: 400;
-  letter-spacing: -0.025em;
-}
-
-.root[data-spacing-scale="sm"] .title { font-size: 1.5rem; }
-.root[data-spacing-scale="md"] .title { font-size: 1.875rem; }
-.root[data-spacing-scale="lg"] .title { font-size: 2.25rem; }
-
 /* ── Button ──────────────────────────────────────────────── */
 
 .button {

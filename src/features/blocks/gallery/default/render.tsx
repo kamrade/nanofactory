@@ -5,6 +5,7 @@ import type { CSSProperties } from "react";
 import { resolveAssetById } from "@/lib/assets/resolution";
 import { buildModeQuery } from "@/lib/routing/mode-query";
 import type { BlockRenderProps } from "../../shared/types";
+import { BlockSectionTitle } from "../../shared/components/block-section-title/block-section-title";
 import styles from "./render.module.css";
 
 type GalleryItem = {
@@ -111,9 +112,7 @@ export function GalleryDefaultRender({
       className={styles.root}
       style={radiusVars as CSSProperties}
     >
-      {sectionTitle.trim().length > 0 ? (
-        <h2 className={styles.title}>{sectionTitle}</h2>
-      ) : null}
+      <BlockSectionTitle title={sectionTitle} />
 
       <div
         className={styles.grid}

@@ -1,5 +1,5 @@
 import { isPlainObject, readString } from "../../shared/base";
-import { GenericBlockEditor } from "../../shared/generic-editor";
+import { GenericBlockEditor } from "../../shared/editor/generic-editor";
 import type { BlockVariantDefinition } from "../../shared/types";
 import { CtaDefaultRender } from "./render";
 
