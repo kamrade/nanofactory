@@ -33,7 +33,6 @@ export function createHeroDefaultProps(copyDefaults: HeroCopyDefaults): Record<s
     imageLightAssetId: undefined,
     imageDarkAssetId: undefined,
     animateMainText: false,
-    animateContent: false,
   };
 }
 
@@ -59,6 +58,5 @@ export function normalizeHeroProps(
     imageLightAssetId: readOptionalString(props.imageLightAssetId),
     imageDarkAssetId: readOptionalString(props.imageDarkAssetId),
     animateMainText: props.animateMainText === true,
-    animateContent: props.animateContent === true,
   };
 }

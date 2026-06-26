@@ -28,7 +28,6 @@ export function HeroCenteredRender({
     buttonAnchor,
     contentPosition,
     animateMainText,
-    animateContent,
   } = readHeroRenderContent(block);
 
   const { defaultImageId, lightImageId, darkImageId } = readHeroImageIds(block);
@@ -98,7 +97,6 @@ export function HeroCenteredRender({
           buttonText={buttonText}
           buttonAnchor={buttonAnchor}
           animateMainText={animateMainText}
-          animateContent={animateContent}
           contentStackClassName={styles.content}
           eyebrowClassName={styles.eyebrow}
           headingClassName={styles.heading}

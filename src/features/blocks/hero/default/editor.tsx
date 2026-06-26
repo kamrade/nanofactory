@@ -14,7 +14,6 @@ export function HeroDefaultEditor(props: BlockEditorProps) {
         buttonTextPlaceholder: "Get started",
         buttonTextSize: "sm",
         buttonAnchorInputId: "hero-default-button-anchor",
-        animateContentInputId: "hero-default-animate-content",
         animateTitleInputId: "hero-default-animate-main-text",
         contentPositionInputId: "hero-default-content-position",
         textFields: [

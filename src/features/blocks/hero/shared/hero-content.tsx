@@ -1,4 +1,4 @@
-import { HeroCta, HeroEyebrow, HeroHeadline, HeroSubtitle } from "./content";
+import { HeroHeadline } from "./hero-headline";
 
 type HeroContentProps = {
   eyebrow: string;
@@ -7,7 +7,6 @@ type HeroContentProps = {
   buttonText: string;
   buttonAnchor: string;
   animateMainText: boolean;
-  animateContent: boolean;
   contentStackClassName: string;
   eyebrowClassName: string;
   headingGroupClassName?: string;
@@ -24,7 +23,6 @@ export function HeroContent({
   buttonText,
   buttonAnchor,
   animateMainText,
-  animateContent,
   contentStackClassName,
   eyebrowClassName,
   headingGroupClassName,
@@ -33,33 +31,44 @@ export function HeroContent({
   buttonClassName,
   buttonRadiusVar,
 }: HeroContentProps) {
+  const eyebrowNode = eyebrow.trim().length > 0 ? <p className={eyebrowClassName}>{eyebrow}</p> : null;
+  const subtitleNode = <p className={subtitleClassName}>{subtitle}</p>;
+  const ctaNode =
+    buttonAnchor.trim().length > 0 ? (
+      <a
+        href={`#${buttonAnchor}`}
+        className={buttonClassName}
+        style={{ borderRadius: `var(${buttonRadiusVar})` }}
+      >
+        {buttonText}
+      </a>
+    ) : (
+      <span className={buttonClassName} style={{ borderRadius: `var(${buttonRadiusVar})` }}>
+        {buttonText}
+      </span>
+    );
+
   const headingAndSubtitle = (
     <>
       <HeroHeadline
         text={title}
         className={headingClassName}
-        animateContent={animateContent}
         animateMainText={animateMainText}
       />
-      <HeroSubtitle text={subtitle} className={subtitleClassName} />
+      {subtitleNode}
     </>
   );
 
   return (
     <div className={contentStackClassName}>
-      <HeroEyebrow text={eyebrow} className={eyebrowClassName} />
+      {eyebrowNode}
       {headingGroupClassName ? (
         <div className={headingGroupClassName}>{headingAndSubtitle}</div>
       ) : (
         headingAndSubtitle
       )}
       <div>
-        <HeroCta
-          buttonText={buttonText}
-          buttonAnchor={buttonAnchor}
-          buttonClassName={buttonClassName}
-          buttonRadiusVar={buttonRadiusVar}
-        />
+        {ctaNode}
       </div>
     </div>
   );

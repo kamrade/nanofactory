@@ -18,7 +18,6 @@ type HeroRenderContent = {
   buttonAnchor: string;
   contentPosition: string;
   animateMainText: boolean;
-  animateContent: boolean;
 };
 
 type HeroImageIds = {
@@ -37,7 +36,6 @@ export function readHeroRenderContent(block: BlockRenderProps["block"]): HeroRen
     contentPosition:
       typeof block.props.contentPosition === "string" ? block.props.contentPosition : "centered",
     animateMainText: block.props.animateMainText === true,
-    animateContent: block.props.animateContent === true,
   };
 }
 

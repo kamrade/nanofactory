@@ -17,7 +17,6 @@ import { HeroContent } from "../shared/hero-content";
 export function HeroDefaultRender({
   block,
   assetMap,
-  mode = "light",
   projectBorderRadiusPolicy,
   projectSpacingScale,
 }: BlockRenderProps) {
@@ -29,7 +28,6 @@ export function HeroDefaultRender({
     buttonAnchor,
     contentPosition,
     animateMainText,
-    animateContent,
   } = readHeroRenderContent(block);
 
   const { defaultImageId, lightImageId, darkImageId } = readHeroImageIds(block);
@@ -100,7 +98,6 @@ export function HeroDefaultRender({
           buttonText={buttonText}
           buttonAnchor={buttonAnchor}
           animateMainText={animateMainText}
-          animateContent={animateContent}
           contentStackClassName={styles.contentStack}
           eyebrowClassName={styles.eyebrow}
           headingGroupClassName={styles.headingGroup}

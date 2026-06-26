@@ -45,7 +45,6 @@ type HeroEditorConfig = {
   buttonTextPlaceholder: string;
   buttonTextSize: "sm" | "lg";
   buttonAnchorInputId: string;
-  animateContentInputId: string;
   animateTitleInputId: string;
   contentPositionInputId: string;
   textFields: HeroTextFieldConfig[];
@@ -105,7 +104,6 @@ export function HeroBaseEditor({
   const buttonAnchor = readStringProp(block.props, "buttonAnchor");
   const contentPosition = readStringProp(block.props, "contentPosition") || "centered";
   const animateMainText = block.props.animateMainText === true;
-  const animateContent = block.props.animateContent === true;
 
   const fieldValues: Record<HeroTextFieldConfig["key"], string> = {
     eyebrow,
@@ -121,7 +119,7 @@ export function HeroBaseEditor({
     });
   }
 
-  function updateBooleanField(key: "animateContent" | "animateMainText", value: boolean) {
+  function updateBooleanField(key: "animateMainText", value: boolean) {
     onChange({
       ...block.props,
       [key]: value,
@@ -172,14 +170,6 @@ export function HeroBaseEditor({
                 textValue: anchor.label,
               }))}
               clearable
-            />
-          </UIFormRow>
-
-          <UIFormRow label="Animate content" htmlFor={config.animateContentInputId} borderless>
-            <UICheckbox
-              id={config.animateContentInputId}
-              checked={animateContent}
-              onChange={(event) => updateBooleanField("animateContent", event.currentTarget.checked)}
             />
           </UIFormRow>
 
