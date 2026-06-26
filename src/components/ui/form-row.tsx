@@ -54,6 +54,7 @@ export function UIFormRow({
 
   return (
     <div
+      data-testid="form-row"
       className={cx(
         "grid gap-1.5 md:grid-cols-[12rem_minmax(0,1fr)] md:items-start md:gap-4",
         (underline || borderless) && "border-b border-line py-1 transition-colors focus-within:border-neutral-400",
@@ -61,7 +62,7 @@ export function UIFormRow({
       )}
     >
       {labelNode}
-      <div className={cx("w-full max-w-xl", contentClassName)}>
+      <div className={cx("w-full", contentClassName)}>
         {children}
         {error ? <p className="mt-1 text-xs text-danger">{error}</p> : null}
       </div>

@@ -18,6 +18,7 @@ import type { UikitSectionNavItem } from "./uikit-sections/nav";
 
 type UikitSidebarProps = {
   sections: UikitSectionNavItem[];
+  title?: string;
 };
 
 function scrollToSection(id: string) {
@@ -88,7 +89,7 @@ function UikitSidebarList({
   );
 }
 
-export function UikitSidebar({ sections }: UikitSidebarProps) {
+export function UikitSidebar({ sections, title = "UI Kit" }: UikitSidebarProps) {
   const [activeSectionId, setActiveSectionId] = useState(() => sections[0]?.id ?? "");
   const [mobileOpen, setMobileOpen] = useState(false);
 
@@ -154,7 +155,7 @@ export function UikitSidebar({ sections }: UikitSidebarProps) {
             style={{ maxWidth: "13.5rem" }}
           >
             <UISheetHeader className="space-y-0">
-              <UISheetTitle className="text-sm">UIKit sections</UISheetTitle>
+              <UISheetTitle className="text-sm">{title}</UISheetTitle>
             </UISheetHeader>
             <div className="mt-3 grid gap-1">
               <UikitSidebarList
@@ -178,11 +179,14 @@ export function UikitSidebar({ sections }: UikitSidebarProps) {
         </UISheet>
       </div>
 
-      <aside data-testid="uikit-sidebar" className="hidden lg:block lg:sticky lg:top-24 lg:self-start bg-white p-6 rounded-2xl">
-        <div className="p-0.5 max-h-[70vh] overflow-y-auto">
+      <aside
+        data-testid="uikit-sidebar"
+        className="hidden rounded-2xl border border-line bg-surface p-6 text-text-main shadow-sm lg:sticky lg:top-24 lg:block lg:self-start"
+      >
+        <div className="max-h-[70vh] overflow-y-auto p-0.5">
           <div className="mb-2.5">
-            <p className="text-[10px] font-semibold uppercase tracking-[0.14em] text-text-muted">
-              On this page
+            <p className="font-bold uppercase tracking-[0.14em] text-text-muted border-b pb-2 mb-5">
+              {title}
             </p>
           </div>
           <UikitSidebarList

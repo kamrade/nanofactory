@@ -247,146 +247,155 @@ export function HighlightSweepSection({ uiSize }: { uiSize: UiSize }) {
           </div>
         </UICard>
       </UikitSectionAnchor>
-
-      <UikitSectionAnchor id="highlight-sweep-scroll">
-        <UICard title="UIKit · HighlightSweepText / Scroll Trigger">
-          <p className="text-sm text-text-muted">
-            Each highlight animates once when its block enters the viewport.
-          </p>
-          <div className="mt-5 grid gap-4">
-            <ScrollSweepItem label="Single word highlight">
-              {(visible) => (
-                <p className="text-h2 font-bold text-text-main">
-                  Build pages that{" "}
-                  <HighlightSweepText
-                    text="ship."
-                    color="#FFE566"
-                    duration={600}
-                    startDelay={visible ? 200 : 10_000_000}
-                    restartKey={visible ? 1 : 0}
-                  />
-                </p>
-              )}
-            </ScrollSweepItem>
-
-            <ScrollSweepItem label="Staggered multi-word">
-              {(visible) => (
-                <p className="text-h2 font-bold text-text-main">
-                  <HighlightSweepText
-                    text="Fast."
-                    color="#6EE7B7"
-                    duration={500}
-                    startDelay={visible ? 0 : 10_000_000}
-                    restartKey={visible ? 1 : 0}
-                  />
-                  {"  "}
-                  <HighlightSweepText
-                    text="Clean."
-                    color="#93C5FD"
-                    duration={500}
-                    startDelay={visible ? 350 : 10_000_000}
-                    restartKey={visible ? 1 : 0}
-                  />
-                  {"  "}
-                  <HighlightSweepText
-                    text="Ready."
-                    color="#F9A8D4"
-                    duration={500}
-                    startDelay={visible ? 700 : 10_000_000}
-                    restartKey={visible ? 1 : 0}
-                  />
-                </p>
-              )}
-            </ScrollSweepItem>
-
-            <ScrollSweepItem label="Inline emphasis">
-              {(visible) => (
-                <p className="text-h3 text-text-main">
-                  Write the message, pick the layout,{" "}
-                  <HighlightSweepText
-                    text="publish in minutes"
-                    color="#FDB672"
-                    duration={800}
-                    thickness="0.45em"
-                    startDelay={visible ? 300 : 10_000_000}
-                    restartKey={visible ? 1 : 0}
-                  />
-                  {" "}— no build pipeline needed.
-                </p>
-              )}
-            </ScrollSweepItem>
-
-            <ScrollSweepItem label="Right-to-left direction">
-              {(visible) => (
-                <p className="text-h2 font-bold text-text-main">
-                  <HighlightSweepText
-                    text="Ship backwards."
-                    color="#93C5FD"
-                    direction="right-to-left"
-                    duration={700}
-                    startDelay={visible ? 200 : 10_000_000}
-                    restartKey={visible ? 1 : 0}
-                  />
-                </p>
-              )}
-            </ScrollSweepItem>
-          </div>
-        </UICard>
-      </UikitSectionAnchor>
-      <UikitSectionAnchor id="highlight-sweep-hover">
-        <UICard title="UIKit · HighlightSweepText / Hover Trigger">
-          <p className="text-sm text-text-muted">
-            Hover over any item — the sweep replays each time you enter.
-          </p>
-
-          <div className="mt-5 grid gap-6">
-            <div>
-              <p className="mb-3 text-xs font-medium uppercase tracking-wider text-text-muted">Navigation</p>
-              <nav className="flex flex-wrap gap-6">
-                {["Features", "Pricing", "Docs", "Blog", "Contact"].map((item) => (
-                  <span key={item} className="text-base font-medium text-text-main">
-                    <HoverHighlight text={item} color="#FFE566" duration={400} thickness="0.55em" />
-                  </span>
-                ))}
-              </nav>
-            </div>
-
-            <div>
-              <p className="mb-3 text-xs font-medium uppercase tracking-wider text-text-muted">Inline emphasis</p>
-              <p className="text-h3 leading-snug text-text-main">
-                We help teams build{" "}
-                <HoverHighlight text="faster" color="#6EE7B7" duration={500} />,{" "}
-                stay{" "}
-                <HoverHighlight text="focused" color="#93C5FD" duration={500} />,{" "}
-                and ship{" "}
-                <HoverHighlight text="confidently" color="#F9A8D4" duration={600} />.
-              </p>
-            </div>
-
-            <div>
-              <p className="mb-3 text-xs font-medium uppercase tracking-wider text-text-muted">CTA links</p>
-              <div className="flex flex-col gap-3">
-                {[
-                  { label: "Start building for free", color: "#FFE566" },
-                  { label: "See how it works", color: "#6EE7B7" },
-                  { label: "Read the docs", color: "#93C5FD" },
-                ].map((item) => (
-                  <span key={item.label} className="flex items-center gap-2 text-lg font-semibold text-text-main">
-                    <HoverHighlight
-                      text={item.label}
-                      color={item.color}
-                      duration={550}
-                      thickness="0.5em"
-                      offsetY="0.05em"
-                    />
-                    <span className="text-text-muted">→</span>
-                  </span>
-                ))}
-              </div>
-            </div>
-          </div>
-        </UICard>
-      </UikitSectionAnchor>
     </>
+  );
+}
+
+export function HighlightSweepScrollSection() {
+  return (
+    <UikitSectionAnchor id="highlight-sweep-scroll">
+      <UICard title="UIKit · HighlightSweepText / Scroll Trigger">
+        <p className="text-sm text-text-muted">
+          Each highlight animates once when its block enters the viewport.
+        </p>
+        <div className="mt-5 grid gap-4">
+          <ScrollSweepItem label="Single word highlight">
+            {(visible) => (
+              <p className="text-h2 font-bold text-text-main">
+                Build pages that{" "}
+                <HighlightSweepText
+                  text="ship."
+                  color="#FFE566"
+                  duration={600}
+                  startDelay={visible ? 200 : 10_000_000}
+                  restartKey={visible ? 1 : 0}
+                />
+              </p>
+            )}
+          </ScrollSweepItem>
+
+          <ScrollSweepItem label="Staggered multi-word">
+            {(visible) => (
+              <p className="text-h2 font-bold text-text-main">
+                <HighlightSweepText
+                  text="Fast."
+                  color="#6EE7B7"
+                  duration={500}
+                  startDelay={visible ? 0 : 10_000_000}
+                  restartKey={visible ? 1 : 0}
+                />
+                {"  "}
+                <HighlightSweepText
+                  text="Clean."
+                  color="#93C5FD"
+                  duration={500}
+                  startDelay={visible ? 350 : 10_000_000}
+                  restartKey={visible ? 1 : 0}
+                />
+                {"  "}
+                <HighlightSweepText
+                  text="Ready."
+                  color="#F9A8D4"
+                  duration={500}
+                  startDelay={visible ? 700 : 10_000_000}
+                  restartKey={visible ? 1 : 0}
+                />
+              </p>
+            )}
+          </ScrollSweepItem>
+
+          <ScrollSweepItem label="Inline emphasis">
+            {(visible) => (
+              <p className="text-h3 text-text-main">
+                Write the message, pick the layout,{" "}
+                <HighlightSweepText
+                  text="publish in minutes"
+                  color="#FDB672"
+                  duration={800}
+                  thickness="0.45em"
+                  startDelay={visible ? 300 : 10_000_000}
+                  restartKey={visible ? 1 : 0}
+                />
+                {" "}— no build pipeline needed.
+              </p>
+            )}
+          </ScrollSweepItem>
+
+          <ScrollSweepItem label="Right-to-left direction">
+            {(visible) => (
+              <p className="text-h2 font-bold text-text-main">
+                <HighlightSweepText
+                  text="Ship backwards."
+                  color="#93C5FD"
+                  direction="right-to-left"
+                  duration={700}
+                  startDelay={visible ? 200 : 10_000_000}
+                  restartKey={visible ? 1 : 0}
+                />
+              </p>
+            )}
+          </ScrollSweepItem>
+        </div>
+      </UICard>
+    </UikitSectionAnchor>
+  );
+}
+
+export function HighlightSweepHoverSection() {
+  return (
+    <UikitSectionAnchor id="highlight-sweep-hover">
+      <UICard title="UIKit · HighlightSweepText / Hover Trigger">
+        <p className="text-sm text-text-muted">
+          Hover over any item — the sweep replays each time you enter.
+        </p>
+
+        <div className="mt-5 grid gap-6">
+          <div>
+            <p className="mb-3 text-xs font-medium uppercase tracking-wider text-text-muted">Navigation</p>
+            <nav className="flex flex-wrap gap-6">
+              {["Features", "Pricing", "Docs", "Blog", "Contact"].map((item) => (
+                <span key={item} className="text-base font-medium text-text-main">
+                  <HoverHighlight text={item} color="#FFE566" duration={400} thickness="0.55em" />
+                </span>
+              ))}
+            </nav>
+          </div>
+
+          <div>
+            <p className="mb-3 text-xs font-medium uppercase tracking-wider text-text-muted">Inline emphasis</p>
+            <p className="text-h3 leading-snug text-text-main">
+              We help teams build{" "}
+              <HoverHighlight text="faster" color="#6EE7B7" duration={500} />,{" "}
+              stay{" "}
+              <HoverHighlight text="focused" color="#93C5FD" duration={500} />,{" "}
+              and ship{" "}
+              <HoverHighlight text="confidently" color="#F9A8D4" duration={600} />.
+            </p>
+          </div>
+
+          <div>
+            <p className="mb-3 text-xs font-medium uppercase tracking-wider text-text-muted">CTA links</p>
+            <div className="flex flex-col gap-3">
+              {[
+                { label: "Start building for free", color: "#FFE566" },
+                { label: "See how it works", color: "#6EE7B7" },
+                { label: "Read the docs", color: "#93C5FD" },
+              ].map((item) => (
+                <span key={item.label} className="flex items-center gap-2 text-lg font-semibold text-text-main">
+                  <HoverHighlight
+                    text={item.label}
+                    color={item.color}
+                    duration={550}
+                    thickness="0.5em"
+                    offsetY="0.05em"
+                  />
+                  <span className="text-text-muted">→</span>
+                </span>
+              ))}
+            </div>
+          </div>
+        </div>
+      </UICard>
+    </UikitSectionAnchor>
   );
 }

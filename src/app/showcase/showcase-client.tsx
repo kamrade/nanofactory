@@ -6,6 +6,7 @@ import { DialogDemoCard, MarkdownDemoCard, ModalDemoCard } from "@/app/showcase/
 import {
   ControlsAndMenusSection,
   BorderlessFormLayoutSection,
+  AnimationsSection,
   FeedbackAndSheetSection,
   FormLayoutSection,
   InputsSection,
@@ -13,10 +14,8 @@ import {
   TypographyButtonsBadgesSection,
   TypewriterSection,
   HighlightSweepSection,
-  OffsetRevealSection,
-  WordStaggerRevealSection,
 } from "@/app/showcase/uikit-sections";
-import { uikitSectionNavItems } from "@/app/showcase/uikit-sections/nav";
+import { animationsSectionNavItems, uikitSectionNavItems } from "@/app/showcase/uikit-sections/nav";
 import { UikitSidebar } from "@/app/showcase/uikit-sidebar";
 import { AppStickyHeader } from "@/components/navigation/app-sticky-header";
 import { ProjectRenderer } from "@/components/projects/project-renderer";
@@ -27,7 +26,7 @@ import { useToast } from "@/hooks/use-toast";
 import { DEFAULT_THEME_KEY, THEME_OPTIONS, type ThemeKey } from "@/lib/themes";
 import { UI_COOKIE_MAX_AGE, UI_MODE_COOKIE, UI_THEME_COOKIE } from "@/lib/ui-preferences";
 
-type ShowcaseTab = "uikit" | "sections";
+type ShowcaseTab = "uikit" | "animations" | "sections";
 type ShowcaseMode = "light" | "dark";
 
 type ShowcaseClientProps = {
@@ -84,11 +83,11 @@ export function ShowcaseClient({
               />
             </div>
 
-            {activeTab === "uikit" ? (
+            {activeTab === "uikit" || activeTab === "animations" ? (
               <div className="flex items-center gap-2 text-sm font-medium text-text-muted">
                 <span>Size</span>
                 <UISegmentedControl
-                  ariaLabel="UIKit size"
+                  ariaLabel="Showcase size"
                   value={uiSize}
                   onValueChange={setUiSize}
                   options={[{ value: "sm", label: "Small" }, { value: "lg", label: "Large" }]}
@@ -105,6 +104,7 @@ export function ShowcaseClient({
             ariaLabel="Showcase tabs"
             items={[
               { label: "UIKit", href: "/showcase/uikit", active: activeTab === "uikit" },
+              { label: "Animations", href: "/showcase/animations", active: activeTab === "animations" },
               { label: "Sections", href: "/showcase/sections", active: activeTab === "sections" },
             ]}
           />
@@ -128,9 +128,18 @@ export function ShowcaseClient({
                 <MarkdownDemoCard />
                 <TypewriterSection uiSize={uiSize} />
                 <HighlightSweepSection uiSize={uiSize} />
-                <OffsetRevealSection uiSize={uiSize} />
-                <WordStaggerRevealSection uiSize={uiSize} />
               </div>
+            </div>
+          </div>
+        </section>
+      ) : null}
+
+      {activeTab === "animations" ? (
+        <section className="bg-bg py-8 text-text-main">
+          <div className="mx-auto container px-4">
+            <div className="grid gap-8 lg:grid-cols-[18rem_minmax(0,1fr)] lg:items-start">
+              <UikitSidebar sections={animationsSectionNavItems} title="Animations" />
+              <AnimationsSection uiSize={uiSize} />
             </div>
           </div>
         </section>

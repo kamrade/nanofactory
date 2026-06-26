@@ -26,6 +26,9 @@ export const uikitSectionNavItems: UikitSectionNavItem[] = [
   { id: "typewriter", label: "TypewriterText" },
   { id: "typewriter-scroll", label: "TypewriterText / Scroll Trigger" },
   { id: "highlight-sweep", label: "HighlightSweepText" },
+];
+
+export const animationsSectionNavItems: UikitSectionNavItem[] = [
   { id: "highlight-sweep-scroll", label: "HighlightSweepText / Scroll Trigger" },
   { id: "highlight-sweep-hover", label: "HighlightSweepText / Hover Trigger" },
   { id: "offset-reveal", label: "OffsetRevealText" },

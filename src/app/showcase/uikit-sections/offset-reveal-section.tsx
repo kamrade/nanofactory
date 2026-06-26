@@ -20,18 +20,31 @@ type Direction = "up" | "down" | "left" | "right";
 
 type ScrollRevealItemProps = {
   label: string;
-  children: (visible: boolean) => React.ReactNode;
+  children: (visible: boolean, restartKey: number) => React.ReactNode;
 };
 
 function ScrollRevealItem({ label, children }: ScrollRevealItemProps) {
   const { ref, visible } = useVisibleOnce();
+  const [restartKey, setRestartKey] = useState(0);
   return (
     <div
       ref={ref}
       className="flex flex-col gap-3 rounded-xl border border-line bg-surface-alt px-5 py-4"
     >
-      <p className="text-xs font-medium uppercase tracking-wider text-text-muted">{label}</p>
-      {children(visible)}
+      <div className="flex items-start justify-between gap-3">
+        <p className="text-xs font-medium uppercase tracking-wider text-text-muted">{label}</p>
+        <UIButton
+          type="button"
+          size="sm"
+          theme="base"
+          variant="outlined"
+          className="shrink-0"
+          onClick={() => setRestartKey((key) => key + 1)}
+        >
+          Restart
+        </UIButton>
+      </div>
+      {children(visible, restartKey)}
     </div>
   );
 }
@@ -160,110 +173,115 @@ export function OffsetRevealSection({ uiSize }: { uiSize: UiSize }) {
         </UICard>
       </UikitSectionAnchor>
 
-      <UikitSectionAnchor id="offset-reveal-scroll">
-        <UICard title="UIKit · OffsetRevealText / Scroll Trigger">
-          <p className="text-sm text-text-muted">
-            Each element animates once when it enters the viewport.
-          </p>
-          <div className="mt-5 grid gap-4">
-            <ScrollRevealItem label="Heading — slide up">
-              {(visible) => (
-                <p className="overflow-hidden text-h2 font-bold text-text-main">
-                  <OffsetRevealText
-                    text="Build pages that ship."
-                    direction="up"
-                    offset="32px"
-                    duration={800}
-                    fade
-                    startDelay={visible ? 0 : DEFERRED}
-                    restartKey={visible ? 1 : 0}
-                  />
-                </p>
-              )}
-            </ScrollRevealItem>
-
-            <ScrollRevealItem label="Staggered words — slide up">
-              {(visible) => (
-                <p className="overflow-hidden text-h2 font-bold text-text-main">
-                  {["Fast.", "Clean.", "Ready."].map((word, i) => (
-                    <span key={word}>
-                      <OffsetRevealText
-                        text={word}
-                        direction="up"
-                        offset="24px"
-                        duration={700}
-                        fade
-                        startDelay={visible ? i * 150 : DEFERRED}
-                        restartKey={visible ? 1 : 0}
-                      />
-                      {i < 2 && "  "}
-                    </span>
-                  ))}
-                </p>
-              )}
-            </ScrollRevealItem>
-
-            <ScrollRevealItem label="Subtitle — slide up + blur">
-              {(visible) => (
-                <p className="overflow-hidden text-base text-text-main">
-                  <OffsetRevealText
-                    text="Write the message, pick a layout, and publish — no pipeline needed."
-                    direction="up"
-                    offset="16px"
-                    duration={900}
-                    fade
-                    blur
-                    startDelay={visible ? 200 : DEFERRED}
-                    restartKey={visible ? 1 : 0}
-                  />
-                </p>
-              )}
-            </ScrollRevealItem>
-
-            <ScrollRevealItem label="Staggered lines">
-              {(visible) => (
-                <div className="flex flex-col gap-1 overflow-hidden">
-                  {[
-                    "→  Pages that load fast",
-                    "→  Themes that adapt",
-                    "→  Blocks that compose",
-                  ].map((line, i) => (
-                    <p key={line} className="text-base font-medium text-text-main">
-                      <OffsetRevealText
-                        text={line}
-                        direction="up"
-                        offset="20px"
-                        duration={600}
-                        fade
-                        startDelay={visible ? i * 120 : DEFERRED}
-                        restartKey={visible ? 1 : 0}
-                      />
-                    </p>
-                  ))}
-                </div>
-              )}
-            </ScrollRevealItem>
-
-            <ScrollRevealItem label="Button — as='button'">
-              {(visible) => (
-                <div className="overflow-hidden">
-                  <OffsetRevealText
-                    as="button"
-                    text="Get started for free"
-                    direction="up"
-                    offset="20px"
-                    duration={700}
-                    fade
-                    startDelay={visible ? 100 : DEFERRED}
-                    restartKey={visible ? 1 : 0}
-                    className="cursor-pointer rounded-lg bg-accent px-5 py-2.5 text-base font-semibold text-accent-text"
-                  />
-                </div>
-              )}
-            </ScrollRevealItem>
-          </div>
-        </UICard>
-      </UikitSectionAnchor>
     </>
+  );
+}
+
+export function OffsetRevealScrollSection() {
+  return (
+    <UikitSectionAnchor id="offset-reveal-scroll">
+      <UICard title="UIKit · OffsetRevealText / Scroll Trigger">
+        <p className="text-sm text-text-muted">
+          Each element animates once when it enters the viewport.
+        </p>
+        <div className="mt-5 grid gap-4">
+          <ScrollRevealItem label="Heading — slide up">
+            {(visible, restartKey) => (
+              <p className="text-h2 font-bold text-text-main">
+                <OffsetRevealText
+                  text="Build pages that ship."
+                  direction="up"
+                  offset="32px"
+                  duration={800}
+                  fade
+                  startDelay={visible ? 0 : DEFERRED}
+                  restartKey={visible ? restartKey : 0}
+                />
+              </p>
+            )}
+          </ScrollRevealItem>
+
+          <ScrollRevealItem label="Staggered words — slide up">
+            {(visible, restartKey) => (
+              <p className="text-h2 font-bold text-text-main">
+                {["Fast.", "Clean.", "Ready."].map((word, i) => (
+                  <span key={word}>
+                    <OffsetRevealText
+                      text={word}
+                      direction="up"
+                      offset="24px"
+                      duration={700}
+                      fade
+                      startDelay={visible ? i * 150 : DEFERRED}
+                      restartKey={visible ? restartKey : 0}
+                    />
+                    {i < 2 && "  "}
+                  </span>
+                ))}
+              </p>
+            )}
+          </ScrollRevealItem>
+
+          <ScrollRevealItem label="Subtitle — slide up + blur">
+            {(visible, restartKey) => (
+              <p className="text-base text-text-main">
+                <OffsetRevealText
+                  text="Write the message, pick a layout, and publish — no pipeline needed."
+                  direction="up"
+                  offset="16px"
+                  duration={900}
+                  fade
+                  blur
+                  startDelay={visible ? 200 : DEFERRED}
+                  restartKey={visible ? restartKey : 0}
+                />
+              </p>
+            )}
+          </ScrollRevealItem>
+
+          <ScrollRevealItem label="Staggered lines">
+            {(visible, restartKey) => (
+              <div className="flex flex-col gap-1">
+                {[
+                  "→  Pages that load fast",
+                  "→  Themes that adapt",
+                  "→  Blocks that compose",
+                ].map((line, i) => (
+                  <p key={line} className="text-base font-medium text-text-main">
+                    <OffsetRevealText
+                      text={line}
+                      direction="up"
+                      offset="20px"
+                      duration={600}
+                      fade
+                      startDelay={visible ? i * 120 : DEFERRED}
+                      restartKey={visible ? restartKey : 0}
+                    />
+                  </p>
+                ))}
+              </div>
+            )}
+          </ScrollRevealItem>
+
+          <ScrollRevealItem label="Button — as='button'">
+            {(visible, restartKey) => (
+              <div>
+                <OffsetRevealText
+                  as="button"
+                  text="Get started for free"
+                  direction="up"
+                  offset="20px"
+                  duration={700}
+                  fade
+                  startDelay={visible ? 100 : DEFERRED}
+                  restartKey={visible ? restartKey : 0}
+                  className="cursor-pointer rounded-lg bg-accent px-5 py-2.5 text-base font-semibold text-accent-text"
+                />
+              </div>
+            )}
+          </ScrollRevealItem>
+        </div>
+      </UICard>
+    </UikitSectionAnchor>
   );
 }
