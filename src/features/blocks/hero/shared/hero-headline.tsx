@@ -1,6 +1,5 @@
 "use client";
 
-import { useVisibleOnce } from "@/hooks/use-visible-once";
 import { TypewriterText } from "@/components/ui/typewriter-text";
 
 type HeroHeadlineProps = {
@@ -14,15 +13,13 @@ export function HeroHeadline({
   className,
   animateMainText = false,
 }: HeroHeadlineProps) {
-  const { ref, visible } = useVisibleOnce();
-
   return (
-    <h1 ref={ref} className={className}>
+    <h1 className={className}>
       {animateMainText ? (
         <TypewriterText
           text={text}
-          startDelay={visible ? 0 : 10_000_000}
-          restartKey={visible ? 1 : 0}
+          startDelay={0}
+          restartKey={1}
           loop={false}
           showCursor
         />
