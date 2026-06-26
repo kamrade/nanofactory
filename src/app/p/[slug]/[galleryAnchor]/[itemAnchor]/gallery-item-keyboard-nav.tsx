@@ -2,6 +2,8 @@
 
 import { useEffect } from "react";
 import { useRouter } from "next/navigation";
+import { useThemeModeFromDom } from "@/hooks/use-theme-mode-from-dom";
+import { appendModeToPath } from "@/lib/routing/mode-query";
 
 type GalleryItemKeyboardNavProps = {
   previousHref?: string;
@@ -13,6 +15,9 @@ export function GalleryItemKeyboardNav({
   nextHref,
 }: GalleryItemKeyboardNavProps) {
   const router = useRouter();
+  const { mode } = useThemeModeFromDom({
+    rootSelector: "main[data-theme][data-mode]",
+  });
 
   useEffect(() => {
     function handleKeyDown(event: KeyboardEvent) {
@@ -28,20 +33,19 @@ export function GalleryItemKeyboardNav({
 
       if (event.key === "ArrowLeft" && previousHref) {
         event.preventDefault();
-        router.push(previousHref);
+        router.push(appendModeToPath(previousHref, mode));
         return;
       }
 
       if (event.key === "ArrowRight" && nextHref) {
         event.preventDefault();
-        router.push(nextHref);
+        router.push(appendModeToPath(nextHref, mode));
       }
     }
 
     window.addEventListener("keydown", handleKeyDown);
     return () => window.removeEventListener("keydown", handleKeyDown);
-  }, [nextHref, previousHref, router]);
+  }, [mode, nextHref, previousHref, router]);
 
   return null;
 }
-

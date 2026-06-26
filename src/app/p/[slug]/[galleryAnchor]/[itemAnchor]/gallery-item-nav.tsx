@@ -1,4 +1,4 @@
-import Link from "next/link";
+import { ModeAwareLink } from "@/components/projects/mode-aware-link";
 
 type GalleryItemNavProps = {
   backHref: string;
@@ -32,13 +32,13 @@ export function GalleryItemNav({
   return (
     <>
       <div className="flex flex-wrap items-center justify-between gap-3">
-        <Link
+        <ModeAwareLink
           data-testid={backTestId}
           href={backHref}
           className={`inline-flex items-center justify-center border border-line bg-surface font-medium text-text-main transition hover:bg-surface-alt ${controlClassName} ${radiusClassName}`}
         >
           {backLabel}
-        </Link>
+        </ModeAwareLink>
         <div className={`inline-flex items-center gap-2 border border-line bg-surface text-text-muted ${controlClassName} ${radiusClassName}`}>
           <span data-testid={counterTestId}>{counterText}</span>
         </div>
@@ -47,13 +47,13 @@ export function GalleryItemNav({
       <section className={`overflow-hidden border border-line bg-surface-alt ${radiusClassName}`}>
         <div className={`flex items-center justify-between gap-3 border-b border-line bg-surface ${controlBarClassName}`}>
           {previousHref ? (
-            <Link
+            <ModeAwareLink
               data-testid={previousTestId}
               href={previousHref}
               className={`inline-flex items-center justify-center border border-line bg-surface font-medium text-text-main transition hover:bg-surface-alt ${controlClassName} ${radiusClassName}`}
             >
               Previous
-            </Link>
+            </ModeAwareLink>
           ) : (
             <span className={`inline-flex items-center justify-center border border-line bg-surface-alt font-medium text-text-placeholder ${controlClassName} ${radiusClassName}`}>
               Previous
@@ -61,13 +61,13 @@ export function GalleryItemNav({
           )}
 
           {nextHref ? (
-            <Link
+            <ModeAwareLink
               data-testid={nextTestId}
               href={nextHref}
               className={`inline-flex items-center justify-center border border-line bg-surface font-medium text-text-main transition hover:bg-surface-alt ${controlClassName} ${radiusClassName}`}
             >
               Next
-            </Link>
+            </ModeAwareLink>
           ) : (
             <span className={`inline-flex items-center justify-center border border-line bg-surface-alt font-medium text-text-placeholder ${controlClassName} ${radiusClassName}`}>
               Next

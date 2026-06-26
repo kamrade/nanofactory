@@ -9,6 +9,7 @@ import { type ProjectBorderRadiusPolicy, resolveProjectBorderRadiusPolicy } from
 import { type ProjectModePolicy, resolveProjectModePolicy } from "@/lib/projects/mode-policy";
 import { type ProjectSpacingScale, resolveProjectSpacingScale } from "@/lib/projects/spacing-scale";
 import { SectionShell } from "@/components/projects/section-shell";
+import { ThemeRootSync } from "@/components/projects/theme-root-sync";
 import {
   buildEffectivePageAnchors,
   getGalleryItemEffectiveAnchor,
@@ -190,46 +191,50 @@ export function ProjectRenderer({
   const containerClass = "container mx-auto px-4";
 
   return (
-    <main
-      data-testid="project-mode-container"
-      data-theme={renderContext.resolvedThemeKey}
-      data-mode={mode}
-      data-border-radius={resolvedBorderRadiusPolicy}
-      data-spacing-scale={resolvedSpacingScale}
-      className={`min-h-screen py-4 ${renderContext.theme.page}`}
-    >
-      <div className="flex w-full flex-col gap-6">
-        {content.blocks.length === 0 ? (
-          <section data-testid="ProjectRenderBlock" className={containerClass}>
-            <div className="rounded-2xl border border-line bg-surface px-8 py-10 shadow-sm">
-              <h1 className="text-3xl font-semibold tracking-tight">{name}</h1>
-              <p className={`mt-3 text-base leading-7 ${renderContext.theme.muted}`}>
-                This page has been published, but it does not contain any blocks yet.
-              </p>
-            </div>
-          </section>
-        ) : (
-          content.blocks.map((block) => (
-            <div key={block.id}>
-              {renderBlock(
-                block,
-                slug,
-                galleryItemLinkMode,
-                resolvedModePolicy,
-                resolvedBorderRadiusPolicy,
-                resolvedSpacingScale,
-                anchorMap.get(block.id),
-                buildGalleryItemAnchorMap(block, renderContext.effectiveAnchors),
-                renderContext.assetMap,
-                renderContext.sceneMap,
-                renderContext.theme,
-                renderContext.resolvedThemeKey,
-                mode
-              )}
-            </div>
-          ))
-        )}
-      </div>
-    </main>
+    <>
+      <ThemeRootSync />
+
+      <main
+        data-testid="project-mode-container"
+        data-theme={renderContext.resolvedThemeKey}
+        data-mode={mode}
+        data-border-radius={resolvedBorderRadiusPolicy}
+        data-spacing-scale={resolvedSpacingScale}
+        className={`min-h-screen py-4 ${renderContext.theme.page}`}
+      >
+        <div className="flex w-full flex-col gap-6">
+          {content.blocks.length === 0 ? (
+            <section data-testid="ProjectRenderBlock" className={containerClass}>
+              <div className="rounded-2xl border border-line bg-surface px-8 py-10 shadow-sm">
+                <h1 className="text-3xl font-semibold tracking-tight">{name}</h1>
+                <p className={`mt-3 text-base leading-7 ${renderContext.theme.muted}`}>
+                  This page has been published, but it does not contain any blocks yet.
+                </p>
+              </div>
+            </section>
+          ) : (
+            content.blocks.map((block) => (
+              <div key={block.id}>
+                {renderBlock(
+                  block,
+                  slug,
+                  galleryItemLinkMode,
+                  resolvedModePolicy,
+                  resolvedBorderRadiusPolicy,
+                  resolvedSpacingScale,
+                  anchorMap.get(block.id),
+                  buildGalleryItemAnchorMap(block, renderContext.effectiveAnchors),
+                  renderContext.assetMap,
+                  renderContext.sceneMap,
+                  renderContext.theme,
+                  renderContext.resolvedThemeKey,
+                  mode
+                )}
+              </div>
+            ))
+          )}
+        </div>
+      </main>
+    </>
   );
 }

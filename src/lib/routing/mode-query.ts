@@ -6,7 +6,10 @@ export function buildModeQuery(mode: ThemeModeParam) {
 
 export function appendModeToPath(path: string, mode: ThemeModeParam) {
   const [pathWithQuery, hash = ""] = path.split("#");
-  const separator = pathWithQuery.includes("?") ? "&" : "?";
-  const withMode = `${pathWithQuery}${separator}mode=${mode}`;
+  const [pathname, queryString = ""] = pathWithQuery.split("?");
+  const params = new URLSearchParams(queryString);
+  params.set("mode", mode);
+  const query = params.toString();
+  const withMode = query.length > 0 ? `${pathname}?${query}` : `${pathname}?mode=${mode}`;
   return hash.length > 0 ? `${withMode}#${hash}` : withMode;
 }

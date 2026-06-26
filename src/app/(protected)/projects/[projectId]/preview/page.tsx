@@ -2,7 +2,6 @@ import Link from "next/link";
 import { notFound } from "next/navigation";
 
 import { ProjectRenderer } from "@/components/projects/project-renderer";
-import { ThemeRootSync } from "@/components/projects/theme-root-sync";
 import { getAssetsByProjectIdForUser } from "@/lib/assets";
 import { requireCurrentUser } from "@/lib/auth/current-user";
 import { getBackgroundScenesByProjectIdForUser } from "@/lib/background-scenes";
@@ -95,7 +94,6 @@ export async function ProjectPreviewPageWithDependencies(
 
   return (
     <div>
-      <ThemeRootSync />
       <div className="border-b border-zinc-200 bg-zinc-50 px-4 py-4 text-sm text-zinc-700">
         <div className="mx-auto flex w-full max-w-5xl flex-wrap items-center justify-between gap-3">
           <div className="flex flex-wrap items-center gap-3">

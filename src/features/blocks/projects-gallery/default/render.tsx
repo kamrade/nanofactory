@@ -1,9 +1,8 @@
 import Image from "next/image";
-import Link from "next/link";
 import type { CSSProperties } from "react";
 
+import { ModeAwareLink } from "@/components/projects/mode-aware-link";
 import { resolveAssetById } from "@/lib/assets/resolution";
-import { buildModeQuery } from "@/lib/routing/mode-query";
 import type { BlockRenderProps } from "../../shared/types";
 import {
   getEffectiveNestedGalleryAnchor,
@@ -23,7 +22,6 @@ export function ProjectsGalleryDefaultRender({
   galleryItemLinkMode = "absolute",
 }: BlockRenderProps) {
   const props = readProjectsGalleryProps(block.props);
-  const modeQuery = buildModeQuery(mode);
 
   const effectiveSpacingScale =
     projectSpacingScale === "sm" || projectSpacingScale === "md" || projectSpacingScale === "lg"
@@ -65,12 +63,12 @@ export function ProjectsGalleryDefaultRender({
           const imageAsset = resolveAssetById(item.imageAssetId, assetMap);
           const projectAnchor = getEffectiveProjectAnchor(item, index);
           const galleryAnchor = getEffectiveNestedGalleryAnchor(item, index);
-          const resolvedHref =
+          const baseHref =
             projectAnchor && galleryAnchor
               ? publicProjectSlug
                 ? galleryItemLinkMode === "relative"
-                  ? `./${projectAnchor}/${galleryAnchor}${modeQuery}`
-                  : `/p/${publicProjectSlug}/${projectAnchor}/${galleryAnchor}${modeQuery}`
+                  ? `./${projectAnchor}/${galleryAnchor}`
+                  : `/p/${publicProjectSlug}/${projectAnchor}/${galleryAnchor}`
                 : null
               : null;
 
@@ -80,8 +78,8 @@ export function ProjectsGalleryDefaultRender({
               className={styles.card}
             >
               {imageAsset ? (
-                resolvedHref ? (
-                  <Link href={resolvedHref} className={styles.imageLink}>
+                baseHref ? (
+                  <ModeAwareLink href={baseHref} className={styles.imageLink} fallbackMode={mode}>
                     <Image
                       src={imageAsset.publicUrl}
                       alt={imageAsset.alt ?? imageAsset.originalFilename}
@@ -90,7 +88,7 @@ export function ProjectsGalleryDefaultRender({
                       unoptimized
                       className={styles.media}
                     />
-                  </Link>
+                  </ModeAwareLink>
                 ) : (
                   <Image
                     src={imageAsset.publicUrl}
@@ -129,16 +127,17 @@ export function ProjectsGalleryDefaultRender({
                 </p>
               </div>
 
-              {resolvedHref ? (
-                <Link
-                  href={resolvedHref}
+              {baseHref ? (
+                <ModeAwareLink
+                  href={baseHref}
                   aria-label={`Open ${item.title.trim().length > 0 ? item.title : `project ${index + 1}`}`}
                   className={styles.overlayLink}
+                  fallbackMode={mode}
                 >
                   <span className="sr-only">
                     Open {item.title.trim().length > 0 ? item.title : `project ${index + 1}`}
                   </span>
-                </Link>
+                </ModeAwareLink>
               ) : null}
             </article>
           );

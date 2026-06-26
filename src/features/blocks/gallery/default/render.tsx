@@ -1,9 +1,8 @@
 import Image from "next/image";
-import Link from "next/link";
 import type { CSSProperties } from "react";
 
+import { ModeAwareLink } from "@/components/projects/mode-aware-link";
 import { resolveAssetById } from "@/lib/assets/resolution";
-import { buildModeQuery } from "@/lib/routing/mode-query";
 import type { BlockRenderProps } from "../../shared/types";
 import { BlockSectionTitle } from "../../shared/components/block-section-title/block-section-title";
 import styles from "./render.module.css";
@@ -77,7 +76,6 @@ export function GalleryDefaultRender({
   const columns = readColumns(block.props);
   const imageHeightMode = readImageHeightMode(block.props);
   const items = readItems(block.props);
-  const modeQuery = buildModeQuery(mode);
 
   const effectiveSpacingScale =
     projectSpacingScale === "sm" || projectSpacingScale === "md" || projectSpacingScale === "lg"
@@ -122,11 +120,11 @@ export function GalleryDefaultRender({
         {items.map((item, index) => {
           const asset = resolveAssetById(item.assetId, assetMap);
           const itemAnchorId = effectiveGalleryItemAnchors?.get(index);
-          const itemHref =
+          const baseHref =
             publicProjectSlug && effectiveBlockAnchorId && itemAnchorId
               ? galleryItemLinkMode === "relative"
-                ? `./${effectiveBlockAnchorId}/${itemAnchorId}${modeQuery}`
-                : `/p/${publicProjectSlug}/${effectiveBlockAnchorId}/${itemAnchorId}${modeQuery}`
+                ? `./${effectiveBlockAnchorId}/${itemAnchorId}`
+                : `/p/${publicProjectSlug}/${effectiveBlockAnchorId}/${itemAnchorId}`
               : null;
 
           return (
@@ -136,8 +134,8 @@ export function GalleryDefaultRender({
               className={styles.card}
             >
               {asset ? (
-                itemHref ? (
-                  <Link href={itemHref} className={styles.imageLink}>
+                baseHref ? (
+                  <ModeAwareLink href={baseHref} className={styles.imageLink} fallbackMode={mode}>
                     <Image
                       src={asset.publicUrl}
                       alt={asset.alt ?? asset.originalFilename}
@@ -146,7 +144,7 @@ export function GalleryDefaultRender({
                       unoptimized
                       className={styles.cardImage}
                     />
-                  </Link>
+                  </ModeAwareLink>
                 ) : (
                   <Image
                     src={asset.publicUrl}
@@ -178,16 +176,17 @@ export function GalleryDefaultRender({
                 </div>
               ) : null}
 
-              {itemHref ? (
-                <Link
-                  href={itemHref}
+              {baseHref ? (
+                <ModeAwareLink
+                  href={baseHref}
                   aria-label={`Open ${item.title.trim().length > 0 ? item.title : `gallery item ${index + 1}`}`}
                   className={styles.overlayLink}
+                  fallbackMode={mode}
                 >
                   <span className="sr-only">
                     Open {item.title.trim().length > 0 ? item.title : `gallery item ${index + 1}`}
                   </span>
-                </Link>
+                </ModeAwareLink>
               ) : null}
             </article>
           );
