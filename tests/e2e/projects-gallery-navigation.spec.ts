@@ -72,11 +72,7 @@ async function addBlock(page: Page, descriptionText: string) {
 
 async function saveProject(page: Page) {
   await ensureBlockEditorClosed(page);
-  const controlsSheet = await openProjectControls(page);
-  const saveForm = controlsSheet.locator('form:has(input[name="content"])').first();
-  await saveForm.evaluate((form) => {
-    (form as HTMLFormElement).requestSubmit();
-  });
+  await page.getByRole("button", { name: "Save" }).click();
   await expect(page.getByText("Project content saved.")).toBeVisible();
 }
 

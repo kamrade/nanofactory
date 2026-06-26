@@ -98,10 +98,10 @@ export function HeroDefaultRender({
           buttonText={buttonText}
           buttonAnchor={buttonAnchor}
           animateMainText={animateMainText}
+          headlineVariant="default"
           contentStackClassName={styles.contentStack}
           eyebrowClassName={styles.eyebrow}
           headingGroupClassName={styles.headingGroup}
-          headingClassName={styles.heading}
           subtitleClassName={styles.subtitle}
           buttonClassName={styles.button}
           buttonRadiusVar="--hero-radius-button"

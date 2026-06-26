@@ -48,6 +48,32 @@ describe("block normalization", () => {
     expect(fallback).toMatchObject({ buttonAnchor: "" });
   });
 
+  it("normalizes hero animation and contentPosition fields and ignores legacy animateContent", () => {
+    const normalized = heroDefaultDefinition.normalizeProps({
+      title: "Hero",
+      animateMainText: true,
+      animateContent: true,
+      contentPosition: "top",
+    });
+
+    expect(normalized).toMatchObject({
+      title: "Hero",
+      animateMainText: true,
+      contentPosition: "top",
+    });
+    expect(normalized).not.toHaveProperty("animateContent");
+
+    const fallback = heroCenteredDefinition.normalizeProps({
+      contentPosition: "invalid",
+      animateMainText: "yes",
+    });
+
+    expect(fallback).toMatchObject({
+      contentPosition: "centered",
+      animateMainText: false,
+    });
+  });
+
   it("normalizes gallery imageHeightMode with fixed fallback", () => {
     const natural = galleryDefaultDefinition.normalizeProps({
       sectionTitle: "Gallery",

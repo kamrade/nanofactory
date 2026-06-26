@@ -97,9 +97,9 @@ export function HeroCenteredRender({
           buttonText={buttonText}
           buttonAnchor={buttonAnchor}
           animateMainText={animateMainText}
+          headlineVariant="centered"
           contentStackClassName={styles.content}
           eyebrowClassName={styles.eyebrow}
-          headingClassName={styles.heading}
           subtitleClassName={styles.subtitle}
           buttonClassName={styles.button}
           buttonRadiusVar="--hero-centered-radius-button"

@@ -1,0 +1,61 @@
+.headline {
+  overflow-wrap: break-word;
+  line-height: 1;
+}
+
+:global([data-spacing-scale="sm"]) .default {
+  font-size: 1.5rem;
+}
+
+:global([data-spacing-scale="md"]) .default {
+  font-size: 2.25rem;
+}
+
+:global([data-spacing-scale="lg"]) .default {
+  font-size: 3rem;
+}
+
+@media (min-width: 640px) {
+  :global([data-spacing-scale="sm"]) .default {
+    font-size: 1.875rem;
+  }
+
+  :global([data-spacing-scale="md"]) .default {
+    font-size: 3rem;
+  }
+
+  :global([data-spacing-scale="lg"]) .default {
+    font-size: 3.75rem;
+  }
+}
+
+.centered {
+  font-weight: 400;
+  letter-spacing: -0.025em;
+}
+
+:global([data-spacing-scale="sm"]) .centered {
+  font-size: 1.5rem;
+}
+
+:global([data-spacing-scale="md"]) .centered {
+  font-size: 2.25rem;
+}
+
+:global([data-spacing-scale="lg"]) .centered {
+  font-size: 3rem;
+}
+
+@media (min-width: 640px) {
+  :global([data-spacing-scale="sm"]) .centered {
+    font-size: 2.25rem;
+  }
+
+  :global([data-spacing-scale="md"]) .centered {
+    font-size: 3.75rem;
+  }
+
+  :global([data-spacing-scale="lg"]) .centered {
+    font-size: 4.5rem;
+  }
+}

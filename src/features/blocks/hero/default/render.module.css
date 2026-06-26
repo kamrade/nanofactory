@@ -91,25 +91,6 @@
   gap: 1rem;
 }
 
-/* ── Heading ─────────────────────────────────────────────── */
-
-.heading {
-  overflow-wrap: break-word;
-  /* font-weight: 600; */
-  /* letter-spacing: -0.025em; */
-  line-height: 1;
-}
-
-.root[data-spacing-scale="sm"] .heading { font-size: 1.5rem; }
-.root[data-spacing-scale="md"] .heading { font-size: 2.25rem; }
-.root[data-spacing-scale="lg"] .heading { font-size: 3rem; }
-
-@media (min-width: 640px) {
-  .root[data-spacing-scale="sm"] .heading { font-size: 1.875rem; }
-  .root[data-spacing-scale="md"] .heading { font-size: 3rem; }
-  .root[data-spacing-scale="lg"] .heading { font-size: 3.75rem; }
-}
-
 /* ── Subtitle ────────────────────────────────────────────── */
 
 .subtitle {

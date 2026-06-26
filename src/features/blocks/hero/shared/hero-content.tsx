@@ -7,10 +7,10 @@ type HeroContentProps = {
   buttonText: string;
   buttonAnchor: string;
   animateMainText: boolean;
+  headlineVariant: "default" | "centered";
   contentStackClassName: string;
   eyebrowClassName: string;
   headingGroupClassName?: string;
-  headingClassName: string;
   subtitleClassName: string;
   buttonClassName: string;
   buttonRadiusVar: string;
@@ -23,10 +23,10 @@ export function HeroContent({
   buttonText,
   buttonAnchor,
   animateMainText,
+  headlineVariant,
   contentStackClassName,
   eyebrowClassName,
   headingGroupClassName,
-  headingClassName,
   subtitleClassName,
   buttonClassName,
   buttonRadiusVar,
@@ -52,7 +52,7 @@ export function HeroContent({
     <>
       <HeroHeadline
         text={title}
-        className={headingClassName}
+        variant={headlineVariant}
         animateMainText={animateMainText}
       />
       {subtitleNode}

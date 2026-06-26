@@ -71,24 +71,6 @@
 .root[data-spacing-scale="md"] .eyebrow { font-size: 0.875rem; letter-spacing: 0.14em; }
 .root[data-spacing-scale="lg"] .eyebrow { font-size: 1rem;     letter-spacing: 0.16em; }
 
-/* ── Heading ─────────────────────────────────────────────── */
-
-.heading {
-  overflow-wrap: break-word;
-  font-weight: 400;
-  letter-spacing: -0.025em;
-}
-
-.root[data-spacing-scale="sm"] .heading { font-size: 1.5rem; }
-.root[data-spacing-scale="md"] .heading { font-size: 2.25rem; }
-.root[data-spacing-scale="lg"] .heading { font-size: 3rem; }
-
-@media (min-width: 640px) {
-  .root[data-spacing-scale="sm"] .heading { font-size: 2.25rem; }
-  .root[data-spacing-scale="md"] .heading { font-size: 3.75rem; }
-  .root[data-spacing-scale="lg"] .heading { font-size: 4.5rem; }
-}
-
 /* ── Subtitle ────────────────────────────────────────────── */
 
 .subtitle {

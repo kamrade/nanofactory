@@ -2,7 +2,7 @@
 
 import { useActionState, useEffect, useMemo, useState, useTransition } from "react";
 import Link from "next/link";
-import { FiArrowLeft, FiSettings } from "react-icons/fi";
+import { FiArrowLeft, FiPlus, FiSave, FiSettings } from "react-icons/fi";
 
 import type { SaveEditorState } from "@/app/(protected)/projects/[projectId]/actions";
 import { EDITOR_ADD_BLOCK_EVENT, type EditorAddBlockEventDetail } from "@/components/editor/editor-events";
@@ -147,20 +147,80 @@ export function ProjectSettings({
   return (
     <div
       data-testid="project-settings"
-      className="fixed right-4 top-4 z-50 hidden md:flex flex-col items-end gap-3"
+      className="fixed right-3 top-3 z-50 flex w-fit flex-row items-center gap-2 md:right-4 md:top-4 md:flex-col md:items-end md:gap-3"
     >
-      <UIButton
-        asChild
-        theme="base"
-        variant="outlined"
-        size="lg"
-        iconButton
-        className="hidden rounded-full md:inline-flex"
+      <div className="hidden md:block">
+        <UIButton
+          asChild
+          theme="base"
+          variant="outlined"
+          size="sm"
+          iconButton
+          className="rounded-full md:h-10 md:w-10 md:rounded-[12px]"
+        >
+          <Link href="/dashboard" aria-label="Back to dashboard" title="Back to dashboard">
+            <FiArrowLeft aria-hidden className="h-4 w-4 md:h-5 md:w-5" />
+          </Link>
+        </UIButton>
+      </div>
+
+      <UIMenu
+        ariaLabel="Add block"
+        placement="bottom-start"
+        size="sm"
+        trigger={
+          <UIButton
+            type="button"
+            theme="base"
+            variant="outlined"
+            size="sm"
+            iconButton
+            aria-label="Add block"
+            title="Add block"
+            className="rounded-full md:h-10 md:w-10 md:rounded-[12px]"
+          >
+            <FiPlus aria-hidden className="h-4 w-4 md:h-5 md:w-5" />
+          </UIButton>
+        }
       >
-        <Link href="/dashboard" aria-label="Back to dashboard" title="Back to dashboard">
-          <FiArrowLeft aria-hidden className="h-5 w-5" />
-        </Link>
-      </UIButton>
+        {addBlockGroups.map((group) => (
+          <div key={group.type} className="grid gap-0.5">
+            <UIMenuLabel>{group.label}</UIMenuLabel>
+            {group.variants.map((definition) => (
+              <UIMenuItem
+                key={`${definition.type}:${definition.variant}`}
+                onSelect={() => handleAddBlock(definition.type, definition.variant)}
+                className="grid gap-0.5"
+              >
+                <span className="text-sm font-medium text-text-main">{definition.label}</span>
+                {definition.description ? (
+                  <span className="text-xs leading-5 text-text-muted">
+                    {definition.description}
+                  </span>
+                ) : null}
+              </UIMenuItem>
+            ))}
+          </div>
+        ))}
+      </UIMenu>
+
+      <form action={saveFormAction}>
+        <input type="hidden" name="content" value={liveContentShape} />
+        <UIButton
+          type="submit"
+          disabled={isSaving}
+          theme="primary"
+          variant="contained"
+          size="sm"
+          iconButton
+          aria-label={isSaving ? "Saving..." : "Save"}
+          title={isSaving ? "Saving..." : "Save"}
+          className="rounded-full md:h-10 md:w-10 md:rounded-[12px]"
+        >
+          <FiSave aria-hidden className="h-4 w-4 md:h-5 md:w-5" />
+        </UIButton>
+      </form>
+
       <UISheet data-testid="project-settings-sheet">
         <UISheetTrigger>
           <UIButton
@@ -168,18 +228,17 @@ export function ProjectSettings({
             type="button"
             theme="base"
             variant="contained"
-            size="lg"
+            size="sm"
             iconButton
             aria-label="Settings"
             title="Settings"
-            className="hidden rounded-full md:inline-flex"
+            className="rounded-full md:h-10 md:w-10 md:rounded-[12px]"
           >
-            <FiSettings aria-hidden className="h-5 w-5" />
+            <FiSettings aria-hidden className="h-4 w-4 md:h-5 md:w-5" />
           </UIButton>
         </UISheetTrigger>
         <UISheetContent side="right" closeOnOverlayClick data-testid="project-settings-sheet-content">
           <UISheetHeader className="flex-row items-start justify-between gap-3">
-            
             <div>
               <UISheetClose>
                 <UIButton type="button" theme="base" variant="contained" size="sm">
@@ -206,54 +265,6 @@ export function ProjectSettings({
                   action={nameAction}
                   iconOnly
                 />
-              </div>
-
-
-              <div className="flex gap-3">
-                <div className="flex flex-wrap items-center gap-3">
-                  <UIMenu
-                    ariaLabel="Add block"
-                    placement="bottom-start"
-                    size="sm"
-                    trigger={
-                      <UIButton type="button" theme="base" variant="contained" size="sm">
-                        Add block
-                      </UIButton>
-                    }
-                  >
-                    {addBlockGroups.map((group) => (
-                      <div key={group.type} className="grid gap-0.5">
-                        <UIMenuLabel>{group.label}</UIMenuLabel>
-                        {group.variants.map((definition) => (
-                          <UIMenuItem
-                            key={`${definition.type}:${definition.variant}`}
-                            onSelect={() => handleAddBlock(definition.type, definition.variant)}
-                            className="grid gap-0.5"
-                          >
-                            <span className="text-sm font-medium text-text-main">{definition.label}</span>
-                            {definition.description ? (
-                              <span className="text-xs leading-5 text-text-muted">
-                                {definition.description}
-                              </span>
-                            ) : null}
-                          </UIMenuItem>
-                        ))}
-                      </div>
-                    ))}
-                  </UIMenu>
-                </div>
-                <form action={saveFormAction} className="flex items-center gap-3">
-                  <input type="hidden" name="content" value={liveContentShape} />
-                  <UIButton
-                    type="submit"
-                    disabled={isSaving}
-                    theme="primary"
-                    variant="contained"
-                    size="sm"
-                  >
-                    {isSaving ? "Saving..." : "Save"}
-                  </UIButton>
-                </form>
               </div>
             </div>
 

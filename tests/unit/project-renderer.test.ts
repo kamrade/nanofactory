@@ -86,6 +86,32 @@ function createFeaturesCardsContent(): PageContent {
   };
 }
 
+function createFeaturesDefaultContent(imageAssetId?: string): PageContent {
+  return {
+    blocks: [
+      {
+        id: "features-default-1",
+        type: "features",
+        variant: "default",
+        props: {
+          sectionTitle: "Why teams choose Nanofactory",
+          items: [
+            {
+              title: "Small editing surface",
+              content: "Keep the page model understandable while moving quickly.",
+              imageAssetId,
+            },
+            {
+              title: "Predictable sections",
+              content: "Compose pages from a stable set of renderers.",
+            },
+          ],
+        },
+      },
+    ],
+  };
+}
+
 function createCtaContent(buttonHref = "#"): PageContent {
   return {
     blocks: [
@@ -275,6 +301,23 @@ describe("ProjectRenderer", () => {
     expect(html).toContain("Clear growth path");
   });
 
+  it("renders the default features variant with item copy and optional media", () => {
+    const asset = createAsset("feature-asset-1");
+    const html = renderToStaticMarkup(
+      ProjectRenderer({
+        name: "Features Default Project",
+        themeKey: "classic-light",
+        content: createFeaturesDefaultContent(asset.id),
+        assets: [asset],
+      })
+    );
+
+    expect(html).toContain("Why teams choose Nanofactory");
+    expect(html).toContain("Small editing surface");
+    expect(html).toContain("Predictable sections");
+    expect(html).toContain(asset.publicUrl);
+  });
+
   it("applies the provided valid theme key to renderer root", () => {
     const html = renderToStaticMarkup(
       ProjectRenderer({
@@ -354,9 +397,9 @@ describe("ProjectRenderer", () => {
     );
 
     expect(html).toContain('href="https://example.com/pricing"');
-    expect(html).toContain("bg-primary-300");
-    expect(html).toContain("hover:bg-primary-200");
-    expect(html).toContain("px-7 py-4 text-base");
+    expect(html).toContain('data-spacing-scale="lg"');
+    expect(html).toContain('style="border-radius:var(--cta-radius-button)"');
+    expect(html).toContain("Try now");
   });
 
   it("renders a block background from background scene config using CSS gradients", () => {
@@ -400,9 +443,10 @@ describe("ProjectRenderer", () => {
       })
     );
 
-    expect(html).toContain("columns-1");
-    expect(html).toContain("md:columns-3");
-    expect(html).toContain("break-inside-avoid");
+    expect(html).toContain('data-image-height-mode="natural"');
+    expect(html).toContain('data-columns="3"');
+    expect(html).toContain('id="gallery-1-item-1"');
+    expect(html).toContain('id="gallery-1-item-2"');
   });
 
   it("renders absolute gallery item links in platform mode", () => {

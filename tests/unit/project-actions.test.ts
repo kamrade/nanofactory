@@ -62,7 +62,6 @@ describe("saveProjectContentForUserWithDependencies", () => {
             imageLightAssetId: undefined,
             imageDarkAssetId: undefined,
             animateMainText: false,
-            animateContent: false,
           },
         },
       ],

@@ -52,11 +52,7 @@ async function openProjectControls(page: Page) {
 
 async function saveProject(page: Page) {
   await ensureBlockEditorClosed(page);
-  const controlsSheet = await openProjectControls(page);
-  const saveForm = controlsSheet.locator('form:has(input[name="content"])').first();
-  await saveForm.evaluate((form) => {
-    (form as HTMLFormElement).requestSubmit();
-  });
+  await page.getByRole("button", { name: "Save" }).click();
   await expect(page.getByText("Project content saved.")).toBeVisible();
 }
 
@@ -98,11 +94,7 @@ test("adds a block, saves content, and reloads the editor state", async ({ page 
   await createProjectFromDashboard(page, "Editor Save Project");
 
   await page.waitForURL(/\/projects\/.+/);
-  const controlsSheet = await openProjectControls(page);
-  const addBlockButton = controlsSheet.getByRole("button", { name: "Add block" });
-  await addBlockButton.evaluate((button) => {
-    (button as HTMLButtonElement).click();
-  });
+  await page.getByRole("button", { name: "Add block" }).click();
   await page.getByRole("menuitem", { name: /Split image/i }).click();
   await page.getByLabel("Title", { exact: true }).fill("Saved Hero Title");
   await page.getByRole("textbox", { name: "Subtitle" }).fill(

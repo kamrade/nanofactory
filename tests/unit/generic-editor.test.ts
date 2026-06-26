@@ -2,7 +2,7 @@ import { createElement } from "react";
 import { renderToStaticMarkup } from "react-dom/server";
 import { describe, expect, it, vi } from "vitest";
 
-import { GenericBlockEditor } from "@/features/blocks/shared/generic-editor";
+import { GenericBlockEditor } from "@/features/blocks/shared/editor/generic-editor";
 
 describe("GenericBlockEditor", () => {
   it("renders inputs and textareas using theme token classes", () => {
