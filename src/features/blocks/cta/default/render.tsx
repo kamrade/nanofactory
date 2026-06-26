@@ -1,7 +1,8 @@
 import type { CSSProperties } from "react";
-import { VisibleOnce } from "@/components/motion/visible-once";
+import { ViewportAnimation } from "@/components/motion/viewport-animation";
+import { VIEWPORT_WORD_STAGGER_PRESETS } from "@/components/motion/viewport-animation-presets";
 import type { BlockRenderProps } from "../../shared/types";
-import { BlockSectionTitle } from "../../shared/components/block-section-title/block-section-title";
+import titleStyles from "@/features/blocks/shared/components/block-section-title/block-section-title.module.css";
 import styles from "./render.module.css";
 
 export function CtaDefaultRender({
@@ -10,6 +11,8 @@ export function CtaDefaultRender({
   projectSpacingScale,
 }: BlockRenderProps) {
   const title = typeof block.props.title === "string" ? block.props.title : "";
+  const titleText = title.trim();
+  const animate = typeof block.props.animate === "boolean" ? block.props.animate : true;
   const buttonText =
     typeof block.props.buttonText === "string" ? block.props.buttonText : "";
   const rawButtonHref =
@@ -40,13 +43,17 @@ export function CtaDefaultRender({
       className={styles.root}
       style={radiusVars as CSSProperties}
     >
-      <VisibleOnce
-        threshold={0.5}
-        className={styles.viewportRoot}
-        hiddenClassName={styles.viewportOffset}
-      >
-        <BlockSectionTitle title={title} />
-      </VisibleOnce>
+      <h2 className={titleStyles.title}>
+        {animate ? (
+          <ViewportAnimation
+            type="word-stagger"
+            text={titleText}
+            {...VIEWPORT_WORD_STAGGER_PRESETS.cta}
+          />
+        ) : (
+          titleText
+        )}
+      </h2>
       <div>
         <a
           href={buttonHref}

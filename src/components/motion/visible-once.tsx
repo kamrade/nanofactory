@@ -18,7 +18,7 @@ export function VisibleOnce({
   hiddenClassName,
   children,
 }: VisibleOnceProps) {
-  const { ref, visible } = useVisibleOnce(threshold);
+  const { ref, visible } = useVisibleOnce({ threshold });
 
   return (
     <div ref={ref} className={cx(className, !visible && hiddenClassName)}>

@@ -11,7 +11,7 @@ import type { BlockVariant, PageBlock, SupportedBlockType } from "./content";
 export type BlockFieldDefinition = {
   key: string;
   label: string;
-  kind: "text" | "textarea" | "string-list";
+  kind: "text" | "textarea" | "string-list" | "boolean";
   placeholder?: string;
 };
 

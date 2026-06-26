@@ -12,10 +12,21 @@ export const projectsGalleryDefaultDefinition: BlockVariantDefinition = {
   variant: "default",
   label: "Default",
   description: "Projects gallery with nested per-project image galleries.",
-  fields: [],
+  fields: [
+    {
+      key: "sectionTitle",
+      label: "Section title",
+      kind: "text",
+      placeholder: "Projects",
+    },
+    {
+      key: "animate",
+      label: "Animate title",
+      kind: "boolean",
+    },
+  ],
   Editor: ProjectsGalleryDefaultEditor,
   createDefaultProps: createDefaultProjectsGalleryProps,
   normalizeProps: (input) => readProjectsGalleryProps(input),
   Renderer: ProjectsGalleryDefaultRender,
 };
-

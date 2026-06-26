@@ -3,6 +3,7 @@
 import type { BlockEditorProps } from "../../shared/types";
 import { AssetPicker } from "../../shared/editor/asset-picker";
 import { UIButton } from "@/components/ui/button";
+import { UICheckbox } from "@/components/ui/checkbox";
 import { UIFormRow } from "@/components/ui/form-row";
 import { UITextInput } from "@/components/ui/text-input";
 import { UITextArea } from "@/components/ui/textarea";
@@ -60,12 +61,20 @@ function readItems(props: Record<string, unknown>): FeatureCardItem[] {
 
 export function FeaturesCardsEditor({ block, assets, onChange }: BlockEditorProps) {
   const sectionTitle = readSectionTitle(block.props);
+  const animate = block.props.animate !== false;
   const items = readItems(block.props);
 
   function updateSectionTitle(nextValue: string) {
     onChange({
       ...block.props,
       sectionTitle: nextValue,
+    });
+  }
+
+  function updateAnimate(nextValue: boolean) {
+    onChange({
+      ...block.props,
+      animate: nextValue,
     });
   }
 
@@ -142,6 +151,13 @@ export function FeaturesCardsEditor({ block, assets, onChange }: BlockEditorProp
               value={sectionTitle}
               placeholder="Why teams choose Nanofactory"
               onValueChange={updateSectionTitle}
+            />
+          </UIFormRow>
+
+          <UIFormRow label="Animate title" borderless>
+            <UICheckbox
+              checked={animate}
+              onChange={(event) => updateAnimate(event.currentTarget.checked)}
             />
           </UIFormRow>
         </div>

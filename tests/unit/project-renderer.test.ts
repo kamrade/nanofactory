@@ -6,6 +6,7 @@ import type { PageContent } from "../../db/schema";
 import type { ProjectAssetRecord } from "../../src/lib/assets";
 import type { BackgroundSceneRecord } from "../../src/lib/background-scenes/types";
 import { DEFAULT_THEME_KEY } from "../../src/lib/themes";
+import { createDefaultProjectsGalleryProps } from "@/features/blocks/projects-gallery/default/model";
 
 function createHeroContent(imageAssetId?: string): PageContent {
   return {
@@ -70,7 +71,7 @@ function createHeroWithButtonAnchorContent(): PageContent {
   };
 }
 
-function createFeaturesCardsContent(): PageContent {
+function createFeaturesCardsContent(animate = true): PageContent {
   return {
     blocks: [
       {
@@ -79,6 +80,7 @@ function createFeaturesCardsContent(): PageContent {
         variant: "cards",
         props: {
           sectionTitle: "Why this setup scales",
+          animate,
           items: ["Fewer moving parts", "Variant-aware rendering", "Clear growth path"],
         },
       },
@@ -86,7 +88,7 @@ function createFeaturesCardsContent(): PageContent {
   };
 }
 
-function createFeaturesDefaultContent(imageAssetId?: string): PageContent {
+function createFeaturesDefaultContent(imageAssetId?: string, animate = true): PageContent {
   return {
     blocks: [
       {
@@ -95,6 +97,7 @@ function createFeaturesDefaultContent(imageAssetId?: string): PageContent {
         variant: "default",
         props: {
           sectionTitle: "Why teams choose Nanofactory",
+          animate,
           items: [
             {
               title: "Small editing surface",
@@ -112,7 +115,44 @@ function createFeaturesDefaultContent(imageAssetId?: string): PageContent {
   };
 }
 
-function createCtaContent(buttonHref = "#"): PageContent {
+function createGalleryNaturalContent(animate = true): PageContent {
+  return {
+    blocks: [
+      {
+        id: "gallery-1",
+        type: "gallery",
+        props: {
+          sectionTitle: "Gallery",
+          animate,
+          columns: 3,
+          imageHeightMode: "natural",
+          items: [
+            { title: "Item A", description: "", price: "", meta: "" },
+            { title: "Item B", description: "", price: "", meta: "" },
+          ],
+        },
+      },
+    ],
+  };
+}
+
+function createProjectsGalleryContent(animate = true): PageContent {
+  const props = createDefaultProjectsGalleryProps();
+  return {
+    blocks: [
+      {
+        id: "projects-gallery-1",
+        type: "projects-gallery",
+        props: {
+          ...props,
+          animate,
+        },
+      },
+    ],
+  };
+}
+
+function createCtaContent(buttonHref = "#", animate = true): PageContent {
   return {
     blocks: [
       {
@@ -122,6 +162,7 @@ function createCtaContent(buttonHref = "#"): PageContent {
           title: "Go full width",
           buttonText: "Try now",
           buttonHref,
+          animate,
         },
       },
     ],
@@ -138,26 +179,6 @@ function createBackgroundSceneContent(sceneId: string): PageContent {
         props: {
           title: "Styled by scene",
           buttonText: "Inspect",
-        },
-      },
-    ],
-  };
-}
-
-function createGalleryNaturalContent(): PageContent {
-  return {
-    blocks: [
-      {
-        id: "gallery-1",
-        type: "gallery",
-        props: {
-          sectionTitle: "Gallery",
-          columns: 3,
-          imageHeightMode: "natural",
-          items: [
-            { title: "Item A", description: "", price: "", meta: "" },
-            { title: "Item B", description: "", price: "", meta: "" },
-          ],
         },
       },
     ],
@@ -301,6 +322,20 @@ describe("ProjectRenderer", () => {
     expect(html).toContain("Clear growth path");
   });
 
+  it("renders the features cards title statically when animation is disabled", () => {
+    const html = renderToStaticMarkup(
+      ProjectRenderer({
+        name: "Features Cards Static Title Project",
+        themeKey: "classic-light",
+        content: createFeaturesCardsContent(false),
+        assets: [],
+      })
+    );
+
+    expect(html).toContain("Why this setup scales");
+    expect(html).not.toContain("wsr-root");
+  });
+
   it("renders the default features variant with item copy and optional media", () => {
     const asset = createAsset("feature-asset-1");
     const html = renderToStaticMarkup(
@@ -316,6 +351,20 @@ describe("ProjectRenderer", () => {
     expect(html).toContain("Small editing surface");
     expect(html).toContain("Predictable sections");
     expect(html).toContain(asset.publicUrl);
+  });
+
+  it("renders the default features title statically when animation is disabled", () => {
+    const html = renderToStaticMarkup(
+      ProjectRenderer({
+        name: "Features Default Static Title Project",
+        themeKey: "classic-light",
+        content: createFeaturesDefaultContent(undefined, false),
+        assets: [],
+      })
+    );
+
+    expect(html).toContain("Why teams choose Nanofactory");
+    expect(html).not.toContain("wsr-root");
   });
 
   it("applies the provided valid theme key to renderer root", () => {
@@ -402,6 +451,20 @@ describe("ProjectRenderer", () => {
     expect(html).toContain("Try now");
   });
 
+  it("renders CTA title without animation when animate is disabled", () => {
+    const html = renderToStaticMarkup(
+      ProjectRenderer({
+        name: "CTA Static Title Project",
+        themeKey: "sunwash",
+        content: createCtaContent("#", false),
+        assets: [],
+      })
+    );
+
+    expect(html).toContain("Go full width");
+    expect(html).not.toContain("wsr-root");
+  });
+
   it("renders a block background from background scene config using CSS gradients", () => {
     const scene = createScene("scene-1");
     const html = renderToStaticMarkup(
@@ -417,6 +480,34 @@ describe("ProjectRenderer", () => {
     expect(html).toContain("repeating-linear-gradient(45deg");
     expect(html).toContain("rgba(107, 74, 34, 0.35)");
     expect(html).toContain("background-color:#f6ead9");
+  });
+
+  it("renders gallery title statically when animation is disabled", () => {
+    const html = renderToStaticMarkup(
+      ProjectRenderer({
+        name: "Gallery Static Title Project",
+        themeKey: "sunwash",
+        content: createGalleryNaturalContent(false),
+        assets: [],
+      })
+    );
+
+    expect(html).toContain("Gallery");
+    expect(html).not.toContain("wsr-root");
+  });
+
+  it("renders projects gallery title statically when animation is disabled", () => {
+    const html = renderToStaticMarkup(
+      ProjectRenderer({
+        name: "Projects Gallery Static Title Project",
+        themeKey: "sunwash",
+        content: createProjectsGalleryContent(false),
+        assets: [],
+      })
+    );
+
+    expect(html).toContain("Projects");
+    expect(html).not.toContain("wsr-root");
   });
 
   it("renders hero CTA as an anchor when buttonAnchor is set", () => {

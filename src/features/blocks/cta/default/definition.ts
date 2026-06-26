@@ -28,12 +28,18 @@ export const ctaDefaultDefinition: BlockVariantDefinition = {
       kind: "text",
       placeholder: "/contact",
     },
+    {
+      key: "animate",
+      label: "Animate title",
+      kind: "boolean",
+    },
   ],
   Editor: GenericBlockEditor,
   createDefaultProps: () => ({
     title: "Ready to create your page?",
     buttonText: "Start building",
     buttonHref: "#",
+    animate: true,
   }),
   normalizeProps: (input) => {
     const props = isPlainObject(input) ? input : {};
@@ -42,6 +48,7 @@ export const ctaDefaultDefinition: BlockVariantDefinition = {
       title: readString(props.title, "Ready to create your page?"),
       buttonText: readString(props.buttonText, "Start building"),
       buttonHref: readString(props.buttonHref, "#"),
+      animate: typeof props.animate === "boolean" ? props.animate : true,
     };
   },
   Renderer: CtaDefaultRender,

@@ -1,6 +1,7 @@
 "use client";
 
 import { UIButton } from "@/components/ui/button";
+import { UICheckbox } from "@/components/ui/checkbox";
 import { UITextInput } from "@/components/ui/text-input";
 import { UITextArea } from "@/components/ui/textarea";
 import { Card } from "@/components/ui/card";
@@ -34,7 +35,9 @@ function buildFallbackEntryAnchor(projectAnchor: string, galleryAnchor: string, 
 export function ProjectsGalleryDefaultEditor({ block, assets, onChange }: BlockEditorProps) {
   const props = readProjectsGalleryProps(block.props);
 
-  function update(nextProps: Partial<Record<"sectionTitle" | "galleryAnchor" | "items", unknown>>) {
+  function update(
+    nextProps: Partial<Record<"sectionTitle" | "animate" | "galleryAnchor" | "items", unknown>>
+  ) {
     onChange({
       ...block.props,
       ...nextProps,
@@ -72,6 +75,13 @@ export function ProjectsGalleryDefaultEditor({ block, assets, onChange }: BlockE
               value={props.sectionTitle}
               onValueChange={(value) => update({ sectionTitle: value })}
               placeholder="Projects"
+            />
+          </UIFormRow>
+
+          <UIFormRow label="Animate title" borderless>
+            <UICheckbox
+              checked={props.animate}
+              onChange={(event) => update({ animate: event.currentTarget.checked })}
             />
           </UIFormRow>
 

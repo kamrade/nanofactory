@@ -1,6 +1,7 @@
 "use client";
 
 import { UIButton } from "@/components/ui/button";
+import { UICheckbox } from "@/components/ui/checkbox";
 import { UISelect } from "@/components/ui/select";
 import { UITextInput } from "@/components/ui/text-input";
 import { UITextArea } from "@/components/ui/textarea";
@@ -72,12 +73,13 @@ export function GalleryDefaultEditor({
   effectiveGalleryItemAnchors,
 }: BlockEditorProps) {
   const sectionTitle = readSectionTitle(block.props);
+  const animate = block.props.animate !== false;
   const columns = readColumns(block.props);
   const imageHeightMode = readImageHeightMode(block.props);
   const items = readItems(block.props);
 
   function update(
-    next: Partial<Record<"sectionTitle" | "columns" | "imageHeightMode" | "items", unknown>>
+    next: Partial<Record<"sectionTitle" | "animate" | "columns" | "imageHeightMode" | "items", unknown>>
   ) {
     onChange({
       ...block.props,
@@ -96,14 +98,21 @@ export function GalleryDefaultEditor({
       <Card>
         <div className="grid gap-0">
           <UIFormRow label="Section title" htmlFor="gallery-section-title" borderless>
-          <UITextInput
-            id="gallery-section-title"
-            size="sm"
-            borderless
-            value={sectionTitle}
-            onValueChange={(value) => update({ sectionTitle: value })}
-            placeholder="Gallery"
-          />
+            <UITextInput
+              id="gallery-section-title"
+              size="sm"
+              borderless
+              value={sectionTitle}
+              onValueChange={(value) => update({ sectionTitle: value })}
+              placeholder="Gallery"
+            />
+          </UIFormRow>
+
+          <UIFormRow label="Animate title" borderless>
+            <UICheckbox
+              checked={animate}
+              onChange={(event) => update({ animate: event.currentTarget.checked })}
+            />
           </UIFormRow>
 
           <UIFormRow label="Columns" htmlFor="gallery-columns" borderless>

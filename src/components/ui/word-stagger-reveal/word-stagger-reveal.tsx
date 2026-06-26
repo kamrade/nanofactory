@@ -1,4 +1,4 @@
-import { createElement, useEffect, useLayoutEffect, useMemo, useRef, useState } from "react";
+import { createElement, useMemo } from "react";
 import "./word-stagger-reveal.css";
 
 export type WordStaggerRevealProps = {
@@ -6,7 +6,7 @@ export type WordStaggerRevealProps = {
   as?: keyof React.JSX.IntrinsicElements;
   direction?: "up" | "down" | "left" | "right";
   offset?: string | number;
-  /** Per-word transition duration in ms */
+  /** Per-word animation duration in ms */
   duration?: number;
   /** Delay between consecutive words in ms */
   stagger?: number;
@@ -16,12 +16,11 @@ export type WordStaggerRevealProps = {
   reverse?: boolean;
   fade?: boolean;
   blur?: boolean;
-  restartKey?: string | number;
+  active?: boolean;
   disabled?: boolean;
+  restartKey?: string | number;
   className?: string;
   style?: React.CSSProperties;
-  onStart?: () => void;
-  onComplete?: (value: string) => void;
 };
 
 const toCssLength = (v: string | number): string =>
@@ -43,8 +42,6 @@ function offsetToTransform(
   }
 }
 
-type Phase = "priming" | "animating" | "end";
-
 export function WordStaggerReveal({
   text,
   as = "span",
@@ -56,17 +53,12 @@ export function WordStaggerReveal({
   reverse = false,
   fade = true,
   blur = false,
-  restartKey,
+  active = true,
   disabled = false,
+  restartKey,
   className,
   style,
-  onStart,
-  onComplete,
 }: WordStaggerRevealProps) {
-  const [phase, setPhase] = useState<Phase>(disabled ? "end" : "priming");
-  const startTimer = useRef<number | null>(null);
-  const completeTimer = useRef<number | null>(null);
-
   const words = useMemo(() => text.split(/(\s+)/), [text]);
   const wordIndices = useMemo(() => {
     const idx: number[] = [];
@@ -78,80 +70,24 @@ export function WordStaggerReveal({
         idx.push(counter++);
       }
     }
-    const totalWords = counter;
-    return { idx, totalWords };
+    return { idx, totalWords: counter };
   }, [words]);
-
-  const clearTimers = () => {
-    if (startTimer.current !== null) {
-      window.clearTimeout(startTimer.current);
-      startTimer.current = null;
-    }
-    if (completeTimer.current !== null) {
-      window.clearTimeout(completeTimer.current);
-      completeTimer.current = null;
-    }
-  };
-
-  useLayoutEffect(() => {
-    clearTimers();
-    if (disabled) {
-      setPhase("end");
-      return;
-    }
-    setPhase("priming");
-  }, [restartKey, disabled, direction, offset, fade, blur, text, reverse, stagger]);
-
-  const totalDuration =
-    duration + Math.max(0, wordIndices.totalWords - 1) * stagger;
-
-  useEffect(() => {
-    if (disabled) return;
-    if (phase !== "priming") return;
-
-    let raf2 = 0;
-    const raf1 = requestAnimationFrame(() => {
-      raf2 = requestAnimationFrame(() => {
-        startTimer.current = window.setTimeout(() => {
-          onStart?.();
-          setPhase("animating");
-          completeTimer.current = window.setTimeout(() => {
-            setPhase("end");
-            onComplete?.(text);
-          }, totalDuration);
-        }, Math.max(0, startDelay));
-      });
-    });
-
-    return () => {
-      cancelAnimationFrame(raf1);
-      if (raf2) cancelAnimationFrame(raf2);
-      clearTimers();
-    };
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [phase, disabled, startDelay, totalDuration, text]);
-
-  useEffect(() => () => clearTimers(), []);
 
   const offsetStr = toCssLength(offset);
   const { tx, ty } = offsetToTransform(direction, offsetStr);
-  const atOffset = phase === "priming" && !disabled;
-
   const totalWords = wordIndices.totalWords;
+  const isActive = active && !disabled;
 
   return createElement(
     as,
     {
-      className: [
-        "wsr-root",
-        disabled ? "wsr-static" : "",
-        phase === "priming" ? "wsr-priming" : "",
-        className,
-      ]
+      key: restartKey,
+      className: ["wsr-root", isActive ? "wsr-active" : "", disabled ? "wsr-static" : "", className]
         .filter(Boolean)
         .join(" "),
       style,
       "aria-label": text,
+      "data-active": isActive ? "true" : "false",
     },
     words.map((token, i) => {
       if (token === "") return null;
@@ -162,17 +98,19 @@ export function WordStaggerReveal({
           </span>
         );
       }
+
       const wIdx = wordIndices.idx[i];
       const order = reverse ? totalWords - 1 - wIdx : wIdx;
-      const delayMs = order * stagger;
+      const delayMs = startDelay + order * stagger;
       const wordStyle: React.CSSProperties = {
         ["--wsr-duration" as never]: `${duration}ms`,
         ["--wsr-delay" as never]: `${delayMs}ms`,
-        ["--wsr-tx" as never]: atOffset ? tx : "0px",
-        ["--wsr-ty" as never]: atOffset ? ty : "0px",
-        ["--wsr-opacity" as never]: fade ? (atOffset ? 0 : 1) : 1,
-        ["--wsr-filter" as never]: blur && atOffset ? "blur(6px)" : "blur(0px)",
+        ["--wsr-tx" as never]: tx,
+        ["--wsr-ty" as never]: ty,
+        ["--wsr-opacity" as never]: fade ? 0 : 1,
+        ["--wsr-filter" as never]: blur ? "blur(6px)" : "none",
       };
+
       return (
         <span key={i} className="wsr-word" style={wordStyle} aria-hidden="true">
           {token}

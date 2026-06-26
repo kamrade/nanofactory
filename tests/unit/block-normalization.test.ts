@@ -4,6 +4,10 @@ import { readAppHeaderProps } from "@/features/blocks/app-header/default/model";
 import { heroDefaultDefinition } from "@/features/blocks/hero/default/definition";
 import { heroCenteredDefinition } from "@/features/blocks/hero/centered/definition";
 import { galleryDefaultDefinition } from "@/features/blocks/gallery/default/definition";
+import { ctaDefaultDefinition } from "@/features/blocks/cta/default/definition";
+import { featuresDefaultDefinition } from "@/features/blocks/features/default/definition";
+import { featuresCardsDefinition } from "@/features/blocks/features/cards/definition";
+import { readProjectsGalleryProps } from "@/features/blocks/projects-gallery/default/model";
 
 describe("block normalization", () => {
   it("normalizes app header anchors and filters invalid menu items", () => {
@@ -74,6 +78,21 @@ describe("block normalization", () => {
     });
   });
 
+  it("normalizes CTA animate flag with default enabled", () => {
+    const normalized = ctaDefaultDefinition.normalizeProps({
+      title: "CTA",
+      animate: false,
+    });
+
+    expect(normalized).toMatchObject({
+      title: "CTA",
+      animate: false,
+    });
+
+    const fallback = ctaDefaultDefinition.normalizeProps({});
+    expect(fallback).toMatchObject({ animate: true });
+  });
+
   it("normalizes gallery imageHeightMode with fixed fallback", () => {
     const natural = galleryDefaultDefinition.normalizeProps({
       sectionTitle: "Gallery",
@@ -88,5 +107,14 @@ describe("block normalization", () => {
       items: [{ title: "One" }],
     });
     expect(fallback).toMatchObject({ imageHeightMode: "fixed" });
+  });
+
+  it("normalizes features animate flag with default enabled", () => {
+    expect(featuresDefaultDefinition.normalizeProps({})).toMatchObject({ animate: true });
+    expect(featuresCardsDefinition.normalizeProps({})).toMatchObject({ animate: true });
+  });
+
+  it("normalizes projects gallery animate flag with default enabled", () => {
+    expect(readProjectsGalleryProps({})).toMatchObject({ animate: true });
   });
 });

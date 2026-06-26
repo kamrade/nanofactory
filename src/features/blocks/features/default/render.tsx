@@ -1,8 +1,10 @@
 import Image from "next/image";
 import type { CSSProperties } from "react";
 import type { BlockRenderProps } from "../../shared/types";
+import { ViewportAnimation } from "@/components/motion/viewport-animation";
+import { VIEWPORT_WORD_STAGGER_PRESETS } from "@/components/motion/viewport-animation-presets";
 import { resolveAssetById } from "@/lib/assets/resolution";
-import { BlockSectionTitle } from "../../shared/components/block-section-title/block-section-title";
+import titleStyles from "../../shared/components/block-section-title/block-section-title.module.css";
 import styles from "./render.module.css";
 
 type FeatureItem = {
@@ -63,6 +65,7 @@ export function FeaturesDefaultRender({
 }: BlockRenderProps) {
   const sectionTitle =
     typeof block.props.sectionTitle === "string" ? block.props.sectionTitle : "";
+  const animate = block.props.animate !== false;
   const items = readItems(block.props.items);
 
   const borderRadius =
@@ -97,7 +100,19 @@ export function FeaturesDefaultRender({
       className={styles.root}
       style={radiusVars as CSSProperties}
     >
-      <BlockSectionTitle title={sectionTitle} fontWeight={600} />
+      {sectionTitle.trim().length > 0 ? (
+        <h2 className={titleStyles.title} style={{ fontWeight: 600 }}>
+          {animate ? (
+            <ViewportAnimation
+              type="word-stagger"
+              text={sectionTitle}
+              {...VIEWPORT_WORD_STAGGER_PRESETS.cta}
+            />
+          ) : (
+            sectionTitle
+          )}
+        </h2>
+      ) : null}
       <ul className={styles.list}>
         {items.map((item) => {
           const itemImage = resolveAssetById(item.imageAssetId, assetMap);

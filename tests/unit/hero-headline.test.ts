@@ -31,8 +31,7 @@ describe("HeroHeadline", () => {
 
     expect(html).toContain(styles.headline);
     expect(html).toContain(styles.centered);
-    expect(html).toContain('role="text"');
-    expect(html).toContain('aria-label="Animate me"');
-    expect(html).toContain("typewriter-cursor");
+    expect(html).toContain("Animate me");
+    expect(html).not.toContain("typewriter-cursor");
   });
 });

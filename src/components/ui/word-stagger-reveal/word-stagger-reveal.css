@@ -7,16 +7,13 @@
   display: inline-block;
   will-change: transform, opacity, filter;
   transform: translate3d(var(--wsr-tx, 0), var(--wsr-ty, 0), 0);
-  opacity: var(--wsr-opacity, 1);
+  opacity: var(--wsr-opacity, 0);
   filter: var(--wsr-filter, none);
-  transition:
-    transform var(--wsr-duration, 700ms) cubic-bezier(0.22, 1, 0.36, 1) var(--wsr-delay, 0ms),
-    opacity var(--wsr-duration, 700ms) cubic-bezier(0.22, 1, 0.36, 1) var(--wsr-delay, 0ms),
-    filter var(--wsr-duration, 700ms) cubic-bezier(0.22, 1, 0.36, 1) var(--wsr-delay, 0ms);
 }
 
-.wsr-root.wsr-priming .wsr-word {
-  transition: none !important;
+.wsr-root[data-active="true"] .wsr-word {
+  animation: wsr-reveal var(--wsr-duration, 700ms) cubic-bezier(0.22, 1, 0.36, 1)
+    var(--wsr-delay, 0ms) both;
 }
 
 .wsr-space {
@@ -25,15 +22,29 @@
 }
 
 .wsr-static .wsr-word {
-  transition: none;
+  animation: none;
   transform: none;
   opacity: 1;
   filter: none;
 }
 
+@keyframes wsr-reveal {
+  from {
+    transform: translate3d(var(--wsr-tx, 0), var(--wsr-ty, 0), 0);
+    opacity: var(--wsr-opacity, 0);
+    filter: var(--wsr-filter, none);
+  }
+
+  to {
+    transform: translate3d(0, 0, 0);
+    opacity: 1;
+    filter: none;
+  }
+}
+
 @media (prefers-reduced-motion: reduce) {
   .wsr-word {
-    transition: none !important;
+    animation: none !important;
     transform: none !important;
     opacity: 1 !important;
     filter: none !important;

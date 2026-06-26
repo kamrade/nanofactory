@@ -1,8 +1,10 @@
 import Image from "next/image";
 import type { CSSProperties } from "react";
 import type { BlockRenderProps } from "../../shared/types";
+import { ViewportAnimation } from "@/components/motion/viewport-animation";
+import { VIEWPORT_WORD_STAGGER_PRESETS } from "@/components/motion/viewport-animation-presets";
 import { resolveAssetById } from "@/lib/assets/resolution";
-import { BlockSectionTitle } from "../../shared/components/block-section-title/block-section-title";
+import titleStyles from "../../shared/components/block-section-title/block-section-title.module.css";
 import styles from "./render.module.css";
 
 type FeatureCardItem = {
@@ -63,6 +65,7 @@ export function FeaturesCardsRender({
 }: BlockRenderProps) {
   const sectionTitle =
     typeof block.props.sectionTitle === "string" ? block.props.sectionTitle : "";
+  const animate = block.props.animate !== false;
   const items = readItems(block.props.items);
 
   const borderRadius =
@@ -98,7 +101,19 @@ export function FeaturesCardsRender({
       style={radiusVars as CSSProperties}
     >
       <div className={styles.sectionHeader}>
-        <BlockSectionTitle title={sectionTitle} />
+        {sectionTitle.trim().length > 0 ? (
+          <h2 className={titleStyles.title}>
+            {animate ? (
+              <ViewportAnimation
+                type="word-stagger"
+                text={sectionTitle}
+                {...VIEWPORT_WORD_STAGGER_PRESETS.cta}
+              />
+            ) : (
+              sectionTitle
+            )}
+          </h2>
+        ) : null}
       </div>
 
       <div className={styles.grid}>

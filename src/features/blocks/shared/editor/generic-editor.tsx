@@ -3,6 +3,7 @@
 import type { BlockFieldDefinition, BlockEditorProps } from "../types";
 import { AssetPicker } from "./asset-picker";
 import { UIFormRow } from "@/components/ui/form-row";
+import { UICheckbox } from "@/components/ui/checkbox";
 import { UITextInput } from "@/components/ui/text-input";
 import { UITextArea } from "@/components/ui/textarea";
 import { Card } from "@/components/ui/card";
@@ -19,6 +20,10 @@ function readFieldValue(
       : "";
   }
 
+  if (field.kind === "boolean") {
+    return typeof value === "boolean" ? value : false;
+  }
+
   return typeof value === "string" ? value : "";
 }
 
@@ -28,7 +33,7 @@ export function GenericBlockEditor({
   definition,
   onChange,
 }: BlockEditorProps) {
-  function handleUpdateField(field: BlockFieldDefinition, nextValue: string) {
+  function handleUpdateStringField(field: BlockFieldDefinition, nextValue: string) {
     onChange({
       ...block.props,
       [field.key]:
@@ -38,6 +43,13 @@ export function GenericBlockEditor({
               .map((item) => item.trim())
               .filter(Boolean)
           : nextValue,
+    });
+  }
+
+  function handleUpdateBooleanField(field: BlockFieldDefinition, nextValue: boolean) {
+    onChange({
+      ...block.props,
+      [field.key]: nextValue,
     });
   }
 
@@ -55,6 +67,22 @@ export function GenericBlockEditor({
           const value = readFieldValue(block.props, field);
           const fieldId = `generic-field-${field.key}`;
 
+          if (field.kind === "boolean") {
+            const checked = typeof value === "boolean" ? value : false;
+
+            return (
+              <UIFormRow key={field.key} label={field.label} borderless>
+                <UICheckbox
+                  id={fieldId}
+                  checked={checked}
+                  onChange={(event) => handleUpdateBooleanField(field, event.target.checked)}
+                />
+              </UIFormRow>
+            );
+          }
+
+          const textValue = typeof value === "string" ? value : "";
+
           return field.kind === "textarea" || field.kind === "string-list" ? (
             <UIFormRow key={field.key} label={field.label} htmlFor={fieldId} borderless>
               <div className="grid gap-1.5">
@@ -62,10 +90,10 @@ export function GenericBlockEditor({
                   id={fieldId}
                   size="lg"
                   borderless
-                  value={value}
+                  value={textValue}
                   rows={field.kind === "string-list" ? 5 : 4}
                   placeholder={field.placeholder}
-                  onChange={(event) => handleUpdateField(field, event.target.value)}
+                  onChange={(event) => handleUpdateStringField(field, event.target.value)}
                 />
                 {field.kind === "string-list" ? (
                   <span className="text-xs text-text-muted">Enter one list item per line.</span>
@@ -78,9 +106,9 @@ export function GenericBlockEditor({
                 id={fieldId}
                 size="sm"
                 borderless
-                value={value}
+                value={textValue}
                 placeholder={field.placeholder}
-                onValueChange={(nextValue) => handleUpdateField(field, nextValue)}
+                onValueChange={(nextValue) => handleUpdateStringField(field, nextValue)}
               />
             </UIFormRow>
           );

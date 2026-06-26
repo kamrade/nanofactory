@@ -26,6 +26,7 @@ export type ProjectsGalleryProjectItem = {
 
 export type ProjectsGalleryProps = {
   sectionTitle: string;
+  animate: boolean;
   galleryAnchor: string | undefined;
   items: ProjectsGalleryProjectItem[];
 };
@@ -156,6 +157,7 @@ export function readProjectsGalleryProps(input: unknown): ProjectsGalleryProps {
 
   return {
     sectionTitle: readString(props.sectionTitle, "Projects"),
+    animate: typeof props.animate === "boolean" ? props.animate : true,
     galleryAnchor: galleryAnchor && isValidAnchorId(galleryAnchor) ? galleryAnchor : undefined,
     items: items.length > 0 ? items : defaultItems(),
   };
@@ -164,6 +166,7 @@ export function readProjectsGalleryProps(input: unknown): ProjectsGalleryProps {
 export function createDefaultProjectsGalleryProps(): ProjectsGalleryProps {
   return {
     sectionTitle: "Projects",
+    animate: true,
     galleryAnchor: "projects",
     items: defaultItems(),
   };

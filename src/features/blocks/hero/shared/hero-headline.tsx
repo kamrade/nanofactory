@@ -1,6 +1,7 @@
 "use client";
 
-import { TypewriterText } from "@/components/ui/typewriter-text";
+import { ViewportAnimation } from "@/components/motion/viewport-animation";
+import { VIEWPORT_WORD_STAGGER_PRESETS } from "@/components/motion/viewport-animation-presets";
 import { cx } from "@/lib/cn";
 
 import styles from "./hero-headline.module.css";
@@ -19,12 +20,11 @@ export function HeroHeadline({
   return (
     <h1 className={cx(styles.headline, styles[variant])}>
       {animateMainText ? (
-        <TypewriterText
+        <ViewportAnimation
+          type="word-stagger"
           text={text}
-          startDelay={0}
-          restartKey={1}
-          loop={false}
-          showCursor
+          triggerMode="immediate"
+          {...VIEWPORT_WORD_STAGGER_PRESETS.hero}
         />
       ) : (
         text

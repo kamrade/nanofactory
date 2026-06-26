@@ -76,10 +76,23 @@ export const galleryDefaultDefinition: BlockVariantDefinition = {
   variant: "default",
   label: "Default",
   description: "Image gallery with configurable columns and optional text details.",
-  fields: [],
+  fields: [
+    {
+      key: "sectionTitle",
+      label: "Section title",
+      kind: "text",
+      placeholder: "Gallery",
+    },
+    {
+      key: "animate",
+      label: "Animate title",
+      kind: "boolean",
+    },
+  ],
   Editor: GalleryDefaultEditor,
   createDefaultProps: () => ({
     sectionTitle: "Gallery",
+    animate: true,
     columns: 3,
     imageHeightMode: "fixed",
     items: defaultItems(),
@@ -90,6 +103,7 @@ export const galleryDefaultDefinition: BlockVariantDefinition = {
 
     return {
       sectionTitle: readString(props.sectionTitle, "Gallery"),
+      animate: typeof props.animate === "boolean" ? props.animate : true,
       columns: readColumns(props.columns),
       imageHeightMode: readImageHeightMode(props.imageHeightMode),
       items: items.length > 0 ? items : defaultItems(),

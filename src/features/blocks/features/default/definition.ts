@@ -43,6 +43,11 @@ export const featuresDefaultDefinition: BlockVariantDefinition = {
       placeholder: "Why teams choose Nanofactory",
     },
     {
+      key: "animate",
+      label: "Animate title",
+      kind: "boolean",
+    },
+    {
       key: "items",
       label: "Items",
       kind: "string-list",
@@ -52,6 +57,7 @@ export const featuresDefaultDefinition: BlockVariantDefinition = {
   Editor: FeaturesCardsEditor,
   createDefaultProps: () => ({
     sectionTitle: "Why teams choose Nanofactory",
+    animate: true,
     items: defaultItems,
     borderRadius: "lg" as FeatureBorderRadius,
   }),
@@ -93,6 +99,7 @@ export const featuresDefaultDefinition: BlockVariantDefinition = {
 
     return {
       sectionTitle: readString(props.sectionTitle, "Why teams choose Nanofactory"),
+      animate: typeof props.animate === "boolean" ? props.animate : true,
       items: normalizedItems.length > 0 ? normalizedItems : defaultItems,
       borderRadius:
         props.borderRadius === "none" || props.borderRadius === "md" || props.borderRadius === "lg"

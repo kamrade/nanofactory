@@ -1,3 +1,5 @@
+import { ViewportAnimation } from "@/components/motion/viewport-animation";
+import { VIEWPORT_WORD_STAGGER_PRESETS } from "@/components/motion/viewport-animation-presets";
 import { HeroHeadline } from "./hero-headline";
 
 type HeroContentProps = {
@@ -31,7 +33,21 @@ export function HeroContent({
   buttonClassName,
   buttonRadiusVar,
 }: HeroContentProps) {
-  const eyebrowNode = eyebrow.trim().length > 0 ? <p className={eyebrowClassName}>{eyebrow}</p> : null;
+  const eyebrowText = eyebrow.trim();
+  const eyebrowNode = eyebrowText.length > 0 ? (
+    <p className={eyebrowClassName}>
+      {animateMainText ? (
+        <ViewportAnimation
+          type="word-stagger"
+          text={eyebrowText}
+          triggerMode="immediate"
+          {...VIEWPORT_WORD_STAGGER_PRESETS.heroEyebrow}
+        />
+      ) : (
+        eyebrowText
+      )}
+    </p>
+  ) : null;
   const subtitleNode = <p className={subtitleClassName}>{subtitle}</p>;
   const ctaNode =
     buttonAnchor.trim().length > 0 ? (
