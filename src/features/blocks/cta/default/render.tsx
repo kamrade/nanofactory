@@ -1,4 +1,5 @@
 import type { CSSProperties } from "react";
+import { VisibleOnce } from "@/components/motion/visible-once";
 import type { BlockRenderProps } from "../../shared/types";
 import { BlockSectionTitle } from "../../shared/components/block-section-title/block-section-title";
 import styles from "./render.module.css";
@@ -39,7 +40,13 @@ export function CtaDefaultRender({
       className={styles.root}
       style={radiusVars as CSSProperties}
     >
-      <BlockSectionTitle title={title} />
+      <VisibleOnce
+        threshold={0.5}
+        className={styles.viewportRoot}
+        hiddenClassName={styles.viewportOffset}
+      >
+        <BlockSectionTitle title={title} />
+      </VisibleOnce>
       <div>
         <a
           href={buttonHref}

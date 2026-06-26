@@ -8,3 +8,4 @@ export { BorderlessFormLayoutSection } from "./borderless-form-layout-section";
 export { TypewriterSection } from "./typewriter-section";
 export { HighlightSweepSection } from "./highlight-sweep-section";
 export { OffsetRevealSection } from "./offset-reveal-section";
+export { WordStaggerRevealSection } from "./word-stagger-reveal-section";

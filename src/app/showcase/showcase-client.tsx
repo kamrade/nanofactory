@@ -14,6 +14,7 @@ import {
   TypewriterSection,
   HighlightSweepSection,
   OffsetRevealSection,
+  WordStaggerRevealSection,
 } from "@/app/showcase/uikit-sections";
 import { uikitSectionNavItems } from "@/app/showcase/uikit-sections/nav";
 import { UikitSidebar } from "@/app/showcase/uikit-sidebar";
@@ -128,6 +129,7 @@ export function ShowcaseClient({
                 <TypewriterSection uiSize={uiSize} />
                 <HighlightSweepSection uiSize={uiSize} />
                 <OffsetRevealSection uiSize={uiSize} />
+                <WordStaggerRevealSection uiSize={uiSize} />
               </div>
             </div>
           </div>

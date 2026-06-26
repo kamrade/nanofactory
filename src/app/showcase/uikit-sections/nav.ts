@@ -30,4 +30,6 @@ export const uikitSectionNavItems: UikitSectionNavItem[] = [
   { id: "highlight-sweep-hover", label: "HighlightSweepText / Hover Trigger" },
   { id: "offset-reveal", label: "OffsetRevealText" },
   { id: "offset-reveal-scroll", label: "OffsetRevealText / Scroll Trigger" },
+  { id: "word-stagger-reveal", label: "WordStaggerReveal" },
+  { id: "word-stagger-reveal-scroll", label: "WordStaggerReveal / Scroll Trigger" },
 ];

@@ -1,5 +1,14 @@
 /* ── Root section ────────────────────────────────────────── */
 
+.viewportRoot {
+  transition: transform 1600ms cubic-bezier(0.16, 1, 0.3, 1);
+  will-change: transform;
+}
+
+.viewportOffset {
+  transform: translateY(18px);
+}
+
 .root {
   display: flex;
   flex-direction: column;
@@ -34,3 +43,14 @@
 .root[data-spacing-scale="sm"] .button { padding: 0.25rem 0.75rem; font-size: 0.875rem; }
 .root[data-spacing-scale="md"] .button { padding: 0.75rem 1.25rem; font-size: 0.875rem; }
 .root[data-spacing-scale="lg"] .button { padding: 1rem 1.75rem;    font-size: 1rem; }
+
+@media (prefers-reduced-motion: reduce) {
+  .viewportRoot {
+    transition: none;
+    transform: none;
+  }
+
+  .viewportOffset {
+    transform: none;
+  }
+}
