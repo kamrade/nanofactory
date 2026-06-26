@@ -132,7 +132,17 @@ export function FeaturesDefaultRender({
                   </div>
                 ) : null}
                 <div>
-                  <p className={styles.itemTitle}>{item.title}</p>
+                  <p className={styles.itemTitle}>
+                    {animate ? (
+                      <ViewportAnimation
+                        type="word-stagger"
+                        text={item.title}
+                        {...VIEWPORT_WORD_STAGGER_PRESETS.featureCardTitle}
+                      />
+                    ) : (
+                      item.title
+                    )}
+                  </p>
                   {item.content.trim().length > 0 ? (
                     <p className={styles.itemContent}>{item.content}</p>
                   ) : null}

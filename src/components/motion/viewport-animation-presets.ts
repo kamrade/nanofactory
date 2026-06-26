@@ -19,6 +19,13 @@ export const VIEWPORT_WORD_STAGGER_PRESETS = {
     direction: "left",
     fade: true,
   },
+  featureCardTitle: {
+    duration: 1100,
+    stagger: 70,
+    offset: "10px",
+    direction: "left",
+    fade: true,
+  },
   hero: {
     duration: 2200,
     stagger: 120,
