@@ -1,6 +1,7 @@
 "use client";
 
 import { HighlightSweepSection, HighlightSweepHoverSection, HighlightSweepScrollSection } from "./highlight-sweep-section";
+import { ImageZoomRevealSection } from "./image-zoom-reveal-section";
 import { OffsetRevealSection, OffsetRevealScrollSection } from "./offset-reveal-section";
 import { TypewriterViewportSection } from "./typewriter-viewport-section";
 import { ViewportRevealSection } from "./viewport-reveal-section";
@@ -26,6 +27,7 @@ export function AnimationsSection({ uiSize }: AnimationsSectionProps) {
       <WordStaggerRevealScrollSection />
       <TypewriterViewportSection />
       <ViewportRevealSection />
+      <ImageZoomRevealSection />
     </div>
   );
 }

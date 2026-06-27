@@ -1,6 +1,8 @@
 import Image from "next/image";
 import type { CSSProperties } from "react";
 import type { BlockRenderProps } from "../../shared/types";
+import { ViewportAnimation } from "@/components/motion/viewport-animation";
+import { VIEWPORT_WORD_STAGGER_PRESETS } from "@/components/motion/viewport-animation-presets";
 import { resolveAssetById } from "@/lib/assets/resolution";
 import { BlockSectionTitle } from "../../shared/components/block-section-title/block-section-title";
 import styles from "./render.module.css";
@@ -119,7 +121,17 @@ export function FeaturesCardsRender({
                   />
                 </div>
               ) : null}
-              <p className={styles.itemTitle}>{item.title}</p>
+              <p className={styles.itemTitle}>
+                {animate ? (
+                  <ViewportAnimation
+                    type="word-stagger"
+                    text={item.title}
+                    {...VIEWPORT_WORD_STAGGER_PRESETS.featureCardTitle}
+                  />
+                ) : (
+                  item.title
+                )}
+              </p>
               {item.content.trim().length > 0 ? (
                 <p className={styles.itemContent}>{item.content}</p>
               ) : null}

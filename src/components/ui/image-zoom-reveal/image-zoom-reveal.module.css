@@ -1,0 +1,47 @@
+.root {
+  position: relative;
+  overflow: hidden;
+  display: block;
+}
+
+.image {
+  display: block;
+  width: 100%;
+  height: 100%;
+  transform-origin: center center;
+  will-change: transform;
+  transform: scale(var(--image-zoom-end, 1));
+}
+
+.animated {
+  animation-name: image-zoom-reveal;
+  animation-duration: var(--image-zoom-duration, 6000ms);
+  animation-timing-function: var(--image-zoom-easing, cubic-bezier(0.22, 1, 0.36, 1));
+  animation-delay: var(--image-zoom-delay, 0ms);
+  animation-fill-mode: both;
+}
+
+.static {
+  transform: scale(var(--image-zoom-end, 1));
+}
+
+@keyframes image-zoom-reveal {
+  0% {
+    transform: scale(var(--image-zoom-start, 1));
+  }
+
+  45% {
+    transform: scale(var(--image-zoom-peak, 1.12));
+  }
+
+  100% {
+    transform: scale(var(--image-zoom-end, 1));
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .image {
+    animation: none !important;
+    transform: scale(var(--image-zoom-end, 1)) !important;
+  }
+}

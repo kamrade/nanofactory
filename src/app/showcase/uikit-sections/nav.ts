@@ -39,4 +39,5 @@ export const animationsSectionNavItems: UikitSectionNavItem[] = [
   { id: "word-stagger-reveal-scroll", label: "WordStaggerReveal / Scroll Trigger" },
   { id: "typewriter-viewport", label: "TypewriterText / Viewport Trigger" },
   { id: "viewport-reveal", label: "Viewport Reveal" },
+  { id: "image-zoom-reveal", label: "Image Zoom Reveal" },
 ];

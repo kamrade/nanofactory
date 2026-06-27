@@ -82,6 +82,20 @@
 - Где используется:
   - `src/app/showcase/uikit-sections/word-stagger-reveal-section.tsx`
 
+### `UIImageZoomReveal`
+- Путь: `src/components/ui/image-zoom-reveal/image-zoom-reveal.tsx`
+- Назначение: image reveal с zoom-in → zoom-out внутри статичных границ.
+- Ключевые пропсы:
+  - `src`, `alt`
+  - `fit`
+  - `radius`
+  - `duration`, `startDelay`
+  - `startScale`, `peakScale`, `endScale`
+  - `animate`
+  - `restartKey`
+- Где используется:
+  - `src/app/showcase/uikit-sections/image-zoom-reveal-section.tsx`
+
 ### `UISlider`
 - Путь: `src/components/ui/slider/slider.tsx`
 - Назначение: нативный `range`-контрол для настройки параметров анимаций и других числовых значений.
@@ -152,6 +166,10 @@
 ### `Viewport Reveal`
 - `src/app/showcase/uikit-sections/viewport-reveal-section.tsx`
 - Демонстрация live-viewport анимации: появление при входе и исчезновение при выходе.
+
+### `Image Zoom Reveal`
+- `src/app/showcase/uikit-sections/image-zoom-reveal-section.tsx`
+- Демонстрация image-анимации с фиксированными границами и zoom-in → zoom-out.
 
 ## Практика
 
