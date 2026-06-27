@@ -14,6 +14,12 @@ type UIImageZoomRevealProps = Omit<ImageProps, "src" | "alt" | "className" | "st
   style?: CSSProperties;
   radius?: string | number;
   fit?: CSSProperties["objectFit"];
+  /**
+   * - `"keyframe"`: replays a one-shot zoom from start -> end whenever `animate` is true.
+   * - `"transition"`: rests at start scale while `animate` is false and smoothly
+   *   transitions to end scale when `animate` becomes true (and back again on leave).
+   */
+  mode?: "keyframe" | "transition";
   animate?: boolean;
   duration?: number;
   startDelay?: number;
@@ -38,6 +44,7 @@ export function UIImageZoomReveal({
   style,
   radius,
   fit = "cover",
+  mode = "keyframe",
   animate = true,
   duration = 6000,
   startDelay = 0,
@@ -67,7 +74,14 @@ export function UIImageZoomReveal({
         {...props}
         src={src}
         alt={alt}
-        className={cx(styles.image, animate && styles.animated, !animate && styles.static, className)}
+        className={cx(
+          styles.image,
+          mode === "keyframe" && animate && styles.animated,
+          mode === "keyframe" && !animate && styles.static,
+          mode === "transition" && styles.transition,
+          mode === "transition" && animate && styles.transitionRevealed,
+          className
+        )}
         style={{
           objectFit: fit,
           ...style,

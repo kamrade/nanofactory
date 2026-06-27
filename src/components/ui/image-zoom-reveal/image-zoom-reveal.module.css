@@ -13,6 +13,7 @@
   transform: scale(var(--image-zoom-end, 1));
 }
 
+/* One-shot keyframe mode: replays a single zoom from start -> end. */
 .animated {
   animation-name: image-zoom-reveal;
   animation-duration: var(--image-zoom-duration, 6000ms);
@@ -22,6 +23,20 @@
 }
 
 .static {
+  transform: scale(var(--image-zoom-end, 1));
+}
+
+/*
+ * Two-state transition mode: the image rests at start scale while hidden and
+ * smoothly transitions to end scale when revealed (and back when it leaves).
+ */
+.transition {
+  transform: scale(var(--image-zoom-start, 1));
+  transition: transform var(--image-zoom-duration, 6000ms)
+    var(--image-zoom-easing, cubic-bezier(0.22, 1, 0.36, 1)) var(--image-zoom-delay, 0ms);
+}
+
+.transitionRevealed {
   transform: scale(var(--image-zoom-end, 1));
 }
 
@@ -38,6 +53,7 @@
 @media (prefers-reduced-motion: reduce) {
   .image {
     animation: none !important;
+    transition: none !important;
     transform: scale(var(--image-zoom-end, 1)) !important;
   }
 }
