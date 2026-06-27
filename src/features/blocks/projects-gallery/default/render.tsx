@@ -1,8 +1,6 @@
 import Image from "next/image";
 import type { CSSProperties } from "react";
 
-import { ViewportAnimation } from "@/components/motion/viewport-animation";
-import { VIEWPORT_WORD_STAGGER_PRESETS } from "@/components/motion/viewport-animation-presets";
 import { ModeAwareLink } from "@/components/projects/mode-aware-link";
 import { resolveAssetById } from "@/lib/assets/resolution";
 import type { BlockRenderProps } from "../../shared/types";
@@ -11,7 +9,7 @@ import {
   getEffectiveProjectAnchor,
   readProjectsGalleryProps,
 } from "./model";
-import titleStyles from "../../shared/components/block-section-title/block-section-title.module.css";
+import { BlockSectionTitle } from "../../shared/components/block-section-title/block-section-title";
 import styles from "./render.module.css";
 
 export function ProjectsGalleryDefaultRender({
@@ -58,19 +56,7 @@ export function ProjectsGalleryDefaultRender({
       className={styles.root}
       style={radiusVars as CSSProperties}
     >
-      {props.sectionTitle.trim().length > 0 ? (
-        <h2 className={titleStyles.title}>
-          {props.animate ? (
-            <ViewportAnimation
-              type="word-stagger"
-              text={props.sectionTitle}
-              {...VIEWPORT_WORD_STAGGER_PRESETS.cta}
-            />
-          ) : (
-            props.sectionTitle
-          )}
-        </h2>
-      ) : null}
+      <BlockSectionTitle title={props.sectionTitle} animate={props.animate} />
 
       <div className={styles.grid}>
         {props.items.map((item, index) => {

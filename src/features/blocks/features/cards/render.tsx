@@ -1,10 +1,8 @@
 import Image from "next/image";
 import type { CSSProperties } from "react";
 import type { BlockRenderProps } from "../../shared/types";
-import { ViewportAnimation } from "@/components/motion/viewport-animation";
-import { VIEWPORT_WORD_STAGGER_PRESETS } from "@/components/motion/viewport-animation-presets";
 import { resolveAssetById } from "@/lib/assets/resolution";
-import titleStyles from "../../shared/components/block-section-title/block-section-title.module.css";
+import { BlockSectionTitle } from "../../shared/components/block-section-title/block-section-title";
 import styles from "./render.module.css";
 
 type FeatureCardItem = {
@@ -101,19 +99,7 @@ export function FeaturesCardsRender({
       style={radiusVars as CSSProperties}
     >
       <div className={styles.sectionHeader}>
-        {sectionTitle.trim().length > 0 ? (
-          <h2 className={titleStyles.title}>
-            {animate ? (
-              <ViewportAnimation
-                type="word-stagger"
-                text={sectionTitle}
-                {...VIEWPORT_WORD_STAGGER_PRESETS.cta}
-              />
-            ) : (
-              sectionTitle
-            )}
-          </h2>
-        ) : null}
+        <BlockSectionTitle title={sectionTitle} animate={animate} />
       </div>
 
       <div className={styles.grid}>
@@ -133,17 +119,7 @@ export function FeaturesCardsRender({
                   />
                 </div>
               ) : null}
-              <p className={styles.itemTitle}>
-                {animate ? (
-                  <ViewportAnimation
-                    type="word-stagger"
-                    text={item.title}
-                    {...VIEWPORT_WORD_STAGGER_PRESETS.featureCardTitle}
-                  />
-                ) : (
-                  item.title
-                )}
-              </p>
+              <p className={styles.itemTitle}>{item.title}</p>
               {item.content.trim().length > 0 ? (
                 <p className={styles.itemContent}>{item.content}</p>
               ) : null}

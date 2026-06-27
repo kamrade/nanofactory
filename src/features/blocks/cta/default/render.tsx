@@ -1,8 +1,6 @@
 import type { CSSProperties } from "react";
-import { ViewportAnimation } from "@/components/motion/viewport-animation";
-import { VIEWPORT_WORD_STAGGER_PRESETS } from "@/components/motion/viewport-animation-presets";
 import type { BlockRenderProps } from "../../shared/types";
-import titleStyles from "@/features/blocks/shared/components/block-section-title/block-section-title.module.css";
+import { BlockSectionTitle } from "@/features/blocks/shared/components/block-section-title/block-section-title";
 import styles from "./render.module.css";
 
 export function CtaDefaultRender({
@@ -43,17 +41,7 @@ export function CtaDefaultRender({
       className={styles.root}
       style={radiusVars as CSSProperties}
     >
-      <h2 className={titleStyles.title}>
-        {animate ? (
-          <ViewportAnimation
-            type="word-stagger"
-            text={titleText}
-            {...VIEWPORT_WORD_STAGGER_PRESETS.cta}
-          />
-        ) : (
-          titleText
-        )}
-      </h2>
+      <BlockSectionTitle title={titleText} animate={animate} />
       <div>
         <a
           href={buttonHref}

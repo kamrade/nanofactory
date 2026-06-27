@@ -1,12 +1,10 @@
 import Image from "next/image";
 import type { CSSProperties } from "react";
 
-import { ViewportAnimation } from "@/components/motion/viewport-animation";
-import { VIEWPORT_WORD_STAGGER_PRESETS } from "@/components/motion/viewport-animation-presets";
 import { ModeAwareLink } from "@/components/projects/mode-aware-link";
 import { resolveAssetById } from "@/lib/assets/resolution";
 import type { BlockRenderProps } from "../../shared/types";
-import titleStyles from "../../shared/components/block-section-title/block-section-title.module.css";
+import { BlockSectionTitle } from "../../shared/components/block-section-title/block-section-title";
 import styles from "./render.module.css";
 
 type GalleryItem = {
@@ -113,19 +111,7 @@ export function GalleryDefaultRender({
       className={styles.root}
       style={radiusVars as CSSProperties}
     >
-      {sectionTitle.trim().length > 0 ? (
-        <h2 className={titleStyles.title}>
-          {animate ? (
-            <ViewportAnimation
-              type="word-stagger"
-              text={sectionTitle}
-              {...VIEWPORT_WORD_STAGGER_PRESETS.cta}
-            />
-          ) : (
-            sectionTitle
-          )}
-        </h2>
-      ) : null}
+      <BlockSectionTitle title={sectionTitle} animate={animate} />
 
       <div
         className={styles.grid}
