@@ -32,7 +32,7 @@ export function createHeroDefaultProps(copyDefaults: HeroCopyDefaults): Record<s
     imageAssetId: undefined,
     imageLightAssetId: undefined,
     imageDarkAssetId: undefined,
-    animateMainText: false,
+    animate: false,
   };
 }
 
@@ -57,6 +57,7 @@ export function normalizeHeroProps(
     imageAssetId: readOptionalString(props.imageAssetId),
     imageLightAssetId: readOptionalString(props.imageLightAssetId),
     imageDarkAssetId: readOptionalString(props.imageDarkAssetId),
-    animateMainText: props.animateMainText === true,
+    // Backward compat: the flag was previously stored as `animateMainText`.
+    animate: props.animate === true || props.animateMainText === true,
   };
 }

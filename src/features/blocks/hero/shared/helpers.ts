@@ -17,7 +17,7 @@ type HeroRenderContent = {
   buttonText: string;
   buttonAnchor: string;
   contentPosition: string;
-  animateMainText: boolean;
+  animate: boolean;
 };
 
 type HeroImageIds = {
@@ -35,7 +35,8 @@ export function readHeroRenderContent(block: BlockRenderProps["block"]): HeroRen
     buttonAnchor: typeof block.props.buttonAnchor === "string" ? block.props.buttonAnchor : "",
     contentPosition:
       typeof block.props.contentPosition === "string" ? block.props.contentPosition : "centered",
-    animateMainText: block.props.animateMainText === true,
+    // Backward compat: the flag was previously stored as `animateMainText`.
+    animate: block.props.animate === true || block.props.animateMainText === true,
   };
 }
 

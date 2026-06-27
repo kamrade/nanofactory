@@ -18,9 +18,10 @@
 
 /* ── Dual-image light/dark switching via CSS ─────────────── */
 
-.imageDark { display: none; }
-:global([data-mode="dark"]) .imageDark  { display: block; }
-:global([data-mode="dark"]) .imageLight { display: none; }
+/* Scoped under .mediaBg so specificity beats the zoom wrapper's `.image { display: block }`. */
+.mediaBg .imageDark { display: none; }
+:global([data-mode="dark"]) .mediaBg .imageDark  { display: block; }
+:global([data-mode="dark"]) .mediaBg .imageLight { display: none; }
 
 /* ── Shell (inner centered column) ──────────────────────── */
 

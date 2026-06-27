@@ -7,7 +7,7 @@ type HeroContentProps = {
   subtitle: string;
   buttonText: string;
   buttonAnchor: string;
-  animateMainText: boolean;
+  animate: boolean;
   headlineVariant: "default" | "centered";
   contentStackClassName: string;
   eyebrowClassName: string;
@@ -23,7 +23,7 @@ export function HeroContent({
   subtitle,
   buttonText,
   buttonAnchor,
-  animateMainText,
+  animate,
   headlineVariant,
   contentStackClassName,
   eyebrowClassName,
@@ -35,7 +35,7 @@ export function HeroContent({
   const eyebrowText = eyebrow.trim();
   const eyebrowNode = eyebrowText.length > 0 ? (
     <p className={eyebrowClassName}>
-      {animateMainText ? (
+      {animate ? (
         <TypewriterText text={eyebrowText} showCursor={false} typingSpeed={100} />
       ) : (
         eyebrowText
@@ -63,7 +63,7 @@ export function HeroContent({
       <HeroHeadline
         text={title}
         variant={headlineVariant}
-        animateMainText={animateMainText}
+        animate={animate}
       />
       {subtitleNode}
     </>

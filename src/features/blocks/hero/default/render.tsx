@@ -1,5 +1,4 @@
 import type { CSSProperties } from "react";
-import Image from "next/image";
 
 import styles from "./render.module.css";
 
@@ -13,6 +12,7 @@ import {
   resolveHeroSpacingScale,
 } from "../shared/helpers";
 import { HeroContent } from "../shared/hero-content";
+import { HeroMedia } from "../shared/hero-media";
 
 export function HeroDefaultRender({
   block,
@@ -27,13 +27,38 @@ export function HeroDefaultRender({
     buttonText,
     buttonAnchor,
     contentPosition,
-    animateMainText,
+    animate,
   } = readHeroRenderContent(block);
 
   const { defaultImageId, lightImageId, darkImageId } = readHeroImageIds(block);
   const lightAsset = resolveAssetById(lightImageId ?? defaultImageId, assetMap);
   const darkAsset = resolveAssetById(darkImageId ?? defaultImageId, assetMap);
   const sameImages = !lightAsset || !darkAsset || lightAsset.id === darkAsset.id;
+
+  const heroImages = sameImages
+    ? lightAsset
+      ? [{ src: lightAsset.publicUrl, alt: lightAsset.alt ?? lightAsset.originalFilename }]
+      : []
+    : [
+        ...(lightAsset
+          ? [
+              {
+                src: lightAsset.publicUrl,
+                alt: lightAsset.alt ?? lightAsset.originalFilename,
+                className: styles.imageLight,
+              },
+            ]
+          : []),
+        ...(darkAsset
+          ? [
+              {
+                src: darkAsset.publicUrl,
+                alt: darkAsset.alt ?? darkAsset.originalFilename,
+                className: styles.imageDark,
+              },
+            ]
+          : []),
+      ];
 
   const effectiveSpacingScale = resolveHeroSpacingScale(projectSpacingScale);
   const effectiveBorderRadius = resolveHeroBorderRadiusPolicy(projectBorderRadiusPolicy);
@@ -51,43 +76,8 @@ export function HeroDefaultRender({
       className={styles.root}
       style={radiusVars as CSSProperties}
     >
-      {lightAsset || darkAsset ? (
-        <div className={styles.mediaPanel}>
-          {sameImages ? (
-            lightAsset ? (
-              <Image
-                src={lightAsset.publicUrl}
-                alt={lightAsset.alt ?? lightAsset.originalFilename}
-                fill
-                unoptimized
-                style={{ objectFit: "cover" }}
-              />
-            ) : null
-          ) : (
-            <>
-              {lightAsset ? (
-                <Image
-                  src={lightAsset.publicUrl}
-                  alt={lightAsset.alt ?? lightAsset.originalFilename}
-                  fill
-                  unoptimized
-                  style={{ objectFit: "cover" }}
-                  className={styles.imageLight}
-                />
-              ) : null}
-              {darkAsset ? (
-                <Image
-                  src={darkAsset.publicUrl}
-                  alt={darkAsset.alt ?? darkAsset.originalFilename}
-                  fill
-                  unoptimized
-                  style={{ objectFit: "cover" }}
-                  className={styles.imageDark}
-                />
-              ) : null}
-            </>
-          )}
-        </div>
+      {heroImages.length > 0 ? (
+        <HeroMedia panelClassName={styles.mediaPanel} images={heroImages} animate={animate} />
       ) : null}
 
       <div className={styles.contentPanel}>
@@ -97,7 +87,7 @@ export function HeroDefaultRender({
           subtitle={subtitle}
           buttonText={buttonText}
           buttonAnchor={buttonAnchor}
-          animateMainText={animateMainText}
+          animate={animate}
           headlineVariant="default"
           contentStackClassName={styles.contentStack}
           eyebrowClassName={styles.eyebrow}

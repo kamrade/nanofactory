@@ -14,7 +14,7 @@ function renderHeroContent(
       subtitle: "Hero subtitle",
       buttonText: "Start now",
       buttonAnchor: "",
-      animateMainText: false,
+      animate: false,
       headlineVariant: "default",
       contentStackClassName: "content-stack",
       eyebrowClassName: "eyebrow",

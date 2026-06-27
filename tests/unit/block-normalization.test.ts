@@ -55,26 +55,34 @@ describe("block normalization", () => {
   it("normalizes hero animation and contentPosition fields and ignores legacy animateContent", () => {
     const normalized = heroDefaultDefinition.normalizeProps({
       title: "Hero",
-      animateMainText: true,
+      animate: true,
       animateContent: true,
       contentPosition: "top",
     });
 
     expect(normalized).toMatchObject({
       title: "Hero",
-      animateMainText: true,
+      animate: true,
       contentPosition: "top",
     });
     expect(normalized).not.toHaveProperty("animateContent");
 
+    // Legacy `animateMainText` is migrated onto the new `animate` key.
+    const legacy = heroDefaultDefinition.normalizeProps({
+      title: "Hero",
+      animateMainText: true,
+    });
+    expect(legacy).toMatchObject({ animate: true });
+    expect(legacy).not.toHaveProperty("animateMainText");
+
     const fallback = heroCenteredDefinition.normalizeProps({
       contentPosition: "invalid",
-      animateMainText: "yes",
+      animate: "yes",
     });
 
     expect(fallback).toMatchObject({
       contentPosition: "centered",
-      animateMainText: false,
+      animate: false,
     });
   });
 

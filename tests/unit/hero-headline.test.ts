@@ -25,7 +25,7 @@ describe("HeroHeadline", () => {
       createElement(HeroHeadline, {
         text: "Animate me",
         variant: "centered",
-        animateMainText: true,
+        animate: true,
       })
     );
 

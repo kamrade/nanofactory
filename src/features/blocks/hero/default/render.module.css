@@ -105,9 +105,10 @@
 
 /* ── Dual-image light/dark switching via CSS ─────────────── */
 
-.imageDark { display: none; }
-:global([data-mode="dark"]) .imageDark  { display: block; }
-:global([data-mode="dark"]) .imageLight { display: none; }
+/* Scoped under .mediaPanel so specificity beats the zoom wrapper's `.image { display: block }`. */
+.mediaPanel .imageDark { display: none; }
+:global([data-mode="dark"]) .mediaPanel .imageDark  { display: block; }
+:global([data-mode="dark"]) .mediaPanel .imageLight { display: none; }
 
 /* ── Button ──────────────────────────────────────────────── */
 

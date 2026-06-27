@@ -9,17 +9,17 @@ import styles from "./hero-headline.module.css";
 type HeroHeadlineProps = {
   text: string;
   variant: "default" | "centered";
-  animateMainText?: boolean;
+  animate?: boolean;
 };
 
 export function HeroHeadline({
   text,
   variant,
-  animateMainText = false,
+  animate = false,
 }: HeroHeadlineProps) {
   return (
     <h1 className={cx(styles.headline, styles[variant])}>
-      {animateMainText ? (
+      {animate ? (
         <ViewportAnimation
           type="word-stagger"
           text={text}
