@@ -23,12 +23,12 @@ export const uikitSectionNavItems: UikitSectionNavItem[] = [
   { id: "dialog", label: "Dialog" },
   { id: "modal", label: "Modal" },
   { id: "markdown", label: "Markdown" },
-  { id: "typewriter", label: "TypewriterText" },
-  { id: "typewriter-scroll", label: "TypewriterText / Scroll Trigger" },
-  { id: "highlight-sweep", label: "HighlightSweepText" },
 ];
 
 export const animationsSectionNavItems: UikitSectionNavItem[] = [
+  { id: "typewriter", label: "TypewriterText" },
+  { id: "typewriter-scroll", label: "TypewriterText / Scroll Trigger" },
+  { id: "highlight-sweep", label: "HighlightSweepText" },
   { id: "highlight-sweep-scroll", label: "HighlightSweepText / Scroll Trigger" },
   { id: "highlight-sweep-hover", label: "HighlightSweepText / Hover Trigger" },
   { id: "offset-reveal", label: "OffsetRevealText" },

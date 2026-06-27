@@ -12,8 +12,6 @@ import {
   InputsSection,
   type UiSize,
   TypographyButtonsBadgesSection,
-  TypewriterSection,
-  HighlightSweepSection,
 } from "@/app/showcase/uikit-sections";
 import { animationsSectionNavItems, uikitSectionNavItems } from "@/app/showcase/uikit-sections/nav";
 import { UikitSidebar } from "@/app/showcase/uikit-sidebar";
@@ -126,8 +124,6 @@ export function ShowcaseClient({
                 <DialogDemoCard uiSize={uiSize} />
                 <ModalDemoCard uiSize={uiSize} />
                 <MarkdownDemoCard />
-                <TypewriterSection uiSize={uiSize} />
-                <HighlightSweepSection uiSize={uiSize} />
               </div>
             </div>
           </div>

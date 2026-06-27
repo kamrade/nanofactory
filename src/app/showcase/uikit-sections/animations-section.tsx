@@ -1,9 +1,10 @@
 "use client";
 
-import { HighlightSweepHoverSection, HighlightSweepScrollSection } from "./highlight-sweep-section";
-import { OffsetRevealScrollSection, OffsetRevealSection } from "./offset-reveal-section";
+import { HighlightSweepSection, HighlightSweepHoverSection, HighlightSweepScrollSection } from "./highlight-sweep-section";
+import { OffsetRevealSection, OffsetRevealScrollSection } from "./offset-reveal-section";
 import { WordStaggerRevealSection } from "./word-stagger-reveal-section";
 import { WordStaggerRevealScrollSection } from "./word-stagger-reveal-scroll-section";
+import { TypewriterSection } from "./typewriter-section";
 import type { UiSize } from "./types";
 
 type AnimationsSectionProps = {
@@ -13,6 +14,8 @@ type AnimationsSectionProps = {
 export function AnimationsSection({ uiSize }: AnimationsSectionProps) {
   return (
     <div className="grid gap-8">
+      <TypewriterSection uiSize={uiSize} />
+      <HighlightSweepSection uiSize={uiSize} />
       <HighlightSweepScrollSection />
       <HighlightSweepHoverSection />
       <OffsetRevealSection uiSize={uiSize} />
