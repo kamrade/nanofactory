@@ -12,7 +12,7 @@ import { UISwitcher } from "@/components/ui/switcher";
 import { UITextInput } from "@/components/ui/text-input";
 
 import { UikitSectionAnchor } from "./section-anchor";
-import type { UiSize } from "./types";
+import type { UiSize } from "../uikit-sections/types";
 
 type Direction = "up" | "down" | "left" | "right";
 

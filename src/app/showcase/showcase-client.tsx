@@ -6,14 +6,15 @@ import { DialogDemoCard, MarkdownDemoCard, ModalDemoCard } from "@/app/showcase/
 import {
   ControlsAndMenusSection,
   BorderlessFormLayoutSection,
-  AnimationsSection,
   FeedbackAndSheetSection,
   FormLayoutSection,
   InputsSection,
   type UiSize,
   TypographyButtonsBadgesSection,
 } from "@/app/showcase/uikit-sections";
-import { animationsSectionNavItems, uikitSectionNavItems } from "@/app/showcase/uikit-sections/nav";
+import { AnimationsSection } from "@/app/showcase/animation-sections";
+import { animationsSectionNavItems } from "@/app/showcase/animation-sections/nav";
+import { uikitSectionNavItems } from "@/app/showcase/uikit-sections/nav";
 import { UikitSidebar } from "@/app/showcase/uikit-sidebar";
 import { AppStickyHeader } from "@/components/navigation/app-sticky-header";
 import { ProjectRenderer } from "@/components/projects/project-renderer";

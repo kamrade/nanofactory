@@ -13,7 +13,7 @@ import { UITextInput } from "@/components/ui/text-input";
 
 import { useVisibleOnce } from "@/hooks/use-visible-once";
 import { UikitSectionAnchor } from "./section-anchor";
-import type { UiSize } from "./types";
+import type { UiSize } from "../uikit-sections/types";
 
 const DEFERRED_DELAY = 10_000_000;
 
