@@ -3,7 +3,7 @@ export const VIEWPORT_TRIGGER_THRESHOLD = 0.5;
 export const VIEWPORT_WORD_STAGGER_DEFAULTS = {
   direction: "up",
   offset: "16px",
-  duration: 700,
+  duration: 2500,
   stagger: 80,
   startDelay: 0,
   reverse: false,

@@ -1,3 +1,5 @@
+"use client";
+
 import React, { useMemo } from "react";
 import { useTypewriter, type TypewriterDirection } from "./use-typewriter";
 import "./typewriter-text.css";

@@ -1,5 +1,4 @@
-import { ViewportAnimation } from "@/components/motion/viewport-animation";
-import { VIEWPORT_WORD_STAGGER_PRESETS } from "@/components/motion/viewport-animation-presets";
+import { TypewriterText } from "@/components/ui/typewriter-text";
 import { HeroHeadline } from "./hero-headline";
 
 type HeroContentProps = {
@@ -37,12 +36,7 @@ export function HeroContent({
   const eyebrowNode = eyebrowText.length > 0 ? (
     <p className={eyebrowClassName}>
       {animateMainText ? (
-        <ViewportAnimation
-          type="word-stagger"
-          text={eyebrowText}
-          triggerMode="immediate"
-          {...VIEWPORT_WORD_STAGGER_PRESETS.heroEyebrow}
-        />
+        <TypewriterText text={eyebrowText} showCursor={false} typingSpeed={100} />
       ) : (
         eyebrowText
       )}

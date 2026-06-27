@@ -1,3 +1,5 @@
+"use client";
+
 import { useEffect, useReducer, useRef, useCallback } from "react";
 
 type Phase = "idle" | "startDelay" | "typing" | "pauseBeforeDelete" | "deleting" | "pauseBeforeNext" | "done";
