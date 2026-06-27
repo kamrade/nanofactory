@@ -19,6 +19,8 @@ export type OffsetRevealTextProps = {
   onComplete?: (value: string) => void;
 };
 
+export type OffsetRevealProps = OffsetRevealTextProps;
+
 const toCssLength = (v: string | number): string =>
   typeof v === "number" ? `${v}px` : v;
 
@@ -40,7 +42,7 @@ function offsetToTransform(
 
 type Phase = "priming" | "animating" | "end";
 
-export function OffsetRevealText({
+export function OffsetReveal({
   text,
   children,
   as = "span",
@@ -56,7 +58,7 @@ export function OffsetRevealText({
   style,
   onStart,
   onComplete,
-}: OffsetRevealTextProps) {
+}: OffsetRevealProps) {
   // priming   = transition disabled, transform at offset (snap)
   // animating = transition enabled, transform at origin (in-flight)
   // end       = settled at origin
@@ -149,4 +151,5 @@ export function OffsetRevealText({
   );
 }
 
+export const OffsetRevealText = OffsetReveal;
 export default OffsetRevealText;

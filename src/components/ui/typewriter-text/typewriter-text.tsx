@@ -1,5 +1,5 @@
 import React, { useMemo } from "react";
-import { useTypewriter } from "./use-typewriter";
+import { useTypewriter, type TypewriterDirection } from "./use-typewriter";
 import "./typewriter-text.css";
 
 export type TypewriterTextProps = {
@@ -11,6 +11,7 @@ export type TypewriterTextProps = {
   pauseBeforeDelete?: number;
   pauseBeforeNext?: number;
   startDelay?: number;
+  direction?: TypewriterDirection;
   loop?: boolean;
   showCursor?: boolean;
   cursorCharacter?: string;
@@ -50,6 +51,7 @@ export function TypewriterText({
   pauseBeforeDelete = 1500,
   pauseBeforeNext = 500,
   startDelay = 0,
+  direction = "in",
   loop = false,
   showCursor = false,
   cursorCharacter = "|",
@@ -78,6 +80,7 @@ export function TypewriterText({
     pauseBeforeDelete,
     pauseBeforeNext,
     startDelay,
+    direction,
     loop,
     shouldAnimate: !prefersReducedMotion,
     restartKey,
@@ -87,7 +90,11 @@ export function TypewriterText({
     onCycleComplete,
   });
 
-  const shownText = prefersReducedMotion ? resolvedTexts[0] ?? "" : displayText;
+  const shownText = prefersReducedMotion
+    ? direction === "out"
+      ? ""
+      : resolvedTexts[0] ?? ""
+    : displayText;
   const ariaLabel = prefersReducedMotion ? shownText : fullText;
 
   const whiteSpaceStyle: React.CSSProperties | undefined = preserveWhitespace

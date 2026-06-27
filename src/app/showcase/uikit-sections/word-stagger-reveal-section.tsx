@@ -7,6 +7,7 @@ import { UIButton } from "@/components/ui/button";
 import { UICard } from "@/components/ui/card";
 import { UIFormRow } from "@/components/ui/form-row";
 import { UISegmentedControl } from "@/components/ui/segmented-control";
+import { UISlider } from "@/components/ui/slider";
 import { UISwitcher } from "@/components/ui/switcher";
 import { UITextInput } from "@/components/ui/text-input";
 
@@ -18,7 +19,7 @@ type Direction = "up" | "down" | "left" | "right";
 export function WordStaggerRevealSection({ uiSize }: { uiSize: UiSize }) {
   const [text, setText] = useState("Build pages that read clearly.");
   const [direction, setDirection] = useState<Direction>("up");
-  const [offset, setOffset] = useState("18px");
+  const [offset, setOffset] = useState(18);
   const [duration, setDuration] = useState(700);
   const [stagger, setStagger] = useState(90);
   const [startDelay, setStartDelay] = useState(0);
@@ -37,7 +38,7 @@ export function WordStaggerRevealSection({ uiSize }: { uiSize: UiSize }) {
               <WordStaggerReveal
                 text={text || "Build pages that read clearly."}
                 direction={direction}
-                offset={offset}
+                offset={`${offset}px`}
                 duration={duration}
                 stagger={stagger}
                 startDelay={startDelay}
@@ -78,47 +79,52 @@ export function WordStaggerRevealSection({ uiSize }: { uiSize: UiSize }) {
               />
             </UIFormRow>
 
-            <UIFormRow label="Offset" htmlFor="wsr-offset" borderless>
-              <UITextInput
-                id="wsr-offset"
-                size="sm"
-                borderless
+            <UIFormRow label="Offset" borderless>
+              <UISlider
+                ariaLabel="Offset"
+                min={0}
+                max={100}
+                step={1}
                 value={offset}
                 onValueChange={setOffset}
-                placeholder="18px"
+                showValue
+                valueFormatter={(value) => `${value}px`}
               />
             </UIFormRow>
 
-            <UIFormRow label="Duration (ms)" htmlFor="wsr-duration" borderless>
-              <UITextInput
-                id="wsr-duration"
-                size="sm"
-                borderless
-                type="number"
-                value={String(duration)}
-                onValueChange={(v) => setDuration(Math.max(50, Number(v) || 700))}
+            <UIFormRow label="Duration (ms)" borderless>
+              <UISlider
+                ariaLabel="Duration"
+                min={0}
+                max={10000}
+                step={10}
+                value={duration}
+                onValueChange={setDuration}
+                showValue
               />
             </UIFormRow>
 
-            <UIFormRow label="Stagger (ms)" htmlFor="wsr-stagger" borderless>
-              <UITextInput
-                id="wsr-stagger"
-                size="sm"
-                borderless
-                type="number"
-                value={String(stagger)}
-                onValueChange={(v) => setStagger(Math.max(0, Number(v) || 90))}
+            <UIFormRow label="Stagger (ms)" borderless>
+              <UISlider
+                ariaLabel="Stagger"
+                min={0}
+                max={1000}
+                step={1}
+                value={stagger}
+                onValueChange={setStagger}
+                showValue
               />
             </UIFormRow>
 
-            <UIFormRow label="Start delay (ms)" htmlFor="wsr-start-delay" borderless>
-              <UITextInput
-                id="wsr-start-delay"
-                size="sm"
-                borderless
-                type="number"
-                value={String(startDelay)}
-                onValueChange={(v) => setStartDelay(Math.max(0, Number(v) || 0))}
+            <UIFormRow label="Start delay (ms)" borderless>
+              <UISlider
+                ariaLabel="Start delay"
+                min={0}
+                max={1000}
+                step={1}
+                value={startDelay}
+                onValueChange={setStartDelay}
+                showValue
               />
             </UIFormRow>
 

@@ -48,20 +48,20 @@ export function MdRenderer({ content, className }: MdRendererProps) {
         skipHtml
         components={{
           h1: ({ ...props }) => (
-            <h1 className="mb-2 mt-0 text-2xl font-semibold tracking-tight text-text-main" {...props} />
+            <h1 className="mb-2 mt-0 text-h1 text-text-main" {...props} />
           ),
           h2: ({ ...props }) => (
-            <h2 className="mb-2 mt-0 text-xl font-semibold tracking-tight text-text-main" {...props} />
+            <h2 className="mb-2 mt-0 text-h2 text-text-placeholder" {...props} />
           ),
           h3: ({ ...props }) => (
-            <h3 className="mb-1.5 mt-0 text-lg font-semibold text-text-main" {...props} />
+            <h3 className="mb-1.5 mt-0 text-h3 text-text-main" {...props} />
           ),
           h4: ({ ...props }) => (
             <h4 className="mb-1.5 mt-0 text-base font-semibold text-text-main" {...props} />
           ),
           h5: ({ ...props }) => <h5 className="mb-1 mt-0 text-sm font-semibold text-text-main" {...props} />,
           h6: ({ ...props }) => <h6 className="mb-1 mt-0 text-xs font-semibold uppercase tracking-wide text-text-main" {...props} />,
-          p: ({ ...props }) => <p className="my-0 leading-6" {...props} />,
+          p: ({ ...props }) => <p className="my-0" {...props} />,
           ul: ({ ...props }) => <ul className="my-0 list-disc space-y-1 pl-5" {...props} />,
           ol: ({ ...props }) => <ol className="my-0 list-decimal space-y-1 pl-5" {...props} />,
           li: ({ ...props }) => <li className="leading-6" {...props} />,

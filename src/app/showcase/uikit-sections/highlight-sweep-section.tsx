@@ -8,6 +8,7 @@ import { UIButton } from "@/components/ui/button";
 import { UICard } from "@/components/ui/card";
 import { UIFormRow } from "@/components/ui/form-row";
 import { UISegmentedControl } from "@/components/ui/segmented-control";
+import { UISlider } from "@/components/ui/slider";
 import { UISwitcher } from "@/components/ui/switcher";
 import { UITextInput } from "@/components/ui/text-input";
 
@@ -104,8 +105,8 @@ export function HighlightSweepSection({ uiSize }: { uiSize: UiSize }) {
   const [duration, setDuration] = useState(700);
   const [startDelay, setStartDelay] = useState(0);
   const [direction, setDirection] = useState<"left-to-right" | "right-to-left">("left-to-right");
-  const [thickness, setThickness] = useState("0.6em");
-  const [offsetY, setOffsetY] = useState("0.1em");
+  const [thickness, setThickness] = useState(0.6);
+  const [offsetY, setOffsetY] = useState(0.1);
   const [rounded, setRounded] = useState(true);
   const [disabled, setDisabled] = useState(false);
   const [restartKey, setRestartKey] = useState(0);
@@ -119,13 +120,14 @@ export function HighlightSweepSection({ uiSize }: { uiSize: UiSize }) {
           <div className="flex min-h-[96px] items-center justify-center rounded-xl border border-line bg-surface-alt px-5 py-6">
             <p className="text-h2 font-bold text-text-main">
               <HighlightSweepText
+                key={restartKey}
                 text={text || "Ship it."}
                 color={resolvedColor}
                 duration={duration}
                 startDelay={startDelay}
                 direction={direction}
-                thickness={thickness}
-                offsetY={offsetY}
+                thickness={`${thickness}em`}
+                offsetY={`${offsetY}em`}
                 rounded={rounded}
                 disabled={disabled}
                 restartKey={restartKey}
@@ -167,25 +169,27 @@ export function HighlightSweepSection({ uiSize }: { uiSize: UiSize }) {
               />
             </UIFormRow>
 
-            <UIFormRow label="Duration (ms)" htmlFor="hst-duration" borderless>
-              <UITextInput
-                id="hst-duration"
-                size="sm"
-                borderless
-                type="number"
-                value={String(duration)}
-                onValueChange={(v) => setDuration(Math.max(50, Number(v) || 700))}
+            <UIFormRow label="Duration (ms)" borderless>
+              <UISlider
+                ariaLabel="Duration"
+                min={0}
+                max={10000}
+                step={10}
+                value={duration}
+                onValueChange={setDuration}
+                showValue
               />
             </UIFormRow>
 
-            <UIFormRow label="Start delay (ms)" htmlFor="hst-start-delay" borderless>
-              <UITextInput
-                id="hst-start-delay"
-                size="sm"
-                borderless
-                type="number"
-                value={String(startDelay)}
-                onValueChange={(v) => setStartDelay(Math.max(0, Number(v) || 0))}
+            <UIFormRow label="Start delay (ms)" borderless>
+              <UISlider
+                ariaLabel="Start delay"
+                min={0}
+                max={10000}
+                step={10}
+                value={startDelay}
+                onValueChange={setStartDelay}
+                showValue
               />
             </UIFormRow>
 
@@ -203,25 +207,29 @@ export function HighlightSweepSection({ uiSize }: { uiSize: UiSize }) {
               />
             </UIFormRow>
 
-            <UIFormRow label="Thickness" htmlFor="hst-thickness" borderless>
-              <UITextInput
-                id="hst-thickness"
-                size="sm"
-                borderless
+            <UIFormRow label="Thickness" borderless>
+              <UISlider
+                ariaLabel="Thickness"
+                min={0}
+                max={2}
+                step={0.01}
                 value={thickness}
                 onValueChange={setThickness}
-                placeholder="0.6em"
+                showValue
+                valueFormatter={(value) => `${value.toFixed(2)}em`}
               />
             </UIFormRow>
 
-            <UIFormRow label="Offset Y" htmlFor="hst-offset-y" borderless>
-              <UITextInput
-                id="hst-offset-y"
-                size="sm"
-                borderless
+            <UIFormRow label="OffsetY" borderless>
+              <UISlider
+                ariaLabel="OffsetY"
+                min={0}
+                max={2}
+                step={0.01}
                 value={offsetY}
                 onValueChange={setOffsetY}
-                placeholder="0.1em"
+                showValue
+                valueFormatter={(value) => `${value.toFixed(2)}em`}
               />
             </UIFormRow>
 

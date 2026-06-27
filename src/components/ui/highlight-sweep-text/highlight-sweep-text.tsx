@@ -46,6 +46,7 @@ export function HighlightSweepText({
   onComplete,
 }: HighlightSweepTextProps) {
   const [active, setActive] = useState(false);
+  const startFrameRef = useRef<ReturnType<typeof requestAnimationFrame> | null>(null);
   const startTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
   const completeTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
   const onStartRef = useRef(onStart);
@@ -57,6 +58,7 @@ export function HighlightSweepText({
   }, [onStart, onComplete]);
 
   useEffect(() => {
+    if (startFrameRef.current) cancelAnimationFrame(startFrameRef.current);
     if (startTimerRef.current) clearTimeout(startTimerRef.current);
     if (completeTimerRef.current) clearTimeout(completeTimerRef.current);
 
@@ -69,15 +71,18 @@ export function HighlightSweepText({
 
     setActive(false);
 
-    startTimerRef.current = setTimeout(() => {
-      setActive(true);
-      onStartRef.current?.();
-      completeTimerRef.current = setTimeout(() => {
-        onCompleteRef.current?.(text);
-      }, duration);
-    }, Math.max(0, startDelay));
+    startFrameRef.current = requestAnimationFrame(() => {
+      startTimerRef.current = setTimeout(() => {
+        setActive(true);
+        onStartRef.current?.();
+        completeTimerRef.current = setTimeout(() => {
+          onCompleteRef.current?.(text);
+        }, duration);
+      }, Math.max(0, startDelay));
+    });
 
     return () => {
+      if (startFrameRef.current) cancelAnimationFrame(startFrameRef.current);
       if (startTimerRef.current) clearTimeout(startTimerRef.current);
       if (completeTimerRef.current) clearTimeout(completeTimerRef.current);
     };

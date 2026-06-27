@@ -13,6 +13,8 @@ export const uikitSectionNavItems: UikitSectionNavItem[] = [
   { id: "controls-menu", label: "Controls / Menu" },
   { id: "inputs-text-input", label: "Inputs / Text Input" },
   { id: "inputs-select", label: "Inputs / Select" },
+  { id: "inputs-slider", label: "Inputs / Slider" },
+  { id: "inputs-slider-ranges", label: "Inputs / Slider / Ranges" },
   { id: "inputs-multiselect-list", label: "Inputs / MultiSelect List" },
   { id: "inputs-multiselect-dropdown", label: "Inputs / MultiSelect Dropdown" },
   { id: "inputs-autocomplete", label: "Inputs / Autocomplete" },
@@ -35,4 +37,6 @@ export const animationsSectionNavItems: UikitSectionNavItem[] = [
   { id: "offset-reveal-scroll", label: "OffsetRevealText / Scroll Trigger" },
   { id: "word-stagger-reveal", label: "WordStaggerReveal" },
   { id: "word-stagger-reveal-scroll", label: "WordStaggerReveal / Scroll Trigger" },
+  { id: "typewriter-viewport", label: "TypewriterText / Viewport Trigger" },
+  { id: "viewport-reveal", label: "Viewport Reveal" },
 ];

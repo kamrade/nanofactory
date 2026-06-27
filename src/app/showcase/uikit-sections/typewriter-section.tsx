@@ -7,6 +7,7 @@ import { UIButton } from "@/components/ui/button";
 import { UICard } from "@/components/ui/card";
 import { UIFormRow } from "@/components/ui/form-row";
 import { UISegmentedControl } from "@/components/ui/segmented-control";
+import { UISlider } from "@/components/ui/slider";
 import { UISwitcher } from "@/components/ui/switcher";
 import { UITextInput } from "@/components/ui/text-input";
 
@@ -170,58 +171,63 @@ export function TypewriterSection({ uiSize }: { uiSize: UiSize }) {
             </>
           )}
 
-          <UIFormRow label="Typing speed (ms / char)" htmlFor="tw-typing-speed" borderless>
-            <UITextInput
-              id="tw-typing-speed"
-              size="sm"
-              borderless
-              type="number"
-              value={String(typingSpeed)}
-              onValueChange={(v) => setTypingSpeed(Math.max(1, Number(v) || 1))}
+          <UIFormRow label="Typing speed (ms / char)" borderless>
+            <UISlider
+              ariaLabel="Typing speed"
+              min={0}
+              max={1000}
+              step={1}
+              value={typingSpeed}
+              onValueChange={setTypingSpeed}
+              showValue
             />
           </UIFormRow>
 
-          <UIFormRow label="Deleting speed (ms / char)" htmlFor="tw-deleting-speed" borderless>
-            <UITextInput
-              id="tw-deleting-speed"
-              size="sm"
-              borderless
-              type="number"
-              value={String(deletingSpeed)}
-              onValueChange={(v) => setDeletingSpeed(Math.max(1, Number(v) || 1))}
+          <UIFormRow label="Deleting speed (ms / char)" borderless>
+            <UISlider
+              ariaLabel="Deleting speed"
+              min={0}
+              max={1000}
+              step={1}
+              value={deletingSpeed}
+              onValueChange={setDeletingSpeed}
+              showValue
             />
           </UIFormRow>
 
-          <UIFormRow label="Pause before delete (ms)" htmlFor="tw-pause-delete" borderless>
-            <UITextInput
-              id="tw-pause-delete"
-              size="sm"
-              borderless
-              type="number"
-              value={String(pauseBeforeDelete)}
-              onValueChange={(v) => setPauseBeforeDelete(Math.max(0, Number(v) || 0))}
+          <UIFormRow label="Pause before delete (ms)" borderless>
+            <UISlider
+              ariaLabel="Pause before delete"
+              min={0}
+              max={10000}
+              step={10}
+              value={pauseBeforeDelete}
+              onValueChange={setPauseBeforeDelete}
+              showValue
             />
           </UIFormRow>
 
-          <UIFormRow label="Pause before next (ms)" htmlFor="tw-pause-next" borderless>
-            <UITextInput
-              id="tw-pause-next"
-              size="sm"
-              borderless
-              type="number"
-              value={String(pauseBeforeNext)}
-              onValueChange={(v) => setPauseBeforeNext(Math.max(0, Number(v) || 0))}
+          <UIFormRow label="Pause before next (ms)" borderless>
+            <UISlider
+              ariaLabel="Pause before next"
+              min={0}
+              max={10000}
+              step={10}
+              value={pauseBeforeNext}
+              onValueChange={setPauseBeforeNext}
+              showValue
             />
           </UIFormRow>
 
-          <UIFormRow label="Start delay (ms)" htmlFor="tw-start-delay" borderless>
-            <UITextInput
-              id="tw-start-delay"
-              size="sm"
-              borderless
-              type="number"
-              value={String(startDelay)}
-              onValueChange={(v) => setStartDelay(Math.max(0, Number(v) || 0))}
+          <UIFormRow label="Start delay (ms)" borderless>
+            <UISlider
+              ariaLabel="Start delay"
+              min={0}
+              max={10000}
+              step={10}
+              value={startDelay}
+              onValueChange={setStartDelay}
+              showValue
             />
           </UIFormRow>
 
@@ -245,14 +251,15 @@ export function TypewriterSection({ uiSize }: { uiSize: UiSize }) {
                   placeholder="|"
                 />
               </UIFormRow>
-              <UIFormRow label="Cursor blink speed (ms)" htmlFor="tw-cursor-blink" borderless>
-                <UITextInput
-                  id="tw-cursor-blink"
-                  size="sm"
-                  borderless
-                  type="number"
-                  value={String(cursorBlinkSpeed)}
-                  onValueChange={(v) => setCursorBlinkSpeed(Math.max(100, Number(v) || 530))}
+              <UIFormRow label="Cursor blink speed (ms)" borderless>
+                <UISlider
+                  ariaLabel="Cursor blink speed"
+                  min={100}
+                  max={1000}
+                  step={10}
+                  value={cursorBlinkSpeed}
+                  onValueChange={setCursorBlinkSpeed}
+                  showValue
                 />
               </UIFormRow>
             </>

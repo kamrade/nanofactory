@@ -1,6 +1,7 @@
 import { useEffect, useReducer, useRef, useCallback } from "react";
 
 type Phase = "idle" | "startDelay" | "typing" | "pauseBeforeDelete" | "deleting" | "pauseBeforeNext" | "done";
+export type TypewriterDirection = "in" | "out";
 
 interface State {
   phase: Phase;
@@ -14,7 +15,7 @@ type Action =
   | { type: "TYPE_CHAR"; char: string }
   | { type: "DELETE_CHAR" }
   | { type: "NEXT_TEXT"; textIndex: number }
-  | { type: "RESET"; displayText?: string };
+  | { type: "RESET"; displayText?: string; charIndex?: number; textIndex?: number; phase?: Phase };
 
 function reducer(state: State, action: Action): State {
   switch (action.type) {
@@ -41,9 +42,9 @@ function reducer(state: State, action: Action): State {
       };
     case "RESET":
       return {
-        phase: "idle",
-        textIndex: 0,
-        charIndex: 0,
+        phase: action.phase ?? "idle",
+        textIndex: action.textIndex ?? 0,
+        charIndex: action.charIndex ?? 0,
         displayText: action.displayText ?? "",
       };
     default:
@@ -58,6 +59,7 @@ export interface UseTypewriterOptions {
   pauseBeforeDelete: number;
   pauseBeforeNext: number;
   startDelay: number;
+  direction: TypewriterDirection;
   loop: boolean;
   shouldAnimate: boolean;
   restartKey?: string | number;
@@ -75,6 +77,7 @@ export function useTypewriter(options: UseTypewriterOptions) {
     pauseBeforeDelete,
     pauseBeforeNext,
     startDelay,
+    direction,
     loop,
     shouldAnimate,
     restartKey,
@@ -109,13 +112,26 @@ export function useTypewriter(options: UseTypewriterOptions) {
   useEffect(() => {
     clearTimer();
     if (!shouldAnimate) {
-      dispatch({ type: "RESET", displayText: texts[0] ?? "" });
+      const currentText = texts[0] ?? "";
+      dispatch({
+        type: "RESET",
+        displayText: direction === "out" ? "" : currentText,
+        charIndex: direction === "out" ? 0 : currentText.length,
+        textIndex: 0,
+        phase: "done",
+      });
       return;
     }
-    dispatch({ type: "RESET" });
-    dispatch({ type: "SET_PHASE", phase: "startDelay" });
+    const currentText = texts[0] ?? "";
+    dispatch({
+      type: "RESET",
+      displayText: direction === "out" ? currentText : "",
+      charIndex: direction === "out" ? currentText.length : 0,
+      textIndex: 0,
+      phase: "startDelay",
+    });
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [texts.join("\x00"), shouldAnimate, clearTimer, restartKey]);
+  }, [texts.join("\x00"), shouldAnimate, direction, clearTimer, restartKey]);
 
   // State machine
   useEffect(() => {
@@ -129,7 +145,7 @@ export function useTypewriter(options: UseTypewriterOptions) {
       case "startDelay":
         timerRef.current = setTimeout(() => {
           callbacksRef.current.onTypingStart?.();
-          dispatch({ type: "SET_PHASE", phase: "typing" });
+          dispatch({ type: "SET_PHASE", phase: direction === "out" ? "deleting" : "typing" });
         }, startDelay);
         break;
 
@@ -173,6 +189,11 @@ export function useTypewriter(options: UseTypewriterOptions) {
           callbacksRef.current.onDeleteComplete?.(deletedText);
           callbacksRef.current.onCycleComplete?.(state.textIndex);
 
+          if (direction === "out") {
+            dispatch({ type: "SET_PHASE", phase: "done" });
+            break;
+          }
+
           if (isMultiple) {
             const nextIndex = (state.textIndex + 1) % textsRef.current.length;
             dispatch({ type: "NEXT_TEXT", textIndex: nextIndex });
@@ -198,7 +219,20 @@ export function useTypewriter(options: UseTypewriterOptions) {
     }
 
     return clearTimer;
-  }, [state.phase, state.charIndex, state.textIndex, shouldAnimate, typingSpeed, deletingSpeed, pauseBeforeDelete, pauseBeforeNext, startDelay, loop, clearTimer]);
+  }, [
+    state.phase,
+    state.charIndex,
+    state.textIndex,
+    shouldAnimate,
+    direction,
+    typingSpeed,
+    deletingSpeed,
+    pauseBeforeDelete,
+    pauseBeforeNext,
+    startDelay,
+    loop,
+    clearTimer,
+  ]);
 
   const fullText = texts[state.textIndex] ?? "";
 

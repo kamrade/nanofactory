@@ -16,6 +16,7 @@ import {
 } from "@/components/ui/dialog";
 import { UISegmentedControl } from "@/components/ui/segmented-control";
 import { UISelect } from "@/components/ui/select";
+import { UISlider } from "@/components/ui/slider";
 import { UISwitcher } from "@/components/ui/switcher";
 import { UIFormRow } from "@/components/ui/form-row";
 import { UITextInput } from "@/components/ui/text-input";
@@ -33,6 +34,7 @@ export function BorderlessFormLayoutSection({ uiSize }: { uiSize: UiSize }) {
   const [autocompleteValue, setAutocompleteValue] = useState("");
   const [autocompleteSelection, setAutocompleteSelection] = useState("none");
   const [multiSelectValue, setMultiSelectValue] = useState<string[]>(["react"]);
+  const [intensityValue, setIntensityValue] = useState(65);
   const [nameValue, setNameValue] = useState("");
   const [isPublished, setIsPublished] = useState(false);
   const [switcherEnabled, setSwitcherEnabled] = useState(true);
@@ -158,6 +160,25 @@ export function BorderlessFormLayoutSection({ uiSize }: { uiSize: UiSize }) {
                   ]}
                 />
               </div>
+            </UIFormRow>
+
+            <UIFormRow
+              label="Intensity"
+              labelId="intensity-label-borderless"
+              error={undefined}
+              underline
+              contentClassName="max-w-none"
+            >
+              <UISlider
+                ariaLabel="Intensity"
+                value={intensityValue}
+                onValueChange={setIntensityValue}
+                min={0}
+                max={100}
+                step={1}
+                showValue
+                valueFormatter={(value) => `${value}%`}
+              />
             </UIFormRow>
 
             {/* TEXTINPUT */}

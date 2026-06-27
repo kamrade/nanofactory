@@ -2,12 +2,13 @@
 
 import { useState } from "react";
 
-import { OffsetRevealText } from "@/components/ui/offset-reveal-text";
+import { OffsetReveal, OffsetRevealText } from "@/components/ui/offset-reveal-text";
 import { useVisibleOnce } from "@/hooks/use-visible-once";
 import { UIButton } from "@/components/ui/button";
 import { UICard } from "@/components/ui/card";
 import { UIFormRow } from "@/components/ui/form-row";
 import { UISegmentedControl } from "@/components/ui/segmented-control";
+import { UISlider } from "@/components/ui/slider";
 import { UISwitcher } from "@/components/ui/switcher";
 import { UITextInput } from "@/components/ui/text-input";
 
@@ -52,13 +53,21 @@ function ScrollRevealItem({ label, children }: ScrollRevealItemProps) {
 export function OffsetRevealSection({ uiSize }: { uiSize: UiSize }) {
   const [text, setText] = useState("Ship it.");
   const [direction, setDirection] = useState<Direction>("down");
-  const [offset, setOffset] = useState("24px");
+  const [offset, setOffset] = useState(24);
   const [duration, setDuration] = useState(900);
   const [startDelay, setStartDelay] = useState(0);
   const [fade, setFade] = useState(false);
   const [blur, setBlur] = useState(false);
   const [disabled, setDisabled] = useState(false);
   const [restartKey, setRestartKey] = useState(0);
+  const [objectRestartKey, setObjectRestartKey] = useState(0);
+  const [objectDirection, setObjectDirection] = useState<Direction>("up");
+  const [objectOffset, setObjectOffset] = useState(24);
+  const [objectDuration, setObjectDuration] = useState(900);
+  const [objectStartDelay, setObjectStartDelay] = useState(0);
+  const [objectFade, setObjectFade] = useState(true);
+  const [objectBlur, setObjectBlur] = useState(false);
+  const [objectDisabled, setObjectDisabled] = useState(false);
 
   return (
     <>
@@ -69,7 +78,7 @@ export function OffsetRevealSection({ uiSize }: { uiSize: UiSize }) {
               <OffsetRevealText
                 text={text || "Ship it."}
                 direction={direction}
-                offset={offset}
+                offset={`${offset}px`}
                 duration={duration}
                 startDelay={startDelay}
                 fade={fade}
@@ -108,36 +117,40 @@ export function OffsetRevealSection({ uiSize }: { uiSize: UiSize }) {
               />
             </UIFormRow>
 
-            <UIFormRow label="Offset" htmlFor="ort-offset" borderless>
-              <UITextInput
-                id="ort-offset"
-                size="sm"
-                borderless
+            <UIFormRow label="Offset" borderless>
+              <UISlider
+                ariaLabel="Offset"
+                min={0}
+                max={100}
+                step={1}
                 value={offset}
                 onValueChange={setOffset}
-                placeholder="24px"
+                showValue
+                valueFormatter={(value) => `${value}px`}
               />
             </UIFormRow>
 
-            <UIFormRow label="Duration (ms)" htmlFor="ort-duration" borderless>
-              <UITextInput
-                id="ort-duration"
-                size="sm"
-                borderless
-                type="number"
-                value={String(duration)}
-                onValueChange={(v) => setDuration(Math.max(50, Number(v) || 900))}
+            <UIFormRow label="Duration (ms)" borderless>
+              <UISlider
+                ariaLabel="Duration"
+                min={0}
+                max={5000}
+                step={10}
+                value={duration}
+                onValueChange={setDuration}
+                showValue
               />
             </UIFormRow>
 
-            <UIFormRow label="Start delay (ms)" htmlFor="ort-start-delay" borderless>
-              <UITextInput
-                id="ort-start-delay"
-                size="sm"
-                borderless
-                type="number"
-                value={String(startDelay)}
-                onValueChange={(v) => setStartDelay(Math.max(0, Number(v) || 0))}
+            <UIFormRow label="Start delay (ms)" borderless>
+              <UISlider
+                ariaLabel="Start delay"
+                min={0}
+                max={1000}
+                step={10}
+                value={startDelay}
+                onValueChange={setStartDelay}
+                showValue
               />
             </UIFormRow>
 
@@ -173,7 +186,133 @@ export function OffsetRevealSection({ uiSize }: { uiSize: UiSize }) {
         </UICard>
       </UikitSectionAnchor>
 
-    </>
+      <UikitSectionAnchor id="offset-reveal-object">
+        <UICard title="UIKit · OffsetReveal">
+          <div className="flex min-h-[96px] items-center justify-center overflow-hidden rounded-xl border border-line bg-surface-alt px-5 py-6">
+            <OffsetReveal
+              key={objectRestartKey}
+              as="div"
+              direction={objectDirection}
+              offset={`${objectOffset}px`}
+              duration={objectDuration}
+              startDelay={objectStartDelay}
+              fade={objectFade}
+              blur={objectBlur}
+              disabled={objectDisabled}
+              restartKey={objectRestartKey}
+            >
+              <div className="flex w-full max-w-xl items-start gap-4 rounded-2xl border border-line bg-surface p-4 shadow-sm">
+                <div className="mt-1 flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-primary-100 text-primary-400">
+                  ●
+                </div>
+                <div className="min-w-0 flex-1">
+                  <p className="text-sm font-semibold text-text-main">OffsetReveal works on any object</p>
+                  <p className="mt-1 text-sm text-text-muted">
+                    Wrap a card, a button, an icon row, or any composed UI.
+                  </p>
+                  <div className="mt-3 flex flex-wrap gap-2">
+                    <span className="rounded-full bg-surface-alt px-2.5 py-1 text-xs font-medium text-text-muted">
+                      Card
+                    </span>
+                    <span className="rounded-full bg-surface-alt px-2.5 py-1 text-xs font-medium text-text-muted">
+                      Button
+                    </span>
+                    <span className="rounded-full bg-surface-alt px-2.5 py-1 text-xs font-medium text-text-muted">
+                      Badge
+                    </span>
+                  </div>
+                </div>
+              </div>
+            </OffsetReveal>
+          </div>
+
+          <div className="mt-5 grid">
+            <UIFormRow label="Direction" borderless>
+              <UISegmentedControl
+                ariaLabel="Object reveal direction"
+                size="sm"
+                borderless
+                value={objectDirection}
+                onValueChange={setObjectDirection}
+                options={[
+                  { value: "up", label: "Up" },
+                  { value: "down", label: "Down" },
+                  { value: "left", label: "Left" },
+                  { value: "right", label: "Right" },
+                ]}
+              />
+            </UIFormRow>
+
+            <UIFormRow label="Offset" borderless>
+              <UISlider
+                ariaLabel="Object offset"
+                min={0}
+                max={100}
+                step={1}
+                value={objectOffset}
+                onValueChange={setObjectOffset}
+                showValue
+                valueFormatter={(value) => `${value}px`}
+              />
+            </UIFormRow>
+
+            <UIFormRow label="Duration (ms)" borderless>
+              <UISlider
+                ariaLabel="Object duration"
+                min={0}
+                max={5000}
+                step={10}
+                value={objectDuration}
+                onValueChange={setObjectDuration}
+                showValue
+              />
+            </UIFormRow>
+
+            <UIFormRow label="Start delay (ms)" borderless>
+              <UISlider
+                ariaLabel="Object start delay"
+                min={0}
+                max={1000}
+                step={10}
+                value={objectStartDelay}
+                onValueChange={setObjectStartDelay}
+                showValue
+              />
+            </UIFormRow>
+
+            <UIFormRow label="Fade" borderless>
+              <UISwitcher size="sm" checked={objectFade} onCheckedChange={setObjectFade} label="Fade in" />
+            </UIFormRow>
+
+            <UIFormRow label="Blur" borderless>
+              <UISwitcher size="sm" checked={objectBlur} onCheckedChange={setObjectBlur} label="Blur in" />
+            </UIFormRow>
+
+            <UIFormRow label="Disabled (instant)" borderless>
+              <UISwitcher
+                size="sm"
+                checked={objectDisabled}
+                onCheckedChange={setObjectDisabled}
+                label="Skip animation"
+              />
+            </UIFormRow>
+          </div>
+
+          <div className="mt-4">
+            <UIButton
+              type="button"
+              size={uiSize}
+              theme="base"
+              variant="outlined"
+              onClick={() => setObjectRestartKey((key) => key + 1)}
+            >
+              Restart
+            </UIButton>
+          </div>
+        </UICard>
+      </UikitSectionAnchor>
+
+      </>
   );
 }
 

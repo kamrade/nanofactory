@@ -2,6 +2,8 @@
 
 import { HighlightSweepSection, HighlightSweepHoverSection, HighlightSweepScrollSection } from "./highlight-sweep-section";
 import { OffsetRevealSection, OffsetRevealScrollSection } from "./offset-reveal-section";
+import { TypewriterViewportSection } from "./typewriter-viewport-section";
+import { ViewportRevealSection } from "./viewport-reveal-section";
 import { WordStaggerRevealSection } from "./word-stagger-reveal-section";
 import { WordStaggerRevealScrollSection } from "./word-stagger-reveal-scroll-section";
 import { TypewriterSection } from "./typewriter-section";
@@ -22,6 +24,8 @@ export function AnimationsSection({ uiSize }: AnimationsSectionProps) {
       <OffsetRevealScrollSection />
       <WordStaggerRevealSection uiSize={uiSize} />
       <WordStaggerRevealScrollSection />
+      <TypewriterViewportSection />
+      <ViewportRevealSection />
     </div>
   );
 }
