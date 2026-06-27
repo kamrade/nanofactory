@@ -17,7 +17,6 @@ export function ImageZoomRevealSection() {
   const [duration, setDuration] = useState(5600);
   const [startDelay, setStartDelay] = useState(0);
   const [startScale, setStartScale] = useState(1);
-  const [peakScale, setPeakScale] = useState(1.14);
   const [endScale, setEndScale] = useState(1);
   const [radius, setRadius] = useState(32);
   const [fit, setFit] = useState<ObjectFit>("cover");
@@ -41,7 +40,6 @@ export function ImageZoomRevealSection() {
             duration={duration}
             startDelay={startDelay}
             startScale={startScale}
-            peakScale={peakScale}
             endScale={endScale}
             radius={`${radius}px`}
             fit={fit}
@@ -73,19 +71,6 @@ export function ImageZoomRevealSection() {
               step={0.01}
               value={startScale}
               onValueChange={setStartScale}
-              showValue
-              valueFormatter={(value) => value.toFixed(2)}
-            />
-          </UIFormRow>
-
-          <UIFormRow label="Peak scale" borderless>
-            <UISlider
-              ariaLabel="Peak scale"
-              min={1}
-              max={1.5}
-              step={0.01}
-              value={peakScale}
-              onValueChange={setPeakScale}
               showValue
               valueFormatter={(value) => value.toFixed(2)}
             />

@@ -30,10 +30,6 @@
     transform: scale(var(--image-zoom-start, 1));
   }
 
-  45% {
-    transform: scale(var(--image-zoom-peak, 1.12));
-  }
-
   100% {
     transform: scale(var(--image-zoom-end, 1));
   }

@@ -1,5 +1,6 @@
 export { AnimationsSection } from "./animations-section";
 export { HighlightSweepSection, HighlightSweepScrollSection, HighlightSweepHoverSection } from "./highlight-sweep-section";
+export { ImageZoomScrollRevealSection } from "./image-zoom-scroll-reveal-section";
 export { ImageZoomRevealSection } from "./image-zoom-reveal-section";
 export { OffsetRevealSection, OffsetRevealScrollSection } from "./offset-reveal-section";
 export { TypewriterSection } from "./typewriter-section";

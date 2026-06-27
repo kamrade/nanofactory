@@ -18,7 +18,6 @@ type UIImageZoomRevealProps = Omit<ImageProps, "src" | "alt" | "className" | "st
   duration?: number;
   startDelay?: number;
   startScale?: number;
-  peakScale?: number;
   endScale?: number;
   easing?: string;
   restartKey?: string | number;
@@ -43,7 +42,6 @@ export function UIImageZoomReveal({
   duration = 6000,
   startDelay = 0,
   startScale = 1,
-  peakScale = 1.12,
   endScale = 1,
   easing = "cubic-bezier(0.22, 1, 0.36, 1)",
   restartKey,
@@ -55,7 +53,6 @@ export function UIImageZoomReveal({
     ["--image-zoom-duration" as never]: `${duration}ms`,
     ["--image-zoom-delay" as never]: `${startDelay}ms`,
     ["--image-zoom-start" as never]: `${startScale}`,
-    ["--image-zoom-peak" as never]: `${peakScale}`,
     ["--image-zoom-end" as never]: `${endScale}`,
     ["--image-zoom-easing" as never]: easing,
   };

@@ -1,6 +1,7 @@
 import type { UikitSectionNavItem } from "../uikit-sections/nav";
 
 export const animationsSectionNavItems: UikitSectionNavItem[] = [
+  { id: "image-zoom-scroll-reveal", label: "Image Zoom Reveal / Scroll Trigger" },
   { id: "typewriter", label: "TypewriterText" },
   { id: "typewriter-scroll", label: "TypewriterText / Scroll Trigger" },
   { id: "highlight-sweep", label: "HighlightSweepText" },
