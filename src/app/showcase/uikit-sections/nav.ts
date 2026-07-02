@@ -10,6 +10,7 @@ export const uikitSectionNavItems: UikitSectionNavItem[] = [
   { id: "controls-checkbox", label: "Controls / Checkbox" },
   { id: "controls-switcher", label: "Controls / Switcher" },
   { id: "controls-segmented-control", label: "Controls / Segmented Control" },
+  { id: "controls-accordion", label: "Controls / Accordion" },
   { id: "controls-menu", label: "Controls / Menu" },
   { id: "inputs-text-input", label: "Inputs / Text Input" },
   { id: "inputs-select", label: "Inputs / Select" },

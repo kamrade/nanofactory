@@ -4,6 +4,7 @@ import { useEffect, useState } from "react";
 
 import { DialogDemoCard, MarkdownDemoCard, ModalDemoCard } from "@/app/showcase/demo-cards";
 import {
+  AccordionSection,
   ControlsAndMenusSection,
   BorderlessFormLayoutSection,
   FeedbackAndSheetSection,
@@ -118,6 +119,7 @@ export function ShowcaseClient({
               <div className="grid gap-8">
                 <TypographyButtonsBadgesSection uiSize={uiSize} />
                 <ControlsAndMenusSection uiSize={uiSize} />
+                <AccordionSection uiSize={uiSize} />
                 <InputsSection uiSize={uiSize} />
                 <FormLayoutSection uiSize={uiSize} />
                 <BorderlessFormLayoutSection uiSize={uiSize} />
