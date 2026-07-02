@@ -78,8 +78,9 @@ This is a website/page builder with project-level editing, block-based content, 
 - Showcase refactor:
   - `showcase-client.tsx` slimmed down to composition.
   - demo cards extracted: `src/app/showcase/demo-cards.tsx`
-  - UIKit sections split into modular files:
+  - showcase sections split into modular files:
     - `src/app/showcase/uikit-sections/*`
+    - `src/app/showcase/animation-sections/*`
 - Project settings `Actions` in `ProjectSettings` now apply immediately on selection (no `Apply` buttons):
   - `modePolicy`, `borderRadiusPolicy`, and `theme` updates are triggered from client `onValueChange` via server actions.
   - files:

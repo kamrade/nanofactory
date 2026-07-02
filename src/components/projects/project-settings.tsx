@@ -2,7 +2,7 @@
 
 import { useActionState, useEffect, useMemo, useState, useTransition } from "react";
 import Link from "next/link";
-import { FiArrowLeft, FiPlus, FiSave, FiSettings } from "react-icons/fi";
+import { FiArrowLeft, FiArrowUpRight, FiPlus, FiSave, FiSettings } from "react-icons/fi";
 
 import type { SaveEditorState } from "@/app/(protected)/projects/[projectId]/actions";
 import { EDITOR_ADD_BLOCK_EVENT, type EditorAddBlockEventDetail } from "@/components/editor/editor-events";
@@ -96,6 +96,7 @@ export function ProjectSettings({
     project.spacingScale
   );
   const [liveDraftContentShape, setLiveDraftContentShape] = useState<string | null>(null);
+  const [savedContentShape, setSavedContentShape] = useState(contentShape);
   const initialSaveState: SaveEditorState = {
     status: "idle",
     message: "",
@@ -111,6 +112,10 @@ export function ProjectSettings({
   );
 
   useEffect(() => {
+    setSavedContentShape(contentShape);
+  }, [contentShape]);
+
+  useEffect(() => {
     return subscribePreviewDraft(() => {
       const nextDraft = getPreviewDraftContent();
       if (!nextDraft) {
@@ -119,6 +124,9 @@ export function ProjectSettings({
       setLiveDraftContentShape(JSON.stringify(nextDraft, null, 2));
     });
   }, []);
+
+  const liveContentShape = liveDraftContentShape ?? contentShape;
+  const isDirty = liveContentShape !== savedContentShape;
 
   useEffect(() => {
     if (saveState.status === "idle" || !saveState.message) {
@@ -129,9 +137,11 @@ export function ProjectSettings({
       tone: saveState.status === "success" ? "default" : "error",
       title: saveState.message,
     });
-  }, [saveState.message, saveState.status, showToast]);
 
-  const liveContentShape = liveDraftContentShape ?? contentShape;
+    if (saveState.status === "success") {
+      setSavedContentShape(liveContentShape);
+    }
+  }, [liveContentShape, saveState.message, saveState.status, showToast]);
 
   function handleAddBlock(blockType: string, variant: string) {
     window.dispatchEvent(
@@ -209,8 +219,8 @@ export function ProjectSettings({
         <UIButton
           type="submit"
           disabled={isSaving}
-          theme="primary"
-          variant="contained"
+          theme={isDirty ? "primary" : "base"}
+          variant={isDirty ? "contained" : "outlined"}
           size="sm"
           iconButton
           aria-label={isSaving ? "Saving..." : "Save"}
@@ -220,6 +230,27 @@ export function ProjectSettings({
           <FiSave aria-hidden className="h-4 w-4 md:h-5 md:w-5" />
         </UIButton>
       </form>
+
+      {project.status === "published" ? (
+        <UIButton
+          asChild
+          theme="base"
+          variant="contained"
+          size="sm"
+          iconButton
+          className="rounded-full md:h-10 md:w-10 md:rounded-[12px]"
+        >
+          <Link
+            href={`/p/${project.slug}`}
+            target="_blank"
+            rel="noreferrer"
+            aria-label="Open public page"
+            title="Open public page"
+          >
+            <FiArrowUpRight aria-hidden className="h-4 w-4 md:h-5 md:w-5" />
+          </Link>
+        </UIButton>
+      ) : null}
 
       <UISheet data-testid="project-settings-sheet">
         <UISheetTrigger>
@@ -408,14 +439,6 @@ export function ProjectSettings({
                 </form>
 
                 <OpenPreviewButton projectId={project.id} />
-
-                {project.status === "published" ? (
-                  <UIButton asChild theme="base" variant="contained" size="sm">
-                    <Link href={`/p/${project.slug}`} target="_blank" rel="noreferrer">
-                      Open public page
-                    </Link>
-                  </UIButton>
-                ) : null}
               </div>
             </Card>
 

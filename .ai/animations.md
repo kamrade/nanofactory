@@ -89,12 +89,17 @@
   - `src`, `alt`
   - `fit`
   - `radius`
+  - `wrapperClassName`, `wrapperStyle`
+  - `className`, `style`
   - `duration`, `startDelay`
-  - `startScale`, `peakScale`, `endScale`
+  - `startScale`, `endScale`
+  - `mode: "keyframe" | "transition"`
   - `animate`
+  - `easing`
   - `restartKey`
 - Где используется:
-  - `src/app/showcase/uikit-sections/image-zoom-reveal-section.tsx`
+  - `src/app/showcase/animation-sections/image-zoom-reveal-section.tsx`
+  - `src/app/showcase/animation-sections/image-zoom-scroll-reveal-section.tsx`
 
 ### `UISlider`
 - Путь: `src/components/ui/slider/slider.tsx`
@@ -124,51 +129,51 @@
 ## Showcase-блоки
 
 ### `TypewriterText`
-- `src/app/showcase/uikit-sections/typewriter-section.tsx`
+- `src/app/showcase/animation-sections/typewriter-section.tsx`
 - Настройки текста, скорости, пауз, cursor и restart.
 
 ### `TypewriterText / Viewport Trigger`
-- `src/app/showcase/uikit-sections/typewriter-viewport-section.tsx`
+- `src/app/showcase/animation-sections/typewriter-viewport-section.tsx`
 - Появление при входе в viewport, удаление при выходе.
 
 ### `HighlightSweepText`
-- `src/app/showcase/uikit-sections/highlight-sweep-section.tsx`
+- `src/app/showcase/animation-sections/highlight-sweep-section.tsx`
 - Настройки цвета, duration, delay, thickness, offsetY, restart.
 
 ### `HighlightSweepText / Scroll Trigger`
-- `src/app/showcase/uikit-sections/highlight-sweep-section.tsx`
+- `src/app/showcase/animation-sections/highlight-sweep-section.tsx`
 - Одноразовый viewport reveal.
 
 ### `HighlightSweepText / Hover Trigger`
-- `src/app/showcase/uikit-sections/highlight-sweep-section.tsx`
+- `src/app/showcase/animation-sections/highlight-sweep-section.tsx`
 - Анимация по hover.
 
 ### `OffsetRevealText`
-- `src/app/showcase/uikit-sections/offset-reveal-section.tsx`
+- `src/app/showcase/animation-sections/offset-reveal-section.tsx`
 - Настройки direction, offset, duration, start delay, fade, blur.
 
 ### `OffsetReveal`
-- `src/app/showcase/uikit-sections/offset-reveal-section.tsx`
+- `src/app/showcase/animation-sections/offset-reveal-section.tsx`
 - Отдельный пример, что эффект применим не только к тексту.
 
 ### `OffsetRevealText / Scroll Trigger`
-- `src/app/showcase/uikit-sections/offset-reveal-section.tsx`
+- `src/app/showcase/animation-sections/offset-reveal-section.tsx`
 - Одноразовые scroll-trigger примеры.
 
 ### `WordStaggerReveal`
-- `src/app/showcase/uikit-sections/word-stagger-reveal-section.tsx`
+- `src/app/showcase/animation-sections/word-stagger-reveal-section.tsx`
 - Настройки offset, duration, stagger, start delay, reverse, fade, blur.
 
 ### `WordStaggerReveal / Scroll Trigger`
-- `src/app/showcase/uikit-sections/word-stagger-reveal-scroll-section.tsx`
+- `src/app/showcase/animation-sections/word-stagger-reveal-scroll-section.tsx`
 - Одноразовые scroll-trigger примеры.
 
 ### `Viewport Reveal`
-- `src/app/showcase/uikit-sections/viewport-reveal-section.tsx`
+- `src/app/showcase/animation-sections/viewport-reveal-section.tsx`
 - Демонстрация live-viewport анимации: появление при входе и исчезновение при выходе.
 
 ### `Image Zoom Reveal`
-- `src/app/showcase/uikit-sections/image-zoom-reveal-section.tsx`
+- `src/app/showcase/animation-sections/image-zoom-reveal-section.tsx`
 - Демонстрация image-анимации с фиксированными границами и zoom-in → zoom-out.
 
 ## Практика

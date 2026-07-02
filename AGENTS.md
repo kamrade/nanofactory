@@ -92,7 +92,7 @@ The database is **owned by this application** and follows a **code-first approac
 - Schema: `db/schema.ts`
 - DB connection: `db/index.ts`
 - Seeds: `db/seeds/*`
-- Full strategy: `docs/database-strategy.md`
+- Database workflow: `README.md`
 
 ---
 

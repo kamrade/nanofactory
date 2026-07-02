@@ -90,7 +90,9 @@ async function getPublicUrl(page: Page) {
   await ensureBlockEditorClosed(page);
   const infoSheet = await openProjectControls(page);
   await expect(infoSheet).toBeVisible();
-  const publicLink = infoSheet.getByRole("link", { name: "Open public page" });
+  const publicLink = page
+    .getByTestId("project-settings")
+    .getByRole("link", { name: "Open public page" });
   await expect(publicLink).toBeVisible();
   const href = await publicLink.getAttribute("href");
   if (!href) {

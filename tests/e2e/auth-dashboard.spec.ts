@@ -127,7 +127,9 @@ test("publishes and unpublishes a project through the editor", async ({ page }) 
   infoSheet = await openProjectControls(page);
   await expect(infoSheet.getByTestId("project-publish-status")).toHaveText("published");
 
-  const publicLink = infoSheet.getByRole("link", { name: "Open public page" });
+  const publicLink = page
+    .getByTestId("project-settings")
+    .getByRole("link", { name: "Open public page" });
   await expect(publicLink).toBeVisible();
   const publicUrl = await publicLink.getAttribute("href");
 

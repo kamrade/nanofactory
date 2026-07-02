@@ -36,7 +36,7 @@ Public pages are served by slug at `/p/[slug]`.
 - `db/` - schema, database connection, seeds
 - `drizzle/` - generated SQL migrations
 - `tests/` - unit, integration, and e2e tests
-- `docs/` - product and architecture notes
+- `.ai/` - product notes, handoff context, and animation docs
 
 ## Environment
 
@@ -231,5 +231,5 @@ Key files:
 ## Related Docs
 
 - `AGENTS.md`
-- `docs/02-database-strategy.md`
-- `docs/04-assets-storage.md`
+- `.ai/handoff.md`
+- `.ai/animations.md`

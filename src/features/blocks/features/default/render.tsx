@@ -118,13 +118,13 @@ export function FeaturesDefaultRender({
                   </div>
                 ) : null}
                 <div>
-                  <p className={styles.itemTitle}>
+                  <div className={styles.itemTitle}>
                     <BlockSectionTitle
                       title={item.title}
                       animate={animate}
                       animationPreset="featureCardTitle"
                     />
-                  </p>
+                  </div>
                   {item.content.trim().length > 0 ? (
                     <p className={styles.itemContent}>{item.content}</p>
                   ) : null}
