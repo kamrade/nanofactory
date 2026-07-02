@@ -133,14 +133,15 @@ export function ProjectSettings({
       return;
     }
 
-    showToast({
-      tone: saveState.status === "success" ? "default" : "error",
-      title: saveState.message,
-    });
-
     if (saveState.status === "success") {
       setSavedContentShape(liveContentShape);
+      return;
     }
+
+    showToast({
+      tone: "error",
+      title: saveState.message,
+    });
   }, [liveContentShape, saveState.message, saveState.status, showToast]);
 
   function handleAddBlock(blockType: string, variant: string) {

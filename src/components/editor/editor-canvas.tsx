@@ -7,6 +7,7 @@ import type { PageBlock } from "@/features/blocks/shared/content";
 
 type EditorCanvasProps = {
   content: PageContent;
+  activeBlockId: string | null;
   lastVariantUndo: VariantUndo | null;
   onUndoVariantSwitch: () => void;
   onDismissVariantUndo: () => void;
@@ -26,6 +27,7 @@ type EditorCanvasProps = {
 
 export function EditorCanvas({
   content,
+  activeBlockId,
   lastVariantUndo,
   onUndoVariantSwitch,
   onDismissVariantUndo,
@@ -78,6 +80,7 @@ export function EditorCanvas({
             <div
               data-testid="Variant"
               key={block.id}
+              data-editor-block-id={block.id}
               role="button"
               tabIndex={0}
               aria-label={`Edit block ${index + 1}: ${formatDefinitionLabel(definition)}`}
@@ -88,7 +91,11 @@ export function EditorCanvas({
                   onSelectBlock(block.id);
                 }
               }}
-              className="cursor-pointer transition focus:outline-none"
+              className={
+                block.id === activeBlockId
+                  ? "cursor-pointer rounded-[2rem] bg-neutral-100 p-1 transition focus:outline-none"
+                  : "cursor-pointer transition focus:outline-none"
+              }
             >
               <div data-testid="RenderedBlockInEditor">{renderBlockPreview(block)}</div>
             </div>

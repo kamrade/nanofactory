@@ -20,22 +20,49 @@ async function createProjectFromDashboard(page: Page, name: string) {
 
 async function ensureBlockEditorClosed(page: Page) {
   const blockEditor = page.getByRole("dialog", { name: "Block editor" });
-  if (await blockEditor.isVisible()) {
-    await page.keyboard.press("Escape");
-    await page.waitForTimeout(100);
+  const closeButton = blockEditor.getByRole("button", { name: "Close" }).first();
 
-    if (await blockEditor.isVisible()) {
-      const closeButton = blockEditor.getByRole("button", { name: "Close" }).first();
-      if ((await closeButton.count()) > 0) {
-        await closeButton.click({ force: true });
-        await page.waitForTimeout(100);
+  const isBlockEditorOpen = async () => {
+    return blockEditor.evaluate((dialog) => {
+      const panel = dialog.parentElement as HTMLElement | null;
+      const root = panel?.parentElement as HTMLElement | null;
+
+      if (!panel || !root) {
+        return false;
       }
-    }
 
-    if (await blockEditor.isVisible()) {
-      await page.keyboard.press("Escape");
-    }
+      return (
+        root.className.includes("pointer-events-auto") &&
+        panel.className.includes("pointer-events-auto") &&
+        !panel.className.includes("translate-x-full")
+      );
+    });
+  };
+
+  if (!(await isBlockEditorOpen())) {
+    return;
   }
+
+  await blockEditor.press("Escape");
+  await page.waitForTimeout(150);
+
+  if (!(await isBlockEditorOpen())) {
+    return;
+  }
+
+  await closeButton.evaluate((button) => {
+    const closeTarget =
+      button.parentElement instanceof HTMLElement ? button.parentElement : button;
+    closeTarget.click();
+  });
+  await page.waitForTimeout(150);
+
+  if (!(await isBlockEditorOpen())) {
+    return;
+  }
+
+  await blockEditor.press("Escape");
+  await page.waitForTimeout(150);
 }
 
 async function openProjectControls(page: Page) {
@@ -76,8 +103,9 @@ async function addBlock(page: Page, descriptionText: string) {
 
 async function saveProject(page: Page) {
   await ensureBlockEditorClosed(page);
-  await page.getByRole("button", { name: "Save" }).click();
-  await expect(page.getByText("Project content saved.")).toBeVisible();
+  const saveButton = page.getByRole("button", { name: "Save" });
+  await saveButton.click();
+  await expect(saveButton).toHaveClass(/border-neutral-line/);
 }
 
 async function publishProject(page: Page) {

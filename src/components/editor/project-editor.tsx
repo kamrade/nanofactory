@@ -11,7 +11,6 @@ import {
   type BlockVariant,
   createPageBlock,
   getBlockDefinition,
-  getBlockVariants,
   type SupportedBlockType,
 } from "@/lib/editor/blocks";
 
@@ -33,7 +32,6 @@ import { SectionShell } from "@/components/projects/section-shell";
 import { UIButton } from "@/components/ui/button";
 import type { PageBlock } from "@/features/blocks/shared/content";
 import type { BlockVariantDefinition } from "@/features/blocks/shared/types";
-import { useToast } from "@/hooks/use-toast";
 import type { BackgroundSceneRecord } from "@/lib/background-scenes/types";
 import {
   buildEffectivePageAnchors,
@@ -65,6 +63,7 @@ type ProjectEditorProps = {
 
 type EditorState = {
   content: PageContent;
+  isInspectorOpen: boolean;
   activeEditorBlockId: string | null;
   pendingVariantSwitch: PendingVariantSwitch | null;
   lastVariantUndo: VariantUndo | null;
@@ -82,7 +81,9 @@ type EditorAction =
   | { type: "cancel_variant_switch" }
   | { type: "undo_variant_switch" }
   | { type: "dismiss_variant_undo" }
+  | { type: "open_inspector" }
   | { type: "open_block"; blockId: string }
+  | { type: "collapse_active_block" }
   | { type: "close_sheet" };
 
 function formatDefinitionLabel(definition: {
@@ -143,6 +144,7 @@ function editorReducer(state: EditorState, action: EditorAction): EditorState {
       return {
         ...state,
         content: { blocks: [...state.content.blocks, nextBlock] },
+        isInspectorOpen: true,
         activeEditorBlockId: nextBlock.id,
         pendingVariantSwitch: null,
       };
@@ -258,15 +260,30 @@ function editorReducer(state: EditorState, action: EditorAction): EditorState {
         lastVariantUndo: null,
       };
     }
+    case "open_inspector": {
+      return {
+        ...state,
+        isInspectorOpen: true,
+      };
+    }
     case "open_block": {
       return {
         ...state,
+        isInspectorOpen: true,
         activeEditorBlockId: action.blockId,
+      };
+    }
+    case "collapse_active_block": {
+      return {
+        ...state,
+        activeEditorBlockId: null,
+        pendingVariantSwitch: null,
       };
     }
     case "close_sheet": {
       return {
         ...state,
+        isInspectorOpen: false,
         activeEditorBlockId: null,
         pendingVariantSwitch: null,
       };
@@ -284,9 +301,9 @@ export function ProjectEditor({
   activeMode,
   backgroundScenes = [],
 }: ProjectEditorProps) {
-  const { showToast } = useToast();
   const [state, dispatch] = useReducer(editorReducer, {
     content: project.contentJson,
+    isInspectorOpen: false,
     activeEditorBlockId: null,
     pendingVariantSwitch: null,
     lastVariantUndo: null,
@@ -332,6 +349,22 @@ export function ProjectEditor({
       window.removeEventListener(EDITOR_ADD_BLOCK_EVENT, handleAddBlock);
     };
   }, []);
+
+  useEffect(() => {
+    if (!state.activeEditorBlockId) {
+      return;
+    }
+
+    const node = document.querySelector<HTMLElement>(
+      `[data-editor-block-id="${state.activeEditorBlockId}"]`
+    );
+
+    node?.scrollIntoView({
+      behavior: "smooth",
+      block: "start",
+      inline: "nearest",
+    });
+  }, [state.activeEditorBlockId]);
 
   const effectiveAnchors = useMemo(
     () => buildEffectivePageAnchors(state.content.blocks),
@@ -416,20 +449,10 @@ export function ProjectEditor({
         : null,
     [activeEditorBlock]
   );
-  const activeVariantOptions = useMemo(
-    () => (activeEditorDefinition ? getBlockVariants(activeEditorDefinition.type) : []),
-    [activeEditorDefinition]
-  );
   const activePendingSwitch =
     state.pendingVariantSwitch && state.pendingVariantSwitch.blockId === activeEditorBlock?.id
       ? state.pendingVariantSwitch
       : null;
-  const activeVariant = activePendingSwitch
-    ? activePendingSwitch.nextVariant
-    : activeEditorDefinition?.variant;
-  const activeEditorBlockIndex = activeEditorBlock
-    ? state.content.blocks.findIndex((block) => block.id === activeEditorBlock.id)
-    : -1;
   const availableAnchors = useMemo(
     () => {
       const anchors: Array<{ id: string; label: string }> = [];
@@ -454,26 +477,28 @@ export function ProjectEditor({
     },
     [effectiveAnchors.blockAnchors, state.content.blocks]
   );
-  const activeGalleryItemAnchors = useMemo(() => {
-    if (!activeEditorBlock || activeEditorBlock.type !== "gallery" || !Array.isArray(activeEditorBlock.props.items)) {
-      return undefined;
-    }
+  const galleryItemAnchorsByBlock = useMemo(
+    () =>
+      new Map(
+        state.content.blocks.flatMap((block) => {
+          if (block.type !== "gallery" || !Array.isArray(block.props.items)) {
+            return [];
+          }
 
-    return new Map(
-      activeEditorBlock.props.items
-        .map((_, index) => [
-          index,
-          getGalleryItemEffectiveAnchor(effectiveAnchors.galleryItemAnchors, activeEditorBlock.id, index),
-        ] as const)
-        .filter((entry): entry is readonly [number, string] => Boolean(entry[1]))
-    );
-  }, [activeEditorBlock, effectiveAnchors.galleryItemAnchors]);
+          const anchors = new Map(
+            block.props.items
+              .map((_, index) => [
+                index,
+                getGalleryItemEffectiveAnchor(effectiveAnchors.galleryItemAnchors, block.id, index),
+              ] as const)
+              .filter((entry): entry is readonly [number, string] => Boolean(entry[1]))
+          );
 
-  function openProjectSettingsSheet() {
-    document
-      .querySelector<HTMLButtonElement>('[data-testid="project-settings-trigger"]')
-      ?.click();
-  }
+          return [[block.id, anchors] as const];
+        })
+      ),
+    [effectiveAnchors.galleryItemAnchors, state.content.blocks]
+  );
 
   return (
     <div className="grid gap-6">
@@ -494,7 +519,7 @@ export function ProjectEditor({
               aria-label="Settings"
               title="Settings"
               className="rounded-full"
-              onClick={openProjectSettingsSheet}
+              onClick={() => dispatch({ type: "open_inspector" })}
             >
               <FiSettings aria-hidden className="h-4 w-4" />
             </UIButton>
@@ -503,6 +528,7 @@ export function ProjectEditor({
 
         <EditorCanvas
           content={state.content}
+          activeBlockId={state.activeEditorBlockId}
           lastVariantUndo={state.lastVariantUndo}
           onUndoVariantSwitch={() => dispatch({ type: "undo_variant_switch" })}
           onDismissVariantUndo={() => dispatch({ type: "dismiss_variant_undo" })}
@@ -514,26 +540,23 @@ export function ProjectEditor({
       </section>
 
       <BlockSettingsSheet
-        open={Boolean(activeEditorBlock && activeEditorDefinition)}
-        activeEditorBlock={activeEditorBlock}
-        activeEditorDefinition={activeEditorDefinition}
-        activeVariantOptions={activeVariantOptions}
-        activeVariant={activeVariant}
+        open={state.isInspectorOpen}
+        activeEditorBlockId={state.activeEditorBlockId}
         activePendingSwitch={activePendingSwitch}
         assets={assets}
         availableAnchors={availableAnchors}
-        effectiveGalleryItemAnchors={activeGalleryItemAnchors}
+        effectiveGalleryItemAnchorsByBlock={galleryItemAnchorsByBlock}
         backgroundScenes={backgroundScenes}
         activeThemeKey={activeThemeKey}
         activeMode={activeMode}
-        activeEditorBlockIndex={activeEditorBlockIndex}
-        totalBlocks={state.content.blocks.length}
         formatDefinitionLabel={formatDefinitionLabel}
         onOpenChange={(nextOpen) => {
           if (!nextOpen) {
             dispatch({ type: "close_sheet" });
           }
         }}
+        onSelectBlock={(blockId) => dispatch({ type: "open_block", blockId })}
+        onCollapseActiveBlock={() => dispatch({ type: "collapse_active_block" })}
         onSelectVariant={(block, definition, nextVariant) =>
           dispatch({ type: "select_variant", block, definition, nextVariant })
         }
@@ -553,15 +576,7 @@ export function ProjectEditor({
         }
         onDeleteBlock={(blockId) => dispatch({ type: "delete_block", blockId })}
         allBlocks={state.content.blocks}
-        effectiveAnchorId={
-          activeEditorBlock ? effectiveAnchors.blockAnchors.get(activeEditorBlock.id) : undefined
-        }
-        onAnchorIdRejected={(message) =>
-          showToast({
-            tone: "error",
-            title: message,
-          })
-        }
+        effectiveBlockAnchors={effectiveAnchors.blockAnchors}
       />
     </div>
   );
