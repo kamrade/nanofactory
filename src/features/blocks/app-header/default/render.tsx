@@ -16,6 +16,7 @@ export function AppHeaderDefaultRender({
   modePolicy = "switchable",
   projectBorderRadiusPolicy,
   projectSpacingScale,
+  projectSurfaceStyle,
 }: BlockRenderProps) {
   const {
     title,
@@ -119,6 +120,7 @@ export function AppHeaderDefaultRender({
   return (
     <section
       data-spacing-scale={effectiveSpacingScale}
+      data-surface-style={projectSurfaceStyle ?? "default"}
       data-collapse-breakpoint={collapseBreakpoint}
       data-always-mobile={alwaysMobile ? "" : undefined}
       className={styles.root}

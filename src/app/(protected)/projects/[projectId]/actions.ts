@@ -25,6 +25,7 @@ import {
   saveProjectContentForUser,
   updateProjectBorderRadiusPolicyForUser,
   updateProjectSpacingScaleForUser,
+  updateProjectSurfaceStyleForUser,
   unpublishProjectForUser,
   updateProjectModePolicyForUser,
   updateProjectNameForUser,
@@ -42,6 +43,10 @@ import {
   isProjectSpacingScale,
   resolveProjectSpacingScale,
 } from "@/lib/projects/spacing-scale";
+import {
+  isProjectSurfaceStyle,
+  resolveProjectSurfaceStyle,
+} from "@/lib/projects/surface-style";
 import { isValidProjectSlug } from "@/lib/projects/slug";
 import { isThemeKey } from "@/lib/themes";
 
@@ -114,6 +119,13 @@ type UpdateProjectSpacingScaleDependencies = {
   redirect: typeof redirect;
 };
 
+type UpdateProjectSurfaceStyleDependencies = {
+  requireCurrentUser: typeof requireCurrentUser;
+  updateProjectSurfaceStyleForUser: typeof updateProjectSurfaceStyleForUser;
+  revalidatePath: typeof revalidatePath;
+  redirect: typeof redirect;
+};
+
 const publishProjectDependencies: PublishProjectDependencies = {
   requireCurrentUser,
   publishProjectForUser,
@@ -159,6 +171,13 @@ const updateProjectBorderRadiusPolicyDependencies: UpdateProjectBorderRadiusPoli
 const updateProjectSpacingScaleDependencies: UpdateProjectSpacingScaleDependencies = {
   requireCurrentUser,
   updateProjectSpacingScaleForUser,
+  revalidatePath,
+  redirect,
+};
+
+const updateProjectSurfaceStyleDependencies: UpdateProjectSurfaceStyleDependencies = {
+  requireCurrentUser,
+  updateProjectSurfaceStyleForUser,
   revalidatePath,
   redirect,
 };
@@ -362,6 +381,17 @@ export async function updateProjectSpacingScaleAction(
   );
 }
 
+export async function updateProjectSurfaceStyleAction(
+  projectId: string,
+  formData: FormData
+) {
+  return updateProjectSurfaceStyleActionWithDependencies(
+    projectId,
+    formData,
+    updateProjectSurfaceStyleDependencies
+  );
+}
+
 export async function updateProjectThemeActionWithDependencies(
   projectId: string,
   formData: FormData,
@@ -492,6 +522,34 @@ export async function updateProjectSpacingScaleActionWithDependencies(
     projectId,
     currentUser.id,
     resolveProjectSpacingScale(rawScale)
+  );
+
+  if (!updatedProject) {
+    dependencies.redirect(`/projects/${projectId}`);
+  }
+
+  dependencies.revalidatePath(`/projects/${projectId}`);
+  dependencies.revalidatePath("/dashboard");
+  dependencies.revalidatePath(`/p/${updatedProject.slug}`);
+  dependencies.redirect(`/projects/${projectId}`);
+}
+
+export async function updateProjectSurfaceStyleActionWithDependencies(
+  projectId: string,
+  formData: FormData,
+  dependencies: UpdateProjectSurfaceStyleDependencies
+) {
+  const currentUser = await dependencies.requireCurrentUser();
+  const rawSurfaceStyle = String(formData.get("surfaceStyle") ?? "");
+
+  if (!isProjectSurfaceStyle(rawSurfaceStyle)) {
+    dependencies.redirect(`/projects/${projectId}`);
+  }
+
+  const updatedProject = await dependencies.updateProjectSurfaceStyleForUser(
+    projectId,
+    currentUser.id,
+    resolveProjectSurfaceStyle(rawSurfaceStyle)
   );
 
   if (!updatedProject) {

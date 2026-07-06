@@ -583,6 +583,27 @@ describe("ProjectRenderer", () => {
     expect(html).toContain('id="hero-1"');
   });
 
+  it("renders flat surface style without shell padding, radius, or background scene output", () => {
+    const scene = createScene("scene-flat-1");
+    const html = renderToStaticMarkup(
+      ProjectRenderer({
+        name: "Flat Surface Project",
+        themeKey: "sunwash",
+        surfaceStyle: "flat",
+        borderRadiusPolicy: "lg",
+        content: createBackgroundSceneContent(scene.id),
+        assets: [],
+        backgroundScenes: [scene],
+      })
+    );
+
+    expect(html).toContain('data-surface-style="flat"');
+    expect(html).toContain('class="scroll-mt-24 container mx-auto"');
+    expect(html).not.toContain("container mx-auto px-4");
+    expect(html).not.toContain("rounded-3xl");
+    expect(html).not.toContain("repeating-linear-gradient(45deg");
+  });
+
   it("applies footer section shell radius from project policy (none)", () => {
     const html = renderToStaticMarkup(
       ProjectRenderer({

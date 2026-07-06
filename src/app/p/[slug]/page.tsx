@@ -48,6 +48,7 @@ export default async function PublicProjectPage({
       modePolicy={project.modePolicy}
       borderRadiusPolicy={project.borderRadiusPolicy}
       spacingScale={project.spacingScale}
+      surfaceStyle={project.surfaceStyle}
       galleryItemLinkMode={galleryItemLinkMode}
       content={normalizePageContent(project.contentJson)}
       assets={assets}

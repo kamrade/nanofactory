@@ -4,6 +4,7 @@ import type { ProjectAssetRecord } from "@/lib/assets";
 import type { ProjectBorderRadiusPolicy } from "@/lib/projects/border-radius-policy";
 import type { ProjectModePolicy } from "@/lib/projects/mode-policy";
 import type { ProjectSpacingScale } from "@/lib/projects/spacing-scale";
+import type { ProjectSurfaceStyle } from "@/lib/projects/surface-style";
 import type { GalleryItemLinkMode } from "@/lib/routing/gallery-link-mode";
 
 import type { BlockVariant, PageBlock, SupportedBlockType } from "./content";
@@ -30,6 +31,7 @@ export type BlockRenderProps = {
   modePolicy?: ProjectModePolicy;
   projectBorderRadiusPolicy?: ProjectBorderRadiusPolicy;
   projectSpacingScale?: ProjectSpacingScale;
+  projectSurfaceStyle?: ProjectSurfaceStyle;
   publicProjectSlug?: string;
   galleryItemLinkMode?: GalleryItemLinkMode;
   effectiveBlockAnchorId?: string;

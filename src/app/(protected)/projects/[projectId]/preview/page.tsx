@@ -121,6 +121,7 @@ export async function ProjectPreviewPageWithDependencies(
         modePolicy={project.modePolicy}
         borderRadiusPolicy={project.borderRadiusPolicy}
         spacingScale={project.spacingScale}
+        surfaceStyle={project.surfaceStyle}
         content={dependencies.normalizePageContent(content)}
         assets={assets}
         backgroundScenes={backgroundScenes}

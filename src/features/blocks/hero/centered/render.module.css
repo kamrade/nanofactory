@@ -8,6 +8,10 @@
   border-radius: var(--hero-centered-radius-shell);
 }
 
+.root[data-surface-style="flat"] {
+  border-radius: 0;
+}
+
 /* ── Background media ────────────────────────────────────── */
 
 .mediaBg {
@@ -42,6 +46,10 @@
 .root[data-spacing-scale="sm"] .shell { max-width: 42rem; gap: 0.75rem; padding-top: 1.5rem;  padding-bottom: 1.5rem;  min-height: 16rem; }
 .root[data-spacing-scale="md"] .shell { max-width: 48rem; gap: 1.5rem;  padding-top: 3rem;    padding-bottom: 3rem;    min-height: 22rem; }
 .root[data-spacing-scale="lg"] .shell { max-width: 56rem; gap: 2rem;    padding-top: 3.5rem;  padding-bottom: 3.5rem;  min-height: 26rem; }
+
+.root[data-surface-style="flat"][data-spacing-scale="sm"] .shell { padding-top: 3rem; padding-bottom: 3rem; }
+.root[data-surface-style="flat"][data-spacing-scale="md"] .shell { padding-top: 6rem; padding-bottom: 6rem; }
+.root[data-surface-style="flat"][data-spacing-scale="lg"] .shell { padding-top: 7rem; padding-bottom: 7rem; }
 
 @media (min-width: 768px) {
   .root[data-spacing-scale="sm"] .shell { min-height: 20rem; }

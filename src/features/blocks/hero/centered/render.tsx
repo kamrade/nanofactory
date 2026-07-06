@@ -19,6 +19,7 @@ export function HeroCenteredRender({
   assetMap,
   projectBorderRadiusPolicy,
   projectSpacingScale,
+  projectSurfaceStyle,
 }: BlockRenderProps) {
   const {
     eyebrow,
@@ -59,6 +60,7 @@ export function HeroCenteredRender({
     <section
       data-testid="HeroCenteredComponent"
       data-spacing-scale={effectiveSpacingScale}
+      data-surface-style={projectSurfaceStyle ?? "default"}
       data-content-position={contentPosition}
       className={styles.root}
       style={radiusVars as CSSProperties}

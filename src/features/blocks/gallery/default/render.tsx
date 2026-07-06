@@ -67,6 +67,7 @@ export function GalleryDefaultRender({
   mode = "light",
   projectBorderRadiusPolicy,
   projectSpacingScale,
+  projectSurfaceStyle,
   publicProjectSlug,
   galleryItemLinkMode = "absolute",
   effectiveBlockAnchorId,
@@ -108,6 +109,7 @@ export function GalleryDefaultRender({
   return (
     <section
       data-spacing-scale={effectiveSpacingScale}
+      data-surface-style={projectSurfaceStyle ?? "default"}
       className={styles.root}
       style={radiusVars as CSSProperties}
     >

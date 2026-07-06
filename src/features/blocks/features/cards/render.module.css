@@ -15,6 +15,10 @@
   .root[data-spacing-scale="lg"] { padding-left: 2.5rem;  padding-right: 2.5rem; }
 }
 
+.root[data-surface-style="flat"][data-spacing-scale="sm"] { padding: 4rem 0; }
+.root[data-surface-style="flat"][data-spacing-scale="md"] { padding: 6rem 0; }
+.root[data-surface-style="flat"][data-spacing-scale="lg"] { padding: 7rem 0; }
+
 /* ── Section header ──────────────────────────────────────── */
 
 .sectionHeader {

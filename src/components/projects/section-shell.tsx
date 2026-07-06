@@ -2,6 +2,7 @@ import type { ReactNode } from "react";
 
 import { BackgroundRenderer } from "@/components/projects/background-renderer";
 import type { BackgroundScene } from "@/lib/background-scenes/types";
+import type { ProjectSurfaceStyle } from "@/lib/projects/surface-style";
 import type { ThemeKey } from "@/lib/themes";
 import type { UiMode } from "@/lib/ui-preferences";
 import { cx } from "@/lib/cn";
@@ -12,6 +13,7 @@ type SectionShellProps = {
   innerRadiusClassName?: string;
   anchorId?: string;
   backgroundScene?: BackgroundScene | null;
+  surfaceStyle?: ProjectSurfaceStyle;
   fallbackThemeKey?: ThemeKey;
   fallbackMode?: UiMode;
   children: ReactNode;
@@ -20,21 +22,26 @@ type SectionShellProps = {
 function renderInnerContent(
   innerRadiusClassName: string | undefined,
   backgroundScene: BackgroundScene | null | undefined,
+  surfaceStyle: ProjectSurfaceStyle | undefined,
   fallbackThemeKey: ThemeKey | undefined,
   fallbackMode: UiMode | undefined,
   children: ReactNode
 ) {
+  const isFlat = surfaceStyle === "flat";
+  const visibleBackgroundScene = isFlat ? null : backgroundScene;
+
   return (
     <div
       className={cx(
-        "relative bg-surface overflow-hidden",
-        innerRadiusClassName ?? "rounded-3xl",
-        backgroundScene ? "overflow-hidden" : undefined
+        "relative overflow-hidden",
+        isFlat ? "bg-transparent rounded-none" : "bg-surface",
+        isFlat ? "rounded-none" : innerRadiusClassName ?? "rounded-3xl",
+        visibleBackgroundScene ? "overflow-hidden" : undefined
       )}
     >
-      {backgroundScene ? (
+      {visibleBackgroundScene ? (
         <BackgroundRenderer
-          scene={backgroundScene}
+          scene={visibleBackgroundScene}
           fallbackThemeKey={fallbackThemeKey}
           fallbackMode={fallbackMode}
         />
@@ -49,6 +56,7 @@ export function SectionShell({
   innerRadiusClassName,
   anchorId,
   backgroundScene,
+  surfaceStyle,
   fallbackThemeKey,
   fallbackMode,
   children,
@@ -62,6 +70,7 @@ export function SectionShell({
       {renderInnerContent(
         innerRadiusClassName,
         backgroundScene,
+        surfaceStyle,
         fallbackThemeKey,
         fallbackMode,
         children

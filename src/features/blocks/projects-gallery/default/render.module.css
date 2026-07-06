@@ -15,6 +15,16 @@
   .root[data-spacing-scale="lg"] { padding: 2.5rem; }
 }
 
+.root[data-surface-style="flat"][data-spacing-scale="sm"] { padding: 1.5rem 0; }
+.root[data-surface-style="flat"][data-spacing-scale="md"] { padding: 2rem 0; }
+.root[data-surface-style="flat"][data-spacing-scale="lg"] { padding: 3rem 0; }
+
+@media (min-width: 768px) {
+  .root[data-surface-style="flat"][data-spacing-scale="sm"] { padding: 2.5rem 0; }
+  .root[data-surface-style="flat"][data-spacing-scale="md"] { padding: 4rem 0; }
+  .root[data-surface-style="flat"][data-spacing-scale="lg"] { padding: 5rem 0; }
+}
+
 /* ── Grid ────────────────────────────────────────────────── */
 
 .grid {

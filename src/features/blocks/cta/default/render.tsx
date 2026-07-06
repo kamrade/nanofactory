@@ -7,6 +7,7 @@ export function CtaDefaultRender({
   block,
   projectBorderRadiusPolicy,
   projectSpacingScale,
+  projectSurfaceStyle,
 }: BlockRenderProps) {
   const title = typeof block.props.title === "string" ? block.props.title : "";
   const titleText = title.trim();
@@ -38,6 +39,7 @@ export function CtaDefaultRender({
   return (
     <section
       data-spacing-scale={effectiveSpacingScale}
+      data-surface-style={projectSurfaceStyle ?? "default"}
       className={styles.root}
       style={radiusVars as CSSProperties}
     >

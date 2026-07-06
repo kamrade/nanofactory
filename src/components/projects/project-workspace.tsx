@@ -23,6 +23,7 @@ type EditorProject = {
   modePolicy: "switchable" | "light-only" | "dark-only";
   borderRadiusPolicy: "none" | "md" | "lg";
   spacingScale: "sm" | "md" | "lg";
+  surfaceStyle: "default" | "flat";
   status: "draft" | "published";
   contentJson: PageContent;
 };

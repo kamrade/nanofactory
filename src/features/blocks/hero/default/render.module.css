@@ -49,6 +49,10 @@
 .root[data-spacing-scale="md"] .contentPanel { min-height: 20rem; padding: 1rem; }
 .root[data-spacing-scale="lg"] .contentPanel { min-height: 24rem; padding: 1.5rem; }
 
+.root[data-surface-style="flat"][data-spacing-scale="sm"] .contentPanel { padding-left: 0; padding-right: 0; }
+.root[data-surface-style="flat"][data-spacing-scale="md"] .contentPanel { padding-left: 0; padding-right: 0; }
+.root[data-surface-style="flat"][data-spacing-scale="lg"] .contentPanel { padding-left: 0; padding-right: 0; }
+
 @media (min-width: 768px) {
   .root[data-spacing-scale="sm"] .contentPanel { min-height: 20rem; }
   .root[data-spacing-scale="md"] .contentPanel { min-height: 26rem; }
@@ -70,6 +74,10 @@
 .root[data-spacing-scale="sm"] .contentStack { gap: 0.75rem; padding-top: 1rem;  padding-bottom: 1rem; }
 .root[data-spacing-scale="md"] .contentStack { gap: 1.25rem; padding-top: 2rem;  padding-bottom: 2rem; }
 .root[data-spacing-scale="lg"] .contentStack { gap: 1.75rem; padding-top: 2.5rem; padding-bottom: 2.5rem; }
+
+.root[data-surface-style="flat"][data-spacing-scale="sm"] .contentStack { padding-top: 2rem;  padding-bottom: 2rem; }
+.root[data-surface-style="flat"][data-spacing-scale="md"] .contentStack { padding-top: 4rem;  padding-bottom: 4rem; }
+.root[data-surface-style="flat"][data-spacing-scale="lg"] .contentStack { padding-top: 5rem;  padding-bottom: 5rem; }
 
 /* ── Eyebrow ─────────────────────────────────────────────── */
 

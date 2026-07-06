@@ -43,6 +43,7 @@ export function FooterDefaultRender({
   assetMap,
   projectBorderRadiusPolicy,
   projectSpacingScale,
+  projectSurfaceStyle,
 }: BlockRenderProps) {
   const props = readFooterProps(block.props);
   const logoAsset = resolveAssetById(props.logoAssetId, assetMap);
@@ -124,6 +125,7 @@ export function FooterDefaultRender({
   return (
     <section
       data-spacing-scale={effectiveSpacingScale}
+      data-surface-style={projectSurfaceStyle ?? "default"}
       className={styles.root}
       style={radiusVars as CSSProperties}
     >

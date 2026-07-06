@@ -8,6 +8,7 @@ import type { GalleryItemLinkMode } from "@/lib/routing/gallery-link-mode";
 import { type ProjectBorderRadiusPolicy, resolveProjectBorderRadiusPolicy } from "@/lib/projects/border-radius-policy";
 import { type ProjectModePolicy, resolveProjectModePolicy } from "@/lib/projects/mode-policy";
 import { type ProjectSpacingScale, resolveProjectSpacingScale } from "@/lib/projects/spacing-scale";
+import { type ProjectSurfaceStyle, resolveProjectSurfaceStyle } from "@/lib/projects/surface-style";
 import { SectionShell } from "@/components/projects/section-shell";
 import { ThemeRootSync } from "@/components/projects/theme-root-sync";
 import {
@@ -25,6 +26,7 @@ type RenderedProject = {
   modePolicy?: ProjectModePolicy;
   borderRadiusPolicy?: ProjectBorderRadiusPolicy;
   spacingScale?: ProjectSpacingScale;
+  surfaceStyle?: ProjectSurfaceStyle;
   content: PageContent;
   assets: ProjectAssetRecord[];
   backgroundScenes?: BackgroundSceneRecord[];
@@ -104,6 +106,7 @@ function renderBlock(
   modePolicy: ProjectModePolicy,
   borderRadiusPolicy: ProjectBorderRadiusPolicy,
   spacingScale: ProjectSpacingScale,
+  surfaceStyle: ProjectSurfaceStyle,
   anchorId: string | undefined,
   effectiveGalleryItemAnchors: Map<number, string> | undefined,
   assetMap: Map<string, ProjectAssetRecord>,
@@ -120,13 +123,15 @@ function renderBlock(
 
   const Renderer = definition.Renderer;
   const blockShellRadiusClassName =
-    block.type === "features" ||
-    block.type === "cta" ||
-    block.type === "app-header" ||
-    block.type === "gallery" ||
-    block.type === "hero" ||
-    block.type === "projects-gallery" ||
-    block.type === "footer"
+    surfaceStyle === "flat"
+      ? undefined
+      : block.type === "features" ||
+          block.type === "cta" ||
+          block.type === "app-header" ||
+          block.type === "gallery" ||
+          block.type === "hero" ||
+          block.type === "projects-gallery" ||
+          block.type === "footer"
       ? borderRadiusPolicy === "none"
         ? "rounded-none"
         : borderRadiusPolicy === "md"
@@ -138,12 +143,16 @@ function renderBlock(
       ? sceneMap.get(block.backgroundSceneId)?.sceneJson ?? null
       : null;
 
+  const containerClassName =
+    surfaceStyle === "flat" ? "container mx-auto" : "container mx-auto px-4";
+
   return (
     <SectionShell
       anchorId={anchorId}
-      containerClassName="container mx-auto px-4"
+      containerClassName={containerClassName}
       innerRadiusClassName={blockShellRadiusClassName}
       backgroundScene={backgroundScene}
+      surfaceStyle={surfaceStyle}
       fallbackThemeKey={fallbackThemeKey}
       fallbackMode={fallbackMode}
     >
@@ -155,6 +164,7 @@ function renderBlock(
         modePolicy={modePolicy}
         projectBorderRadiusPolicy={borderRadiusPolicy}
         projectSpacingScale={spacingScale}
+        projectSurfaceStyle={surfaceStyle}
         publicProjectSlug={publicProjectSlug}
         galleryItemLinkMode={galleryItemLinkMode}
         effectiveBlockAnchorId={anchorId}
@@ -172,6 +182,7 @@ export function ProjectRenderer({
   modePolicy = "switchable",
   borderRadiusPolicy = "lg",
   spacingScale = "md",
+  surfaceStyle = "default",
   content,
   assets,
   backgroundScenes = [],
@@ -188,6 +199,7 @@ export function ProjectRenderer({
   const resolvedModePolicy = resolveProjectModePolicy(modePolicy);
   const resolvedBorderRadiusPolicy = resolveProjectBorderRadiusPolicy(borderRadiusPolicy);
   const resolvedSpacingScale = resolveProjectSpacingScale(spacingScale);
+  const resolvedSurfaceStyle = resolveProjectSurfaceStyle(surfaceStyle);
   const containerClass = "container mx-auto px-4";
 
   return (
@@ -200,6 +212,7 @@ export function ProjectRenderer({
         data-mode={mode}
         data-border-radius={resolvedBorderRadiusPolicy}
         data-spacing-scale={resolvedSpacingScale}
+        data-surface-style={resolvedSurfaceStyle}
         className={`min-h-screen py-4 ${renderContext.theme.page}`}
       >
         <div className="flex w-full flex-col gap-6">
@@ -222,6 +235,7 @@ export function ProjectRenderer({
                   resolvedModePolicy,
                   resolvedBorderRadiusPolicy,
                   resolvedSpacingScale,
+                  resolvedSurfaceStyle,
                   anchorMap.get(block.id),
                   buildGalleryItemAnchorMap(block, renderContext.effectiveAnchors),
                   renderContext.assetMap,

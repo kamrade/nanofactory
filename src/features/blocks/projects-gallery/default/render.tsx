@@ -18,6 +18,7 @@ export function ProjectsGalleryDefaultRender({
   mode = "light",
   projectBorderRadiusPolicy,
   projectSpacingScale,
+  projectSurfaceStyle,
   publicProjectSlug,
   galleryItemLinkMode = "absolute",
 }: BlockRenderProps) {
@@ -53,6 +54,7 @@ export function ProjectsGalleryDefaultRender({
   return (
     <section
       data-spacing-scale={effectiveSpacingScale}
+      data-surface-style={projectSurfaceStyle ?? "default"}
       className={styles.root}
       style={radiusVars as CSSProperties}
     >

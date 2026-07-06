@@ -35,6 +35,10 @@ export const projectSpacingScaleEnum = pgEnum("project_spacing_scale", [
   "md",
   "lg",
 ]);
+export const projectSurfaceStyleEnum = pgEnum("project_surface_style", [
+  "default",
+  "flat",
+]);
 
 // 1. Users
 export const users = pgTable("users", {
@@ -61,6 +65,7 @@ export const projects = pgTable("projects", {
     .default("lg")
     .notNull(),
   spacingScale: projectSpacingScaleEnum("spacing_scale").default("md").notNull(),
+  surfaceStyle: projectSurfaceStyleEnum("surface_style").default("default").notNull(),
   status: projectStatusEnum("status").default("draft").notNull(),
   publishedAt: timestamp("published_at", { withTimezone: true }),
   createdAt: timestamp("created_at", { withTimezone: true }).defaultNow().notNull(),

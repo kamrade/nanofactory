@@ -12,6 +12,7 @@ import {
   saveProjectContentAction,
   updateProjectBorderRadiusPolicyAction,
   updateProjectSpacingScaleAction,
+  updateProjectSurfaceStyleAction,
   updateProjectNameAction,
   updateProjectModePolicyAction,
   updateProjectThemeAction,
@@ -68,6 +69,7 @@ export default async function ProjectPage({ params, searchParams }: ProjectPageP
       data-mode-policy={project.modePolicy}
       data-border-radius={project.borderRadiusPolicy}
       data-spacing-scale={project.spacingScale}
+      data-surface-style={project.surfaceStyle}
       className="min-h-screen bg-bg pb-4 text-text-main"
     >
       <ThemeRootSync />
@@ -81,6 +83,7 @@ export default async function ProjectPage({ params, searchParams }: ProjectPageP
             modePolicy: project.modePolicy,
             borderRadiusPolicy: project.borderRadiusPolicy,
             spacingScale: project.spacingScale,
+            surfaceStyle: project.surfaceStyle,
             status: project.status,
             schemaVersion: project.schemaVersion,
             publishedAt: project.publishedAt,
@@ -92,6 +95,7 @@ export default async function ProjectPage({ params, searchParams }: ProjectPageP
           modePolicyAction={modePolicyAction}
           borderRadiusPolicyAction={borderRadiusPolicyAction}
           spacingScaleAction={updateProjectSpacingScaleAction.bind(null, project.id)}
+          surfaceStyleAction={updateProjectSurfaceStyleAction.bind(null, project.id)}
           saveAction={saveAction}
           contentShape={JSON.stringify(normalizedContent, null, 2)}
         />
@@ -105,6 +109,7 @@ export default async function ProjectPage({ params, searchParams }: ProjectPageP
             modePolicy: project.modePolicy,
             borderRadiusPolicy: project.borderRadiusPolicy,
             spacingScale: project.spacingScale,
+            surfaceStyle: project.surfaceStyle,
             status: project.status,
             contentJson: normalizedContent,
           }}

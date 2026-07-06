@@ -40,6 +40,7 @@ import {
 } from "@/lib/editor/anchor-id";
 import type { UiMode } from "@/lib/ui-preferences";
 import type { ThemeKey } from "@/lib/themes";
+import type { ProjectSurfaceStyle } from "@/lib/projects/surface-style";
 
 type EditorProject = {
   id: string;
@@ -49,6 +50,7 @@ type EditorProject = {
   modePolicy: "switchable" | "light-only" | "dark-only";
   borderRadiusPolicy: "none" | "md" | "lg";
   spacingScale: "sm" | "md" | "lg";
+  surfaceStyle: ProjectSurfaceStyle;
   status: "draft" | "published";
   contentJson: PageContent;
 };
@@ -378,14 +380,16 @@ export function ProjectEditor({
     }
 
     const BlockRenderer = definition.Renderer;
-    const blockShellRadiusClassName =
-      block.type === "features" ||
-      block.type === "cta" ||
-      block.type === "app-header" ||
-      block.type === "gallery" ||
-      block.type === "hero" ||
-      block.type === "projects-gallery" ||
-      block.type === "footer"
+  const blockShellRadiusClassName =
+      project.surfaceStyle === "flat"
+        ? undefined
+        : block.type === "features" ||
+            block.type === "cta" ||
+            block.type === "app-header" ||
+            block.type === "gallery" ||
+            block.type === "hero" ||
+            block.type === "projects-gallery" ||
+            block.type === "footer"
         ? project.borderRadiusPolicy === "none"
           ? "rounded-none"
           : project.borderRadiusPolicy === "md"
@@ -415,6 +419,7 @@ export function ProjectEditor({
         containerClassName="mx-auto container"
         innerRadiusClassName={blockShellRadiusClassName}
         backgroundScene={backgroundScene}
+        surfaceStyle={project.surfaceStyle}
         fallbackThemeKey={activeThemeKey}
         fallbackMode={activeMode}
       >
@@ -424,6 +429,7 @@ export function ProjectEditor({
           mode={activeMode}
           projectBorderRadiusPolicy={project.borderRadiusPolicy}
           projectSpacingScale={project.spacingScale}
+          projectSurfaceStyle={project.surfaceStyle}
           effectiveGalleryItemAnchors={galleryItemAnchors}
           theme={{
             muted: "text-text-muted",

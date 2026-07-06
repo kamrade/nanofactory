@@ -21,6 +21,10 @@ import {
   type ProjectSpacingScale,
   resolveProjectSpacingScale,
 } from "@/lib/projects/spacing-scale";
+import {
+  type ProjectSurfaceStyle,
+  resolveProjectSurfaceStyle,
+} from "@/lib/projects/surface-style";
 import { DEFAULT_THEME_KEY, type ThemeKey } from "@/lib/themes";
 import { isUuid } from "@/lib/validate";
 
@@ -30,6 +34,7 @@ type CreateProjectInput = {
   modePolicy?: ProjectModePolicy;
   borderRadiusPolicy?: ProjectBorderRadiusPolicy;
   spacingScale?: ProjectSpacingScale;
+  surfaceStyle?: ProjectSurfaceStyle;
 };
 
 async function generateUniqueProjectSlug(baseName: string) {
@@ -62,6 +67,7 @@ export async function getProjectsByUserId(userId: string) {
       modePolicy: projects.modePolicy,
       borderRadiusPolicy: projects.borderRadiusPolicy,
       spacingScale: projects.spacingScale,
+      surfaceStyle: projects.surfaceStyle,
       status: projects.status,
       publishedAt: projects.publishedAt,
       createdAt: projects.createdAt,
@@ -88,6 +94,7 @@ export async function getProjectByIdForUser(projectId: string, userId: string) {
         modePolicy: projects.modePolicy,
         borderRadiusPolicy: projects.borderRadiusPolicy,
         spacingScale: projects.spacingScale,
+        surfaceStyle: projects.surfaceStyle,
         status: projects.status,
         publishedAt: projects.publishedAt,
         createdAt: projects.createdAt,
@@ -137,6 +144,7 @@ export async function getPublishedProjectBySlug(slug: string) {
       modePolicy: projects.modePolicy,
       borderRadiusPolicy: projects.borderRadiusPolicy,
       spacingScale: projects.spacingScale,
+      surfaceStyle: projects.surfaceStyle,
       status: projects.status,
       publishedAt: projects.publishedAt,
       updatedAt: projects.updatedAt,
@@ -388,6 +396,33 @@ export async function updateProjectSpacingScaleForUser(
   return project ?? null;
 }
 
+export async function updateProjectSurfaceStyleForUser(
+  projectId: string,
+  userId: string,
+  surfaceStyle: ProjectSurfaceStyle
+) {
+  if (!isUuid(projectId)) {
+    return null;
+  }
+
+  const now = new Date();
+  const [project] = await db
+    .update(projects)
+    .set({
+      surfaceStyle: resolveProjectSurfaceStyle(surfaceStyle),
+      updatedAt: now,
+    })
+    .where(and(eq(projects.id, projectId), eq(projects.userId, userId)))
+    .returning({
+      id: projects.id,
+      slug: projects.slug,
+      surfaceStyle: projects.surfaceStyle,
+      updatedAt: projects.updatedAt,
+    });
+
+  return project ?? null;
+}
+
 export async function updateProjectNameForUser(
   projectId: string,
   userId: string,
@@ -452,6 +487,7 @@ export async function createProjectForUser(userId: string, input: CreateProjectI
   const modePolicy = resolveProjectModePolicy(input.modePolicy);
   const borderRadiusPolicy = resolveProjectBorderRadiusPolicy(input.borderRadiusPolicy);
   const spacingScale = resolveProjectSpacingScale(input.spacingScale);
+  const surfaceStyle = resolveProjectSurfaceStyle(input.surfaceStyle);
 
   return db.transaction(async (tx) => {
     const [project] = await tx
@@ -464,6 +500,7 @@ export async function createProjectForUser(userId: string, input: CreateProjectI
         modePolicy,
         borderRadiusPolicy,
         spacingScale,
+        surfaceStyle,
         status: "draft",
       })
       .returning({
@@ -475,6 +512,7 @@ export async function createProjectForUser(userId: string, input: CreateProjectI
         modePolicy: projects.modePolicy,
         borderRadiusPolicy: projects.borderRadiusPolicy,
         spacingScale: projects.spacingScale,
+        surfaceStyle: projects.surfaceStyle,
         status: projects.status,
         createdAt: projects.createdAt,
         updatedAt: projects.updatedAt,

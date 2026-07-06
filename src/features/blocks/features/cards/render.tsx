@@ -62,6 +62,7 @@ export function FeaturesCardsRender({
   assetMap,
   projectBorderRadiusPolicy,
   projectSpacingScale,
+  projectSurfaceStyle,
 }: BlockRenderProps) {
   const sectionTitle =
     typeof block.props.sectionTitle === "string" ? block.props.sectionTitle : "";
@@ -97,6 +98,7 @@ export function FeaturesCardsRender({
   return (
     <section
       data-spacing-scale={effectiveSpacingScale}
+      data-surface-style={projectSurfaceStyle ?? "default"}
       className={styles.root}
       style={radiusVars as CSSProperties}
     >

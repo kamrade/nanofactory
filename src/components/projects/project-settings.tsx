@@ -43,6 +43,10 @@ import {
   PROJECT_SPACING_SCALES,
   type ProjectSpacingScale,
 } from "@/lib/projects/spacing-scale";
+import {
+  PROJECT_SURFACE_STYLES,
+  type ProjectSurfaceStyle,
+} from "@/lib/projects/surface-style";
 import { getBlockTypes, getBlockVariants } from "@/lib/editor/blocks";
 import { useToast } from "@/hooks/use-toast";
 
@@ -55,6 +59,7 @@ type ProjectSettingsProps = {
     modePolicy: ProjectModePolicy;
     borderRadiusPolicy: ProjectBorderRadiusPolicy;
     spacingScale: ProjectSpacingScale;
+    surfaceStyle: ProjectSurfaceStyle;
     status: "draft" | "published";
     schemaVersion: number;
     publishedAt: Date | null;
@@ -65,6 +70,7 @@ type ProjectSettingsProps = {
   modePolicyAction: (formData: FormData) => void | Promise<void>;
   borderRadiusPolicyAction: (formData: FormData) => void | Promise<void>;
   spacingScaleAction: (formData: FormData) => void | Promise<void>;
+  surfaceStyleAction: (formData: FormData) => void | Promise<void>;
   nameAction: (formData: FormData) => void | Promise<void>;
   saveAction: (
     state: SaveEditorState,
@@ -81,6 +87,7 @@ export function ProjectSettings({
   modePolicyAction,
   borderRadiusPolicyAction,
   spacingScaleAction,
+  surfaceStyleAction,
   nameAction,
   saveAction,
   contentShape,
@@ -94,6 +101,9 @@ export function ProjectSettings({
   );
   const [spacingScaleValue, setSpacingScaleValue] = useState<ProjectSpacingScale>(
     project.spacingScale
+  );
+  const [surfaceStyleValue, setSurfaceStyleValue] = useState<ProjectSurfaceStyle>(
+    project.surfaceStyle
   );
   const [liveDraftContentShape, setLiveDraftContentShape] = useState<string | null>(null);
   const [savedContentShape, setSavedContentShape] = useState(contentShape);
@@ -399,6 +409,38 @@ export function ProjectSettings({
                   />
                 </UIFormRow>
 
+                <UIFormRow label="Surface style" underline contentClassName="max-w-none">
+                  <UISelect
+                    ariaLabel="Surface style"
+                    size="sm"
+                    value={surfaceStyleValue}
+                    borderless
+                    onValueChange={(nextValue) => {
+                      if (!PROJECT_SURFACE_STYLES.includes(nextValue as ProjectSurfaceStyle)) {
+                        return;
+                      }
+                      const nextStyle = nextValue as ProjectSurfaceStyle;
+                      if (nextStyle === surfaceStyleValue) {
+                        return;
+                      }
+                      setSurfaceStyleValue(nextStyle);
+                      document
+                        .querySelector<HTMLElement>("main[data-theme]")
+                        ?.setAttribute("data-surface-style", nextStyle);
+                      startTransition(() => {
+                        const formData = new FormData();
+                        formData.set("surfaceStyle", nextStyle);
+                        void surfaceStyleAction(formData);
+                      });
+                    }}
+                    options={PROJECT_SURFACE_STYLES.map((style) => ({
+                      value: style,
+                      label: style,
+                      textValue: style,
+                    }))}
+                  />
+                </UIFormRow>
+
                 <UIFormRow label="Theme" underline contentClassName="max-w-none">
                   <ProjectThemeForm
                     initialThemeKey={resolvedThemeKey}
@@ -470,6 +512,10 @@ export function ProjectSettings({
                 <div className="grid grid-cols-[160px_minmax(0,1fr)] gap-3 border-b border-line px-4 py-3">
                   <span className="font-medium text-text-main">spacingScale</span>
                   <span>{project.spacingScale}</span>
+                </div>
+                <div className="grid grid-cols-[160px_minmax(0,1fr)] gap-3 border-b border-line px-4 py-3">
+                  <span className="font-medium text-text-main">surfaceStyle</span>
+                  <span>{project.surfaceStyle}</span>
                 </div>
                 <div className="grid grid-cols-[160px_minmax(0,1fr)] gap-3 border-b border-line px-4 py-3">
                   <span className="font-medium text-text-main">schemaVersion</span>
