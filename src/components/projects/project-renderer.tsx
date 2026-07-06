@@ -8,6 +8,7 @@ import type { GalleryItemLinkMode } from "@/lib/routing/gallery-link-mode";
 import { type ProjectBorderRadiusPolicy, resolveProjectBorderRadiusPolicy } from "@/lib/projects/border-radius-policy";
 import { type ProjectModePolicy, resolveProjectModePolicy } from "@/lib/projects/mode-policy";
 import { type ProjectSpacingScale, resolveProjectSpacingScale } from "@/lib/projects/spacing-scale";
+import { type ProjectHeadingFont, resolveProjectHeadingFont } from "@/lib/projects/heading-font";
 import { type ProjectSurfaceStyle, resolveProjectSurfaceStyle } from "@/lib/projects/surface-style";
 import { SectionShell } from "@/components/projects/section-shell";
 import { ThemeRootSync } from "@/components/projects/theme-root-sync";
@@ -27,6 +28,7 @@ type RenderedProject = {
   borderRadiusPolicy?: ProjectBorderRadiusPolicy;
   spacingScale?: ProjectSpacingScale;
   surfaceStyle?: ProjectSurfaceStyle;
+  headingFont?: ProjectHeadingFont;
   content: PageContent;
   assets: ProjectAssetRecord[];
   backgroundScenes?: BackgroundSceneRecord[];
@@ -183,6 +185,7 @@ export function ProjectRenderer({
   borderRadiusPolicy = "lg",
   spacingScale = "md",
   surfaceStyle = "default",
+  headingFont = "onest",
   content,
   assets,
   backgroundScenes = [],
@@ -200,6 +203,7 @@ export function ProjectRenderer({
   const resolvedBorderRadiusPolicy = resolveProjectBorderRadiusPolicy(borderRadiusPolicy);
   const resolvedSpacingScale = resolveProjectSpacingScale(spacingScale);
   const resolvedSurfaceStyle = resolveProjectSurfaceStyle(surfaceStyle);
+  const resolvedHeadingFont = resolveProjectHeadingFont(headingFont);
   const containerClass = "container mx-auto px-4";
 
   return (
@@ -213,6 +217,7 @@ export function ProjectRenderer({
         data-border-radius={resolvedBorderRadiusPolicy}
         data-spacing-scale={resolvedSpacingScale}
         data-surface-style={resolvedSurfaceStyle}
+        data-heading-font={resolvedHeadingFont}
         className={`min-h-screen py-4 ${renderContext.theme.page}`}
       >
         <div className="flex w-full flex-col gap-6">

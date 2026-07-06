@@ -239,6 +239,27 @@ h6 {
   font-family: var(--font-onest), Arial, Helvetica, sans-serif;
 }
 
+main[data-heading-font] h1,
+main[data-heading-font] h2,
+main[data-heading-font] h3,
+main[data-heading-font] h4,
+main[data-heading-font] h5,
+main[data-heading-font] h6 {
+  font-family: var(--project-heading-font, var(--font-onest)), Arial, Helvetica, sans-serif;
+}
+
+main[data-heading-font="onest"] {
+  --project-heading-font: var(--font-onest);
+}
+
+main[data-heading-font="playfair-display"] {
+  --project-heading-font: var(--font-playfair-display);
+}
+
+main[data-heading-font="ibm-plex-mono"] {
+  --project-heading-font: var(--font-ibm-plex-mono);
+}
+
 .text-h1 {
   margin-bottom: 0.5em;
 }

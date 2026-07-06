@@ -39,6 +39,11 @@ export const projectSurfaceStyleEnum = pgEnum("project_surface_style", [
   "default",
   "flat",
 ]);
+export const projectHeadingFontEnum = pgEnum("project_heading_font", [
+  "onest",
+  "playfair-display",
+  "ibm-plex-mono",
+]);
 
 // 1. Users
 export const users = pgTable("users", {
@@ -66,6 +71,7 @@ export const projects = pgTable("projects", {
     .notNull(),
   spacingScale: projectSpacingScaleEnum("spacing_scale").default("md").notNull(),
   surfaceStyle: projectSurfaceStyleEnum("surface_style").default("default").notNull(),
+  headingFont: projectHeadingFontEnum("heading_font").default("onest").notNull(),
   status: projectStatusEnum("status").default("draft").notNull(),
   publishedAt: timestamp("published_at", { withTimezone: true }),
   createdAt: timestamp("created_at", { withTimezone: true }).defaultNow().notNull(),

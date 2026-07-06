@@ -225,6 +225,7 @@ export default async function ProjectsGalleryEntryPage({
       data-theme={resolved.projectThemeKey}
       data-mode={resolvedMode}
       data-border-radius={project.borderRadiusPolicy}
+      data-heading-font={project.headingFont}
       className={spacing.pageClassName}
     >
       <GalleryItemKeyboardNav previousHref={previousHref} nextHref={nextHref} />

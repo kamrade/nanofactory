@@ -1,0 +1,2 @@
+CREATE TYPE "public"."project_heading_font" AS ENUM('onest', 'playfair-display', 'ibm-plex-mono');--> statement-breakpoint
+ALTER TABLE "projects" ADD COLUMN "heading_font" "project_heading_font" DEFAULT 'onest' NOT NULL;

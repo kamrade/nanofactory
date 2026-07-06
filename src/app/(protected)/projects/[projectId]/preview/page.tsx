@@ -122,6 +122,7 @@ export async function ProjectPreviewPageWithDependencies(
         borderRadiusPolicy={project.borderRadiusPolicy}
         spacingScale={project.spacingScale}
         surfaceStyle={project.surfaceStyle}
+        headingFont={project.headingFont}
         content={dependencies.normalizePageContent(content)}
         assets={assets}
         backgroundScenes={backgroundScenes}

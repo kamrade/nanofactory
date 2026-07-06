@@ -11,6 +11,7 @@ import {
   publishProjectAction,
   saveProjectContentAction,
   updateProjectBorderRadiusPolicyAction,
+  updateProjectHeadingFontAction,
   updateProjectSpacingScaleAction,
   updateProjectSurfaceStyleAction,
   updateProjectNameAction,
@@ -70,6 +71,7 @@ export default async function ProjectPage({ params, searchParams }: ProjectPageP
       data-border-radius={project.borderRadiusPolicy}
       data-spacing-scale={project.spacingScale}
       data-surface-style={project.surfaceStyle}
+      data-heading-font={project.headingFont}
       className="min-h-screen bg-bg pb-4 text-text-main"
     >
       <ThemeRootSync />
@@ -84,6 +86,7 @@ export default async function ProjectPage({ params, searchParams }: ProjectPageP
             borderRadiusPolicy: project.borderRadiusPolicy,
             spacingScale: project.spacingScale,
             surfaceStyle: project.surfaceStyle,
+            headingFont: project.headingFont,
             status: project.status,
             schemaVersion: project.schemaVersion,
             publishedAt: project.publishedAt,
@@ -95,6 +98,7 @@ export default async function ProjectPage({ params, searchParams }: ProjectPageP
           modePolicyAction={modePolicyAction}
           borderRadiusPolicyAction={borderRadiusPolicyAction}
           spacingScaleAction={updateProjectSpacingScaleAction.bind(null, project.id)}
+          headingFontAction={updateProjectHeadingFontAction.bind(null, project.id)}
           surfaceStyleAction={updateProjectSurfaceStyleAction.bind(null, project.id)}
           saveAction={saveAction}
           contentShape={JSON.stringify(normalizedContent, null, 2)}
@@ -110,6 +114,7 @@ export default async function ProjectPage({ params, searchParams }: ProjectPageP
             borderRadiusPolicy: project.borderRadiusPolicy,
             spacingScale: project.spacingScale,
             surfaceStyle: project.surfaceStyle,
+            headingFont: project.headingFont,
             status: project.status,
             contentJson: normalizedContent,
           }}

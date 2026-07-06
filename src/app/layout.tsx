@@ -1,18 +1,10 @@
 import type { Metadata } from "next";
 import { cookies } from "next/headers";
-import localFont from "next/font/local";
 
 import { UI_MODE_COOKIE, UI_THEME_COOKIE, resolveModePreference, resolveThemePreference } from "@/lib/ui-preferences";
+import { appFontVariables } from "./fonts";
 import { AppProviders } from "./providers";
 import "./globals.css";
-
-const onest = localFont({
-  src: "./fonts/Onest-Variable.ttf",
-  weight: "100 900",
-  style: "normal",
-  display: "swap",
-  variable: "--font-onest",
-});
 
 export const metadata: Metadata = {
   title: "Nanofactory",
@@ -33,7 +25,7 @@ export default async function RootLayout({
       lang="en"
       data-theme={theme}
       data-mode={mode}
-      className={`${onest.variable} h-full antialiased`}
+      className={`${appFontVariables} h-full antialiased`}
     >
       <body className="min-h-full flex flex-col">
         <AppProviders>{children}</AppProviders>

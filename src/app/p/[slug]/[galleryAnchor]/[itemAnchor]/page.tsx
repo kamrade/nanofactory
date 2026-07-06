@@ -285,6 +285,7 @@ export default async function PublishedGalleryItemPage({
         data-theme={resolvedProjectGallery.projectThemeKey}
         data-mode={resolvedMode}
         data-border-radius={project.borderRadiusPolicy}
+        data-heading-font={project.headingFont}
         className={spacing.pageClassName}
       >
         <div className={spacing.containerClassName}>
@@ -438,6 +439,7 @@ export default async function PublishedGalleryItemPage({
       data-theme={viewModel.resolvedThemeKey}
       data-mode={resolvedMode}
       data-border-radius={project.borderRadiusPolicy}
+      data-heading-font={project.headingFont}
       className={spacing.pageClassName}
     >
       <GalleryItemKeyboardNav

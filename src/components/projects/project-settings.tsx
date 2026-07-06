@@ -40,6 +40,11 @@ import {
   type ProjectModePolicy,
 } from "@/lib/projects/mode-policy";
 import {
+  PROJECT_HEADING_FONTS,
+  PROJECT_HEADING_FONT_LABELS,
+  type ProjectHeadingFont,
+} from "@/lib/projects/heading-font";
+import {
   PROJECT_SPACING_SCALES,
   type ProjectSpacingScale,
 } from "@/lib/projects/spacing-scale";
@@ -60,6 +65,7 @@ type ProjectSettingsProps = {
     borderRadiusPolicy: ProjectBorderRadiusPolicy;
     spacingScale: ProjectSpacingScale;
     surfaceStyle: ProjectSurfaceStyle;
+    headingFont: ProjectHeadingFont;
     status: "draft" | "published";
     schemaVersion: number;
     publishedAt: Date | null;
@@ -70,6 +76,7 @@ type ProjectSettingsProps = {
   modePolicyAction: (formData: FormData) => void | Promise<void>;
   borderRadiusPolicyAction: (formData: FormData) => void | Promise<void>;
   spacingScaleAction: (formData: FormData) => void | Promise<void>;
+  headingFontAction: (formData: FormData) => void | Promise<void>;
   surfaceStyleAction: (formData: FormData) => void | Promise<void>;
   nameAction: (formData: FormData) => void | Promise<void>;
   saveAction: (
@@ -87,6 +94,7 @@ export function ProjectSettings({
   modePolicyAction,
   borderRadiusPolicyAction,
   spacingScaleAction,
+  headingFontAction,
   surfaceStyleAction,
   nameAction,
   saveAction,
@@ -101,6 +109,9 @@ export function ProjectSettings({
   );
   const [spacingScaleValue, setSpacingScaleValue] = useState<ProjectSpacingScale>(
     project.spacingScale
+  );
+  const [headingFontValue, setHeadingFontValue] = useState<ProjectHeadingFont>(
+    project.headingFont
   );
   const [surfaceStyleValue, setSurfaceStyleValue] = useState<ProjectSurfaceStyle>(
     project.surfaceStyle
@@ -441,6 +452,38 @@ export function ProjectSettings({
                   />
                 </UIFormRow>
 
+                <UIFormRow label="Heading font" underline contentClassName="max-w-none">
+                  <UISelect
+                    ariaLabel="Heading font"
+                    size="sm"
+                    value={headingFontValue}
+                    borderless
+                    onValueChange={(nextValue) => {
+                      if (!PROJECT_HEADING_FONTS.includes(nextValue as ProjectHeadingFont)) {
+                        return;
+                      }
+                      const nextFont = nextValue as ProjectHeadingFont;
+                      if (nextFont === headingFontValue) {
+                        return;
+                      }
+                      setHeadingFontValue(nextFont);
+                      document
+                        .querySelector<HTMLElement>("main[data-theme]")
+                        ?.setAttribute("data-heading-font", nextFont);
+                      startTransition(() => {
+                        const formData = new FormData();
+                        formData.set("headingFont", nextFont);
+                        void headingFontAction(formData);
+                      });
+                    }}
+                    options={PROJECT_HEADING_FONTS.map((font) => ({
+                      value: font,
+                      label: PROJECT_HEADING_FONT_LABELS[font],
+                      textValue: PROJECT_HEADING_FONT_LABELS[font],
+                    }))}
+                  />
+                </UIFormRow>
+
                 <UIFormRow label="Theme" underline contentClassName="max-w-none">
                   <ProjectThemeForm
                     initialThemeKey={resolvedThemeKey}
@@ -516,6 +559,10 @@ export function ProjectSettings({
                 <div className="grid grid-cols-[160px_minmax(0,1fr)] gap-3 border-b border-line px-4 py-3">
                   <span className="font-medium text-text-main">surfaceStyle</span>
                   <span>{project.surfaceStyle}</span>
+                </div>
+                <div className="grid grid-cols-[160px_minmax(0,1fr)] gap-3 border-b border-line px-4 py-3">
+                  <span className="font-medium text-text-main">headingFont</span>
+                  <span>{PROJECT_HEADING_FONT_LABELS[project.headingFont]}</span>
                 </div>
                 <div className="grid grid-cols-[160px_minmax(0,1fr)] gap-3 border-b border-line px-4 py-3">
                   <span className="font-medium text-text-main">schemaVersion</span>

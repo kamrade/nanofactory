@@ -24,6 +24,7 @@ type EditorProject = {
   borderRadiusPolicy: "none" | "md" | "lg";
   spacingScale: "sm" | "md" | "lg";
   surfaceStyle: "default" | "flat";
+  headingFont: "onest" | "playfair-display" | "ibm-plex-mono";
   status: "draft" | "published";
   contentJson: PageContent;
 };

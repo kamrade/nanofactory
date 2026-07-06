@@ -22,6 +22,10 @@ import {
   resolveProjectSpacingScale,
 } from "@/lib/projects/spacing-scale";
 import {
+  type ProjectHeadingFont,
+  resolveProjectHeadingFont,
+} from "@/lib/projects/heading-font";
+import {
   type ProjectSurfaceStyle,
   resolveProjectSurfaceStyle,
 } from "@/lib/projects/surface-style";
@@ -35,6 +39,7 @@ type CreateProjectInput = {
   borderRadiusPolicy?: ProjectBorderRadiusPolicy;
   spacingScale?: ProjectSpacingScale;
   surfaceStyle?: ProjectSurfaceStyle;
+  headingFont?: ProjectHeadingFont;
 };
 
 async function generateUniqueProjectSlug(baseName: string) {
@@ -68,6 +73,7 @@ export async function getProjectsByUserId(userId: string) {
       borderRadiusPolicy: projects.borderRadiusPolicy,
       spacingScale: projects.spacingScale,
       surfaceStyle: projects.surfaceStyle,
+      headingFont: projects.headingFont,
       status: projects.status,
       publishedAt: projects.publishedAt,
       createdAt: projects.createdAt,
@@ -95,6 +101,7 @@ export async function getProjectByIdForUser(projectId: string, userId: string) {
         borderRadiusPolicy: projects.borderRadiusPolicy,
         spacingScale: projects.spacingScale,
         surfaceStyle: projects.surfaceStyle,
+        headingFont: projects.headingFont,
         status: projects.status,
         publishedAt: projects.publishedAt,
         createdAt: projects.createdAt,
@@ -145,6 +152,7 @@ export async function getPublishedProjectBySlug(slug: string) {
       borderRadiusPolicy: projects.borderRadiusPolicy,
       spacingScale: projects.spacingScale,
       surfaceStyle: projects.surfaceStyle,
+      headingFont: projects.headingFont,
       status: projects.status,
       publishedAt: projects.publishedAt,
       updatedAt: projects.updatedAt,
@@ -423,6 +431,33 @@ export async function updateProjectSurfaceStyleForUser(
   return project ?? null;
 }
 
+export async function updateProjectHeadingFontForUser(
+  projectId: string,
+  userId: string,
+  headingFont: ProjectHeadingFont
+) {
+  if (!isUuid(projectId)) {
+    return null;
+  }
+
+  const now = new Date();
+  const [project] = await db
+    .update(projects)
+    .set({
+      headingFont: resolveProjectHeadingFont(headingFont),
+      updatedAt: now,
+    })
+    .where(and(eq(projects.id, projectId), eq(projects.userId, userId)))
+    .returning({
+      id: projects.id,
+      slug: projects.slug,
+      headingFont: projects.headingFont,
+      updatedAt: projects.updatedAt,
+    });
+
+  return project ?? null;
+}
+
 export async function updateProjectNameForUser(
   projectId: string,
   userId: string,
@@ -488,6 +523,7 @@ export async function createProjectForUser(userId: string, input: CreateProjectI
   const borderRadiusPolicy = resolveProjectBorderRadiusPolicy(input.borderRadiusPolicy);
   const spacingScale = resolveProjectSpacingScale(input.spacingScale);
   const surfaceStyle = resolveProjectSurfaceStyle(input.surfaceStyle);
+  const headingFont = resolveProjectHeadingFont(input.headingFont);
 
   return db.transaction(async (tx) => {
     const [project] = await tx
@@ -501,6 +537,7 @@ export async function createProjectForUser(userId: string, input: CreateProjectI
         borderRadiusPolicy,
         spacingScale,
         surfaceStyle,
+        headingFont,
         status: "draft",
       })
       .returning({
@@ -513,6 +550,7 @@ export async function createProjectForUser(userId: string, input: CreateProjectI
         borderRadiusPolicy: projects.borderRadiusPolicy,
         spacingScale: projects.spacingScale,
         surfaceStyle: projects.surfaceStyle,
+        headingFont: projects.headingFont,
         status: projects.status,
         createdAt: projects.createdAt,
         updatedAt: projects.updatedAt,

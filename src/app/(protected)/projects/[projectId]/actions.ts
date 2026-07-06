@@ -24,6 +24,7 @@ import {
   publishProjectForUser,
   saveProjectContentForUser,
   updateProjectBorderRadiusPolicyForUser,
+  updateProjectHeadingFontForUser,
   updateProjectSpacingScaleForUser,
   updateProjectSurfaceStyleForUser,
   unpublishProjectForUser,
@@ -39,6 +40,10 @@ import {
   isProjectModePolicy,
   resolveProjectModePolicy,
 } from "@/lib/projects/mode-policy";
+import {
+  isProjectHeadingFont,
+  resolveProjectHeadingFont,
+} from "@/lib/projects/heading-font";
 import {
   isProjectSpacingScale,
   resolveProjectSpacingScale,
@@ -119,6 +124,13 @@ type UpdateProjectSpacingScaleDependencies = {
   redirect: typeof redirect;
 };
 
+type UpdateProjectHeadingFontDependencies = {
+  requireCurrentUser: typeof requireCurrentUser;
+  updateProjectHeadingFontForUser: typeof updateProjectHeadingFontForUser;
+  revalidatePath: typeof revalidatePath;
+  redirect: typeof redirect;
+};
+
 type UpdateProjectSurfaceStyleDependencies = {
   requireCurrentUser: typeof requireCurrentUser;
   updateProjectSurfaceStyleForUser: typeof updateProjectSurfaceStyleForUser;
@@ -171,6 +183,13 @@ const updateProjectBorderRadiusPolicyDependencies: UpdateProjectBorderRadiusPoli
 const updateProjectSpacingScaleDependencies: UpdateProjectSpacingScaleDependencies = {
   requireCurrentUser,
   updateProjectSpacingScaleForUser,
+  revalidatePath,
+  redirect,
+};
+
+const updateProjectHeadingFontDependencies: UpdateProjectHeadingFontDependencies = {
+  requireCurrentUser,
+  updateProjectHeadingFontForUser,
   revalidatePath,
   redirect,
 };
@@ -392,6 +411,17 @@ export async function updateProjectSurfaceStyleAction(
   );
 }
 
+export async function updateProjectHeadingFontAction(
+  projectId: string,
+  formData: FormData
+) {
+  return updateProjectHeadingFontActionWithDependencies(
+    projectId,
+    formData,
+    updateProjectHeadingFontDependencies
+  );
+}
+
 export async function updateProjectThemeActionWithDependencies(
   projectId: string,
   formData: FormData,
@@ -522,6 +552,34 @@ export async function updateProjectSpacingScaleActionWithDependencies(
     projectId,
     currentUser.id,
     resolveProjectSpacingScale(rawScale)
+  );
+
+  if (!updatedProject) {
+    dependencies.redirect(`/projects/${projectId}`);
+  }
+
+  dependencies.revalidatePath(`/projects/${projectId}`);
+  dependencies.revalidatePath("/dashboard");
+  dependencies.revalidatePath(`/p/${updatedProject.slug}`);
+  dependencies.redirect(`/projects/${projectId}`);
+}
+
+export async function updateProjectHeadingFontActionWithDependencies(
+  projectId: string,
+  formData: FormData,
+  dependencies: UpdateProjectHeadingFontDependencies
+) {
+  const currentUser = await dependencies.requireCurrentUser();
+  const rawHeadingFont = String(formData.get("headingFont") ?? "");
+
+  if (!isProjectHeadingFont(rawHeadingFont)) {
+    dependencies.redirect(`/projects/${projectId}`);
+  }
+
+  const updatedProject = await dependencies.updateProjectHeadingFontForUser(
+    projectId,
+    currentUser.id,
+    resolveProjectHeadingFont(rawHeadingFont)
   );
 
   if (!updatedProject) {
