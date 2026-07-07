@@ -6,6 +6,7 @@ type GalleryItemNavProps = {
   counterText: string;
   previousHref?: string;
   nextHref?: string;
+  showStepNavigation?: boolean;
   radiusClassName?: string;
   controlClassName?: string;
   controlBarClassName?: string;
@@ -19,6 +20,7 @@ export function GalleryItemNav({
   counterText,
   previousHref,
   nextHref,
+  showStepNavigation = true,
   radiusClassName = "rounded-xl",
   controlClassName = "px-3 py-2 text-sm",
   controlBarClassName = "px-4 py-3",
@@ -44,37 +46,39 @@ export function GalleryItemNav({
         </div>
       </div>
 
-      <section className={`overflow-hidden border border-line bg-surface-alt ${radiusClassName}`}>
-        <div className={`flex items-center justify-between gap-3 border-b border-line bg-surface ${controlBarClassName}`}>
-          {previousHref ? (
-            <ModeAwareLink
-              data-testid={previousTestId}
-              href={previousHref}
-              className={`inline-flex items-center justify-center border border-line bg-surface font-medium text-text-main transition hover:bg-surface-alt ${controlClassName} ${radiusClassName}`}
-            >
-              Previous
-            </ModeAwareLink>
-          ) : (
-            <span className={`inline-flex items-center justify-center border border-line bg-surface-alt font-medium text-text-placeholder ${controlClassName} ${radiusClassName}`}>
-              Previous
-            </span>
-          )}
+      {showStepNavigation ? (
+        <section className={`overflow-hidden border border-line bg-surface-alt ${radiusClassName}`}>
+          <div className={`flex items-center justify-between gap-3 border-b border-line bg-surface ${controlBarClassName}`}>
+            {previousHref ? (
+              <ModeAwareLink
+                data-testid={previousTestId}
+                href={previousHref}
+                className={`inline-flex items-center justify-center border border-line bg-surface font-medium text-text-main transition hover:bg-surface-alt ${controlClassName} ${radiusClassName}`}
+              >
+                Previous
+              </ModeAwareLink>
+            ) : (
+              <span className={`inline-flex items-center justify-center border border-line bg-surface-alt font-medium text-text-placeholder ${controlClassName} ${radiusClassName}`}>
+                Previous
+              </span>
+            )}
 
-          {nextHref ? (
-            <ModeAwareLink
-              data-testid={nextTestId}
-              href={nextHref}
-              className={`inline-flex items-center justify-center border border-line bg-surface font-medium text-text-main transition hover:bg-surface-alt ${controlClassName} ${radiusClassName}`}
-            >
-              Next
-            </ModeAwareLink>
-          ) : (
-            <span className={`inline-flex items-center justify-center border border-line bg-surface-alt font-medium text-text-placeholder ${controlClassName} ${radiusClassName}`}>
-              Next
-            </span>
-          )}
-        </div>
-      </section>
+            {nextHref ? (
+              <ModeAwareLink
+                data-testid={nextTestId}
+                href={nextHref}
+                className={`inline-flex items-center justify-center border border-line bg-surface font-medium text-text-main transition hover:bg-surface-alt ${controlClassName} ${radiusClassName}`}
+              >
+                Next
+              </ModeAwareLink>
+            ) : (
+              <span className={`inline-flex items-center justify-center border border-line bg-surface-alt font-medium text-text-placeholder ${controlClassName} ${radiusClassName}`}>
+                Next
+              </span>
+            )}
+          </div>
+        </section>
+      ) : null}
     </>
   );
 }

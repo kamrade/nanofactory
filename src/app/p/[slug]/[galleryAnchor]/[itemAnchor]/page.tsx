@@ -3,6 +3,7 @@ import { cookies, headers } from "next/headers";
 import { notFound } from "next/navigation";
 import type { Metadata } from "next";
 import { GalleryItemKeyboardNav } from "./gallery-item-keyboard-nav";
+import { GalleryItemImageNav } from "./gallery-item-image-nav";
 import { GalleryItemNav } from "./gallery-item-nav";
 
 import { MdRenderer } from "@/components/md-renderer";
@@ -121,7 +122,7 @@ function getProjectSpacingClasses(spacingScale: "sm" | "md" | "lg") {
   if (spacingScale === "lg") {
     return {
       pageClassName: "min-h-screen bg-bg py-12 text-text-main",
-      containerClassName: "container mx-auto grid max-w-6xl gap-8 px-6",
+      containerClassName: "container mx-auto grid gap-8 px-6",
       controlClassName: "px-4 py-3 text-base",
       controlBarClassName: "px-5 py-4",
       cardClassName: "grid gap-4 border border-line bg-surface p-6",
@@ -432,6 +433,12 @@ export default async function PublishedGalleryItemPage({
   const previewRadiusClass = getProjectRadiusClass(project.borderRadiusPolicy);
   const controlRadiusClass = getProjectControlRadiusClass(project.borderRadiusPolicy);
   const spacing = getProjectSpacingClasses(project.spacingScale);
+  const previewPageClassName = `${spacing.pageClassName} py-6`;
+  const previewContainerClassName = `${spacing.containerClassName} gap-4`;
+  const previewCardClassName = `${spacing.cardClassName} p-4`;
+  const previewImageFrameClassName =
+    "flex h-[calc(100dvh-24rem)] min-h-[14rem] items-center justify-center overflow-hidden";
+  const previewImageClassName = "block max-h-full max-w-full w-auto object-contain";
 
   return (
     <main
@@ -440,33 +447,45 @@ export default async function PublishedGalleryItemPage({
       data-mode={resolvedMode}
       data-border-radius={project.borderRadiusPolicy}
       data-heading-font={project.headingFont}
-      className={spacing.pageClassName}
+      className={previewPageClassName}
     >
       <GalleryItemKeyboardNav
         previousHref={viewModel.navigationHrefs.previousHref}
         nextHref={viewModel.navigationHrefs.nextHref}
       />
-      <div className={spacing.containerClassName}>
+      <div className={previewContainerClassName}>
         <GalleryItemNav
           backHref={viewModel.navigationHrefs.backHref}
           counterText={`Item ${resolved.itemIndex + 1} of ${resolved.totalItems}`}
           previousHref={viewModel.navigationHrefs.previousHref}
           nextHref={viewModel.navigationHrefs.nextHref}
+          showStepNavigation={false}
           radiusClassName={controlRadiusClass}
           controlClassName={spacing.controlClassName}
           controlBarClassName={spacing.controlBarClassName}
         />
 
         <section
-          className={`overflow-hidden border border-line bg-surface-alt ${previewRadiusClass}`}
+          className={`relative overflow-hidden border border-line bg-surface-alt ${previewRadiusClass} ${previewImageFrameClassName}`}
         >
+          <GalleryItemImageNav
+            previousHref={viewModel.navigationHrefs.previousHref}
+            nextHref={viewModel.navigationHrefs.nextHref}
+          />
           {asset ? (
-            // eslint-disable-next-line @next/next/no-img-element
-            <img
-              src={asset.publicUrl}
-              alt={asset.alt ?? asset.originalFilename}
-              className="h-auto w-full object-contain"
-            />
+            <a
+              href={asset.publicUrl}
+              target="_blank"
+              rel="noreferrer noopener"
+              className="flex h-full w-full items-center justify-center"
+            >
+              {/* eslint-disable-next-line @next/next/no-img-element */}
+              <img
+                src={asset.publicUrl}
+                alt={asset.alt ?? asset.originalFilename}
+                className={previewImageClassName}
+              />
+            </a>
           ) : (
             <div className={spacing.singleImageFallbackClassName}>
               No image
@@ -474,7 +493,7 @@ export default async function PublishedGalleryItemPage({
           )}
         </section>
 
-        <section className={`${spacing.cardClassName} ${previewRadiusClass}`}>
+        <section className={`${previewCardClassName} ${previewRadiusClass}`}>
           {resolved.title.trim().length > 0 ? (
             <h1 className={spacing.h1ClassName}>{resolved.title}</h1>
           ) : (
