@@ -12,6 +12,7 @@ export type UIAccordionItem = {
   title: ReactNode;
   content: ReactNode;
   description?: ReactNode;
+  actions?: ReactNode;
   disabled?: boolean;
 };
 
@@ -69,61 +70,68 @@ export function UIAccordion({
                 open ? "bg-neutral-100" : "bg-surface"
               )}
             >
-              <button
-                id={triggerId}
-                type="button"
-                disabled={item.disabled}
-                aria-expanded={open}
-                aria-controls={panelId}
+              <div
                 className={cx(
-                  "group flex w-full items-start justify-between gap-4 text-left transition outline-none",
-                  "focus-visible:bg-surface-alt focus-visible:shadow-[inset_0_0_0_1px_var(--color-focus)]",
-                  "disabled:cursor-not-allowed disabled:opacity-50",
+                  "flex items-start gap-2 transition",
                   size === "sm" ? "px-4 py-3" : "px-5 py-4"
                 )}
-                onClick={() => {
-                  if (open) {
-                    setValue(collapsible ? null : item.id);
-                    return;
-                  }
-                  setValue(item.id);
-                }}
               >
-                <span className="grid gap-1">
-                  <h4
+                <button
+                  id={triggerId}
+                  type="button"
+                  disabled={item.disabled}
+                  aria-expanded={open}
+                  aria-controls={panelId}
+                  className={cx(
+                    "group flex min-w-0 flex-1 items-start gap-3 text-left transition outline-none",
+                    "focus-visible:bg-surface-alt focus-visible:shadow-[inset_0_0_0_1px_var(--color-focus)]",
+                    "disabled:cursor-not-allowed disabled:opacity-50"
+                  )}
+                  onClick={() => {
+                    if (open) {
+                      setValue(collapsible ? null : item.id);
+                      return;
+                    }
+                    setValue(item.id);
+                  }}
+                >
+                  <FiChevronDown
+                    aria-hidden
                     className={cx(
-                      "font-medium text-text-main",
-                      size === "sm" ? "text-sm leading-5" : "text-base leading-6"
+                      "mt-0.5 shrink-0 text-text-muted transition-transform group-focus-visible:text-text-main",
+                      size === "sm" ? "h-4 w-4" : "h-5 w-5",
+                      open && "rotate-180"
                     )}
-                  >
-                    {item.title}
-                  </h4>
-                  {item.description ? (
-                    <span
+                  />
+                  <span className="grid min-w-0 gap-1">
+                    <h4
                       className={cx(
-                        "text-text-muted",
-                        size === "sm" ? "text-sm leading-6" : "text-base leading-7"
+                        "font-medium text-text-main",
+                        size === "sm" ? "text-sm leading-5" : "text-base leading-6"
+                      )}
+                    >
+                      {item.title}
+                    </h4>
+                    {item.description ? (
+                      <span
+                        className={cx(
+                          "text-text-muted",
+                          size === "sm" ? "text-sm leading-6" : "text-base leading-7"
                       )}
                     >
                       {item.description}
                     </span>
                   ) : null}
-                </span>
-                <FiChevronDown
-                  aria-hidden
-                  className={cx(
-                    "mt-0.5 shrink-0 text-text-muted transition-transform group-focus-visible:text-text-main",
-                    size === "sm" ? "h-4 w-4" : "h-5 w-5",
-                    open && "rotate-180"
-                  )}
-                />
-              </button>
+                  </span>
+                </button>
+                {item.actions ? <div className="flex shrink-0 items-center gap-1">{item.actions}</div> : null}
+              </div>
               <div
                 id={panelId}
                 role="region"
                 aria-labelledby={triggerId}
                 hidden={!open}
-                className="px-5 pb-4"
+                className={cx(size === "sm" ? "px-4 pb-3" : "px-5 pb-4")}
               >
                 <div
                   className={cx(

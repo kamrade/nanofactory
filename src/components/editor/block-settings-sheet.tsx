@@ -1,6 +1,12 @@
 "use client";
 
 import { useMemo, useState } from "react";
+import {
+  FiChevronsDown,
+  FiChevronsUp,
+  FiChevronDown,
+  FiChevronUp,
+} from "react-icons/fi";
 
 import {
   getBlockDefinition,
@@ -141,8 +147,6 @@ function BlockAnchorIdField({
 
 type BlockSettingsSectionProps = {
   block: PageBlock;
-  blockIndex: number;
-  totalBlocks: number;
   definition: BlockVariantDefinition;
   pendingVariantSwitch: PendingVariantSwitch | null;
   assets: ProjectAssetRecord[];
@@ -164,14 +168,11 @@ type BlockSettingsSectionProps = {
   onCancelVariantSwitch: () => void;
   onChangeProps: (blockId: string, nextProps: Record<string, unknown>) => void;
   onChangeAnchorId: (blockId: string, nextAnchorId?: string) => void;
-  onMoveBlock: (blockId: string, nextIndex: number) => void;
   onDeleteBlock: (blockId: string) => void;
 };
 
 function BlockSettingsSection({
   block,
-  blockIndex,
-  totalBlocks,
   definition,
   pendingVariantSwitch,
   assets,
@@ -186,13 +187,10 @@ function BlockSettingsSection({
   onCancelVariantSwitch,
   onChangeProps,
   onChangeAnchorId,
-  onMoveBlock,
   onDeleteBlock,
 }: BlockSettingsSectionProps) {
   const variantOptions = getBlockVariants(definition.type);
   const activeVariant = pendingVariantSwitch ? pendingVariantSwitch.nextVariant : definition.variant;
-  const canMoveBlockUp = blockIndex > 0;
-  const canMoveBlockDown = blockIndex < totalBlocks - 1;
 
   return (
     <div className="grid gap-5">
@@ -282,49 +280,7 @@ function BlockSettingsSection({
         onChange={(nextProps) => onChangeProps(block.id, nextProps)}
       />
 
-      <div className="flex flex-wrap items-center justify-between gap-3 border-t border-neutral-line pt-4">
-        <div className="flex flex-wrap items-center gap-2">
-          <UIButton
-            type="button"
-            size="sm"
-            theme="base"
-            variant="outlined"
-            disabled={!canMoveBlockUp}
-            onClick={() => onMoveBlock(block.id, 0)}
-          >
-            ⇡
-          </UIButton>
-          <UIButton
-            type="button"
-            size="sm"
-            theme="base"
-            variant="outlined"
-            disabled={!canMoveBlockUp}
-            onClick={() => onMoveBlock(block.id, blockIndex - 1)}
-          >
-            ↑
-          </UIButton>
-          <UIButton
-            type="button"
-            size="sm"
-            theme="base"
-            variant="outlined"
-            disabled={!canMoveBlockDown}
-            onClick={() => onMoveBlock(block.id, blockIndex + 1)}
-          >
-            ↓
-          </UIButton>
-          <UIButton
-            type="button"
-            size="sm"
-            theme="base"
-            variant="outlined"
-            disabled={!canMoveBlockDown}
-            onClick={() => onMoveBlock(block.id, totalBlocks - 1)}
-          >
-            ⇣
-          </UIButton>
-        </div>
+      <div className="flex flex-wrap items-center justify-end gap-3 border-t border-neutral-line pt-4">
         <UIButton
           type="button"
           size="sm"
@@ -376,12 +332,69 @@ export function BlockSettingsSheet({
           {
             id: block.id,
             title: formatDefinitionLabel(definition),
-            description: `Block ${index + 1} of ${allBlocks.length}`,
+            actions: (
+              <div className="flex items-center gap-1">
+                <UIButton
+                  type="button"
+                  size="sm"
+                  theme="base"
+                  variant="text"
+                  iconButton
+                  disabled={index === 0}
+                  aria-label="Move block to top"
+                  title="Move block to top"
+                  className="text-text-muted"
+                  onClick={() => onMoveBlock(block.id, 0)}
+                >
+                  <FiChevronsUp aria-hidden className="h-4 w-4" />
+                </UIButton>
+                <UIButton
+                  type="button"
+                  size="sm"
+                  theme="base"
+                  variant="text"
+                  iconButton
+                  disabled={index === 0}
+                  aria-label="Move block up"
+                  title="Move block up"
+                  className="text-text-muted"
+                  onClick={() => onMoveBlock(block.id, index - 1)}
+                >
+                  <FiChevronUp aria-hidden className="h-4 w-4" />
+                </UIButton>
+                <UIButton
+                  type="button"
+                  size="sm"
+                  theme="base"
+                  variant="text"
+                  iconButton
+                  disabled={index === allBlocks.length - 1}
+                  aria-label="Move block down"
+                  title="Move block down"
+                  className="text-text-muted"
+                  onClick={() => onMoveBlock(block.id, index + 1)}
+                >
+                  <FiChevronDown aria-hidden className="h-4 w-4" />
+                </UIButton>
+                <UIButton
+                  type="button"
+                  size="sm"
+                  theme="base"
+                  variant="text"
+                  iconButton
+                  disabled={index === allBlocks.length - 1}
+                  aria-label="Move block to bottom"
+                  title="Move block to bottom"
+                  className="text-text-muted"
+                  onClick={() => onMoveBlock(block.id, allBlocks.length - 1)}
+                >
+                  <FiChevronsDown aria-hidden className="h-4 w-4" />
+                </UIButton>
+              </div>
+            ),
             content: (
               <BlockSettingsSection
                 block={block}
-                blockIndex={index}
-                totalBlocks={allBlocks.length}
                 definition={definition}
                 pendingVariantSwitch={
                   activePendingSwitch?.blockId === block.id ? activePendingSwitch : null
@@ -398,7 +411,6 @@ export function BlockSettingsSheet({
                 onCancelVariantSwitch={onCancelVariantSwitch}
                 onChangeProps={onChangeProps}
                 onChangeAnchorId={onChangeAnchorId}
-                onMoveBlock={onMoveBlock}
                 onDeleteBlock={onDeleteBlock}
               />
             ),
