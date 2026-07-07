@@ -10,6 +10,7 @@ import {
   FeedbackAndSheetSection,
   FormLayoutSection,
   InputsSection,
+  TimelineSection,
   type UiSize,
   TypographyButtonsBadgesSection,
 } from "@/app/showcase/uikit-sections";
@@ -120,6 +121,7 @@ export function ShowcaseClient({
                 <TypographyButtonsBadgesSection uiSize={uiSize} />
                 <ControlsAndMenusSection uiSize={uiSize} />
                 <AccordionSection uiSize={uiSize} />
+                <TimelineSection uiSize={uiSize} />
                 <InputsSection uiSize={uiSize} />
                 <FormLayoutSection uiSize={uiSize} />
                 <BorderlessFormLayoutSection uiSize={uiSize} />

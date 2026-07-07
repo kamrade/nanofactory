@@ -57,6 +57,7 @@ describe("saveProjectContentForUserWithDependencies", () => {
               "Write the core message, add a call to action, and publish a focused landing page without a long setup.",
             buttonText: "Start now",
             buttonAnchor: "",
+            buttonTargetType: "inner-anchor",
             contentPosition: "centered",
             imageAssetId: undefined,
             imageLightAssetId: undefined,

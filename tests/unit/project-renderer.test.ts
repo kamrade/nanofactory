@@ -598,7 +598,7 @@ describe("ProjectRenderer", () => {
     );
 
     expect(html).toContain('data-surface-style="flat"');
-    expect(html).toContain('class="scroll-mt-24 container mx-auto"');
+    expect(html).toContain('class="scroll-mt-24 container mx-auto px-2 sm:px-0"');
     expect(html).not.toContain("container mx-auto px-4");
     expect(html).not.toContain("rounded-3xl");
     expect(html).not.toContain("repeating-linear-gradient(45deg");

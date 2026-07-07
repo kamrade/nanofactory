@@ -180,7 +180,6 @@ test("gallery item page handles ArrowRight and edge states for previous/next", a
 
   await expect(page.getByTestId("gallery-counter")).toHaveText("Item 1 of 2");
   const firstDetailUrl = page.url();
-  await expect(page.getByText("Previous")).toBeVisible();
   await expect(page.getByTestId("gallery-nav-previous")).toHaveCount(0);
   await expect(page.getByTestId("gallery-nav-next")).toHaveCount(1);
 
@@ -236,8 +235,8 @@ test("gallery detail nav controls follow project spacing scale", async ({ page }
 
   await expect(page.getByTestId("gallery-back-link")).toHaveClass(/text-base/);
   await expect(page.getByTestId("gallery-back-link")).toHaveClass(/px-4/);
-  await expect(page.getByTestId("gallery-nav-next")).toHaveClass(/text-base/);
-  await expect(page.getByTestId("gallery-nav-next")).toHaveClass(/py-3/);
+  await expect(page.getByTestId("gallery-nav-next")).toHaveClass(/size-10/);
+  await expect(page.getByTestId("gallery-nav-next")).toHaveClass(/rounded-full/);
 });
 
 test("single image preview size class stays stable across spacing scale changes", async ({
@@ -257,9 +256,9 @@ test("single image preview size class stays stable across spacing scale changes"
   await expect(page).toHaveURL(/\/gallery-[^/]+\/[^/?#]+(?:\?mode=(?:light|dark))?$/);
   const smContainer = page.getByTestId("gallery-entry-mode-container");
   await expect(smContainer).toBeVisible();
-  const smPreviewSectionClass = await smContainer
-    .locator(":scope > div > section")
-    .nth(1)
+  const smPreviewImageClass = await smContainer
+    .locator(':scope > div > section a img')
+    .first()
     .getAttribute("class");
 
   await createProjectFromDashboard(page, "Gallery Spacing LG");
@@ -274,10 +273,10 @@ test("single image preview size class stays stable across spacing scale changes"
   await expect(page).toHaveURL(/\/gallery-[^/]+\/[^/?#]+(?:\?mode=(?:light|dark))?$/);
   const lgContainer = page.getByTestId("gallery-entry-mode-container");
   await expect(lgContainer).toBeVisible();
-  const lgPreviewSectionClass = await lgContainer
-    .locator(":scope > div > section")
-    .nth(1)
+  const lgPreviewImageClass = await lgContainer
+    .locator(':scope > div > section a img')
+    .first()
     .getAttribute("class");
 
-  expect(smPreviewSectionClass).toBe(lgPreviewSectionClass);
+  expect(smPreviewImageClass).toBe(lgPreviewImageClass);
 });

@@ -1,6 +1,7 @@
 export type SupportedBlockType =
   | "hero"
   | "features"
+  | "timeline"
   | "cta"
   | "app-header"
   | "gallery"
@@ -9,6 +10,7 @@ export type SupportedBlockType =
 
 export type HeroVariant = "default" | "centered";
 export type FeaturesVariant = "default" | "cards";
+export type TimelineVariant = "default";
 export type CtaVariant = "default";
 export type AppHeaderVariant = "default";
 export type GalleryVariant = "default";
@@ -18,6 +20,7 @@ export type ProjectsGalleryVariant = "default";
 export type BlockVariant =
   | HeroVariant
   | FeaturesVariant
+  | TimelineVariant
   | CtaVariant
   | AppHeaderVariant
   | GalleryVariant

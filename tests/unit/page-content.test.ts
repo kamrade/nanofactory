@@ -13,16 +13,35 @@ describe("page content validation", () => {
             title: "Hero title",
           },
         },
-        {
-          id: "features-1",
-          type: "features",
-          props: {
-            sectionTitle: "Features",
-            items: ["Fast", "Flexible"],
-          },
+      {
+        id: "features-1",
+        type: "features",
+        props: {
+          sectionTitle: "Features",
+          items: ["Fast", "Flexible"],
         },
-      ],
-    });
+      },
+      {
+        id: "timeline-1",
+        type: "timeline",
+        props: {
+          sectionTitle: "How it works",
+          items: [
+            {
+              meta: "01",
+              title: "Plan",
+              content: "Define the flow.",
+            },
+            {
+              meta: "02",
+              title: "",
+              content: "Draft step.",
+            },
+          ],
+        },
+      },
+    ],
+  });
 
     expect(result.success).toBe(true);
 
@@ -37,6 +56,14 @@ describe("page content validation", () => {
         items: [
           { title: "Fast", content: "", imageAssetId: undefined },
           { title: "Flexible", content: "", imageAssetId: undefined },
+        ],
+      });
+      expect(result.data.blocks[2]?.type).toBe("timeline");
+      expect(result.data.blocks[2]?.props).toMatchObject({
+        sectionTitle: "How it works",
+        items: [
+          { meta: "01", title: "Plan", content: "Define the flow." },
+          { meta: "02", title: "", content: "Draft step." },
         ],
       });
     }

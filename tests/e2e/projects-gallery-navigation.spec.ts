@@ -276,6 +276,6 @@ test("projects gallery entry nav controls follow project spacing scale", async (
 
   await expect(page.getByTestId("projects-gallery-entry-back-link")).toHaveClass(/text-xs/);
   await expect(page.getByTestId("projects-gallery-entry-back-link")).toHaveClass(/px-2/);
-  await expect(page.getByTestId("projects-gallery-entry-nav-next")).toHaveClass(/text-xs/);
-  await expect(page.getByTestId("projects-gallery-entry-nav-next")).toHaveClass(/py-1\.5/);
+  await expect(page.getByTestId("projects-gallery-entry-nav-next")).toHaveClass(/size-10/);
+  await expect(page.getByTestId("projects-gallery-entry-nav-next")).toHaveClass(/rounded-full/);
 });

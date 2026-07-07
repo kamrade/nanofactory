@@ -1,5 +1,6 @@
 import { ctaDefinitions } from "../cta";
 import { featuresDefinitions } from "../features";
+import { timelineDefinitions } from "../timeline";
 import { galleryDefinitions } from "../gallery";
 import { heroDefinitions } from "../hero";
 import { footerDefinitions } from "../footer";
@@ -12,6 +13,7 @@ import { appHeaderDefinitions } from "../app-header";
 const definitions = [
   ...heroDefinitions,
   ...featuresDefinitions,
+  ...timelineDefinitions,
   ...ctaDefinitions,
   ...appHeaderDefinitions,
   ...galleryDefinitions,

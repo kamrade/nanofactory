@@ -23,7 +23,7 @@ export function useVisibleOnce<T extends HTMLElement = HTMLDivElement>({
     }
 
     didRevealRef.current = true;
-    console.log("[viewport] element became visible", { threshold });
+    // console.log("[viewport] element became visible", { threshold });
     setVisible(true);
   }, [threshold]);
 

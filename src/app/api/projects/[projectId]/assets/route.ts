@@ -115,8 +115,6 @@ export async function postAssetWithDependencies(
       return NextResponse.json({ error: error.message }, { status: error.status });
     }
 
-    console.error("Asset upload failed", error);
-
     if (
       typeof error === "object" &&
       error !== null &&

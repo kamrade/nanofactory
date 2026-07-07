@@ -1,0 +1,233 @@
+/* Root section */
+
+.root {
+  display: flex;
+  flex-direction: column;
+  --timeline-axis: 0.75rem;
+}
+
+.root[data-spacing-scale="sm"] {
+  gap: 1rem;
+  padding: 2rem 0.5rem;
+}
+
+.root[data-spacing-scale="md"] {
+  gap: 1.25rem;
+  padding: 3rem 0.5rem;
+}
+
+.root[data-spacing-scale="lg"] {
+  gap: 1.75rem;
+  padding: 3.5rem 0.5rem;
+}
+
+@media (min-width: 768px) {
+  .root[data-spacing-scale="sm"] {
+    padding-left: 1.25rem;
+    padding-right: 1.25rem;
+  }
+
+  .root[data-spacing-scale="md"] {
+    padding-left: 2rem;
+    padding-right: 2rem;
+  }
+
+  .root[data-spacing-scale="lg"] {
+    padding-left: 2.5rem;
+    padding-right: 2.5rem;
+  }
+}
+
+.root[data-surface-style="flat"][data-spacing-scale="sm"] {
+  padding: 4rem 0;
+}
+
+.root[data-surface-style="flat"][data-spacing-scale="md"] {
+  padding: 6rem 0;
+}
+
+.root[data-surface-style="flat"][data-spacing-scale="lg"] {
+  padding: 7rem 0;
+}
+
+/* Timeline list */
+
+.list {
+  position: relative;
+  display: grid;
+}
+
+.root[data-spacing-scale="sm"] .list {
+  gap: 0.75rem;
+}
+
+.root[data-spacing-scale="md"] .list {
+  gap: 1rem;
+}
+
+.root[data-spacing-scale="lg"] .list {
+  gap: 1.25rem;
+}
+
+.list::before {
+  content: "";
+  position: absolute;
+  top: 0.75rem;
+  bottom: 0.75rem;
+  left: var(--timeline-axis);
+  width: 1px;
+  background-color: var(--color-line);
+}
+
+/* Timeline item */
+
+.item {
+  position: relative;
+  display: grid;
+  align-items: start;
+}
+
+.root[data-spacing-scale="sm"] .item,
+.root[data-spacing-scale="md"] .item,
+.root[data-spacing-scale="lg"] .item {
+  grid-template-columns: minmax(0, 1fr);
+  gap: 0.5rem;
+  padding-left: 1.5rem;
+}
+
+.metaWrap {
+  min-width: 0;
+}
+
+.card {
+  min-width: 0;
+  border-radius: var(--timeline-radius-card);
+  background-color: var(--color-surface-alt);
+}
+
+@media (min-width: 768px) {
+  .root[data-spacing-scale="sm"] .item {
+    grid-template-columns: 4.5rem minmax(0, 1fr);
+    gap: 0.75rem;
+    padding-left: 2.25rem;
+  }
+
+  .root[data-spacing-scale="md"] .item {
+    grid-template-columns: 5.5rem minmax(0, 1fr);
+    gap: 1rem;
+    padding-left: 2.5rem;
+  }
+
+  .root[data-spacing-scale="lg"] .item {
+    grid-template-columns: 6rem minmax(0, 1fr);
+    gap: 1.25rem;
+    padding-left: 2.75rem;
+  }
+
+  .list::before {
+    left: var(--timeline-axis);
+  }
+
+  .marker {
+    left: var(--timeline-axis);
+  }
+}
+
+.marker {
+  position: absolute;
+  top: 0.9rem;
+  left: var(--timeline-axis);
+  width: 0.75rem;
+  height: 0.75rem;
+  border-radius: 9999px;
+  background-color: var(--color-primary-300);
+  transform: translateX(-50%);
+  box-shadow:
+    0 0 0 3px var(--color-bg),
+    0 0 0 4px var(--color-line);
+}
+
+.meta {
+  overflow-wrap: break-word;
+  color: var(--color-text-placeholder);
+  font-weight: 500;
+  text-transform: uppercase;
+  letter-spacing: 0.16em;
+}
+
+.root[data-spacing-scale="sm"] .meta {
+  font-size: 0.7rem;
+  line-height: 1rem;
+}
+
+.root[data-spacing-scale="md"] .meta {
+  font-size: 0.75rem;
+  line-height: 1rem;
+}
+
+.root[data-spacing-scale="lg"] .meta {
+  font-size: 0.875rem;
+  line-height: 1.25rem;
+}
+
+.card {
+  min-width: 0;
+  border-radius: var(--timeline-radius-card);
+  background-color: var(--color-surface-alt);
+}
+
+.root[data-spacing-scale="sm"] .card {
+  padding: 0.625rem 0.75rem;
+}
+
+.root[data-spacing-scale="md"] .card {
+  padding: 0.75rem 0.875rem;
+}
+
+.root[data-spacing-scale="lg"] .card {
+  padding: 0.875rem 1rem;
+}
+
+.itemTitle {
+  overflow-wrap: break-word;
+  color: var(--color-text-main);
+  font-weight: 500;
+}
+
+.root[data-spacing-scale="sm"] .itemTitle {
+  font-size: 0.875rem;
+  line-height: 1.2rem;
+}
+
+.root[data-spacing-scale="md"] .itemTitle {
+  font-size: 0.9375rem;
+  line-height: 1.3rem;
+}
+
+.root[data-spacing-scale="lg"] .itemTitle {
+  font-size: 1rem;
+  line-height: 1.4rem;
+}
+
+.itemContent {
+  overflow-wrap: break-word;
+  color: var(--color-text-muted);
+}
+
+.root[data-spacing-scale="sm"] .itemContent {
+  margin-top: 0.35rem;
+  font-size: 0.75rem;
+  line-height: 1.2rem;
+}
+
+.root[data-spacing-scale="md"] .itemContent {
+  margin-top: 0.35rem;
+  font-size: 0.875rem;
+  line-height: 1.35rem;
+}
+
+.root[data-spacing-scale="lg"] .itemContent {
+  margin-top: 0.35rem;
+  font-size: 0.9375rem;
+  line-height: 1.45rem;
+}
