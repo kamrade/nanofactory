@@ -14,6 +14,7 @@ export function HeroCenteredEditor(props: BlockEditorProps) {
         buttonTextPlaceholder: "See how it works",
         buttonTextSize: "lg",
         buttonAnchorInputId: "hero-centered-button-anchor",
+        buttonTargetTypeInputId: "hero-centered-button-target-type",
         animateInputId: "hero-centered-animate",
         contentPositionInputId: "hero-centered-content-position",
         textFields: [

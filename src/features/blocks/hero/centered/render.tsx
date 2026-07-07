@@ -27,6 +27,7 @@ export function HeroCenteredRender({
     subtitle,
     buttonText,
     buttonAnchor,
+    buttonTargetType,
     contentPosition,
     animate,
   } = readHeroRenderContent(block);
@@ -76,6 +77,7 @@ export function HeroCenteredRender({
           subtitle={subtitle}
           buttonText={buttonText}
           buttonAnchor={buttonAnchor}
+          buttonTargetType={buttonTargetType}
           animate={animate}
           headlineVariant="centered"
           contentStackClassName={styles.content}

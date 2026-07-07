@@ -9,6 +9,7 @@ import {
 } from "@/lib/projects/spacing-scale";
 
 import type { BlockRenderProps } from "../../shared/types";
+import type { HeroButtonTargetType } from "./model";
 
 type HeroRenderContent = {
   eyebrow: string;
@@ -16,6 +17,7 @@ type HeroRenderContent = {
   subtitle: string;
   buttonText: string;
   buttonAnchor: string;
+  buttonTargetType: HeroButtonTargetType;
   contentPosition: string;
   animate: boolean;
 };
@@ -27,12 +29,19 @@ type HeroImageIds = {
 };
 
 export function readHeroRenderContent(block: BlockRenderProps["block"]): HeroRenderContent {
+  const buttonAnchor = typeof block.props.buttonAnchor === "string" ? block.props.buttonAnchor : "";
   return {
     eyebrow: typeof block.props.eyebrow === "string" ? block.props.eyebrow : "",
     title: typeof block.props.title === "string" ? block.props.title : "",
     subtitle: typeof block.props.subtitle === "string" ? block.props.subtitle : "",
     buttonText: typeof block.props.buttonText === "string" ? block.props.buttonText : "",
-    buttonAnchor: typeof block.props.buttonAnchor === "string" ? block.props.buttonAnchor : "",
+    buttonAnchor,
+    buttonTargetType:
+      block.props.buttonTargetType === "link" ||
+      (block.props.buttonTargetType !== "inner-anchor" &&
+        /^(#|\/|https?:\/\/|mailto:|tel:)/i.test(buttonAnchor))
+        ? "link"
+        : "inner-anchor",
     contentPosition:
       typeof block.props.contentPosition === "string" ? block.props.contentPosition : "centered",
     // Backward compat: the flag was previously stored as `animateMainText`.

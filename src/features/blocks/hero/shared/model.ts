@@ -1,6 +1,9 @@
 import { isPlainObject, readOptionalString, readString } from "../../shared/base";
 
 export const HERO_STANDARD_CONTENT_POSITIONS = ["top", "bottom", "centered"] as const;
+export const HERO_BUTTON_TARGET_TYPES = ["inner-anchor", "link"] as const;
+
+export type HeroButtonTargetType = (typeof HERO_BUTTON_TARGET_TYPES)[number];
 
 type HeroCopyDefaults = {
   title: string;
@@ -21,6 +24,18 @@ function readHeroContentPosition(
     : "centered";
 }
 
+function readHeroButtonTargetType(input: unknown, buttonAnchor: string): HeroButtonTargetType {
+  if (typeof input === "string" && HERO_BUTTON_TARGET_TYPES.includes(input as HeroButtonTargetType)) {
+    return input as HeroButtonTargetType;
+  }
+
+  if (/^(#|\/|https?:\/\/|mailto:|tel:)/i.test(buttonAnchor.trim())) {
+    return "link";
+  }
+
+  return "inner-anchor";
+}
+
 export function createHeroDefaultProps(copyDefaults: HeroCopyDefaults): Record<string, unknown> {
   return {
     eyebrow: "",
@@ -28,6 +43,7 @@ export function createHeroDefaultProps(copyDefaults: HeroCopyDefaults): Record<s
     subtitle: copyDefaults.subtitle,
     buttonText: copyDefaults.buttonText,
     buttonAnchor: "",
+    buttonTargetType: "inner-anchor",
     contentPosition: "centered",
     imageAssetId: undefined,
     imageLightAssetId: undefined,
@@ -53,6 +69,7 @@ export function normalizeHeroProps(
     subtitle: readString(props.subtitle, subtitle),
     buttonText: readString(props.buttonText, buttonText),
     buttonAnchor: readString(props.buttonAnchor, ""),
+    buttonTargetType: readHeroButtonTargetType(props.buttonTargetType, readString(props.buttonAnchor, "")),
     contentPosition: readHeroContentPosition(props.contentPosition, contentPositions),
     imageAssetId: readOptionalString(props.imageAssetId),
     imageLightAssetId: readOptionalString(props.imageLightAssetId),

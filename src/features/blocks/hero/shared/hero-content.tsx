@@ -7,6 +7,7 @@ type HeroContentProps = {
   subtitle: string;
   buttonText: string;
   buttonAnchor: string;
+  buttonTargetType: "inner-anchor" | "link";
   animate: boolean;
   headlineVariant: "default" | "centered";
   contentStackClassName: string;
@@ -23,6 +24,7 @@ export function HeroContent({
   subtitle,
   buttonText,
   buttonAnchor,
+  buttonTargetType,
   animate,
   headlineVariant,
   contentStackClassName,
@@ -43,10 +45,17 @@ export function HeroContent({
     </p>
   ) : null;
   const subtitleNode = <p className={subtitleClassName}>{subtitle}</p>;
+  const resolvedButtonAnchor = buttonAnchor.trim();
   const ctaNode =
-    buttonAnchor.trim().length > 0 ? (
+    resolvedButtonAnchor.length > 0 ? (
       <a
-        href={`#${buttonAnchor}`}
+        href={
+          buttonTargetType === "link"
+            ? resolvedButtonAnchor
+            : resolvedButtonAnchor.startsWith("#")
+              ? resolvedButtonAnchor
+              : `#${resolvedButtonAnchor}`
+        }
         className={buttonClassName}
         style={{ borderRadius: `var(${buttonRadiusVar})` }}
       >

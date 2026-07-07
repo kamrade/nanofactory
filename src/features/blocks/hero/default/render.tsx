@@ -27,6 +27,7 @@ export function HeroDefaultRender({
     subtitle,
     buttonText,
     buttonAnchor,
+    buttonTargetType,
     contentPosition,
     animate,
   } = readHeroRenderContent(block);
@@ -89,6 +90,7 @@ export function HeroDefaultRender({
           subtitle={subtitle}
           buttonText={buttonText}
           buttonAnchor={buttonAnchor}
+          buttonTargetType={buttonTargetType}
           animate={animate}
           headlineVariant="default"
           contentStackClassName={styles.contentStack}

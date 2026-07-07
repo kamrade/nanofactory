@@ -4,6 +4,7 @@ import { Card } from "@/components/ui/card";
 import { UICheckbox } from "@/components/ui/checkbox";
 import { UIFormRow } from "@/components/ui/form-row";
 import { UISelect } from "@/components/ui/select";
+import { UISegmentedControl } from "@/components/ui/segmented-control";
 import { UITextArea } from "@/components/ui/textarea";
 import { UITextInput } from "@/components/ui/text-input";
 
@@ -16,6 +17,7 @@ type HeroFieldKey =
   | "subtitle"
   | "buttonText"
   | "buttonAnchor"
+  | "buttonTargetType"
   | "contentPosition";
 
 type HeroAssetKey = "imageAssetId" | "imageLightAssetId" | "imageDarkAssetId";
@@ -45,6 +47,7 @@ type HeroEditorConfig = {
   buttonTextPlaceholder: string;
   buttonTextSize: "sm" | "lg";
   buttonAnchorInputId: string;
+  buttonTargetTypeInputId: string;
   animateInputId: string;
   contentPositionInputId: string;
   textFields: HeroTextFieldConfig[];
@@ -102,6 +105,12 @@ export function HeroBaseEditor({
   const subtitle = readStringProp(block.props, "subtitle");
   const buttonText = readStringProp(block.props, "buttonText");
   const buttonAnchor = readStringProp(block.props, "buttonAnchor");
+  const buttonTargetType =
+    block.props.buttonTargetType === "link" ||
+    (block.props.buttonTargetType !== "inner-anchor" &&
+      /^(#|\/|https?:\/\/|mailto:|tel:)/i.test(buttonAnchor.trim()))
+      ? "link"
+      : "inner-anchor";
   const contentPosition = readStringProp(block.props, "contentPosition") || "centered";
   // Backward compat: the flag was previously stored as `animateMainText`.
   const animate = block.props.animate === true || block.props.animateMainText === true;
@@ -155,23 +164,53 @@ export function HeroBaseEditor({
             />
           </UIFormRow>
 
-          <UIFormRow label="Button anchor" htmlFor={config.buttonAnchorInputId} borderless>
-            <UISelect
-              id={config.buttonAnchorInputId}
-              ariaLabel="Hero button anchor"
+          <UIFormRow label="Button target" borderless>
+            <UISegmentedControl
+              value={buttonTargetType}
+              ariaLabel="Hero button target"
               size="sm"
               borderless
               className="w-full"
-              value={buttonAnchor}
-              onValueChange={(value) => updateField("buttonAnchor", String(value))}
-              placeholder={availableAnchors.length === 0 ? "No anchors available" : "Select anchor"}
-              options={availableAnchors.map((anchor) => ({
-                value: anchor.id,
-                label: anchor.label,
-                textValue: anchor.label,
-              }))}
-              clearable
+              onValueChange={(value) => updateField("buttonTargetType", value)}
+              options={[
+                { value: "inner-anchor", label: "Inner anchor" },
+                { value: "link", label: "Link" },
+              ]}
             />
+          </UIFormRow>
+
+          <UIFormRow
+            label={buttonTargetType === "link" ? "Button link" : "Button anchor"}
+            htmlFor={config.buttonAnchorInputId}
+            borderless
+          >
+            {buttonTargetType === "link" ? (
+              <UITextInput
+                id={config.buttonAnchorInputId}
+                size="sm"
+                value={buttonAnchor}
+                borderless
+                placeholder="https://example.com or /contact"
+                onValueChange={(value) => updateField("buttonAnchor", value)}
+              />
+            ) : (
+              <UISelect
+                id={config.buttonAnchorInputId}
+                ariaLabel="Hero button anchor"
+                size="sm"
+                borderless
+                className="w-full"
+                value={buttonAnchor}
+                onValueChange={(value) => updateField("buttonAnchor", String(value))}
+                placeholder={availableAnchors.length === 0 ? "No anchors available" : "Select anchor"}
+                options={availableAnchors.map((anchor) => ({
+                  value: anchor.id,
+                  label: anchor.label,
+                  textValue: anchor.label,
+                }))}
+                clearable
+              />
+            )}
           </UIFormRow>
 
           <UIFormRow label="Animate" htmlFor={config.animateInputId} borderless>
