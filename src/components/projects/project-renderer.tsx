@@ -146,7 +146,7 @@ function renderBlock(
       : null;
 
   const containerClassName =
-    surfaceStyle === "flat" ? "container mx-auto" : "container mx-auto px-4";
+    surfaceStyle === "flat" ? "container mx-auto px-2 sm:px-0" : "container mx-auto px-2 sm:px-4";
 
   return (
     <SectionShell
@@ -204,7 +204,7 @@ export function ProjectRenderer({
   const resolvedSpacingScale = resolveProjectSpacingScale(spacingScale);
   const resolvedSurfaceStyle = resolveProjectSurfaceStyle(surfaceStyle);
   const resolvedHeadingFont = resolveProjectHeadingFont(headingFont);
-  const containerClass = "container mx-auto px-4";
+  const containerClass = "container mx-auto px-2 sm:px-4";
 
   return (
     <>

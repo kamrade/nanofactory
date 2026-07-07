@@ -4,9 +4,9 @@
   border-radius: var(--app-header-radius-shell);
 }
 
-.root[data-spacing-scale="sm"] { padding: 0.75rem; }
-.root[data-spacing-scale="md"] { padding: 1.5rem; }
-.root[data-spacing-scale="lg"] { padding: 2rem; }
+.root[data-spacing-scale="sm"] { padding: 0.75rem 0.5rem; }
+.root[data-spacing-scale="md"] { padding: 1.5rem 0.5rem; }
+.root[data-spacing-scale="lg"] { padding: 2rem 0.5rem; }
 
 @media (min-width: 768px) {
   .root[data-spacing-scale="sm"] { padding-top: 0.25rem; padding-bottom: 0.25rem; }

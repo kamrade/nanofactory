@@ -416,7 +416,7 @@ export function ProjectEditor({
     return (
       <SectionShell
         anchorId={effectiveAnchorId}
-        containerClassName="mx-auto container"
+        containerClassName="mx-auto container px-2 sm:px-4"
         innerRadiusClassName={blockShellRadiusClassName}
         backgroundScene={backgroundScene}
         surfaceStyle={project.surfaceStyle}

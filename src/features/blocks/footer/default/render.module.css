@@ -4,9 +4,9 @@
   /* padding varies by scale and breakpoint */
 }
 
-.root[data-spacing-scale="sm"] { padding: 1.5rem 0.75rem; }
-.root[data-spacing-scale="md"] { padding: 2rem 1rem; }
-.root[data-spacing-scale="lg"] { padding: 2.5rem 1.5rem; }
+.root[data-spacing-scale="sm"] { padding: 1.5rem 0.5rem; }
+.root[data-spacing-scale="md"] { padding: 2rem 0.5rem; }
+.root[data-spacing-scale="lg"] { padding: 2.5rem 0.5rem; }
 
 @media (min-width: 768px) {
   .root[data-spacing-scale="sm"] { padding: 2rem 1.25rem; }
