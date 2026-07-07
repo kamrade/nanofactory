@@ -8,6 +8,8 @@ import styles from "./render.module.css";
 
 type TimelineItem = {
   meta: string;
+  date: string;
+  status: string;
   title: string;
   content: string;
 };
@@ -27,6 +29,8 @@ function readItems(input: unknown): TimelineItem[] {
 
         return {
           meta: "",
+          date: "",
+          status: "",
           title,
           content: "",
         };
@@ -45,6 +49,8 @@ function readItems(input: unknown): TimelineItem[] {
 
       return {
         meta: typeof record.meta === "string" ? record.meta : "",
+        date: typeof record.date === "string" ? record.date : "",
+        status: typeof record.status === "string" ? record.status : "",
         title,
         content: typeof record.content === "string" ? record.content : "",
       };
@@ -97,7 +103,17 @@ export function TimelineDefaultRender({
             <span aria-hidden className={styles.marker} />
 
             <div className={styles.metaWrap}>
-              {item.meta.trim().length > 0 ? <p className={styles.meta}>{item.meta}</p> : null}
+              {item.meta.trim().length > 0 ||
+              item.date.trim().length > 0 ||
+              item.status.trim().length > 0 ? (
+                <div className={styles.metaRow}>
+                  {item.meta.trim().length > 0 ? <span className={styles.meta}>{item.meta}</span> : null}
+                  {item.date.trim().length > 0 ? <span className={styles.meta}>{item.date}</span> : null}
+                  {item.status.trim().length > 0 ? (
+                    <span className={styles.status}>{item.status}</span>
+                  ) : null}
+                </div>
+              ) : null}
             </div>
 
             <article className={styles.card}>

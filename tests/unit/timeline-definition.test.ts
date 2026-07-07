@@ -15,6 +15,8 @@ describe("timeline default definition", () => {
     expect(normalized.items).toHaveLength(3);
     expect(normalized.items[0]).toMatchObject({
       meta: "01",
+      date: "Q1 2026",
+      status: "Planned",
       title: "Plan the flow",
     });
   });
@@ -26,6 +28,8 @@ describe("timeline default definition", () => {
       items: [
         {
           meta: "01",
+          date: "Q2 2026",
+          status: "In progress",
           title: "",
           content: "",
         },
@@ -35,8 +39,35 @@ describe("timeline default definition", () => {
     expect(normalized.items).toHaveLength(1);
     expect(normalized.items[0]).toMatchObject({
       meta: "01",
+      date: "Q2 2026",
+      status: "In progress",
       title: "",
       content: "",
+    });
+  });
+
+  it("preserves explicit date and status fields when provided", () => {
+    const normalized = timelineDefaultDefinition.normalizeProps({
+      sectionTitle: "Roadmap",
+      animate: false,
+      items: [
+        {
+          meta: "04",
+          date: "Q4 2026",
+          status: "Done",
+          title: "Ship",
+          content: "Launch the release.",
+        },
+      ],
+    });
+
+    expect(normalized.items).toHaveLength(1);
+    expect(normalized.items[0]).toMatchObject({
+      meta: "04",
+      date: "Q4 2026",
+      status: "Done",
+      title: "Ship",
+      content: "Launch the release.",
     });
   });
 });

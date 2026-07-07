@@ -1,5 +1,7 @@
 export type TimelineItem = {
   meta: string;
+  date: string;
+  status: string;
   title: string;
   content: string;
 };
@@ -7,6 +9,8 @@ export type TimelineItem = {
 export function createTimelineItem(): TimelineItem {
   return {
     meta: "",
+    date: "",
+    status: "",
     title: "",
     content: "",
   };

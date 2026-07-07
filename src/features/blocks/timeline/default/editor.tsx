@@ -33,6 +33,8 @@ function readItems(props: Record<string, unknown>): TimelineItem[] {
 
         return {
           meta: "",
+          date: "",
+          status: "",
           title,
           content: "",
         };
@@ -46,6 +48,8 @@ function readItems(props: Record<string, unknown>): TimelineItem[] {
 
       return {
         meta: typeof record.meta === "string" ? record.meta : "",
+        date: typeof record.date === "string" ? record.date : "",
+        status: typeof record.status === "string" ? record.status : "",
         title: typeof record.title === "string" ? record.title : "",
         content: typeof record.content === "string" ? record.content : "",
       };
@@ -99,7 +103,7 @@ export function TimelineDefaultEditor({ block, onChange }: BlockEditorProps) {
         <div className="space-y-1">
           <h4 className="text-sm font-semibold text-text-main">Steps</h4>
           <p className="text-sm text-text-muted">
-            Keep each step short. The meta field works well for numbers, dates, or phase labels.
+            Keep each step short. Meta, date, and status work well as compact supporting labels.
           </p>
         </div>
 
@@ -143,6 +147,28 @@ export function TimelineDefaultEditor({ block, onChange }: BlockEditorProps) {
                   value={item.meta}
                   placeholder="01"
                   onValueChange={(value) => updateItem(index, { ...item, meta: value })}
+                />
+              </UIFormRow>
+
+              <UIFormRow label="Date" htmlFor={`timeline-item-date-${index}`} borderless>
+                <UITextInput
+                  id={`timeline-item-date-${index}`}
+                  size="sm"
+                  borderless
+                  value={item.date}
+                  placeholder="Q1 2026"
+                  onValueChange={(value) => updateItem(index, { ...item, date: value })}
+                />
+              </UIFormRow>
+
+              <UIFormRow label="Status" htmlFor={`timeline-item-status-${index}`} borderless>
+                <UITextInput
+                  id={`timeline-item-status-${index}`}
+                  size="sm"
+                  borderless
+                  value={item.status}
+                  placeholder="Planned"
+                  onValueChange={(value) => updateItem(index, { ...item, status: value })}
                 />
               </UIFormRow>
 

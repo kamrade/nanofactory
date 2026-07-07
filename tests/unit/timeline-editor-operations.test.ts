@@ -9,12 +9,14 @@ import {
 describe("timeline editor operations", () => {
   it("addTimelineItem appends a blank step", () => {
     const next = addTimelineItem([
-      { meta: "01", title: "Step 1", content: "First step" },
+      { meta: "01", date: "Q1 2026", status: "Planned", title: "Step 1", content: "First step" },
     ]);
 
     expect(next).toHaveLength(2);
     expect(next[1]).toEqual({
       meta: "",
+      date: "",
+      status: "",
       title: "",
       content: "",
     });
@@ -22,12 +24,14 @@ describe("timeline editor operations", () => {
 
   it("updateTimelineItem replaces a step by index and preserves others", () => {
     const items = [
-      { meta: "01", title: "Step 1", content: "First step" },
-      { meta: "02", title: "Step 2", content: "Second step" },
+      { meta: "01", date: "Q1 2026", status: "Planned", title: "Step 1", content: "First step" },
+      { meta: "02", date: "Q2 2026", status: "In progress", title: "Step 2", content: "Second step" },
     ];
 
     const next = updateTimelineItem(items, 1, {
       meta: "02",
+      date: "Q2 2026",
+      status: "In progress",
       title: "Updated",
       content: "Updated content",
     });
@@ -35,6 +39,8 @@ describe("timeline editor operations", () => {
     expect(next[0]).toEqual(items[0]);
     expect(next[1]).toEqual({
       meta: "02",
+      date: "Q2 2026",
+      status: "In progress",
       title: "Updated",
       content: "Updated content",
     });
@@ -42,8 +48,8 @@ describe("timeline editor operations", () => {
 
   it("removeTimelineItem removes a step by index and ignores invalid indexes", () => {
     const items = [
-      { meta: "01", title: "Step 1", content: "First step" },
-      { meta: "02", title: "Step 2", content: "Second step" },
+      { meta: "01", date: "Q1 2026", status: "Planned", title: "Step 1", content: "First step" },
+      { meta: "02", date: "Q2 2026", status: "In progress", title: "Step 2", content: "Second step" },
     ];
 
     expect(removeTimelineItem(items, 0)).toEqual([items[1]]);

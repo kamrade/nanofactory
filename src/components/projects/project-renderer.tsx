@@ -146,7 +146,7 @@ function renderBlock(
       : null;
 
   const containerClassName =
-    surfaceStyle === "flat" ? "container mx-auto px-2 sm:px-0" : "container mx-auto px-2 sm:px-4";
+    surfaceStyle === "flat" ? "container mx-auto px-2 sm:px-4" : "container mx-auto px-2 sm:px-4";
 
   return (
     <SectionShell

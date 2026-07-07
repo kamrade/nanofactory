@@ -21,23 +21,27 @@ describe("page content validation", () => {
           items: ["Fast", "Flexible"],
         },
       },
-      {
-        id: "timeline-1",
-        type: "timeline",
-        props: {
-          sectionTitle: "How it works",
-          items: [
-            {
-              meta: "01",
-              title: "Plan",
-              content: "Define the flow.",
-            },
-            {
-              meta: "02",
-              title: "",
-              content: "Draft step.",
-            },
-          ],
+          {
+            id: "timeline-1",
+            type: "timeline",
+            props: {
+              sectionTitle: "How it works",
+              items: [
+                {
+                  meta: "01",
+                  date: "Q1 2026",
+                  status: "Planned",
+                  title: "Plan",
+                  content: "Define the flow.",
+                },
+                {
+                  meta: "02",
+                  date: "Q2 2026",
+                  status: "In progress",
+                  title: "",
+                  content: "Draft step.",
+                },
+              ],
         },
       },
     ],
@@ -62,8 +66,20 @@ describe("page content validation", () => {
       expect(result.data.blocks[2]?.props).toMatchObject({
         sectionTitle: "How it works",
         items: [
-          { meta: "01", title: "Plan", content: "Define the flow." },
-          { meta: "02", title: "", content: "Draft step." },
+          {
+            meta: "01",
+            date: "Q1 2026",
+            status: "Planned",
+            title: "Plan",
+            content: "Define the flow.",
+          },
+          {
+            meta: "02",
+            date: "Q2 2026",
+            status: "In progress",
+            title: "",
+            content: "Draft step.",
+          },
         ],
       });
     }
