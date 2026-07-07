@@ -17,8 +17,8 @@
 }
 
 .wsr-space {
-  display: inline-block;
-  white-space: pre;
+  display: inline;
+  white-space: pre-wrap;
 }
 
 .wsr-static .wsr-word {
