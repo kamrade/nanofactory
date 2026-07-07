@@ -2,7 +2,7 @@
 
 import type { BlockVariant, SupportedBlockType } from "@/lib/editor/blocks";
 import { UIButton } from "@/components/ui/button";
-import { UIMenu, UIMenuItem, UIMenuLabel } from "@/components/ui/menu";
+import { UIMenu, UIMenuItem, UIMenuLabel, UIMenuSeparator } from "@/components/ui/menu";
 
 type AddBlockGroup = {
   type: SupportedBlockType;
@@ -42,22 +42,19 @@ export function EditorToolbar({
               Add block
             </UIButton>
           }
-        >
-          {addBlockGroups.map((group) => (
+          >
+          {addBlockGroups.map((group, groupIndex) => (
             <div key={group.type} className="grid gap-0.5">
-              <UIMenuLabel>{group.label}</UIMenuLabel>
+              {groupIndex > 0 ? <UIMenuSeparator /> : null}
+              <UIMenuLabel className="text-[11px] uppercase tracking-[0.18em]">
+                {group.label}
+              </UIMenuLabel>
               {group.variants.map((definition) => (
                 <UIMenuItem
                   key={`${definition.type}:${definition.variant}`}
                   onSelect={() => onAddBlock(definition.type, definition.variant)}
-                  className="grid gap-0.5"
                 >
                   <span className="text-sm font-medium text-text-main">{definition.label}</span>
-                  {definition.description ? (
-                    <span className="text-xs leading-5 text-text-muted">
-                      {definition.description}
-                    </span>
-                  ) : null}
                 </UIMenuItem>
               ))}
             </div>
