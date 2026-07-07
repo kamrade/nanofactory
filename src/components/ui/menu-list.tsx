@@ -166,7 +166,7 @@ export function UIMenuList({
       aria-label={ariaLabel}
       onKeyDown={handleKeyDown}
       className={cx(
-        "flex min-w-44 max-h-[min(24rem,calc(100vh-2rem))] flex-col gap-[2px] overflow-y-auto rounded-xl border border-line bg-surface p-1",
+        "scrollbar-macos flex min-w-44 max-h-[min(24rem,calc(100vh-2rem))] flex-col gap-[2px] overflow-y-auto rounded-xl border border-line bg-surface p-1",
         className
       )}
     >

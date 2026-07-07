@@ -183,7 +183,7 @@ export function UikitSidebar({ sections, title = "UI Kit" }: UikitSidebarProps) 
         data-testid="uikit-sidebar"
         className="hidden rounded-2xl border border-line bg-surface p-6 text-text-main shadow-sm lg:sticky lg:top-24 lg:block lg:self-start"
       >
-        <div className="max-h-[70vh] overflow-y-auto p-0.5 pr-4">
+        <div className="scrollbar-macos max-h-[70vh] overflow-y-auto p-0.5 pr-4">
           <div className="mb-2.5">
             <p className="font-bold uppercase tracking-[0.14em] text-text-muted border-b pb-2 mb-5">
               {title}

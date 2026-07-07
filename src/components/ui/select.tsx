@@ -486,7 +486,7 @@ export function UISelect({
           role="listbox"
           aria-label={ariaLabel}
           className={cx(
-            "flex min-w-44 max-h-[min(24rem,calc(100vh-2rem))] flex-col gap-[2px] overflow-y-auto rounded-xl bg-surface shadow-[0_10px_30px_rgba(0,0,0,0.12)]",
+            "scrollbar-macos flex min-w-44 max-h-[min(24rem,calc(100vh-2rem))] flex-col gap-[2px] overflow-y-auto rounded-xl bg-surface shadow-[0_10px_30px_rgba(0,0,0,0.12)]",
             !borderless && "border border-neutral-line",
             sizeClasses.listPadding
           )}

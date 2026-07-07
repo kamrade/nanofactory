@@ -60,7 +60,7 @@ export function ScenePicker({
               <UIDialogDescription>{description}</UIDialogDescription>
             </UIDialogHeader>
 
-            <div className="max-h-[68vh] overflow-y-auto pr-1">
+            <div className="scrollbar-macos max-h-[68vh] overflow-y-auto pr-1">
               <div className="grid gap-3 md:grid-cols-2">
                 {scenes.map((scene) => {
                   const selected = selectedSceneId === scene.id;

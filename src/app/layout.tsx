@@ -25,7 +25,7 @@ export default async function RootLayout({
       lang="en"
       data-theme={theme}
       data-mode={mode}
-      className={`${appFontVariables} h-full antialiased`}
+      className={`${appFontVariables} scrollbar-macos h-full antialiased`}
     >
       <body className="min-h-full flex flex-col">
         <AppProviders>{children}</AppProviders>

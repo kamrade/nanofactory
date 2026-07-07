@@ -236,7 +236,7 @@ export function UIMultiSelectList({
         tabIndex={0}
         onKeyDown={handleKeyDown}
         className={cx(
-          "flex max-h-[min(24rem,calc(100vh-2rem))] w-full flex-col gap-0.5 overflow-y-auto bg-surface p-1 outline-none",
+          "scrollbar-macos flex max-h-[min(24rem,calc(100vh-2rem))] w-full flex-col gap-0.5 overflow-y-auto bg-surface p-1 outline-none",
           "focus:ring-2 focus:ring-focus/50 focus:ring-offset-0 focus:ring-offset-bg",
           sizeClasses.list,
           disabled && "cursor-not-allowed opacity-60",

@@ -578,7 +578,7 @@ export function ProjectSettings({
               
               <div className="space-y-2">
                 <h3 className="text-base font-semibold text-text-main">Content shape</h3>
-                <pre className="max-h-[50vh] overflow-auto whitespace-pre-wrap wrap-break-word rounded-2xl border border-line bg-surface-alt p-4 text-xs leading-6 text-text-main">
+                <pre className="scrollbar-macos max-h-[50vh] overflow-auto whitespace-pre-wrap wrap-break-word rounded-2xl border border-line bg-surface-alt p-4 text-xs leading-6 text-text-main">
                   {liveContentShape}
                 </pre>
               </div>

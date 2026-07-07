@@ -78,7 +78,7 @@ export function AssetPicker({
                   <UIDialogDescription>{description}</UIDialogDescription>
                 </UIDialogHeader>
 
-                <div className="max-h-[68vh] overflow-y-auto pr-1">
+                <div className="scrollbar-macos max-h-[68vh] overflow-y-auto pr-1">
                   <div
                     className={
                       selectionContainerClassName ??

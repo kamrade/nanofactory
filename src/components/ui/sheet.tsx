@@ -288,7 +288,7 @@ export function UISheetContent({
           aria-labelledby={ariaLabel ? undefined : hasTitle ? titleId : undefined}
           aria-describedby={hasDescription ? descriptionId : undefined}
           tabIndex={-1}
-          className={cx("h-full overflow-y-auto p-6", sheetClassName, className)}
+          className={cx("scrollbar-macos h-full overflow-y-auto p-6", sheetClassName, className)}
           {...props}
         >
           {children}
