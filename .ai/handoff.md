@@ -82,7 +82,7 @@ This is a website/page builder with project-level editing, block-based content, 
     - `src/app/showcase/uikit-sections/*`
     - `src/app/showcase/animation-sections/*`
 - Project settings `Actions` in `ProjectSettings` now apply immediately on selection (no `Apply` buttons):
-  - `modePolicy`, `borderRadiusPolicy`, and `theme` updates are triggered from client `onValueChange` via server actions.
+  - `modePolicy`, `borderRadiusPolicy`, `spacingScale`, `surfaceStyle`, `headingFont`, and `theme` updates are triggered from client `onValueChange` via server actions.
   - files:
     - `src/components/projects/project-settings.tsx`
     - `src/components/projects/project-theme-form.tsx`
@@ -101,6 +101,13 @@ This is a website/page builder with project-level editing, block-based content, 
     - `src/lib/projects.ts`
     - `src/app/(protected)/projects/[projectId]/actions.ts`
     - `src/app/(protected)/projects/[projectId]/page.tsx`
+    - `src/components/projects/project-renderer.tsx`
+    - `src/components/editor/project-editor.tsx`
+    - `src/features/blocks/shared/types.ts`
+- Project surface style and heading font are first-class project settings and are applied immediately like spacing scale:
+  - `surfaceStyle` and `headingFont` flow through the same settings/editor/renderer pipeline.
+  - files include:
+    - `src/components/projects/project-settings.tsx`
     - `src/components/projects/project-renderer.tsx`
     - `src/components/editor/project-editor.tsx`
     - `src/features/blocks/shared/types.ts`

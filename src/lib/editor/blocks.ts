@@ -18,6 +18,7 @@ export type {
   GalleryVariant,
   FooterVariant,
   ProjectsGalleryVariant,
+  TestimonialsVariant,
   PageBlock,
   PageContent,
   SupportedBlockType,
