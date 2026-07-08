@@ -6,6 +6,7 @@ import { heroDefinitions } from "../hero";
 import { footerDefinitions } from "../footer";
 import { projectsGalleryDefinitions } from "../projects-gallery";
 import { testimonialsDefinitions } from "../testimonials";
+import { pricingDefinitions } from "../pricing";
 import { createBlockId } from "./base";
 import type { BlockVariantDefinition } from "./types";
 import type { BlockVariant, PageBlock, SupportedBlockType } from "./content";
@@ -21,6 +22,7 @@ const definitions = [
   ...footerDefinitions,
   ...projectsGalleryDefinitions,
   ...testimonialsDefinitions,
+  ...pricingDefinitions,
 ];
 const blockTypeLabels = new Map<SupportedBlockType, string>(
   definitions.reduce<Array<[SupportedBlockType, string]>>((acc, definition) => {

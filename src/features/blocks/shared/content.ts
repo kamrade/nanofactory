@@ -7,7 +7,8 @@ export type SupportedBlockType =
   | "gallery"
   | "footer"
   | "projects-gallery"
-  | "testimonials";
+  | "testimonials"
+  | "pricing";
 
 export type HeroVariant = "default" | "centered";
 export type FeaturesVariant = "default" | "cards";
