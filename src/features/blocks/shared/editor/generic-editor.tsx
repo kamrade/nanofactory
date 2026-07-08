@@ -2,10 +2,9 @@
 
 import type { BlockFieldDefinition, BlockEditorProps } from "../types";
 import { AssetPicker } from "./asset-picker";
+import { DebouncedTextArea, DebouncedTextInput } from "./debounced-text-field";
 import { UIFormRow } from "@/components/ui/form-row";
 import { UICheckbox } from "@/components/ui/checkbox";
-import { UITextInput } from "@/components/ui/text-input";
-import { UITextArea } from "@/components/ui/textarea";
 import { Card } from "@/components/ui/card";
 
 function readFieldValue(
@@ -86,14 +85,14 @@ export function GenericBlockEditor({
           return field.kind === "textarea" || field.kind === "string-list" ? (
             <UIFormRow key={field.key} label={field.label} htmlFor={fieldId} borderless>
               <div className="grid gap-1.5">
-                <UITextArea
+                <DebouncedTextArea
                   id={fieldId}
                   size="lg"
                   borderless
                   value={textValue}
                   rows={field.kind === "string-list" ? 5 : 4}
                   placeholder={field.placeholder}
-                  onChange={(event) => handleUpdateStringField(field, event.target.value)}
+                  onCommit={(nextValue) => handleUpdateStringField(field, nextValue)}
                 />
                 {field.kind === "string-list" ? (
                   <span className="text-xs text-text-muted">Enter one list item per line.</span>
@@ -102,13 +101,13 @@ export function GenericBlockEditor({
             </UIFormRow>
           ) : (
             <UIFormRow key={field.key} label={field.label} htmlFor={fieldId} borderless>
-              <UITextInput
+              <DebouncedTextInput
                 id={fieldId}
                 size="sm"
                 borderless
                 value={textValue}
                 placeholder={field.placeholder}
-                onValueChange={(nextValue) => handleUpdateStringField(field, nextValue)}
+                onCommit={(nextValue) => handleUpdateStringField(field, nextValue)}
               />
             </UIFormRow>
           );

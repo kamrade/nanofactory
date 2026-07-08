@@ -2,11 +2,10 @@
 
 import type { BlockEditorProps } from "../../shared/types";
 import { AssetPicker } from "../../shared/editor/asset-picker";
+import { DebouncedTextArea, DebouncedTextInput } from "../../shared/editor/debounced-text-field";
 import { UIButton } from "@/components/ui/button";
 import { UICheckbox } from "@/components/ui/checkbox";
 import { UIFormRow } from "@/components/ui/form-row";
-import { UITextInput } from "@/components/ui/text-input";
-import { UITextArea } from "@/components/ui/textarea";
 import { Card } from "@/components/ui/card";
 
 type FeatureCardItem = {
@@ -144,13 +143,13 @@ export function FeaturesCardsEditor({ block, assets, onChange }: BlockEditorProp
       <Card>
         <div className="grid gap-0">
           <UIFormRow label="Section title" htmlFor="features-cards-section-title" borderless>
-            <UITextInput
+            <DebouncedTextInput
               id="features-cards-section-title"
               size="sm"
               borderless
               value={sectionTitle}
               placeholder="Why teams choose Nanofactory"
-              onValueChange={updateSectionTitle}
+              onCommit={updateSectionTitle}
             />
           </UIFormRow>
 
@@ -200,25 +199,25 @@ export function FeaturesCardsEditor({ block, assets, onChange }: BlockEditorProp
               </div>
 
               <UIFormRow label="Card title" htmlFor={`features-card-title-${index}`} borderless>
-                <UITextInput
+                <DebouncedTextInput
                   id={`features-card-title-${index}`}
                   size="sm"
                   borderless
                   value={item.title}
                   placeholder={`Feature card ${index + 1}`}
-                  onValueChange={(value) => handleUpdateItemTitle(index, value)}
+                  onCommit={(value) => handleUpdateItemTitle(index, value)}
                 />
               </UIFormRow>
 
               <UIFormRow label="Card content" htmlFor={`features-card-content-${index}`} borderless>
-                <UITextArea
+                <DebouncedTextArea
                   id={`features-card-content-${index}`}
                   size="lg"
                   borderless
                   value={item.content}
                   rows={3}
                   placeholder="Card supporting content"
-                  onChange={(event) => handleUpdateItemContent(index, event.target.value)}
+                  onCommit={(value) => handleUpdateItemContent(index, value)}
                 />
               </UIFormRow>
 

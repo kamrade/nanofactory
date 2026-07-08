@@ -2,12 +2,11 @@
 
 import { UIButton } from "@/components/ui/button";
 import { UICheckbox } from "@/components/ui/checkbox";
-import { UITextInput } from "@/components/ui/text-input";
-import { UITextArea } from "@/components/ui/textarea";
 import { Card } from "@/components/ui/card";
 import { UIFormRow } from "@/components/ui/form-row";
 import type { BlockEditorProps } from "../../shared/types";
 import { AssetPicker } from "../../shared/editor/asset-picker";
+import { DebouncedTextArea as UITextArea, DebouncedTextInput as UITextInput } from "../../shared/editor/debounced-text-field";
 import {
   addImageEntry,
   addMarkdownEntry,

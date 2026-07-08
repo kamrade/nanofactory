@@ -4,10 +4,10 @@ import { useMemo, useState } from "react";
 
 import { UIButton } from "@/components/ui/button";
 import { UISelect } from "@/components/ui/select";
-import { UITextInput } from "@/components/ui/text-input";
 import { EditorFieldRow } from "@/components/editor/editor-field-row";
 import type { BlockEditorProps } from "../../shared/types";
 import { AssetPicker } from "../../shared/editor/asset-picker";
+import { DebouncedTextInput as UITextInput } from "../../shared/editor/debounced-text-field";
 import {
   SOCIAL_ICON_OPTIONS,
   type SocialIconKey,

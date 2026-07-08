@@ -4,12 +4,12 @@ import { useMemo, useState } from "react";
 
 import type { BlockEditorProps } from "../../shared/types";
 import { AssetPicker } from "../../shared/editor/asset-picker";
+import { DebouncedTextInput as UITextInput } from "../../shared/editor/debounced-text-field";
 import { UIButton } from "@/components/ui/button";
 import { UICheckbox } from "@/components/ui/checkbox";
 import { UIFormRow } from "@/components/ui/form-row";
 import { UIModalForm } from "@/components/ui/modal";
 import { UISelect } from "@/components/ui/select";
-import { UITextInput } from "@/components/ui/text-input";
 import { Card } from "@/components/ui/card";
 import {
   APP_HEADER_BREAKPOINTS,

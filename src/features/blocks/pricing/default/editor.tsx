@@ -1,12 +1,11 @@
 "use client";
 
 import type { BlockEditorProps } from "../../shared/types";
+import { DebouncedTextArea, DebouncedTextInput } from "../../shared/editor/debounced-text-field";
 import { UIButton } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import { UIFormRow } from "@/components/ui/form-row";
 import { UISelect } from "@/components/ui/select";
-import { UITextArea } from "@/components/ui/textarea";
-import { UITextInput } from "@/components/ui/text-input";
 
 type PricingPlan = {
   title: string;
@@ -115,25 +114,25 @@ export function PricingDefaultEditor({ block, onChange }: BlockEditorProps) {
       <Card>
         <div className="grid gap-0">
           <UIFormRow label="Section title" htmlFor="pricing-section-title" borderless>
-            <UITextInput
+            <DebouncedTextInput
               id="pricing-section-title"
               size="sm"
               borderless
               value={sectionTitle}
               placeholder="Pricing"
-              onValueChange={(value) => update({ sectionTitle: value })}
+              onCommit={(value) => update({ sectionTitle: value })}
             />
           </UIFormRow>
 
           <UIFormRow label="Subtitle" htmlFor="pricing-subtitle" borderless>
-            <UITextArea
+            <DebouncedTextArea
               id="pricing-subtitle"
               size="lg"
               borderless
               value={subtitle}
               rows={3}
               placeholder="A short line under the title that explains the pricing structure."
-              onChange={(event) => update({ subtitle: event.target.value })}
+              onCommit={(value) => update({ subtitle: value })}
             />
           </UIFormRow>
 
@@ -181,7 +180,7 @@ export function PricingDefaultEditor({ block, onChange }: BlockEditorProps) {
                 <p className="text-sm font-bold text-text-main">
                   Plan {index + 1}
                   {index === featuredIndex ? (
-                    <span className="ml-2 rounded-full bg-primary-100 px-2 py-0.5 text-xs font-medium text-text-main">
+                    <span className="ml-2 rounded-full border border-focus/40 bg-focus/15 px-2 py-0.5 text-xs font-medium text-text-main">
                       Featured
                     </span>
                   ) : null}
@@ -198,13 +197,13 @@ export function PricingDefaultEditor({ block, onChange }: BlockEditorProps) {
               </div>
 
               <UIFormRow label="Title" htmlFor={`pricing-title-${index}`} borderless>
-                <UITextInput
+                <DebouncedTextInput
                   id={`pricing-title-${index}`}
                   size="sm"
                   borderless
                   value={plan.title}
                   placeholder="Starter"
-                  onValueChange={(value) =>
+                  onCommit={(value) =>
                     updatePlan(index, {
                       ...plan,
                       title: value,
@@ -214,13 +213,13 @@ export function PricingDefaultEditor({ block, onChange }: BlockEditorProps) {
               </UIFormRow>
 
               <UIFormRow label="Price" htmlFor={`pricing-price-${index}`} borderless>
-                <UITextInput
+                <DebouncedTextInput
                   id={`pricing-price-${index}`}
                   size="sm"
                   borderless
                   value={plan.price}
                   placeholder="$19"
-                  onValueChange={(value) =>
+                  onCommit={(value) =>
                     updatePlan(index, {
                       ...plan,
                       price: value,
@@ -230,31 +229,31 @@ export function PricingDefaultEditor({ block, onChange }: BlockEditorProps) {
               </UIFormRow>
 
               <UIFormRow label="Description" htmlFor={`pricing-description-${index}`} borderless>
-                <UITextArea
+                <DebouncedTextArea
                   id={`pricing-description-${index}`}
                   size="lg"
                   borderless
                   value={plan.description}
                   rows={3}
                   placeholder="Describe what this plan is for in a little more detail."
-                  onChange={(event) =>
+                  onCommit={(value) =>
                     updatePlan(index, {
                       ...plan,
-                      description: event.target.value,
+                      description: value,
                     })
                   }
                 />
               </UIFormRow>
 
-              <div className="grid gap-3 md:grid-cols-2">
+              <div className="grid gap-3">
                 <UIFormRow label="Button text" htmlFor={`pricing-button-text-${index}`} borderless>
-                  <UITextInput
+                  <DebouncedTextInput
                     id={`pricing-button-text-${index}`}
                     size="sm"
                     borderless
                     value={plan.buttonText}
                     placeholder="Choose plan"
-                    onValueChange={(value) =>
+                    onCommit={(value) =>
                       updatePlan(index, {
                         ...plan,
                         buttonText: value,
@@ -264,13 +263,13 @@ export function PricingDefaultEditor({ block, onChange }: BlockEditorProps) {
                 </UIFormRow>
 
                 <UIFormRow label="Button link" htmlFor={`pricing-button-href-${index}`} borderless>
-                  <UITextInput
+                  <DebouncedTextInput
                     id={`pricing-button-href-${index}`}
                     size="sm"
                     borderless
                     value={plan.buttonHref}
                     placeholder="/contact"
-                    onValueChange={(value) =>
+                    onCommit={(value) =>
                       updatePlan(index, {
                         ...plan,
                         buttonHref: value,
@@ -281,17 +280,17 @@ export function PricingDefaultEditor({ block, onChange }: BlockEditorProps) {
               </div>
 
               <UIFormRow label="Includes" htmlFor={`pricing-includes-${index}`} borderless>
-                <UITextArea
+                <DebouncedTextArea
                   id={`pricing-includes-${index}`}
                   size="lg"
                   borderless
                   value={stringifyIncludes(plan.includes)}
                   rows={4}
                   placeholder="One item per line"
-                  onChange={(event) =>
+                  onCommit={(value) =>
                     updatePlan(index, {
                       ...plan,
-                      includes: parseIncludesValue(event.target.value),
+                      includes: parseIncludesValue(value),
                     })
                   }
                 />

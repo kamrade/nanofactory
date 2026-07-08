@@ -110,7 +110,7 @@
 .description {
   color: var(--color-text-muted);
   overflow-wrap: break-word;
-  padding-top: 0.5rem;
+  padding: 2rem 0;
   line-height: 1.25rem;
 }
 

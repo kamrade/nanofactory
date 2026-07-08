@@ -2,11 +2,10 @@
 
 import type { BlockEditorProps } from "../../shared/types";
 import { AssetPicker } from "../../shared/editor/asset-picker";
+import { DebouncedTextArea, DebouncedTextInput } from "../../shared/editor/debounced-text-field";
 import { UIButton } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import { UIFormRow } from "@/components/ui/form-row";
-import { UITextArea } from "@/components/ui/textarea";
-import { UITextInput } from "@/components/ui/text-input";
 
 type TestimonialItem = {
   quote: string;
@@ -94,25 +93,25 @@ export function TestimonialsDefaultEditor({
       <Card>
         <div className="grid gap-0">
           <UIFormRow label="Section title" htmlFor="testimonials-section-title" borderless>
-            <UITextInput
+            <DebouncedTextInput
               id="testimonials-section-title"
               size="sm"
               borderless
               value={sectionTitle}
               placeholder="What people say"
-              onValueChange={(value) => update({ sectionTitle: value })}
+              onCommit={(value) => update({ sectionTitle: value })}
             />
           </UIFormRow>
 
           <UIFormRow label="Subtitle" htmlFor="testimonials-subtitle" borderless>
-            <UITextArea
+            <DebouncedTextArea
               id="testimonials-subtitle"
               size="lg"
               borderless
               value={subtitle}
               rows={3}
               placeholder="Add a short supporting line under the title."
-              onChange={(event) => update({ subtitle: event.target.value })}
+              onCommit={(value) => update({ subtitle: value })}
             />
           </UIFormRow>
         </div>
@@ -159,30 +158,30 @@ export function TestimonialsDefaultEditor({
               </div>
 
               <UIFormRow label="Quote" htmlFor={`testimonials-quote-${index}`} borderless>
-                <UITextArea
+                <DebouncedTextArea
                   id={`testimonials-quote-${index}`}
                   size="lg"
                   borderless
                   value={item.quote}
                   rows={4}
                   placeholder="Write a short quote."
-                  onChange={(event) =>
+                  onCommit={(value) =>
                     updateItem(index, {
                       ...item,
-                      quote: event.target.value,
+                      quote: value,
                     })
                   }
                 />
               </UIFormRow>
 
               <UIFormRow label="Name" htmlFor={`testimonials-name-${index}`} borderless>
-                <UITextInput
+                <DebouncedTextInput
                   id={`testimonials-name-${index}`}
                   size="sm"
                   borderless
                   value={item.name}
                   placeholder="Jane Doe"
-                  onValueChange={(value) =>
+                  onCommit={(value) =>
                     updateItem(index, {
                       ...item,
                       name: value,
@@ -192,13 +191,13 @@ export function TestimonialsDefaultEditor({
               </UIFormRow>
 
               <UIFormRow label="Role" htmlFor={`testimonials-role-${index}`} borderless>
-                <UITextInput
+                <DebouncedTextInput
                   id={`testimonials-role-${index}`}
                   size="sm"
                   borderless
                   value={item.role}
                   placeholder="Founder"
-                  onValueChange={(value) =>
+                  onCommit={(value) =>
                     updateItem(index, {
                       ...item,
                       role: value,

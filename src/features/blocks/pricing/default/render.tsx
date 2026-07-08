@@ -119,19 +119,19 @@ export function PricingDefaultRender({
               data-featured={isFeatured ? "true" : "false"}
             >
               <div className={styles.contentWrapper}>
-                <p className={styles.planTitle}>{plan.title}</p>
+                <h2 className={styles.planTitle}>{plan.title}</h2>
                 <div className={styles.topRow}>
                   <div className={styles.priceRow}>
-                    <p className={styles.price}>{plan.price}</p>
+                    <h3 className={styles.price}>{plan.price}</h3>
                   </div>
-                  {plan.description.trim().length > 0 ? (
-                    <p className={styles.description}>{plan.description}</p>
-                  ) : null}
                 </div>
                 {hasButton ? (
                   <a href={buttonHref} className={isFeatured ? styles.buttonFeatured : styles.button}>
                     {buttonText}
                   </a>
+                ) : null}
+                {plan.description.trim().length > 0 ? (
+                  <p className={styles.description}>{plan.description}</p>
                 ) : null}
 
                 {includes.length > 0 ? (

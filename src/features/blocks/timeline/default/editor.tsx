@@ -4,9 +4,8 @@ import { UIButton } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import { UICheckbox } from "@/components/ui/checkbox";
 import { UIFormRow } from "@/components/ui/form-row";
-import { UITextInput } from "@/components/ui/text-input";
-import { UITextArea } from "@/components/ui/textarea";
 import type { BlockEditorProps } from "../../shared/types";
+import { DebouncedTextArea as UITextArea, DebouncedTextInput as UITextInput } from "../../shared/editor/debounced-text-field";
 import {
   addTimelineItem,
   removeTimelineItem,

@@ -5,10 +5,9 @@ import { UICheckbox } from "@/components/ui/checkbox";
 import { UIFormRow } from "@/components/ui/form-row";
 import { UISelect } from "@/components/ui/select";
 import { UISegmentedControl } from "@/components/ui/segmented-control";
-import { UITextArea } from "@/components/ui/textarea";
-import { UITextInput } from "@/components/ui/text-input";
 
 import { AssetPicker } from "../../shared/editor/asset-picker";
+import { DebouncedTextArea, DebouncedTextInput } from "../../shared/editor/debounced-text-field";
 import type { BlockEditorProps } from "../../shared/types";
 
 type HeroFieldKey =
@@ -70,25 +69,25 @@ function renderTextField(
 ) {
   if (field.inputKind === "textarea") {
     return (
-      <UITextArea
+      <DebouncedTextArea
         id={field.inputId}
         size={field.inputSize}
         borderless
         value={value}
         placeholder={field.placeholder}
-        onChange={(event) => onValueChange(event.target.value)}
+        onCommit={onValueChange}
       />
     );
   }
 
   return (
-    <UITextInput
+    <DebouncedTextInput
       id={field.inputId}
       size={field.inputSize}
       value={value}
       borderless
       placeholder={field.placeholder}
-      onValueChange={onValueChange}
+      onCommit={onValueChange}
     />
   );
 }
@@ -154,13 +153,13 @@ export function HeroBaseEditor({
           ))}
 
           <UIFormRow label={config.buttonTextLabel} htmlFor={config.buttonTextInputId} borderless>
-            <UITextInput
+            <DebouncedTextInput
               id={config.buttonTextInputId}
               size={config.buttonTextSize}
               value={buttonText}
               borderless
               placeholder={config.buttonTextPlaceholder}
-              onValueChange={(value) => updateField("buttonText", value)}
+              onCommit={(value) => updateField("buttonText", value)}
             />
           </UIFormRow>
 
@@ -185,13 +184,13 @@ export function HeroBaseEditor({
             borderless
           >
             {buttonTargetType === "link" ? (
-              <UITextInput
+              <DebouncedTextInput
                 id={config.buttonAnchorInputId}
                 size="sm"
                 value={buttonAnchor}
                 borderless
                 placeholder="https://example.com or /contact"
-                onValueChange={(value) => updateField("buttonAnchor", value)}
+                onCommit={(value) => updateField("buttonAnchor", value)}
               />
             ) : (
               <UISelect
