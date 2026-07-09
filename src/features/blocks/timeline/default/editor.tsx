@@ -98,18 +98,11 @@ export function TimelineDefaultEditor({ block, onChange }: BlockEditorProps) {
         </div>
       </Card>
 
-      <div className="flex flex-wrap items-center justify-between gap-3">
-        <div className="space-y-1">
-          <h4 className="text-sm font-semibold text-text-main">Steps</h4>
-          <p className="text-sm text-text-muted">
-            Keep each step short. Meta, date, and status work well as compact supporting labels.
-          </p>
-        </div>
-
+      <div className="flex justify-start">
         <UIButton
           type="button"
           size="sm"
-          theme="base"
+          theme="primary"
           variant="contained"
           onClick={() => update({ items: addTimelineItem(items) })}
         >

@@ -448,13 +448,6 @@ export function ProjectEditor({
     () => state.content.blocks.find((block) => block.id === state.activeEditorBlockId) ?? null,
     [state.activeEditorBlockId, state.content.blocks]
   );
-  const activeEditorDefinition = useMemo(
-    () =>
-      activeEditorBlock
-        ? getBlockDefinition(activeEditorBlock.type, activeEditorBlock.variant)
-        : null,
-    [activeEditorBlock]
-  );
   const activePendingSwitch =
     state.pendingVariantSwitch && state.pendingVariantSwitch.blockId === activeEditorBlock?.id
       ? state.pendingVariantSwitch
@@ -555,6 +548,7 @@ export function ProjectEditor({
         backgroundScenes={backgroundScenes}
         activeThemeKey={activeThemeKey}
         activeMode={activeMode}
+        activeSurfaceStyle={project.surfaceStyle}
         formatDefinitionLabel={formatDefinitionLabel}
         onOpenChange={(nextOpen) => {
           if (!nextOpen) {

@@ -14,14 +14,6 @@ type TestimonialItem = {
   imageAssetId: string | undefined;
 };
 
-function readSectionTitle(props: Record<string, unknown>) {
-  return typeof props.sectionTitle === "string" ? props.sectionTitle : "";
-}
-
-function readSubtitle(props: Record<string, unknown>) {
-  return typeof props.subtitle === "string" ? props.subtitle : "";
-}
-
 function readItems(props: Record<string, unknown>): TestimonialItem[] {
   if (!Array.isArray(props.items)) {
     return [];
@@ -51,11 +43,9 @@ export function TestimonialsDefaultEditor({
   assets,
   onChange,
 }: BlockEditorProps) {
-  const sectionTitle = readSectionTitle(block.props);
-  const subtitle = readSubtitle(block.props);
   const items = readItems(block.props);
 
-  function update(nextProps: Partial<Record<"sectionTitle" | "subtitle" | "items", unknown>>) {
+  function update(nextProps: Partial<Record<"items", unknown>>) {
     onChange({
       ...block.props,
       ...nextProps,
@@ -90,45 +80,11 @@ export function TestimonialsDefaultEditor({
 
   return (
     <div className="grid gap-5">
-      <Card>
-        <div className="grid gap-0">
-          <UIFormRow label="Section title" htmlFor="testimonials-section-title" borderless>
-            <DebouncedTextInput
-              id="testimonials-section-title"
-              size="sm"
-              borderless
-              value={sectionTitle}
-              placeholder="What people say"
-              onCommit={(value) => update({ sectionTitle: value })}
-            />
-          </UIFormRow>
-
-          <UIFormRow label="Subtitle" htmlFor="testimonials-subtitle" borderless>
-            <DebouncedTextArea
-              id="testimonials-subtitle"
-              size="lg"
-              borderless
-              value={subtitle}
-              rows={3}
-              placeholder="Add a short supporting line under the title."
-              onCommit={(value) => update({ subtitle: value })}
-            />
-          </UIFormRow>
-        </div>
-      </Card>
-
-      <div className="flex flex-wrap items-center justify-between gap-3">
-        <div className="space-y-1">
-          <h4 className="text-sm font-semibold text-text-main">Testimonials</h4>
-          <p className="text-sm text-text-muted">
-            Keep each quote short. Name, role, and an optional portrait are enough.
-          </p>
-        </div>
-
+      <div className="flex justify-start">
         <UIButton
           type="button"
           size="sm"
-          theme="base"
+          theme="primary"
           variant="contained"
           onClick={addItem}
         >
@@ -221,8 +177,6 @@ export function TestimonialsDefaultEditor({
                     imageAssetId: undefined,
                   })
                 }
-                title="Portrait image"
-                description="Optional square portrait for this testimonial."
                 emptyMessage="Upload an image in Project assets first."
                 clearLabel="Remove portrait"
                 selectLabel="Use portrait"
@@ -231,6 +185,7 @@ export function TestimonialsDefaultEditor({
                 compact
                 layout="grid"
                 selectionContainerClassName="grid gap-3 md:grid-cols-2"
+                wrapped={false}
               />
             </Card>
           ))}

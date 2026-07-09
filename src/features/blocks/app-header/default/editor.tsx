@@ -175,17 +175,17 @@ export function AppHeaderDefaultEditor({
       return;
     }
 
-      updateSocialLinks(
-        socialLinks.map((item, index) =>
-          index === editingSocialIndex
-            ? {
-                ...item,
-                label,
-                url,
-              }
-            : item
-        )
-      );
+    updateSocialLinks(
+      socialLinks.map((item, index) =>
+        index === editingSocialIndex
+          ? {
+              ...item,
+              label,
+              url,
+            }
+          : item
+      )
+    );
     closeSocialLinkEditor();
   }
 
@@ -204,7 +204,7 @@ export function AppHeaderDefaultEditor({
               size="sm"
               value={title}
               borderless
-              onValueChange={(nextTitle) =>
+              onCommit={(nextTitle: string) =>
                 onChange({
                   ...block.props,
                   title: nextTitle,
@@ -259,77 +259,77 @@ export function AppHeaderDefaultEditor({
           </UIFormRow>
         </div>
       </Card>
+      <div className="grid gap-4 py-5">
+        <AssetPicker
+          assets={assets}
+          selectedAssetId={selectedLogoAssetId}
+          onSelect={(assetId) =>
+            onChange({
+              ...block.props,
+              logoAssetId: assetId,
+            })
+          }
+          onClear={() =>
+            onChange({
+              ...block.props,
+              logoAssetId: undefined,
+            })
+          }
+          title="Left: Logo"
+          emptyMessage="Upload an image in Project assets first."
+          clearLabel="Remove logo"
+          selectLabel="Use as logo"
+          compact
+          wrapped={false}
+        />
+        <AssetPicker
+          assets={assets}
+          selectedAssetId={selectedLogoLightAssetId}
+          onSelect={(assetId) =>
+            onChange({
+              ...block.props,
+              logoLightAssetId: assetId,
+            })
+          }
+          onClear={() =>
+            onChange({
+              ...block.props,
+              logoLightAssetId: undefined,
+            })
+          }
+          title="Light mode logo"
+          emptyMessage="Upload an image in Project assets first."
+          clearLabel="Remove light logo"
+          selectLabel="Use in light mode"
+          compact
+          wrapped={false}
+        />
+        <AssetPicker
+          assets={assets}
+          selectedAssetId={selectedLogoDarkAssetId}
+          onSelect={(assetId) =>
+            onChange({
+              ...block.props,
+              logoDarkAssetId: assetId,
+            })
+          }
+          onClear={() =>
+            onChange({
+              ...block.props,
+              logoDarkAssetId: undefined,
+            })
+          }
+          title="Dark mode logo"
+          emptyMessage="Upload an image in Project assets first."
+          clearLabel="Remove dark logo"
+          selectLabel="Use in dark mode"
+          compact
+          wrapped={false}
+        />
+      </div>
 
-    
-      <AssetPicker
-        assets={assets}
-        selectedAssetId={selectedLogoAssetId}
-        onSelect={(assetId) =>
-          onChange({
-            ...block.props,
-            logoAssetId: assetId,
-          })
-        }
-        onClear={() =>
-          onChange({
-            ...block.props,
-            logoAssetId: undefined,
-          })
-        }
-        title="Left: Logo"
-        emptyMessage="Upload an image in Project assets first."
-        clearLabel="Remove logo"
-        selectLabel="Use as logo"
-        compact
-      />
-      <AssetPicker
-        assets={assets}
-        selectedAssetId={selectedLogoLightAssetId}
-        onSelect={(assetId) =>
-          onChange({
-            ...block.props,
-            logoLightAssetId: assetId,
-          })
-        }
-        onClear={() =>
-          onChange({
-            ...block.props,
-            logoLightAssetId: undefined,
-          })
-        }
-        title="Light mode logo"
-        description="Optional override for light mode."
-        emptyMessage="Upload an image in Project assets first."
-        clearLabel="Remove light logo"
-        selectLabel="Use in light mode"
-        compact
-      />
-      <AssetPicker
-        assets={assets}
-        selectedAssetId={selectedLogoDarkAssetId}
-        onSelect={(assetId) =>
-          onChange({
-            ...block.props,
-            logoDarkAssetId: assetId,
-          })
-        }
-        onClear={() =>
-          onChange({
-            ...block.props,
-            logoDarkAssetId: undefined,
-          })
-        }
-        title="Dark mode logo"
-        description="Optional override for dark mode."
-        emptyMessage="Upload an image in Project assets first."
-        clearLabel="Remove dark logo"
-        selectLabel="Use in dark mode"
-        compact
-      />
-    
-
-      <Card className="bg-surface-alt">
-        <p className="text-sm font-semibold text-text-main">Center: Menu</p>
+      <div className="grid gap-4 py-5">
+        <h4 className="text-lg font-semibold text-text-main">Center: Menu</h4>
         {menuItems.length === 0 ? (
           <p className="text-sm text-text-muted">No menu items yet.</p>
         ) : (
@@ -376,12 +376,17 @@ export function AppHeaderDefaultEditor({
               id="app-header-menu-item-label"
               size="sm"
               value={draftLabel}
-              onValueChange={setDraftLabel}
+              onCommit={setDraftLabel}
               borderless
               placeholder="Menu label"
             />
           </UIFormRow>
-          <UIFormRow label="Anchor id" htmlFor="app-header-menu-item-anchor" borderless className="mb-3">
+          <UIFormRow
+            label="Anchor id"
+            htmlFor="app-header-menu-item-anchor"
+            borderless
+            className="mb-3"
+          >
             <UISelect
               id="app-header-menu-item-anchor"
               ariaLabel="Anchor id"
@@ -405,7 +410,7 @@ export function AppHeaderDefaultEditor({
             Add item
           </UIButton>
         </div>
-      </Card>
+      </div>
 
       <UIModalForm
         open={editingMenuIndex !== null}
@@ -416,9 +421,7 @@ export function AppHeaderDefaultEditor({
         }}
         trigger={<button type="button" className="hidden" aria-hidden tabIndex={-1} />}
         title="Edit menu item"
-        description={
-          editingMenuItem ? `Editing ${editingMenuItem.label} · ${editingMenuItem.anchorId}` : "Edit menu item"
-        }
+        
         submitLabel="Save changes"
         cancelLabel="Cancel"
         size="md"
@@ -433,7 +436,7 @@ export function AppHeaderDefaultEditor({
               id="app-header-menu-item-edit-label"
               size="sm"
               value={editingLabel}
-              onValueChange={setEditingLabel}
+              onCommit={setEditingLabel}
               borderless
               placeholder="Menu label"
             />
@@ -454,8 +457,8 @@ export function AppHeaderDefaultEditor({
         </div>
       </UIModalForm>
 
-      <Card className="bg-surface-alt">
-        <p className="text-sm font-semibold text-text-main">Right: Social links</p>
+      <div className="grid gap-4 py-5">
+        <h4 className="text-lg font-semibold text-text-main">Right: Social links</h4>
         {socialLinks.length === 0 ? (
           <p className="text-sm text-text-muted">No social links yet.</p>
         ) : (
@@ -502,7 +505,7 @@ export function AppHeaderDefaultEditor({
               id="app-header-social-label"
               size="sm"
               value={draftSocialLabel}
-              onValueChange={setDraftSocialLabel}
+              onCommit={setDraftSocialLabel}
               placeholder="Instagram"
               borderless
             />
@@ -512,7 +515,7 @@ export function AppHeaderDefaultEditor({
               id="app-header-social-url"
               size="sm"
               value={draftSocialUrl}
-              onValueChange={setDraftSocialUrl}
+              onCommit={setDraftSocialUrl}
               placeholder="https://..."
               borderless
             />
@@ -528,7 +531,7 @@ export function AppHeaderDefaultEditor({
             Add social link
           </UIButton>
         </div>
-      </Card>
+      </div>
 
       <UIModalForm
         open={editingSocialIndex !== null}
@@ -540,7 +543,9 @@ export function AppHeaderDefaultEditor({
         trigger={<button type="button" className="hidden" aria-hidden tabIndex={-1} />}
         title="Edit social link"
         description={
-          editingSocialItem ? `Editing ${editingSocialItem.label} · ${editingSocialItem.url}` : "Edit social link"
+          editingSocialItem
+            ? `Editing ${editingSocialItem.label} · ${editingSocialItem.url}`
+            : "Edit social link"
         }
         submitLabel="Save changes"
         cancelLabel="Cancel"
@@ -556,7 +561,7 @@ export function AppHeaderDefaultEditor({
               id="app-header-social-edit-label"
               size="sm"
               value={editingSocialLabel}
-              onValueChange={setEditingSocialLabel}
+              onCommit={setEditingSocialLabel}
               borderless
               placeholder="Instagram"
             />
@@ -566,7 +571,7 @@ export function AppHeaderDefaultEditor({
               id="app-header-social-edit-url"
               size="sm"
               value={editingSocialUrl}
-              onValueChange={setEditingSocialUrl}
+              onCommit={setEditingSocialUrl}
               borderless
               placeholder="https://..."
             />

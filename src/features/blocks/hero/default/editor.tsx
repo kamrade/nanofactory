@@ -16,7 +16,6 @@ export function HeroDefaultEditor(props: BlockEditorProps) {
         buttonAnchorInputId: "hero-default-button-anchor",
         buttonTargetTypeInputId: "hero-default-button-target-type",
         animateInputId: "hero-default-animate",
-        contentPositionInputId: "hero-default-content-position",
         textFields: [
           {
             key: "eyebrow",
@@ -43,24 +42,16 @@ export function HeroDefaultEditor(props: BlockEditorProps) {
             inputSize: "lg",
           },
         ],
-        contentPositionOptions: [
-          { value: "top", label: "Top", textValue: "Top" },
-          { value: "centered", label: "Centered", textValue: "Centered" },
-          { value: "bottom", label: "Bottom", textValue: "Bottom" },
-          { value: "stretch", label: "Stretch", textValue: "Stretch" },
-        ],
         assetPickers: [
           {
             key: "imageAssetId",
             title: "Hero image asset",
-            description: "Select one of the uploaded project assets.",
             emptyMessage:
               "Upload an asset in the project assets panel below to use it in this block.",
           },
           {
             key: "imageLightAssetId",
             title: "Light mode image",
-            description: "Optional override for light mode.",
             emptyMessage:
               "Upload an asset in the project assets panel below to use it in this block.",
             clearLabel: "Remove light image",
@@ -69,7 +60,6 @@ export function HeroDefaultEditor(props: BlockEditorProps) {
           {
             key: "imageDarkAssetId",
             title: "Dark mode image",
-            description: "Optional override for dark mode.",
             emptyMessage:
               "Upload an asset in the project assets panel below to use it in this block.",
             clearLabel: "Remove dark image",

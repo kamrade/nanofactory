@@ -28,7 +28,6 @@ export function HeroCenteredRender({
     buttonText,
     buttonAnchor,
     buttonTargetType,
-    contentPosition,
     animate,
   } = readHeroRenderContent(block);
 
@@ -62,7 +61,6 @@ export function HeroCenteredRender({
       data-testid="HeroCenteredComponent"
       data-spacing-scale={effectiveSpacingScale}
       data-surface-style={projectSurfaceStyle ?? "default"}
-      data-content-position={contentPosition}
       className={styles.root}
       style={radiusVars as CSSProperties}
     >

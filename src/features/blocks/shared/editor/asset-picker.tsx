@@ -23,7 +23,7 @@ type AssetPickerProps = {
   selectedAssetId?: string;
   onSelect: (assetId: string) => void;
   onClear: () => void;
-  title: string;
+  title?: string;
   description?: string;
   emptyMessage: string;
   clearLabel?: string;
@@ -33,6 +33,7 @@ type AssetPickerProps = {
   layout?: "list" | "grid";
   compact?: boolean;
   selectionContainerClassName?: string;
+  wrapped?: boolean;
 };
 
 export function AssetPicker({
@@ -50,17 +51,21 @@ export function AssetPicker({
   layout = "list",
   compact = false,
   selectionContainerClassName,
+  wrapped = true,
 }: AssetPickerProps) {
   const [pickerOpen, setPickerOpen] = useState(false);
   const selectedAsset = assets.find((asset) => asset.id === selectedAssetId) ?? null;
+  const hasTitle = typeof title === "string" && title.trim().length > 0;
+  const hasDescription = description.trim().length > 0;
 
-  return (
-    <Card className="bg-surface-alt">
+  const content = (
       <div className="grid gap-3">
-        <div className="space-y-1">
-          <h4 className="text-lg font-semibold text-text-main">{title}</h4>
-          <p className="text-sm text-text-muted">{description}</p>
-        </div>
+        {hasTitle || hasDescription ? (
+          <div className="space-y-1">
+            {hasTitle ? <h4 className="text-md font-semibold text-text-main">{title}</h4> : null}
+            {hasDescription ? <p className="text-sm text-text-muted">{description}</p> : null}
+          </div>
+        ) : null}
 
         <div className="flex flex-wrap items-center justify-between gap-3 text-sm text-text-muted">
           {assets.length === 0 ? (
@@ -72,11 +77,13 @@ export function AssetPicker({
                   {selectedAsset ? "Change image" : selectLabel}
                 </UIButton>
               </UIDialogTrigger>
-              <UIDialogContent className="max-w-5xl">
-                <UIDialogHeader>
-                  <UIDialogTitle>{title}</UIDialogTitle>
-                  <UIDialogDescription>{description}</UIDialogDescription>
-                </UIDialogHeader>
+                <UIDialogContent className="max-w-5xl">
+                  <UIDialogHeader>
+                  {hasTitle ? <UIDialogTitle>{title}</UIDialogTitle> : null}
+                  {hasDescription ? (
+                    <UIDialogDescription>{description}</UIDialogDescription>
+                  ) : null}
+                  </UIDialogHeader>
 
                 <div className="scrollbar-macos max-h-[68vh] overflow-y-auto pr-1">
                   <div
@@ -176,6 +183,7 @@ export function AssetPicker({
           </div>
         ) : null}
       </div>
-    </Card>
   );
+
+  return wrapped ? <Card className="bg-surface-alt">{content}</Card> : content;
 }

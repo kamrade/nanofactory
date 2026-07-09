@@ -105,6 +105,18 @@ function useSheetContext() {
   return context;
 }
 
+function focusWithoutScroll(element: HTMLElement | null) {
+  if (!element) {
+    return;
+  }
+
+  try {
+    element.focus({ preventScroll: true });
+  } catch {
+    element.focus();
+  }
+}
+
 export function UISheetTrigger({ children }: { children: ReactElement }) {
   const { open, setOpen, setTriggerElement } = useSheetContext();
 
@@ -188,9 +200,9 @@ export function UISheetContent({
         document.body.style.overflow = bodyOverflow;
       }
       if (triggerElement) {
-        triggerElement.focus();
+        focusWithoutScroll(triggerElement);
       } else {
-        previousActive?.focus();
+        focusWithoutScroll(previousActive);
       }
     };
   }, [modal, open, triggerElement]);

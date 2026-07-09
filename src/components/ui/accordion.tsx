@@ -98,7 +98,7 @@ export function UIAccordion({
                   <FiChevronDown
                     aria-hidden
                     className={cx(
-                      "mt-0.5 shrink-0 text-text-muted transition-transform group-focus-visible:text-text-main",
+                      "mt-1 shrink-0 text-text-muted transition-transform group-focus-visible:text-text-main",
                       size === "sm" ? "h-4 w-4" : "h-5 w-5",
                       open && "rotate-180"
                     )}
@@ -106,7 +106,7 @@ export function UIAccordion({
                   <span className="grid min-w-0 gap-1">
                     <h4
                       className={cx(
-                        "font-medium text-text-main",
+                        "font-medium text-text-main py-1",
                         size === "sm" ? "text-sm leading-5" : "text-base leading-6"
                       )}
                     >

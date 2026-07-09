@@ -47,7 +47,8 @@ export const UITextArea = forwardRef<HTMLTextAreaElement, UITextAreaProps>(funct
         onChange?.(event);
       }}
       className={cx(
-        "w-full bg-surface text-text-main outline-none transition placeholder:text-text-placeholder focus:ring-2 focus:ring-focus/50",
+        "w-full bg-surface text-text-main outline-none transition placeholder:text-text-placeholder",
+        !borderless && "focus:ring-2 focus:ring-focus/50",
         sizeClasses.base,
         sizeClasses.text,
         borderless ? "px-0" : "border border-line",

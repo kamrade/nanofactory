@@ -18,7 +18,6 @@ type HeroRenderContent = {
   buttonText: string;
   buttonAnchor: string;
   buttonTargetType: HeroButtonTargetType;
-  contentPosition: string;
   animate: boolean;
 };
 
@@ -42,8 +41,6 @@ export function readHeroRenderContent(block: BlockRenderProps["block"]): HeroRen
         /^(#|\/|https?:\/\/|mailto:|tel:)/i.test(buttonAnchor))
         ? "link"
         : "inner-anchor",
-    contentPosition:
-      typeof block.props.contentPosition === "string" ? block.props.contentPosition : "centered",
     // Backward compat: the flag was previously stored as `animateMainText`.
     animate: block.props.animate === true || block.props.animateMainText === true,
   };

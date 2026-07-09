@@ -90,6 +90,7 @@ export const UIButton = forwardRef<HTMLButtonElement, UIButtonProps>(function UI
 
   return (
     <button
+      data-testid="ui-button"
       ref={ref}
       type={type ?? "button"}
       className={buttonClassName}

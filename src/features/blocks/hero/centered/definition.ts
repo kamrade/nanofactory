@@ -1,7 +1,6 @@
 import type { BlockVariantDefinition } from "../../shared/types";
 import {
   createHeroDefaultProps,
-  HERO_STANDARD_CONTENT_POSITIONS,
   normalizeHeroProps,
 } from "../shared/model";
 import { HeroCenteredEditor } from "./editor";
@@ -50,12 +49,6 @@ export const heroCenteredDefinition: BlockVariantDefinition = {
       kind: "text",
       placeholder: "section-id",
     },
-    {
-      key: "contentPosition",
-      label: "Content position",
-      kind: "text",
-      placeholder: "centered",
-    },
   ],
   Editor: HeroCenteredEditor,
   createDefaultProps: () =>
@@ -69,7 +62,6 @@ export const heroCenteredDefinition: BlockVariantDefinition = {
       title: HERO_CENTERED_TITLE,
       subtitle: HERO_CENTERED_SUBTITLE,
       buttonText: HERO_CENTERED_BUTTON_TEXT,
-      contentPositions: HERO_STANDARD_CONTENT_POSITIONS,
     }),
   Renderer: HeroCenteredRender,
 };

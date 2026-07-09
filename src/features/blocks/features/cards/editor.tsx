@@ -162,18 +162,13 @@ export function FeaturesCardsEditor({ block, assets, onChange }: BlockEditorProp
         </div>
       </Card>
 
-      <div className="flex flex-wrap items-center justify-between gap-3">
-        <div className="space-y-1">
-          <h4 className="text-sm font-semibold text-text-main">Cards</h4>
-          <p className="text-sm text-text-muted">
-            Edit each feature card separately. Keep the titles short and scannable.
-          </p>
-        </div>
-
+      <div className="flex justify-start">
         <UIButton
           type="button"
+          size="sm"
+          theme="primary"
+          variant="contained"
           onClick={handleAddItem}
-          className="inline-flex items-center justify-center rounded-2xl border border-line bg-surface px-3 py-2 text-sm font-medium text-text-main transition hover:border-text-placeholder hover:bg-surface-alt"
         >
           Add card
         </UIButton>
@@ -191,8 +186,10 @@ export function FeaturesCardsEditor({ block, assets, onChange }: BlockEditorProp
                 <p className="text-sm font-bold text-text-main">Card {index + 1}</p>
                 <UIButton
                   type="button"
+                  size="sm"
+                  theme="danger"
+                  variant="outlined"
                   onClick={() => handleRemoveItem(index)}
-                  className="inline-flex items-center justify-center rounded-2xl border border-danger-line bg-danger-100 px-3 py-2 text-sm font-medium text-danger transition hover:bg-danger-200"
                 >
                   Remove
                 </UIButton>

@@ -150,12 +150,11 @@ export function GalleryDefaultEditor({
         </div>
       </Card>
 
-      <div className="flex items-center justify-between gap-3">
-        <p className="text-sm font-semibold text-text-main">Gallery items</p>
+      <div className="flex justify-start gap-3">
         <UIButton
           type="button"
           size="sm"
-          theme="base"
+          theme="primary"
           variant="contained"
           onClick={() =>
             update({
@@ -165,8 +164,8 @@ export function GalleryDefaultEditor({
               ],
             })
           }
-        >
-          Add item
+          >
+          Add gallery item
         </UIButton>
       </div>
 
@@ -178,7 +177,7 @@ export function GalleryDefaultEditor({
         <div className="grid gap-3">
           {items.map((item, index) => {
             return (
-              <Card key={`${block.id}-gallery-item-${index}`} >
+              <Card key={`${block.id}-gallery-item-${index}`} className="grid gap-3">
                 <div className="flex items-center justify-between gap-3">
                   <p className="text-sm font-bold text-text-main">Item {index + 1}</p>
                   <UIButton
@@ -212,31 +211,6 @@ export function GalleryDefaultEditor({
                   />
                 </UIFormRow>
 
-                <AssetPicker
-                  assets={assets}
-                  selectedAssetId={item.assetId}
-                  onSelect={(assetId) =>
-                    updateItem(index, {
-                      ...item,
-                      assetId,
-                    })
-                  }
-                  onClear={() =>
-                    updateItem(index, {
-                      ...item,
-                      assetId: undefined,
-                    })
-                  }
-                  title="Image"
-                  description="Choose an image asset for this gallery item."
-                  emptyMessage="Upload an image in Project assets first."
-                  clearLabel="Remove image"
-                  selectLabel="Use image"
-                  
-                  layout="grid"
-                  compact
-                />
-
                 <div>
                   <UIFormRow label="Title (optional)" htmlFor={`gallery-item-title-${index}`} borderless>
                     <UITextInput
@@ -249,19 +223,23 @@ export function GalleryDefaultEditor({
                     />
                   </UIFormRow>
 
-                  <UIFormRow label="Description (optional)" htmlFor={`gallery-item-description-${index}`} borderless>
+                  <UIFormRow
+                    label="Description (optional)"
+                    htmlFor={`gallery-item-description-${index}`}
+                    borderless
+                  >
                     <div className="min-w-0 flex-1">
-                    <UITextArea
-                      id={`gallery-item-description-${index}`}
-                      size="sm"
-                      borderless
-                      value={item.description}
-                      rows={3}
-                      onChange={(event) =>
-                        updateItem(index, { ...item, description: event.target.value })
-                      }
-                      placeholder="Item description"
-                    />
+                      <UITextArea
+                        id={`gallery-item-description-${index}`}
+                        size="sm"
+                        borderless
+                        value={item.description}
+                        rows={3}
+                        onChange={(event) =>
+                          updateItem(index, { ...item, description: event.target.value })
+                        }
+                        placeholder="Item description"
+                      />
                     </div>
                   </UIFormRow>
 
@@ -287,6 +265,29 @@ export function GalleryDefaultEditor({
                     />
                   </UIFormRow>
                 </div>
+
+                <AssetPicker
+                  assets={assets}
+                  selectedAssetId={item.assetId}
+                  onSelect={(assetId) =>
+                    updateItem(index, {
+                      ...item,
+                      assetId,
+                    })
+                  }
+                  onClear={() =>
+                    updateItem(index, {
+                      ...item,
+                      assetId: undefined,
+                    })
+                  }
+                  emptyMessage="Upload an image in Project assets first."
+                  clearLabel="Remove image"
+                  selectLabel="Use image"
+                  layout="grid"
+                  compact
+                  wrapped={false}
+                />
               </Card>
             );
           })}

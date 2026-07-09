@@ -26,6 +26,7 @@ import { Card } from "@/components/ui/card";
 import { UISelect } from "@/components/ui/select";
 import { UIFormRow } from "@/components/ui/form-row";
 import { UITextInput } from "@/components/ui/text-input";
+import { FiTrash2 } from "react-icons/fi";
 import {
   UISheet,
   UISheetClose,
@@ -42,6 +43,7 @@ type BlockSettingsSheetProps = {
   activeEditorBlockId: string | null;
   activePendingSwitch: PendingVariantSwitch | null;
   assets: ProjectAssetRecord[];
+  activeSurfaceStyle: "default" | "flat";
   availableAnchors: Array<{
     id: string;
     label: string;
@@ -168,7 +170,6 @@ type BlockSettingsSectionProps = {
   onCancelVariantSwitch: () => void;
   onChangeProps: (blockId: string, nextProps: Record<string, unknown>) => void;
   onChangeAnchorId: (blockId: string, nextAnchorId?: string) => void;
-  onDeleteBlock: (blockId: string) => void;
 };
 
 function BlockSettingsSection({
@@ -176,6 +177,7 @@ function BlockSettingsSection({
   definition,
   pendingVariantSwitch,
   assets,
+  activeSurfaceStyle,
   availableAnchors,
   effectiveGalleryItemAnchors,
   backgroundScenes,
@@ -187,7 +189,6 @@ function BlockSettingsSection({
   onCancelVariantSwitch,
   onChangeProps,
   onChangeAnchorId,
-  onDeleteBlock,
 }: BlockSettingsSectionProps) {
   const variantOptions = getBlockVariants(definition.type);
   const activeVariant = pendingVariantSwitch ? pendingVariantSwitch.nextVariant : definition.variant;
@@ -226,18 +227,6 @@ function BlockSettingsSection({
             onChangeAnchorId={onChangeAnchorId}
           />
         </div>
-      </Card>
-
-      <Card className="bg-surface-alt">
-        <ScenePicker
-          scenes={backgroundScenes}
-          selectedSceneId={block.backgroundSceneId}
-          onSelect={(sceneId) => onSelectScene(block.id, sceneId)}
-          onClear={() => onSelectScene(block.id, undefined)}
-          title="Background scene"
-          description="Attach a reusable background scene to this block shell."
-          emptyMessage="Create a scene in Background Editor first, then select it here."
-        />
       </Card>
 
       {pendingVariantSwitch ? (
@@ -280,17 +269,19 @@ function BlockSettingsSection({
         onChange={(nextProps) => onChangeProps(block.id, nextProps)}
       />
 
-      <div className="flex flex-wrap items-center justify-end gap-3 border-t border-neutral-line pt-4">
-        <UIButton
-          type="button"
-          size="sm"
-          theme="danger"
-          variant="outlined"
-          onClick={() => onDeleteBlock(block.id)}
-        >
-          Delete block
-        </UIButton>
-      </div>
+      {activeSurfaceStyle === "default" ? (
+        <Card className="bg-surface-alt">
+          <ScenePicker
+            scenes={backgroundScenes}
+            selectedSceneId={block.backgroundSceneId}
+            onSelect={(sceneId) => onSelectScene(block.id, sceneId)}
+            onClear={() => onSelectScene(block.id, undefined)}
+            title="Background scene"
+            description="Attach a reusable background scene to this block shell."
+            emptyMessage="Create a scene in Background Editor first, then select it here."
+          />
+        </Card>
+      ) : null}
     </div>
   );
 }
@@ -300,6 +291,7 @@ export function BlockSettingsSheet({
   activeEditorBlockId,
   activePendingSwitch,
   assets,
+  activeSurfaceStyle,
   availableAnchors,
   effectiveGalleryItemAnchorsByBlock,
   backgroundScenes,
@@ -390,6 +382,18 @@ export function BlockSettingsSheet({
                 >
                   <FiChevronsDown aria-hidden className="h-4 w-4" />
                 </UIButton>
+                <UIButton
+                  type="button"
+                  size="sm"
+                  theme="danger"
+                  variant="text"
+                  iconButton
+                  aria-label="Delete block"
+                  title="Delete block"
+                  onClick={() => onDeleteBlock(block.id)}
+                >
+                  <FiTrash2 aria-hidden className="h-4 w-4" />
+                </UIButton>
               </div>
             ),
             content: (
@@ -400,6 +404,7 @@ export function BlockSettingsSheet({
                   activePendingSwitch?.blockId === block.id ? activePendingSwitch : null
                 }
                 assets={assets}
+                activeSurfaceStyle={activeSurfaceStyle}
                 availableAnchors={availableAnchors}
                 effectiveGalleryItemAnchors={effectiveGalleryItemAnchorsByBlock.get(block.id)}
                 backgroundScenes={backgroundScenes}
@@ -411,7 +416,6 @@ export function BlockSettingsSheet({
                 onCancelVariantSwitch={onCancelVariantSwitch}
                 onChangeProps={onChangeProps}
                 onChangeAnchorId={onChangeAnchorId}
-                onDeleteBlock={onDeleteBlock}
               />
             ),
           },
@@ -421,6 +425,7 @@ export function BlockSettingsSheet({
       activePendingSwitch,
       allBlocks,
       assets,
+      activeSurfaceStyle,
       availableAnchors,
       backgroundScenes,
       effectiveBlockAnchors,

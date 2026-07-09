@@ -16,8 +16,7 @@ type HeroFieldKey =
   | "subtitle"
   | "buttonText"
   | "buttonAnchor"
-  | "buttonTargetType"
-  | "contentPosition";
+  | "buttonTargetType";
 
 type HeroAssetKey = "imageAssetId" | "imageLightAssetId" | "imageDarkAssetId";
 
@@ -33,7 +32,7 @@ type HeroTextFieldConfig = {
 type HeroAssetPickerConfig = {
   key: HeroAssetKey;
   title: string;
-  description: string;
+  description?: string;
   emptyMessage: string;
   clearLabel?: string;
   selectLabel?: string;
@@ -48,13 +47,7 @@ type HeroEditorConfig = {
   buttonAnchorInputId: string;
   buttonTargetTypeInputId: string;
   animateInputId: string;
-  contentPositionInputId: string;
   textFields: HeroTextFieldConfig[];
-  contentPositionOptions: Array<{
-    value: string;
-    label: string;
-    textValue: string;
-  }>;
   assetPickers: HeroAssetPickerConfig[];
 };
 
@@ -110,7 +103,6 @@ export function HeroBaseEditor({
       /^(#|\/|https?:\/\/|mailto:|tel:)/i.test(buttonAnchor.trim()))
       ? "link"
       : "inner-anchor";
-  const contentPosition = readStringProp(block.props, "contentPosition") || "centered";
   // Backward compat: the flag was previously stored as `animateMainText`.
   const animate = block.props.animate === true || block.props.animateMainText === true;
 
@@ -219,19 +211,6 @@ export function HeroBaseEditor({
               onChange={(event) => updateBooleanField("animate", event.currentTarget.checked)}
             />
           </UIFormRow>
-
-          <UIFormRow label="Content position" htmlFor={config.contentPositionInputId} borderless>
-            <UISelect
-              id={config.contentPositionInputId}
-              ariaLabel="Hero content position"
-              size="sm"
-              borderless
-              className="w-full"
-              value={contentPosition}
-              onValueChange={(value) => updateField("contentPosition", String(value))}
-              options={config.contentPositionOptions}
-            />
-          </UIFormRow>
         </div>
       </Card>
 
@@ -241,7 +220,9 @@ export function HeroBaseEditor({
             key={picker.key}
             assets={assets}
             selectedAssetId={
-              typeof block.props[picker.key] === "string" ? String(block.props[picker.key]) : undefined
+              typeof block.props[picker.key] === "string"
+                ? String(block.props[picker.key])
+                : undefined
             }
             onSelect={(assetId) => selectAsset(picker.key, assetId)}
             onClear={() => selectAsset(picker.key, undefined)}
@@ -252,6 +233,7 @@ export function HeroBaseEditor({
             selectLabel={picker.selectLabel}
             layout="grid"
             compact
+            wrapped={false}
           />
         ))}
       </div>

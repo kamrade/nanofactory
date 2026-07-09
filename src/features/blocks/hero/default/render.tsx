@@ -28,7 +28,6 @@ export function HeroDefaultRender({
     buttonText,
     buttonAnchor,
     buttonTargetType,
-    contentPosition,
     animate,
   } = readHeroRenderContent(block);
 
@@ -75,7 +74,6 @@ export function HeroDefaultRender({
       data-component-id="hero:default"
       data-spacing-scale={effectiveSpacingScale}
       data-surface-style={projectSurfaceStyle ?? "default"}
-      data-content-position={contentPosition}
       className={styles.root}
       style={radiusVars as CSSProperties}
     >

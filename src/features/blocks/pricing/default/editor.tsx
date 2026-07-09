@@ -155,15 +155,8 @@ export function PricingDefaultEditor({ block, onChange }: BlockEditorProps) {
         </div>
       </Card>
 
-      <div className="flex flex-wrap items-center justify-between gap-3">
-        <div className="space-y-1">
-          <h4 className="text-sm font-semibold text-text-main">Plans</h4>
-          <p className="text-sm text-text-muted">
-            Keep titles short. The featured plan gets a stronger visual treatment.
-          </p>
-        </div>
-
-        <UIButton type="button" size="sm" theme="base" variant="contained" onClick={addPlan}>
+      <div className="flex justify-start">
+        <UIButton type="button" size="sm" theme="primary" variant="contained" onClick={addPlan}>
           Add plan
         </UIButton>
       </div>

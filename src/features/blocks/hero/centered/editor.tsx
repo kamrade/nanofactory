@@ -16,7 +16,6 @@ export function HeroCenteredEditor(props: BlockEditorProps) {
         buttonAnchorInputId: "hero-centered-button-anchor",
         buttonTargetTypeInputId: "hero-centered-button-target-type",
         animateInputId: "hero-centered-animate",
-        contentPositionInputId: "hero-centered-content-position",
         textFields: [
           {
             key: "eyebrow",
@@ -44,17 +43,10 @@ export function HeroCenteredEditor(props: BlockEditorProps) {
             inputSize: "lg",
           },
         ],
-        contentPositionOptions: [
-          { value: "top", label: "Top", textValue: "Top" },
-          { value: "centered", label: "Centered", textValue: "Centered" },
-          { value: "bottom", label: "Bottom", textValue: "Bottom" },
-        ],
         assetPickers: [
           {
             key: "imageAssetId",
             title: "Optional image",
-            description:
-              "This variant works without media. Add an image only when it strengthens the centered message.",
             emptyMessage: "Upload an asset in the project assets panel below to use it here.",
             clearLabel: "Remove image",
             selectLabel: "Use image",
@@ -62,7 +54,6 @@ export function HeroCenteredEditor(props: BlockEditorProps) {
           {
             key: "imageLightAssetId",
             title: "Light mode image",
-            description: "Optional override for light mode.",
             emptyMessage: "Upload an asset in the project assets panel below to use it here.",
             clearLabel: "Remove light image",
             selectLabel: "Use in light mode",
@@ -70,7 +61,6 @@ export function HeroCenteredEditor(props: BlockEditorProps) {
           {
             key: "imageDarkAssetId",
             title: "Dark mode image",
-            description: "Optional override for dark mode.",
             emptyMessage: "Upload an asset in the project assets panel below to use it here.",
             clearLabel: "Remove dark image",
             selectLabel: "Use in dark mode",

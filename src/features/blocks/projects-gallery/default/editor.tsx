@@ -1,7 +1,6 @@
 "use client";
 
 import { UIButton } from "@/components/ui/button";
-import { UICheckbox } from "@/components/ui/checkbox";
 import { Card } from "@/components/ui/card";
 import { UIFormRow } from "@/components/ui/form-row";
 import type { BlockEditorProps } from "../../shared/types";
@@ -64,47 +63,11 @@ export function ProjectsGalleryDefaultEditor({ block, assets, onChange }: BlockE
 
   return (
     <div className="grid gap-5">
-      <Card>
-        <div className="grid gap-0">
-          <UIFormRow label="Section title" htmlFor="projects-gallery-section-title" borderless>
-            <UITextInput
-              id="projects-gallery-section-title"
-              size="sm"
-              borderless
-              value={props.sectionTitle}
-              onValueChange={(value) => update({ sectionTitle: value })}
-              placeholder="Projects"
-            />
-          </UIFormRow>
-
-          <UIFormRow label="Animate title" borderless>
-            <UICheckbox
-              checked={props.animate}
-              onChange={(event) => update({ animate: event.currentTarget.checked })}
-            />
-          </UIFormRow>
-
-          <UIFormRow label="Gallery anchor" htmlFor="projects-gallery-gallery-anchor" borderless>
-            <UITextInput
-              id="projects-gallery-gallery-anchor"
-              size="sm"
-              borderless
-              value={props.galleryAnchor ?? ""}
-              onValueChange={(value) =>
-                update({ galleryAnchor: value.trim().length > 0 ? value : undefined })
-              }
-              placeholder="projects"
-            />
-          </UIFormRow>
-        </div>
-      </Card>
-
-      <div className="flex items-center justify-between gap-3">
-        <p className="text-sm font-semibold text-text-main">Projects</p>
+      <div className="flex justify-start">
         <UIButton
           type="button"
           size="sm"
-          theme="base"
+          theme="primary"
           variant="contained"
           onClick={() =>
             update({
@@ -124,7 +87,7 @@ export function ProjectsGalleryDefaultEditor({ block, assets, onChange }: BlockE
               ],
             })
           }
-        >
+          >
           Add project
         </UIButton>
       </div>
@@ -142,9 +105,9 @@ export function ProjectsGalleryDefaultEditor({ block, assets, onChange }: BlockE
             const effectiveGalleryAnchor = item.galleryAnchor ?? fallbackGalleryAnchor;
 
             return (
-              <Card key={`${block.id}-project-item-${projectIndex}`} >
+              <Card key={`${block.id}-project-item-${projectIndex}`} className="grid gap-2">
                 <div className="flex items-center justify-between gap-3">
-                  <p className="text-sm font-medium text-text-main">Project {projectIndex + 1}</p>
+                  <p className="text-base font-bold text-text-main">Project {projectIndex + 1}</p>
                   <UIButton
                     type="button"
                     size="sm"
@@ -322,42 +285,38 @@ export function ProjectsGalleryDefaultEditor({ block, assets, onChange }: BlockE
                       imageAssetId: undefined,
                     })
                   }
-                  title="Project cover image"
-                  description="Image for project card preview."
                   emptyMessage="Upload an image in Project assets first."
                   clearLabel="Remove image"
                   selectLabel="Use image"
                   layout="grid"
                   compact
+                  wrapped={false}
                 />
 
-                <div className="grid gap-3 pt-3">
-                  <div className="flex items-center justify-between gap-3">
-                    <p className="text-md font-bold text-text-main">Nested gallery entries</p>
-                    <div className="flex items-center gap-2">
-                      <UIButton
-                        type="button"
-                        size="sm"
-                        theme="base"
-                        variant="outlined"
-                        onClick={() =>
-                          updateProjectItem(projectIndex, addMarkdownEntry(item))
-                        }
-                      >
-                        Add markdown
-                      </UIButton>
-                      <UIButton
-                        type="button"
-                        size="sm"
-                        theme="base"
-                        variant="contained"
-                        onClick={() =>
-                          updateProjectItem(projectIndex, addImageEntry(item))
-                        }
-                      >
-                        Add entry (image)
-                      </UIButton>
-                    </div>
+                <div className="grid gap-3 pt-2">
+                  <div className="flex flex-wrap items-center justify-start gap-2">
+                    <UIButton
+                      type="button"
+                      size="sm"
+                      theme="primary"
+                      variant="contained"
+                      onClick={() =>
+                        updateProjectItem(projectIndex, addMarkdownEntry(item))
+                      }
+                    >
+                      Add markdown
+                    </UIButton>
+                    <UIButton
+                      type="button"
+                      size="sm"
+                      theme="primary"
+                      variant="contained"
+                      onClick={() =>
+                        updateProjectItem(projectIndex, addImageEntry(item))
+                      }
+                    >
+                      Add entry (image)
+                    </UIButton>
                   </div>
 
                   {item.galleryItems.length === 0 ? (
@@ -365,10 +324,11 @@ export function ProjectsGalleryDefaultEditor({ block, assets, onChange }: BlockE
                   ) : (
                     <div className="grid gap-3">
                       {item.galleryItems.map((galleryItem, entryIndex) => (
-                        <Card key={`${block.id}-project-${projectIndex}-entry-${entryIndex}`}>
+                        <div key={`${block.id}-project-${projectIndex}-entry-${entryIndex}`} className="grid gap-3">
                           <div className="flex items-center justify-between gap-3">
                             <p className="text-sm font-bold text-text-main">
-                              {galleryItem.kind === "markdown" ? "Markdown entry" : "Image entry"} {entryIndex + 1}
+                              {galleryItem.kind === "markdown" ? "Markdown entry" : "Image entry"}{" "}
+                              {entryIndex + 1}
                             </p>
                             <UIButton
                               type="button"
@@ -388,18 +348,17 @@ export function ProjectsGalleryDefaultEditor({ block, assets, onChange }: BlockE
                             htmlFor={`projects-gallery-entry-anchor-${projectIndex}-${entryIndex}`}
                             borderless
                           >
-                            <UITextInput
-                              id={`projects-gallery-entry-anchor-${projectIndex}-${entryIndex}`}
-                              size="sm"
-                              borderless
-                              value={galleryItem.entryAnchor ?? ""}
-                              onValueChange={(value) =>
-                                updateGalleryItem(projectIndex, entryIndex, {
-                                  ...galleryItem,
-                                  entryAnchor:
-                                    value.trim().length > 0 ? value : undefined,
-                                })
-                              }
+                              <UITextInput
+                                id={`projects-gallery-entry-anchor-${projectIndex}-${entryIndex}`}
+                                size="sm"
+                                borderless
+                                value={galleryItem.entryAnchor ?? ""}
+                                onValueChange={(value) =>
+                                  updateGalleryItem(projectIndex, entryIndex, {
+                                    ...galleryItem,
+                                    entryAnchor: value.trim().length > 0 ? value : undefined,
+                                  })
+                                }
                                 placeholder={buildFallbackEntryAnchor(
                                   effectiveProjectAnchor,
                                   effectiveGalleryAnchor,
@@ -409,29 +368,31 @@ export function ProjectsGalleryDefaultEditor({ block, assets, onChange }: BlockE
                           </UIFormRow>
 
                           {galleryItem.kind === "image" ? (
-                            <AssetPicker
-                              assets={assets}
-                              selectedAssetId={galleryItem.assetId}
-                              onSelect={(assetId) =>
-                                updateGalleryItem(projectIndex, entryIndex, {
-                                  ...galleryItem,
-                                  assetId,
-                                })
-                              }
-                              onClear={() =>
-                                updateGalleryItem(projectIndex, entryIndex, {
-                                  ...galleryItem,
-                                  assetId: undefined,
-                                })
-                              }
-                              title="Entry image"
-                              description="Choose image for nested gallery entry."
-                              emptyMessage="Upload an image in Project assets first."
-                              clearLabel="Remove image"
-                              selectLabel="Use image"
-                              layout="grid"
-                              compact
-                            />
+                            <div className="grid gap-3">
+                              <AssetPicker
+                                assets={assets}
+                                selectedAssetId={galleryItem.assetId}
+                                onSelect={(assetId) =>
+                                  updateGalleryItem(projectIndex, entryIndex, {
+                                    ...galleryItem,
+                                    assetId,
+                                  })
+                                }
+                                onClear={() =>
+                                  updateGalleryItem(projectIndex, entryIndex, {
+                                    ...galleryItem,
+                                    assetId: undefined,
+                                  })
+                                }
+                                emptyMessage="Upload an image in Project assets first."
+                                clearLabel="Remove image"
+                                selectLabel="Use image"
+                                layout="grid"
+                                compact
+                                wrapped={false}
+                              />
+                              <div className="border-t border-line pt-3" aria-hidden />
+                            </div>
                           ) : (
                             <UIFormRow
                               label="Markdown content"
@@ -454,7 +415,7 @@ export function ProjectsGalleryDefaultEditor({ block, assets, onChange }: BlockE
                               />
                             </UIFormRow>
                           )}
-                        </Card>
+                        </div>
                       ))}
                     </div>
                   )}

@@ -58,7 +58,6 @@ describe("saveProjectContentForUserWithDependencies", () => {
             buttonText: "Start now",
             buttonAnchor: "",
             buttonTargetType: "inner-anchor",
-            contentPosition: "centered",
             imageAssetId: undefined,
             imageLightAssetId: undefined,
             imageDarkAssetId: undefined,
