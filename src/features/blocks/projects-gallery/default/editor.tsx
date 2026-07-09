@@ -133,7 +133,7 @@ export function ProjectsGalleryDefaultEditor({ block, assets, onChange }: BlockE
                     size="sm"
                     borderless
                     value={item.projectAnchor ?? ""}
-                    onValueChange={(value) =>
+                    onCommit={(value) =>
                       updateProjectItem(projectIndex, {
                         ...item,
                         projectAnchor: value.trim().length > 0 ? value : undefined,
@@ -153,7 +153,7 @@ export function ProjectsGalleryDefaultEditor({ block, assets, onChange }: BlockE
                     size="sm"
                     borderless
                     value={item.galleryAnchor ?? ""}
-                    onValueChange={(value) =>
+                    onCommit={(value) =>
                       updateProjectItem(projectIndex, {
                         ...item,
                         galleryAnchor: value.trim().length > 0 ? value : undefined,
@@ -173,7 +173,7 @@ export function ProjectsGalleryDefaultEditor({ block, assets, onChange }: BlockE
                     size="sm"
                     borderless
                     value={item.title}
-                    onValueChange={(value) =>
+                    onCommit={(value) =>
                       updateProjectItem(projectIndex, {
                         ...item,
                         title: value,
@@ -194,10 +194,10 @@ export function ProjectsGalleryDefaultEditor({ block, assets, onChange }: BlockE
                     borderless
                     value={item.description}
                     rows={3}
-                    onChange={(event) =>
+                    onCommit={(value) =>
                       updateProjectItem(projectIndex, {
                         ...item,
-                        description: event.target.value,
+                        description: value,
                       })
                     }
                     placeholder="Project card description"
@@ -216,10 +216,10 @@ export function ProjectsGalleryDefaultEditor({ block, assets, onChange }: BlockE
                       borderless
                       value={item.descriptionMd}
                       rows={5}
-                      onChange={(event) =>
+                      onCommit={(value) =>
                         updateProjectItem(projectIndex, {
                           ...item,
-                          descriptionMd: event.target.value,
+                          descriptionMd: value,
                         })
                       }
                       placeholder="Project details in markdown for inside page"
@@ -240,7 +240,7 @@ export function ProjectsGalleryDefaultEditor({ block, assets, onChange }: BlockE
                     size="sm"
                     borderless
                     value={item.price}
-                    onValueChange={(value) =>
+                    onCommit={(value) =>
                       updateProjectItem(projectIndex, {
                         ...item,
                         price: value,
@@ -260,7 +260,7 @@ export function ProjectsGalleryDefaultEditor({ block, assets, onChange }: BlockE
                     size="sm"
                     borderless
                     value={item.meta}
-                    onValueChange={(value) =>
+                    onCommit={(value) =>
                       updateProjectItem(projectIndex, {
                         ...item,
                         meta: value,
@@ -348,15 +348,15 @@ export function ProjectsGalleryDefaultEditor({ block, assets, onChange }: BlockE
                             htmlFor={`projects-gallery-entry-anchor-${projectIndex}-${entryIndex}`}
                             borderless
                           >
-                              <UITextInput
-                                id={`projects-gallery-entry-anchor-${projectIndex}-${entryIndex}`}
-                                size="sm"
-                                borderless
-                                value={galleryItem.entryAnchor ?? ""}
-                                onValueChange={(value) =>
-                                  updateGalleryItem(projectIndex, entryIndex, {
-                                    ...galleryItem,
-                                    entryAnchor: value.trim().length > 0 ? value : undefined,
+                            <UITextInput
+                              id={`projects-gallery-entry-anchor-${projectIndex}-${entryIndex}`}
+                              size="sm"
+                              borderless
+                              value={galleryItem.entryAnchor ?? ""}
+                              onCommit={(value) =>
+                                updateGalleryItem(projectIndex, entryIndex, {
+                                  ...galleryItem,
+                                  entryAnchor: value.trim().length > 0 ? value : undefined,
                                   })
                                 }
                                 placeholder={buildFallbackEntryAnchor(
@@ -405,10 +405,10 @@ export function ProjectsGalleryDefaultEditor({ block, assets, onChange }: BlockE
                                 borderless
                                 value={galleryItem.contentMd}
                                 rows={6}
-                                onChange={(event) =>
+                                onCommit={(value) =>
                                   updateGalleryItem(projectIndex, entryIndex, {
                                     ...galleryItem,
-                                    contentMd: event.target.value,
+                                    contentMd: value,
                                   })
                                 }
                                 placeholder="Markdown for this nested item"

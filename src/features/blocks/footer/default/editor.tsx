@@ -94,7 +94,7 @@ export function FooterDefaultEditor({
               size="sm"
               borderless
               value={props.leftTitle}
-              onValueChange={(value) => update({ leftTitle: value })}
+              onCommit={(value) => update({ leftTitle: value })}
               placeholder="About"
             />
           </UIFormRow>
@@ -119,7 +119,7 @@ export function FooterDefaultEditor({
               size="sm"
               borderless
               value={props.siteName}
-              onValueChange={(value) => update({ siteName: value })}
+              onCommit={(value) => update({ siteName: value })}
               placeholder="Project name"
             />
           </UIFormRow>
@@ -149,7 +149,7 @@ export function FooterDefaultEditor({
               size="sm"
               borderless
               value={props.socialLinksTitle}
-              onValueChange={(value) => update({ socialLinksTitle: value })}
+              onCommit={(value) => update({ socialLinksTitle: value })}
               placeholder="Follow us"
             />
           </UIFormRow>
@@ -204,22 +204,22 @@ export function FooterDefaultEditor({
             )}
             <div className="grid gap-2 pt-2">
               <UIFormRow label="Label" htmlFor="footer-social-label" borderless>
-                <UITextInput
+              <UITextInput
                   id="footer-social-label"
                   size="sm"
                   borderless
                   value={draftSocialLabel}
-                  onValueChange={setDraftSocialLabel}
+                  onCommit={setDraftSocialLabel}
                   placeholder="Instagram"
                 />
               </UIFormRow>
               <UIFormRow label="URL" htmlFor="footer-social-url" borderless>
-                <UITextInput
+              <UITextInput
                   id="footer-social-url"
                   size="sm"
                   borderless
                   value={draftSocialUrl}
-                  onValueChange={setDraftSocialUrl}
+                  onCommit={setDraftSocialUrl}
                   placeholder="https://instagram.com/..."
                 />
               </UIFormRow>
@@ -266,7 +266,7 @@ export function FooterDefaultEditor({
               size="sm"
               borderless
               value={props.scrollTopLabel}
-              onValueChange={(value) => update({ scrollTopLabel: value })}
+              onCommit={(value) => update({ scrollTopLabel: value })}
               placeholder="Scroll to top"
             />
           </UIFormRow>
@@ -283,7 +283,7 @@ export function FooterDefaultEditor({
               size="sm"
               borderless
               value={props.navColumnTitle}
-              onValueChange={(value) => update({ navColumnTitle: value })}
+              onCommit={(value) => update({ navColumnTitle: value })}
               placeholder="Navigation"
             />
           </UIFormRow>
@@ -324,7 +324,7 @@ export function FooterDefaultEditor({
                 size="sm"
                 borderless
                 value={draftNavLabel}
-                onValueChange={setDraftNavLabel}
+                onCommit={setDraftNavLabel}
                 placeholder="Features"
               />
             </UIFormRow>
@@ -374,7 +374,7 @@ export function FooterDefaultEditor({
               size="sm"
               borderless
               value={props.linksColumnOneTitle}
-              onValueChange={(value) => update({ linksColumnOneTitle: value })}
+              onCommit={(value) => update({ linksColumnOneTitle: value })}
               placeholder="Resources"
             />
           </UIFormRow>
@@ -417,7 +417,7 @@ export function FooterDefaultEditor({
                 size="sm"
                 borderless
                 value={draftExternalOneLabel}
-                onValueChange={setDraftExternalOneLabel}
+                onCommit={setDraftExternalOneLabel}
                 placeholder="Docs"
               />
             </UIFormRow>
@@ -427,7 +427,7 @@ export function FooterDefaultEditor({
                 size="sm"
                 borderless
                 value={draftExternalOneUrl}
-                onValueChange={setDraftExternalOneUrl}
+                onCommit={setDraftExternalOneUrl}
                 placeholder="https://example.com"
               />
             </UIFormRow>
@@ -462,7 +462,7 @@ export function FooterDefaultEditor({
               size="sm"
               borderless
               value={props.linksColumnTwoTitle}
-              onValueChange={(value) => update({ linksColumnTwoTitle: value })}
+              onCommit={(value) => update({ linksColumnTwoTitle: value })}
               placeholder="Legal"
             />
           </UIFormRow>
@@ -505,7 +505,7 @@ export function FooterDefaultEditor({
                 size="sm"
                 borderless
                 value={draftExternalTwoLabel}
-                onValueChange={setDraftExternalTwoLabel}
+                onCommit={setDraftExternalTwoLabel}
                 placeholder="Privacy policy"
               />
             </UIFormRow>
@@ -515,7 +515,7 @@ export function FooterDefaultEditor({
                 size="sm"
                 borderless
                 value={draftExternalTwoUrl}
-                onValueChange={setDraftExternalTwoUrl}
+                onCommit={setDraftExternalTwoUrl}
                 placeholder="https://example.com/privacy"
               />
             </UIFormRow>
