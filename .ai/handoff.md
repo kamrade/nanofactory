@@ -55,6 +55,7 @@ This is a website/page builder with project-level editing, block-based content, 
 - Editor action wiring update:
   - `ProjectEditor` no longer renders toolbar save/add controls.
   - add-block flow is now bridged via event (`src/components/editor/editor-events.ts`).
+  - legacy `src/components/editor/editor-toolbar.tsx` remains in the tree but is not wired into the current editor shell.
 - E2E updates for header-driven save flow:
   - specs use helper-based save that closes block editor before clicking header `Save`.
   - removed unstable spec file:
@@ -111,6 +112,11 @@ This is a website/page builder with project-level editing, block-based content, 
     - `src/components/projects/project-renderer.tsx`
     - `src/components/editor/project-editor.tsx`
     - `src/features/blocks/shared/types.ts`
+- Debounced block editors use `onCommit` for text inputs/areas:
+  - current gallery and timeline editors commit on blur/enter rather than on every keystroke.
+  - files:
+    - `src/features/blocks/gallery/default/editor.tsx`
+    - `src/features/blocks/timeline/default/editor.tsx`
 - `ProjectSettings` project settings include immediate apply for spacing scale:
   - file:
     - `src/components/projects/project-settings.tsx`

@@ -152,6 +152,7 @@ type BlockSettingsSectionProps = {
   definition: BlockVariantDefinition;
   pendingVariantSwitch: PendingVariantSwitch | null;
   assets: ProjectAssetRecord[];
+  activeSurfaceStyle: "default" | "flat";
   availableAnchors: Array<{
     id: string;
     label: string;

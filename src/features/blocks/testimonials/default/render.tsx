@@ -1,4 +1,5 @@
 import Image from "next/image";
+import type { CSSProperties } from "react";
 
 import type { BlockRenderProps } from "../../shared/types";
 import { BlockSectionTitle } from "@/features/blocks/shared/components/block-section-title/block-section-title";
@@ -47,6 +48,7 @@ function readItems(input: unknown): TestimonialItem[] {
 export function TestimonialsDefaultRender({
   block,
   assetMap,
+  projectBorderRadiusPolicy,
   projectSpacingScale,
   projectSurfaceStyle,
 }: BlockRenderProps) {
@@ -59,12 +61,25 @@ export function TestimonialsDefaultRender({
     projectSpacingScale === "sm" || projectSpacingScale === "md" || projectSpacingScale === "lg"
       ? projectSpacingScale
       : "md";
+  const effectiveBorderRadius =
+    projectBorderRadiusPolicy === "none" ||
+    projectBorderRadiusPolicy === "md" ||
+    projectBorderRadiusPolicy === "lg"
+      ? projectBorderRadiusPolicy
+      : "lg";
+  const radiusVars =
+    effectiveBorderRadius === "none"
+      ? { "--testimonials-radius-card": "0px" }
+      : effectiveBorderRadius === "md"
+        ? { "--testimonials-radius-card": "0.875rem" }
+        : { "--testimonials-radius-card": "1.25rem" };
 
   return (
     <section
       data-spacing-scale={effectiveSpacingScale}
       data-surface-style={projectSurfaceStyle ?? "default"}
       className={styles.root}
+      style={radiusVars as CSSProperties}
     >
       <div className={styles.header}>
         <BlockSectionTitle title={sectionTitle} animate={animate} />

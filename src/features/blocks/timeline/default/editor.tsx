@@ -85,7 +85,7 @@ export function TimelineDefaultEditor({ block, onChange }: BlockEditorProps) {
               borderless
               value={sectionTitle}
               placeholder="How it works"
-              onValueChange={(value) => update({ sectionTitle: value })}
+              onCommit={(value) => update({ sectionTitle: value })}
             />
           </UIFormRow>
 
@@ -132,58 +132,58 @@ export function TimelineDefaultEditor({ block, onChange }: BlockEditorProps) {
               </div>
 
               <UIFormRow label="Meta" htmlFor={`timeline-item-meta-${index}`} borderless>
-                <UITextInput
+              <UITextInput
                   id={`timeline-item-meta-${index}`}
                   size="sm"
                   borderless
                   value={item.meta}
                   placeholder="01"
-                  onValueChange={(value) => updateItem(index, { ...item, meta: value })}
+                  onCommit={(value) => updateItem(index, { ...item, meta: value })}
                 />
               </UIFormRow>
 
               <UIFormRow label="Date" htmlFor={`timeline-item-date-${index}`} borderless>
-                <UITextInput
+              <UITextInput
                   id={`timeline-item-date-${index}`}
                   size="sm"
                   borderless
                   value={item.date}
                   placeholder="Q1 2026"
-                  onValueChange={(value) => updateItem(index, { ...item, date: value })}
+                  onCommit={(value) => updateItem(index, { ...item, date: value })}
                 />
               </UIFormRow>
 
               <UIFormRow label="Status" htmlFor={`timeline-item-status-${index}`} borderless>
-                <UITextInput
+              <UITextInput
                   id={`timeline-item-status-${index}`}
                   size="sm"
                   borderless
                   value={item.status}
                   placeholder="Planned"
-                  onValueChange={(value) => updateItem(index, { ...item, status: value })}
+                  onCommit={(value) => updateItem(index, { ...item, status: value })}
                 />
               </UIFormRow>
 
               <UIFormRow label="Title" htmlFor={`timeline-item-title-${index}`} borderless>
-                <UITextInput
+              <UITextInput
                   id={`timeline-item-title-${index}`}
                   size="sm"
                   borderless
                   value={item.title}
                   placeholder={`Step ${index + 1}`}
-                  onValueChange={(value) => updateItem(index, { ...item, title: value })}
+                  onCommit={(value) => updateItem(index, { ...item, title: value })}
                 />
               </UIFormRow>
 
               <UIFormRow label="Description" htmlFor={`timeline-item-content-${index}`} borderless>
-                <UITextArea
+              <UITextArea
                   id={`timeline-item-content-${index}`}
                   size="lg"
                   borderless
                   value={item.content}
                   rows={3}
                   placeholder="Describe what happens in this step."
-                  onChange={(event) => updateItem(index, { ...item, content: event.target.value })}
+                  onCommit={(value) => updateItem(index, { ...item, content: value })}
                 />
               </UIFormRow>
             </Card>

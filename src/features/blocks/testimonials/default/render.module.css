@@ -56,7 +56,7 @@
   justify-content: space-between;
   background-color: var(--color-surface-alt);
   border: 1px solid var(--color-line);
-  border-radius: 1.25rem;
+  border-radius: var(--testimonials-radius-card);
 }
 
 .root[data-spacing-scale="sm"] .card { gap: 0.75rem; padding: 1rem; }

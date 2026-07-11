@@ -1,0 +1,92 @@
+.root {
+  display: flex;
+  flex-direction: column;
+}
+
+.root[data-spacing-scale="sm"] { gap: 0.75rem; padding: 2rem 0.5rem; }
+.root[data-spacing-scale="md"] { gap: 1rem; padding: 3rem 0.5rem; }
+.root[data-spacing-scale="lg"] { gap: 1.25rem; padding: 3.5rem 0.5rem; }
+
+@media (min-width: 768px) {
+  .root[data-spacing-scale="sm"] { padding-left: 1.25rem; padding-right: 1.25rem; }
+  .root[data-spacing-scale="md"] { padding-left: 2rem; padding-right: 2rem; }
+  .root[data-spacing-scale="lg"] { padding-left: 2.5rem; padding-right: 2.5rem; }
+}
+
+.header {
+  display: flex;
+  flex-direction: column;
+}
+
+.root[data-spacing-scale="sm"] .header { gap: 0.25rem; }
+.root[data-spacing-scale="md"] .header { gap: 0.5rem; }
+.root[data-spacing-scale="lg"] .header { gap: 0.75rem; }
+
+.subtitle {
+  max-width: 44rem;
+  color: var(--color-text-muted);
+  overflow-wrap: break-word;
+}
+
+.root[data-spacing-scale="sm"] .subtitle { font-size: 0.75rem; line-height: 1.25rem; }
+.root[data-spacing-scale="md"] .subtitle { font-size: 0.875rem; line-height: 1.5rem; }
+.root[data-spacing-scale="lg"] .subtitle { font-size: 1rem; line-height: 1.75rem; }
+
+.list {
+  display: grid;
+}
+
+.root[data-spacing-scale="sm"] .list { gap: 0.5rem; }
+.root[data-spacing-scale="md"] .list { gap: 0.75rem; }
+.root[data-spacing-scale="lg"] .list { gap: 1rem; }
+
+.item {
+  border: 1px solid var(--color-line);
+  border-radius: var(--faq-radius-item);
+  background: var(--color-surface-alt);
+  overflow: hidden;
+}
+
+.summary {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+  list-style: none;
+  cursor: pointer;
+  padding: 1rem 1rem;
+  color: var(--color-text-main);
+}
+
+.summary::-webkit-details-marker {
+  display: none;
+}
+
+.question {
+  font-weight: 600;
+  overflow-wrap: break-word;
+}
+
+.chevron {
+  flex: 0 0 auto;
+  width: 0.75rem;
+  height: 0.75rem;
+  border-right: 2px solid var(--color-text-muted);
+  border-bottom: 2px solid var(--color-text-muted);
+  transform: rotate(45deg);
+  transition: transform 150ms ease;
+}
+
+.item[open] .chevron {
+  transform: rotate(225deg);
+}
+
+.answer {
+  padding: 0 1rem 1rem;
+  color: var(--color-text-muted);
+  overflow-wrap: break-word;
+}
+
+.root[data-spacing-scale="sm"] .answer { font-size: 0.75rem; line-height: 1.25rem; }
+.root[data-spacing-scale="md"] .answer { font-size: 0.875rem; line-height: 1.5rem; }
+.root[data-spacing-scale="lg"] .answer { font-size: 1rem; line-height: 1.75rem; }

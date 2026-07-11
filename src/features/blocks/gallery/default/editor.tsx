@@ -102,7 +102,7 @@ export function GalleryDefaultEditor({
               size="sm"
               borderless
               value={sectionTitle}
-              onValueChange={(value) => update({ sectionTitle: value })}
+              onCommit={(value) => update({ sectionTitle: value })}
               placeholder="Gallery"
             />
           </UIFormRow>
@@ -201,7 +201,7 @@ export function GalleryDefaultEditor({
                     size="sm"
                     borderless
                     value={item.entryAnchor ?? ""}
-                    onValueChange={(value) =>
+                    onCommit={(value) =>
                       updateItem(index, {
                         ...item,
                         entryAnchor: value.trim().length > 0 ? value : undefined,
@@ -218,7 +218,7 @@ export function GalleryDefaultEditor({
                       size="sm"
                       borderless
                       value={item.title}
-                      onValueChange={(value) => updateItem(index, { ...item, title: value })}
+                      onCommit={(value) => updateItem(index, { ...item, title: value })}
                       placeholder="Item title"
                     />
                   </UIFormRow>
@@ -230,16 +230,16 @@ export function GalleryDefaultEditor({
                   >
                     <div className="min-w-0 flex-1">
                       <UITextArea
-                        id={`gallery-item-description-${index}`}
-                        size="sm"
-                        borderless
-                        value={item.description}
-                        rows={3}
-                        onChange={(event) =>
-                          updateItem(index, { ...item, description: event.target.value })
-                        }
-                        placeholder="Item description"
-                      />
+                      id={`gallery-item-description-${index}`}
+                      size="sm"
+                      borderless
+                      value={item.description}
+                      rows={3}
+                      onCommit={(value) =>
+                        updateItem(index, { ...item, description: value })
+                      }
+                      placeholder="Item description"
+                    />
                     </div>
                   </UIFormRow>
 
@@ -249,7 +249,7 @@ export function GalleryDefaultEditor({
                       size="sm"
                       borderless
                       value={item.price}
-                      onValueChange={(value) => updateItem(index, { ...item, price: value })}
+                      onCommit={(value) => updateItem(index, { ...item, price: value })}
                       placeholder="$120"
                     />
                   </UIFormRow>
@@ -260,7 +260,7 @@ export function GalleryDefaultEditor({
                       size="sm"
                       borderless
                       value={item.meta}
-                      onValueChange={(value) => updateItem(index, { ...item, meta: value })}
+                      onCommit={(value) => updateItem(index, { ...item, meta: value })}
                       placeholder="Limited edition"
                     />
                   </UIFormRow>

@@ -1,5 +1,6 @@
 import { UICard } from "@/components/ui/card";
 import { TimelineDefaultRender } from "@/features/blocks/timeline/default/render";
+import type { ProjectBorderRadiusPolicy } from "@/lib/projects/border-radius-policy";
 
 import { UikitSectionAnchor } from "./section-anchor";
 import type { UiSize } from "./types";
@@ -11,7 +12,13 @@ const demoTheme = {
   kicker: "text-text-placeholder",
 };
 
-export function TimelineSection({ uiSize }: { uiSize: UiSize }) {
+export function TimelineSection({
+  uiSize,
+  borderRadiusPolicy = "lg",
+}: {
+  uiSize: UiSize;
+  borderRadiusPolicy?: ProjectBorderRadiusPolicy;
+}) {
   return (
     <UikitSectionAnchor id="features-timeline">
       <UICard title="UIKit · Timeline">
@@ -51,7 +58,7 @@ export function TimelineSection({ uiSize }: { uiSize: UiSize }) {
             theme={demoTheme}
             mode="light"
             projectSpacingScale={uiSize === "sm" ? "sm" : "lg"}
-            projectBorderRadiusPolicy="lg"
+            projectBorderRadiusPolicy={borderRadiusPolicy}
             projectSurfaceStyle="default"
           />
         </div>

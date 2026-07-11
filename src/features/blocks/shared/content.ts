@@ -8,7 +8,8 @@ export type SupportedBlockType =
   | "footer"
   | "projects-gallery"
   | "testimonials"
-  | "pricing";
+  | "pricing"
+  | "faq";
 
 export type HeroVariant = "default" | "centered";
 export type FeaturesVariant = "default" | "cards";
@@ -19,6 +20,7 @@ export type GalleryVariant = "default";
 export type FooterVariant = "default";
 export type ProjectsGalleryVariant = "default";
 export type TestimonialsVariant = "default";
+export type FaqVariant = "default";
 
 export type BlockVariant =
   | HeroVariant
@@ -29,7 +31,8 @@ export type BlockVariant =
   | GalleryVariant
   | FooterVariant
   | ProjectsGalleryVariant
-  | TestimonialsVariant;
+  | TestimonialsVariant
+  | FaqVariant;
 
 export type PageBlock = {
   id: string;

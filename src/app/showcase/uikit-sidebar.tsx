@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useMemo, useState, type ReactNode } from "react";
 
 import { UIButton } from "@/components/ui/button";
 import {
@@ -19,6 +19,8 @@ import type { UikitSectionNavItem } from "./uikit-sections/nav";
 type UikitSidebarProps = {
   sections: UikitSectionNavItem[];
   title?: string;
+  topContent?: ReactNode;
+  ariaLabel?: string;
 };
 
 function scrollToSection(id: string) {
@@ -89,7 +91,12 @@ function UikitSidebarList({
   );
 }
 
-export function UikitSidebar({ sections, title = "UI Kit" }: UikitSidebarProps) {
+export function UikitSidebar({
+  sections,
+  title = "UI Kit",
+  topContent,
+  ariaLabel = "UIKit sections",
+}: UikitSidebarProps) {
   const [activeSectionId, setActiveSectionId] = useState(() => sections[0]?.id ?? "");
   const [mobileOpen, setMobileOpen] = useState(false);
 
@@ -150,13 +157,14 @@ export function UikitSidebar({ sections, title = "UI Kit" }: UikitSidebarProps) 
           </UISheetTrigger>
           <UISheetContent
             side="left"
-            ariaLabel="UIKit sections"
+            ariaLabel={ariaLabel}
             className="p-2.5"
             style={{ maxWidth: "13.5rem" }}
           >
             <UISheetHeader className="space-y-0">
               <UISheetTitle className="text-sm">{title}</UISheetTitle>
             </UISheetHeader>
+            {topContent ? <div className="mt-3 grid gap-3">{topContent}</div> : null}
             <div className="mt-3 grid gap-1">
               <UikitSidebarList
                 sections={sections}
@@ -185,10 +193,11 @@ export function UikitSidebar({ sections, title = "UI Kit" }: UikitSidebarProps) 
       >
         <div className="scrollbar-macos max-h-[70vh] overflow-y-auto p-0.5 pr-4">
           <div className="mb-2.5">
-            <p className="font-bold uppercase tracking-[0.14em] text-text-muted border-b pb-2 mb-5">
+            <p className="mb-5 border-b pb-2 font-bold uppercase tracking-[0.14em] text-text-muted">
               {title}
             </p>
           </div>
+          {topContent ? <div className="mb-5 grid gap-3">{topContent}</div> : null}
           <UikitSidebarList
             sections={sections}
             activeSectionId={activeSectionId}

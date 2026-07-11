@@ -19,8 +19,8 @@
   - `src/components/ui/typewriter-text/use-typewriter.ts`
   - `src/components/ui/typewriter-text/typewriter-text.css`
 - Где используется:
-  - `src/app/showcase/uikit-sections/typewriter-section.tsx`
-  - `src/app/showcase/uikit-sections/typewriter-viewport-section.tsx`
+  - `src/app/showcase/animation-sections/typewriter-section.tsx`
+  - `src/app/showcase/animation-sections/typewriter-viewport-section.tsx`
 
 ### `HighlightSweepText`
 - Путь: `src/components/ui/highlight-sweep-text/highlight-sweep-text.tsx`
@@ -39,7 +39,7 @@
 - Поддержка:
   - `src/components/ui/highlight-sweep-text/highlight-sweep-text.css`
 - Где используется:
-  - `src/app/showcase/uikit-sections/highlight-sweep-section.tsx`
+  - `src/app/showcase/animation-sections/highlight-sweep-section.tsx`
 
 ### `OffsetReveal`
 - Путь: `src/components/ui/offset-reveal-text/offset-reveal-text.tsx`
@@ -59,7 +59,7 @@
 - Поддержка:
   - `src/components/ui/offset-reveal-text/offset-reveal-text.css`
 - Где используется:
-  - `src/app/showcase/uikit-sections/offset-reveal-section.tsx`
+  - `src/app/showcase/animation-sections/offset-reveal-section.tsx`
 
 ### `WordStaggerReveal`
 - Путь: `src/components/ui/word-stagger-reveal/word-stagger-reveal.tsx`
@@ -80,7 +80,7 @@
 - Поддержка:
   - `src/components/ui/word-stagger-reveal/word-stagger-reveal.css`
 - Где используется:
-  - `src/app/showcase/uikit-sections/word-stagger-reveal-section.tsx`
+  - `src/app/showcase/animation-sections/word-stagger-reveal-section.tsx`
 
 ### `UIImageZoomReveal`
 - Путь: `src/components/ui/image-zoom-reveal/image-zoom-reveal.tsx`
@@ -113,6 +113,7 @@
   - стандартные `min`, `max`, `step`
 - Где используется:
   - Showcase-анимации для настройки параметров `TypewriterText`, `HighlightSweepText`, `OffsetReveal`, `WordStaggerReveal`
+  - часть UI kit демо тоже использует `UISlider`, например `inputs-section` и `borderless-form-layout-section`
 
 ## Viewport helpers
 

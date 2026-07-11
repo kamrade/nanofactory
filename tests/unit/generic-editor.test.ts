@@ -34,7 +34,7 @@ describe("GenericBlockEditor", () => {
     expect(html).toContain("text-text-main");
     expect(html).toContain("bg-surface");
     expect(html).toContain("border-line");
-    expect(html).toContain("focus:ring-focus/50");
+    expect(html).toContain("focus-within:border-neutral-400");
     expect(html).toContain("Enter one list item per line.");
     expect(html).toContain("text-text-muted");
   });

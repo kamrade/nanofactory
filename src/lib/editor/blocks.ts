@@ -19,6 +19,7 @@ export type {
   FooterVariant,
   ProjectsGalleryVariant,
   TestimonialsVariant,
+  FaqVariant,
   PageBlock,
   PageContent,
   SupportedBlockType,

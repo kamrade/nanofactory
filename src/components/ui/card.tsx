@@ -11,7 +11,11 @@ type UICardProps = {
 
 export function UICard({ title, children, className, titleClassName }: UICardProps) {
   return (
-    <section data-testid="UICard" className={cx("grid gap-4 rounded-3xl border border-line bg-surface p-10", className)}>
+    <section
+      data-testid="UICard"
+      className={cx("grid gap-4 rounded-3xl border border-line bg-surface p-10", className)}
+      style={{ borderRadius: "var(--showcase-card-radius, 1.5rem)" }}
+    >
       <h2 className={cx("mb-6 border-b border-line pb-3 text-lg font-semibold", titleClassName)}>
         {title}
       </h2>
