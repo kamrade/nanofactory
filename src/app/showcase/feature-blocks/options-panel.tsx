@@ -30,8 +30,8 @@ type FeatureBlocksOptionsPanelProps = {
 
 export function FeatureBlocksOptionsPanel({ value, onChange }: FeatureBlocksOptionsPanelProps) {
   return (
-    <Card className="p-4 shadow-sm">
-      <div className="grid gap-4">
+    
+      <div className="grid gap-4 lg:grid-cols-4">
         <div className="grid gap-1">
           <span className="text-xs font-medium uppercase tracking-[0.16em] text-text-muted">
             Border radius
@@ -124,6 +124,6 @@ export function FeatureBlocksOptionsPanel({ value, onChange }: FeatureBlocksOpti
           />
         </div>
       </div>
-    </Card>
+    
   );
 }

@@ -129,7 +129,7 @@ export function AppStickyHeader({
           <Link href="/dashboard" className={linkClass(isDashboard)}>
             Dashboard
           </Link>
-          <Link href="/showcase/uikit" className={linkClass(isShowcase)}>
+          <Link href="/showcase/components" className={linkClass(isShowcase)}>
             Showcase
           </Link>
           {isAdmin ? (

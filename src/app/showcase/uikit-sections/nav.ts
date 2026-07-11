@@ -1,30 +1,8 @@
 export type UikitSectionNavItem = {
   id: string;
   label: string;
+  href?: string;
 };
 
 export const uikitSectionNavItems: UikitSectionNavItem[] = [
-  { id: "typography-headings", label: "Typography / Headings" },
-  { id: "typography-buttons", label: "Typography / Buttons" },
-  { id: "typography-badges", label: "Typography / Badges" },
-  { id: "controls-checkbox", label: "Controls / Checkbox" },
-  { id: "controls-switcher", label: "Controls / Switcher" },
-  { id: "controls-segmented-control", label: "Controls / Segmented Control" },
-  { id: "controls-accordion", label: "Controls / Accordion" },
-  { id: "controls-menu", label: "Controls / Menu" },
-  { id: "features-timeline", label: "Features / Timeline" },
-  { id: "inputs-text-input", label: "Inputs / Text Input" },
-  { id: "inputs-select", label: "Inputs / Select" },
-  { id: "inputs-slider", label: "Inputs / Slider" },
-  { id: "inputs-slider-ranges", label: "Inputs / Slider / Ranges" },
-  { id: "inputs-multiselect-list", label: "Inputs / MultiSelect List" },
-  { id: "inputs-multiselect-dropdown", label: "Inputs / MultiSelect Dropdown" },
-  { id: "inputs-autocomplete", label: "Inputs / Autocomplete" },
-  { id: "form-layout", label: "Form Layout" },
-  { id: "form-layout-borderless-inputs", label: "Form Layout / Borderless Inputs" },
-  { id: "feedback-toast", label: "Feedback / Toast" },
-  { id: "feedback-sheet", label: "Feedback / Sheet" },
-  { id: "dialog", label: "Dialog" },
-  { id: "modal", label: "Modal" },
-  { id: "markdown", label: "Markdown" },
 ];

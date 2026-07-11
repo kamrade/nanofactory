@@ -107,7 +107,7 @@ export function FormLayoutSection({ uiSize }: { uiSize: UiSize }) {
   return (
     <>
       <UikitSectionAnchor id="form-layout">
-        <UICard title="UIKit · Form Layout (Label Left)">
+        <UICard title="Form Layout (Label Left)">
           <form className="grid gap-4" onSubmit={handleSubmit}>
             <FormRow
               label="Framework"

@@ -2,30 +2,27 @@
 
 import { useEffect, useState, type CSSProperties } from "react";
 
-import { DialogDemoCard, MarkdownDemoCard, ModalDemoCard } from "@/app/showcase/demo-cards";
 import {
-  AccordionSection,
-  ControlsAndMenusSection,
   BorderlessFormLayoutSection,
-  FeedbackAndSheetSection,
   FormLayoutSection,
-  InputsSection,
-  TimelineSection,
   type UiSize,
-  TypographyButtonsBadgesSection,
 } from "@/app/showcase/uikit-sections";
 import { AnimationsSection } from "@/app/showcase/animation-sections";
 import { animationsSectionNavItems } from "@/app/showcase/animation-sections/nav";
+import { ComponentsShowcaseSection } from "@/app/showcase/components/components-showcase-section";
+import { COMPONENTS_SECTION_PAGE_KEYS, type ComponentsSectionPageKey } from "@/app/showcase/components/section-pages";
 import { FeatureBlocksShowcaseSection } from "@/app/showcase/feature-blocks/showcase-section";
 import type { FeatureBlocksOptionState } from "@/app/showcase/feature-blocks/options-panel";
-import { uikitSectionNavItems } from "@/app/showcase/uikit-sections/nav";
-import { UikitSidebar } from "@/app/showcase/uikit-sidebar";
-import { ShowcaseSidebarControls } from "@/app/showcase/showcase-sidebar-controls";
+import { FeatureBlocksOptionsPanel } from "@/app/showcase/feature-blocks/options-panel";
+import { LayoutsShowcaseSection } from "@/app/showcase/layouts/layouts-showcase-section";
+import { LAYOUTS_SECTION_PAGE_KEYS, type LayoutsSectionPageKey } from "@/app/showcase/layouts/section-pages";
+import { ShowcaseSidebar } from "@/app/showcase/showcase-sidebar";
+import { ShowcaseTabSettings } from "@/app/showcase/showcase-tab-settings";
+import { ShowcaseTabToolbar } from "@/app/showcase/showcase-tab-toolbar";
 import { AppStickyHeader } from "@/components/navigation/app-sticky-header";
 import { UISegmentedControl } from "@/components/ui/segmented-control";
 import { UITabs } from "@/components/ui/tabs";
 import type { PageContent } from "@/db/schema";
-import { useToast } from "@/hooks/use-toast";
 import {
   PROJECT_BORDER_RADIUS_POLICIES,
   type ProjectBorderRadiusPolicy,
@@ -33,7 +30,7 @@ import {
 import { DEFAULT_THEME_KEY, THEME_OPTIONS, type ThemeKey } from "@/lib/themes";
 import { UI_COOKIE_MAX_AGE, UI_MODE_COOKIE, UI_THEME_COOKIE } from "@/lib/ui-preferences";
 
-type ShowcaseTab = "uikit" | "animations" | "sections";
+type ShowcaseTab = "components" | "layouts" | "animations" | "sections";
 type ShowcaseMode = "light" | "dark";
 
 type ShowcaseClientProps = {
@@ -42,6 +39,8 @@ type ShowcaseClientProps = {
   isAdmin?: boolean;
   initialThemeKey?: ThemeKey;
   initialMode?: ShowcaseMode;
+  activeComponentSection?: ComponentsSectionPageKey;
+  activeLayoutSection?: LayoutsSectionPageKey;
 };
 
 export function ShowcaseClient({
@@ -50,8 +49,9 @@ export function ShowcaseClient({
   isAdmin = false,
   initialThemeKey = DEFAULT_THEME_KEY,
   initialMode = "light",
+  activeComponentSection = COMPONENTS_SECTION_PAGE_KEYS[0],
+  activeLayoutSection = LAYOUTS_SECTION_PAGE_KEYS[0],
 }: ShowcaseClientProps) {
-  const { showToast, clearToasts } = useToast();
   const [themeKey, setThemeKey] = useState<ThemeKey>(initialThemeKey);
   const [mode, setMode] = useState<ShowcaseMode>(initialMode);
   const [uiSize, setUiSize] = useState<UiSize>("sm");
@@ -76,19 +76,11 @@ export function ShowcaseClient({
     lg: "1.5rem",
   };
   const showcaseTabs = [
-    { label: "UIKit", href: "/showcase/uikit", active: activeTab === "uikit" },
+    { label: "Components", href: "/showcase/components/typography-headings", active: activeTab === "components" },
+    { label: "Layouts", href: "/showcase/layouts/form-layout", active: activeTab === "layouts" },
     { label: "Animations", href: "/showcase/animations", active: activeTab === "animations" },
     { label: "Sections", href: "/showcase/sections", active: activeTab === "sections" },
   ];
-  const showcaseSidebarControls = (
-    <ShowcaseSidebarControls
-      uiSize={uiSize}
-      onUiSizeChange={setUiSize}
-      borderRadiusPolicy={borderRadiusPolicy}
-      onBorderRadiusPolicyChange={setBorderRadiusPolicy}
-    />
-  );
-
   return (
     <div
       data-theme={themeKey}
@@ -129,63 +121,66 @@ export function ShowcaseClient({
         }
       />
 
-      <div className="pt-4">
-        <div className="mx-auto container px-4">
-          <UITabs ariaLabel="Showcase tabs" items={showcaseTabs} />
-        </div>
-      </div>
+      <ShowcaseTabToolbar>
+        <UITabs ariaLabel="Showcase tabs" items={showcaseTabs} />
+      </ShowcaseTabToolbar>
 
-      {activeTab === "uikit" ? (
-        <section className="bg-bg py-8 text-text-main">
-          <div className="mx-auto container px-4">
-            <div className="grid gap-8 lg:grid-cols-[18rem_minmax(0,1fr)] lg:items-start">
-              <UikitSidebar
-                sections={uikitSectionNavItems}
-                ariaLabel="UIKit sections"
-                topContent={showcaseSidebarControls}
-              />
-              <div className="grid gap-8">
-                <TypographyButtonsBadgesSection uiSize={uiSize} />
-                <ControlsAndMenusSection uiSize={uiSize} />
-                <AccordionSection uiSize={uiSize} />
-                <TimelineSection uiSize={uiSize} borderRadiusPolicy={borderRadiusPolicy} />
-                <InputsSection uiSize={uiSize} />
-                <FormLayoutSection uiSize={uiSize} />
-                <BorderlessFormLayoutSection uiSize={uiSize} />
-                <FeedbackAndSheetSection uiSize={uiSize} showToast={showToast} clearToasts={clearToasts} />
-                <DialogDemoCard uiSize={uiSize} />
-                <ModalDemoCard uiSize={uiSize} />
-                <MarkdownDemoCard />
-              </div>
-            </div>
-          </div>
-        </section>
+      {activeTab === "layouts" ? (
+        <>
+          <ShowcaseTabToolbar>
+            <ShowcaseTabSettings
+              uiSize={uiSize}
+              borderRadiusPolicy={borderRadiusPolicy}
+              onUiSizeChange={setUiSize}
+              onBorderRadiusPolicyChange={setBorderRadiusPolicy}
+            />
+          </ShowcaseTabToolbar>
+          <LayoutsShowcaseSection activeSection={activeLayoutSection} uiSize={uiSize} />
+        </>
       ) : null}
 
       {activeTab === "animations" ? (
-        <section className="bg-bg py-8 text-text-main">
-          <div className="mx-auto container px-4">
-            <div className="grid gap-8 lg:grid-cols-[18rem_minmax(0,1fr)] lg:items-start">
-              <UikitSidebar
-                sections={animationsSectionNavItems}
-                title="Animations"
-                ariaLabel="Animations sections"
-                topContent={showcaseSidebarControls}
-              />
-              <AnimationsSection uiSize={uiSize} />
+        <>
+          <ShowcaseTabToolbar>
+            <ShowcaseTabSettings
+              uiSize={uiSize}
+              borderRadiusPolicy={borderRadiusPolicy}
+              onUiSizeChange={setUiSize}
+              onBorderRadiusPolicyChange={setBorderRadiusPolicy}
+            />
+          </ShowcaseTabToolbar>
+          <section className="bg-bg py-8 text-text-main">
+            <div className="mx-auto container px-4">
+              <div className="grid gap-8 lg:grid-cols-[18rem_minmax(0,1fr)] lg:items-start">
+                <ShowcaseSidebar sections={animationsSectionNavItems} title="Animations" ariaLabel="Animations sections" />
+                <AnimationsSection uiSize={uiSize} />
+              </div>
             </div>
-          </div>
-        </section>
+          </section>
+        </>
+      ) : null}
+
+      {activeTab === "components" ? (
+        <>
+          <ShowcaseTabToolbar>
+            <ShowcaseTabSettings
+              uiSize={uiSize}
+              borderRadiusPolicy={borderRadiusPolicy}
+              onUiSizeChange={setUiSize}
+              onBorderRadiusPolicyChange={setBorderRadiusPolicy}
+            />
+          </ShowcaseTabToolbar>
+          <ComponentsShowcaseSection activeSection={activeComponentSection} uiSize={uiSize} />
+        </>
       ) : null}
 
       {activeTab === "sections" ? (
-        <FeatureBlocksShowcaseSection
-          content={content}
-          themeKey={themeKey}
-          mode={mode}
-          options={featureBlocksOptions}
-          onOptionsChange={setFeatureBlocksOptions}
-        />
+        <>
+          <ShowcaseTabToolbar>
+            <FeatureBlocksOptionsPanel value={featureBlocksOptions} onChange={setFeatureBlocksOptions} />
+          </ShowcaseTabToolbar>
+          <FeatureBlocksShowcaseSection content={content} themeKey={themeKey} mode={mode} options={featureBlocksOptions} />
+        </>
       ) : null}
     </div>
   );

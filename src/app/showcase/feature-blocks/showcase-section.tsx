@@ -1,15 +1,13 @@
 "use client";
 
-import type { Dispatch, SetStateAction } from "react";
-
 import type { PageContent } from "@/db/schema";
 import type { ProjectAssetRecord } from "@/lib/assets";
 import { ProjectRenderer } from "@/components/projects/project-renderer";
-import { UikitSidebar } from "@/app/showcase/uikit-sidebar";
+import { ShowcaseSidebar } from "@/app/showcase/showcase-sidebar";
 
 import { featureBlocksDemoAssets } from "./demo-assets";
 import { featureBlocksSectionNavItems } from "./nav";
-import { FeatureBlocksOptionsPanel, type FeatureBlocksOptionState } from "./options-panel";
+import type { FeatureBlocksOptionState } from "./options-panel";
 
 type FeatureBlocksShowcaseSectionProps = {
   content: PageContent;
@@ -17,7 +15,6 @@ type FeatureBlocksShowcaseSectionProps = {
   themeKey: string;
   mode: "light" | "dark";
   options: FeatureBlocksOptionState;
-  onOptionsChange: Dispatch<SetStateAction<FeatureBlocksOptionState>>;
 };
 
 export function FeatureBlocksShowcaseSection({
@@ -26,19 +23,15 @@ export function FeatureBlocksShowcaseSection({
   themeKey,
   mode,
   options,
-  onOptionsChange,
 }: FeatureBlocksShowcaseSectionProps) {
   return (
     <section className="bg-bg py-8 text-text-main">
       <div className="mx-auto container px-4">
         <div className="grid gap-8 lg:grid-cols-[18rem_minmax(0,1fr)] lg:items-start">
-          <UikitSidebar
+          <ShowcaseSidebar
             sections={featureBlocksSectionNavItems}
             title="Feature blocks"
             ariaLabel="Feature blocks sections"
-            topContent={
-              <FeatureBlocksOptionsPanel value={options} onChange={onOptionsChange} />
-            }
           />
           <ProjectRenderer
             name="Component Showcase"

@@ -2,17 +2,30 @@ import type { Metadata } from "next";
 import { cookies } from "next/headers";
 
 import { ShowcaseClient } from "@/app/showcase/showcase-client";
-import { COMPONENTS_SECTION_PAGE_KEYS } from "@/app/showcase/components/section-pages";
 import { getServerAuthSession } from "@/auth";
 import { showcaseContent } from "@/app/showcase/showcase-content";
 import { UI_MODE_COOKIE, UI_THEME_COOKIE, resolveModePreference, resolveThemePreference } from "@/lib/ui-preferences";
 
-export const metadata: Metadata = {
-  title: "Showcase · Nanofactory",
-  description: "Internal showcase for Nanofactory components.",
+import { getLayoutsSectionPageTitle, resolveLayoutsSectionPageKey } from "../section-pages";
+
+type LayoutsSectionPageProps = {
+  params: Promise<{
+    section: string;
+  }>;
 };
 
-export default async function ShowcaseIndexPage() {
+export async function generateMetadata({ params }: LayoutsSectionPageProps): Promise<Metadata> {
+  const { section } = await params;
+  const resolvedSection = resolveLayoutsSectionPageKey(section);
+
+  return {
+    title: `${getLayoutsSectionPageTitle(resolvedSection)} · Layouts Showcase · Nanofactory`,
+    description: "Internal layouts showcase for Nanofactory layouts.",
+  };
+}
+
+export default async function ShowcaseLayoutsSectionPage({ params }: LayoutsSectionPageProps) {
+  const { section } = await params;
   const session = await getServerAuthSession();
   const cookieStore = await cookies();
   const initialThemeKey = resolveThemePreference(cookieStore.get(UI_THEME_COOKIE)?.value);
@@ -21,11 +34,11 @@ export default async function ShowcaseIndexPage() {
   return (
     <ShowcaseClient
       content={showcaseContent}
-      activeTab="components"
+      activeTab="layouts"
       isAdmin={session?.user?.role === "admin"}
       initialThemeKey={initialThemeKey}
       initialMode={initialMode}
-      activeComponentSection={COMPONENTS_SECTION_PAGE_KEYS[0]}
+      activeLayoutSection={resolveLayoutsSectionPageKey(section)}
     />
   );
 }

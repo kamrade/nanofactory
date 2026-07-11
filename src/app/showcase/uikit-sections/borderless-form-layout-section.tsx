@@ -73,7 +73,7 @@ export function BorderlessFormLayoutSection({ uiSize }: { uiSize: UiSize }) {
   return (
     <>
       <UikitSectionAnchor id="form-layout-borderless-inputs">
-        <UICard title="UIKit · Form Layout (Label Left, Borderless Inputs)">
+        <UICard title="Form Layout (Label Left, Borderless Inputs)">
           <form className="grid" onSubmit={handleSubmit}>
             
             {/* SELECT */}

@@ -31,7 +31,7 @@ export function DialogDemoCard({ uiSize }: { uiSize: UiSize }) {
 
   return (
     <UikitSectionAnchor id="dialog">
-      <UICard title="UIKit · Dialog">
+      <UICard title="Dialog">
         <div className="grid gap-4">
           <div className="flex flex-wrap items-center gap-3">
             <UIDialog open={dialogOpen} onOpenChange={setDialogOpen}>
@@ -97,7 +97,7 @@ export function ModalDemoCard({ uiSize }: { uiSize: UiSize }) {
 
   return (
     <UikitSectionAnchor id="modal">
-      <UICard title="UIKit · Modal">
+      <UICard title="Modal">
         <div className="grid gap-4">
           <div className="flex flex-wrap items-center gap-3">
             <UIModal

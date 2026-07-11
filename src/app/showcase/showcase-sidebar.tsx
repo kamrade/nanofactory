@@ -1,6 +1,7 @@
 "use client";
 
-import { useEffect, useMemo, useState, type ReactNode } from "react";
+import Link from "next/link";
+import { useEffect, useMemo, useState } from "react";
 
 import { UIButton } from "@/components/ui/button";
 import {
@@ -16,11 +17,11 @@ import { cx } from "@/lib/cn";
 
 import type { UikitSectionNavItem } from "./uikit-sections/nav";
 
-type UikitSidebarProps = {
+type ShowcaseSidebarProps = {
   sections: UikitSectionNavItem[];
   title?: string;
-  topContent?: ReactNode;
   ariaLabel?: string;
+  activeSectionId?: string;
 };
 
 function scrollToSection(id: string) {
@@ -33,57 +34,78 @@ function scrollToSection(id: string) {
   history.replaceState(null, "", `#${id}`);
 }
 
-function UikitSectionButton({
+function ShowcaseSectionButton({
   section,
   active,
   onSelect,
+  onItemClick,
   className,
 }: {
   section: UikitSectionNavItem;
   active: boolean;
   onSelect: (id: string) => void;
+  onItemClick?: () => void;
   className?: string;
 }) {
+  const sharedClassName = cx(
+    "block w-full rounded-sm text-left text-sm leading-6 transition outline-none",
+    "focus:ring-2 focus:ring-focus/50 focus:ring-offset-0 focus:ring-offset-bg",
+    "focus-visible:ring-2 focus-visible:ring-focus/50 focus-visible:ring-offset-0 focus-visible:ring-offset-bg",
+    active ? "font-medium text-text-main" : "text-text-muted hover:text-text-main",
+    className
+  );
+
+  if (section.href) {
+    return (
+      <Link
+        href={section.href}
+        aria-current={active ? "page" : undefined}
+        onClick={onItemClick}
+        className={sharedClassName}
+      >
+        {section.label}
+      </Link>
+    );
+  }
+
   return (
     <a
       href={`#${section.id}`}
       onClick={(event) => {
         event.preventDefault();
+        onItemClick?.();
         onSelect(section.id);
       }}
       aria-current={active ? "location" : undefined}
-      className={cx(
-        "block w-full rounded-sm text-left text-sm leading-6 transition outline-none",
-        "focus:ring-2 focus:ring-focus/50 focus:ring-offset-0 focus:ring-offset-bg",
-        "focus-visible:ring-2 focus-visible:ring-focus/50 focus-visible:ring-offset-0 focus-visible:ring-offset-bg",
-        active ? "font-medium text-text-main" : "text-text-muted hover:text-text-main",
-        className
-      )}
+      className={sharedClassName}
     >
       {section.label}
     </a>
   );
 }
 
-function UikitSidebarList({
+function ShowcaseSidebarList({
   sections,
   activeSectionId,
   onSelect,
+  onItemClick,
   compact = false,
 }: {
   sections: UikitSectionNavItem[];
   activeSectionId: string;
   onSelect: (id: string) => void;
+  onItemClick?: () => void;
   compact?: boolean;
 }) {
   return (
     <div className={cx("grid", compact ? "gap-1" : "gap-2")}>
       {sections.map((section) => (
-        <UikitSectionButton
+        <ShowcaseSectionButton
           key={section.id}
           section={section}
           active={section.id === activeSectionId}
           onSelect={onSelect}
+          onItemClick={onItemClick}
           className={compact ? "text-xs leading-4" : "text-sm leading-5"}
         />
       ))}
@@ -91,18 +113,30 @@ function UikitSidebarList({
   );
 }
 
-export function UikitSidebar({
+export function ShowcaseSidebar({
   sections,
   title = "UI Kit",
-  topContent,
   ariaLabel = "UIKit sections",
-}: UikitSidebarProps) {
-  const [activeSectionId, setActiveSectionId] = useState(() => sections[0]?.id ?? "");
+  activeSectionId: controlledActiveSectionId,
+}: ShowcaseSidebarProps) {
+  const [activeSectionId, setActiveSectionId] = useState(
+    () => controlledActiveSectionId ?? sections[0]?.id ?? ""
+  );
   const [mobileOpen, setMobileOpen] = useState(false);
+  const hasLinkedItems = sections.some((section) => Boolean(section.href));
 
   const sectionIds = useMemo(() => sections.map((section) => section.id), [sections]);
 
   useEffect(() => {
+    if (controlledActiveSectionId) {
+      setActiveSectionId(controlledActiveSectionId);
+      return;
+    }
+
+    if (hasLinkedItems) {
+      return;
+    }
+
     const targets = sectionIds
       .map((id) => document.getElementById(id))
       .filter((element): element is HTMLElement => element !== null);
@@ -139,7 +173,7 @@ export function UikitSidebar({
     targets.forEach((target) => observer.observe(target));
 
     return () => observer.disconnect();
-  }, [sectionIds]);
+  }, [controlledActiveSectionId, hasLinkedItems, sectionIds]);
 
   function handleSelect(id: string) {
     setActiveSectionId(id);
@@ -164,15 +198,15 @@ export function UikitSidebar({
             <UISheetHeader className="space-y-0">
               <UISheetTitle className="text-sm">{title}</UISheetTitle>
             </UISheetHeader>
-            {topContent ? <div className="mt-3 grid gap-3">{topContent}</div> : null}
             <div className="mt-3 grid gap-1">
-              <UikitSidebarList
+              <ShowcaseSidebarList
                 sections={sections}
                 activeSectionId={activeSectionId}
                 onSelect={(id) => {
                   handleSelect(id);
                   setMobileOpen(false);
                 }}
+                onItemClick={() => setMobileOpen(false)}
                 compact
               />
             </div>
@@ -197,11 +231,11 @@ export function UikitSidebar({
               {title}
             </p>
           </div>
-          {topContent ? <div className="mb-5 grid gap-3">{topContent}</div> : null}
-          <UikitSidebarList
+          <ShowcaseSidebarList
             sections={sections}
             activeSectionId={activeSectionId}
-            onSelect={handleSelect}
+            onSelect={hasLinkedItems ? () => {} : handleSelect}
+            onItemClick={hasLinkedItems ? () => setMobileOpen(false) : undefined}
           />
         </div>
       </aside>
