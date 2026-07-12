@@ -1,4 +1,4 @@
-import type { UikitSectionNavItem } from "../uikit-sections/nav";
+import type { UikitSectionNavItem } from "@/app/showcase/_shared/uikit-sections/nav";
 
 export const layoutsSectionNavItems: UikitSectionNavItem[] = [
   { id: "form-layout", label: "Form Layout", href: "/showcase/layouts/form-layout" },

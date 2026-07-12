@@ -5,7 +5,7 @@ import { useMemo, useState } from "react";
 import { UICard } from "@/components/ui/card";
 import { UIMultiSelect } from "@/components/ui/multi-select";
 
-import type { UiSize } from "../uikit-sections";
+import type { UiSize } from "@/app/showcase/_shared/uikit-sections";
 
 export function MultiSelectDropdownCard({ uiSize }: { uiSize: UiSize }) {
   const [value, setValue] = useState<string[]>(["nextjs"]);

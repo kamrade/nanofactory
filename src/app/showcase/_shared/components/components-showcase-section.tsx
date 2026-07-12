@@ -2,25 +2,25 @@
 
 import { useToast } from "@/hooks/use-toast";
 
-import { DialogDemoCard, MarkdownDemoCard, ModalDemoCard } from "@/app/showcase/demo-cards";
-import { SheetCard } from "@/app/showcase/components/sheet-card";
-import { ToastCard } from "@/app/showcase/components/toast-card";
-import { ShowcaseSidebar } from "@/app/showcase/showcase-sidebar";
-import { AutocompleteCard } from "@/app/showcase/components/autocomplete-card";
-import { AccordionCard } from "@/app/showcase/uikit-sections/accordion-card";
-import { TypographyButtonsCard } from "@/app/showcase/uikit-sections/typography-buttons-card";
-import { TypographyBadgesCard } from "@/app/showcase/uikit-sections/typography-badges-card";
-import { ControlsCheckboxCard } from "@/app/showcase/uikit-sections/controls-checkbox-card";
-import { ControlsSegmentedControlCard } from "@/app/showcase/uikit-sections/controls-segmented-control-card";
-import { ControlsSwitcherCard } from "@/app/showcase/uikit-sections/controls-switcher-card";
-import { TypographyHeadingsCard } from "@/app/showcase/uikit-sections/typography-headings-card";
-import type { UiSize } from "@/app/showcase/uikit-sections";
-import { MenuCard } from "@/app/showcase/components/menu-card";
-import { MultiSelectDropdownCard } from "@/app/showcase/components/multiselect-dropdown-card";
-import { MultiSelectListCard } from "@/app/showcase/components/multiselect-list-card";
-import { InputsSelectCard } from "@/app/showcase/uikit-sections/inputs-select-card";
-import { InputsSliderCard } from "@/app/showcase/uikit-sections/inputs-slider-card";
-import { InputsTextInputCard } from "@/app/showcase/uikit-sections/inputs-text-input-card";
+import { DialogDemoCard, MarkdownDemoCard, ModalDemoCard } from "@/app/showcase/_shared/demo-cards";
+import { SheetCard } from "@/app/showcase/_shared/components/sheet-card";
+import { ToastCard } from "@/app/showcase/_shared/components/toast-card";
+import { ShowcaseSidebar } from "@/app/showcase/_shared/showcase-sidebar";
+import { AutocompleteCard } from "@/app/showcase/_shared/components/autocomplete-card";
+import { AccordionCard } from "@/app/showcase/_shared/uikit-sections/accordion-card";
+import { TypographyButtonsCard } from "@/app/showcase/_shared/uikit-sections/typography-buttons-card";
+import { TypographyBadgesCard } from "@/app/showcase/_shared/uikit-sections/typography-badges-card";
+import { ControlsCheckboxCard } from "@/app/showcase/_shared/uikit-sections/controls-checkbox-card";
+import { ControlsSegmentedControlCard } from "@/app/showcase/_shared/uikit-sections/controls-segmented-control-card";
+import { ControlsSwitcherCard } from "@/app/showcase/_shared/uikit-sections/controls-switcher-card";
+import { TypographyHeadingsCard } from "@/app/showcase/_shared/uikit-sections/typography-headings-card";
+import type { UiSize } from "@/app/showcase/_shared/uikit-sections";
+import { MenuCard } from "@/app/showcase/_shared/components/menu-card";
+import { MultiSelectDropdownCard } from "@/app/showcase/_shared/components/multiselect-dropdown-card";
+import { MultiSelectListCard } from "@/app/showcase/_shared/components/multiselect-list-card";
+import { InputsSelectCard } from "@/app/showcase/_shared/uikit-sections/inputs-select-card";
+import { InputsSliderCard } from "@/app/showcase/_shared/uikit-sections/inputs-slider-card";
+import { InputsTextInputCard } from "@/app/showcase/_shared/uikit-sections/inputs-text-input-card";
 
 import { componentsSectionNavItems } from "./nav";
 import type { ComponentsSectionPageKey } from "./section-pages";

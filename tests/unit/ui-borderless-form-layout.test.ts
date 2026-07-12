@@ -2,7 +2,7 @@ import { createElement } from "react";
 import { renderToStaticMarkup } from "react-dom/server";
 import { describe, expect, it } from "vitest";
 
-import { BorderlessFormLayoutSection } from "@/app/showcase/uikit-sections/borderless-form-layout-section";
+import { BorderlessFormLayoutSection } from "@/app/showcase/_shared/uikit-sections/borderless-form-layout-section";
 
 describe("BorderlessFormLayoutSection", () => {
   it("renders rows with focus-aware underlines instead of dividers", () => {

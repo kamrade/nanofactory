@@ -1,11 +1,11 @@
 import type { Metadata } from "next";
 import { cookies } from "next/headers";
 
-import { ShowcaseClient } from "@/app/showcase/showcase-client";
-import { COMPONENTS_SECTION_PAGE_KEYS } from "./section-pages";
+import { ShowcaseClient } from "@/app/showcase/_shared/showcase-client";
 import { getServerAuthSession } from "@/auth";
-import { showcaseContent } from "@/app/showcase/showcase-content";
+import { showcaseContent } from "@/app/showcase/_shared/showcase-content";
 import { UI_MODE_COOKIE, UI_THEME_COOKIE, resolveModePreference, resolveThemePreference } from "@/lib/ui-preferences";
+import { COMPONENTS_SECTION_PAGE_KEYS } from "@/app/showcase/_shared/components/section-pages";
 
 export const metadata: Metadata = {
   title: "Components Showcase · Nanofactory",

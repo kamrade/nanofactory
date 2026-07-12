@@ -4,7 +4,7 @@ import type { ReactNode } from "react";
 
 import { Card } from "@/components/ui/card";
 import { UISelect } from "@/components/ui/select";
-import type { UiSize } from "@/app/showcase/uikit-sections";
+import type { UiSize } from "@/app/showcase/_shared/uikit-sections";
 import {
   PROJECT_BORDER_RADIUS_POLICIES,
   type ProjectBorderRadiusPolicy,

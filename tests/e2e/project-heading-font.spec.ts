@@ -37,6 +37,7 @@ async function setHeadingFont(page: Page, nextFontLabel: string) {
   });
   await page.getByRole("option", { name: nextFontLabel }).click();
   await expect(select).toContainText(nextFontLabel);
+  await page.waitForTimeout(750);
 }
 
 test("changes heading font and persists it after reload", async ({ page }) => {

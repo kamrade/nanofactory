@@ -5,7 +5,7 @@ import { useState } from "react";
 import { UICard } from "@/components/ui/card";
 import { UIMultiSelectList } from "@/components/ui/multi-select-list";
 
-import type { UiSize } from "../uikit-sections";
+import type { UiSize } from "@/app/showcase/_shared/uikit-sections";
 
 export function MultiSelectListCard({ uiSize }: { uiSize: UiSize }) {
   const [value, setValue] = useState<string[]>(["react", "typescript"]);

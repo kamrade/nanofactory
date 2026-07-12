@@ -1,9 +1,9 @@
 "use client";
 
-import { ShowcaseSidebar } from "@/app/showcase/showcase-sidebar";
-import { BorderlessFormLayoutSection } from "@/app/showcase/uikit-sections/borderless-form-layout-section";
-import { FormLayoutSection } from "@/app/showcase/uikit-sections/form-layout-section";
-import type { UiSize } from "@/app/showcase/uikit-sections";
+import { ShowcaseSidebar } from "@/app/showcase/_shared/showcase-sidebar";
+import { BorderlessFormLayoutSection } from "@/app/showcase/_shared/uikit-sections/borderless-form-layout-section";
+import { FormLayoutSection } from "@/app/showcase/_shared/uikit-sections/form-layout-section";
+import type { UiSize } from "@/app/showcase/_shared/uikit-sections";
 
 import { layoutsSectionNavItems } from "./nav";
 import type { LayoutsSectionPageKey } from "./section-pages";

@@ -5,7 +5,7 @@ import { useState } from "react";
 import { UICard } from "@/components/ui/card";
 import { UIAutocomplete } from "@/components/ui/autocomplete";
 
-import type { UiSize } from "../uikit-sections";
+import type { UiSize } from "@/app/showcase/_shared/uikit-sections";
 
 export function AutocompleteCard({ uiSize }: { uiSize: UiSize }) {
   const [value, setValue] = useState("");

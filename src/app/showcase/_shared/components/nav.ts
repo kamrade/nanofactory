@@ -1,4 +1,4 @@
-import type { UikitSectionNavItem } from "../uikit-sections/nav";
+import type { UikitSectionNavItem } from "@/app/showcase/_shared/uikit-sections/nav";
 
 export const componentsSectionNavItems: UikitSectionNavItem[] = [
   { id: "typography-headings", label: "Headings", href: "/showcase/components/typography-headings" },

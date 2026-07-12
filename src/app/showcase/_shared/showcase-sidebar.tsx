@@ -1,6 +1,7 @@
 "use client";
 
 import Link from "next/link";
+import type { ReactNode } from "react";
 import { useEffect, useMemo, useState } from "react";
 
 import { UIButton } from "@/components/ui/button";
@@ -22,6 +23,7 @@ type ShowcaseSidebarProps = {
   title?: string;
   ariaLabel?: string;
   activeSectionId?: string;
+  topContent?: ReactNode;
 };
 
 function scrollToSection(id: string) {
@@ -118,6 +120,7 @@ export function ShowcaseSidebar({
   title = "UI Kit",
   ariaLabel = "UIKit sections",
   activeSectionId: controlledActiveSectionId,
+  topContent,
 }: ShowcaseSidebarProps) {
   const [activeSectionId, setActiveSectionId] = useState(
     () => controlledActiveSectionId ?? sections[0]?.id ?? ""
@@ -231,6 +234,7 @@ export function ShowcaseSidebar({
               {title}
             </p>
           </div>
+          {topContent ? <div className="mb-5 grid gap-4">{topContent}</div> : null}
           <ShowcaseSidebarList
             sections={sections}
             activeSectionId={activeSectionId}

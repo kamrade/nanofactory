@@ -1,9 +1,11 @@
 "use client";
 
+import type { ReactNode } from "react";
+
 import type { PageContent } from "@/db/schema";
 import type { ProjectAssetRecord } from "@/lib/assets";
 import { ProjectRenderer } from "@/components/projects/project-renderer";
-import { ShowcaseSidebar } from "@/app/showcase/showcase-sidebar";
+import { ShowcaseSidebar } from "@/app/showcase/_shared/showcase-sidebar";
 
 import { featureBlocksDemoAssets } from "./demo-assets";
 import { featureBlocksSectionNavItems } from "./nav";
@@ -15,6 +17,7 @@ type FeatureBlocksShowcaseSectionProps = {
   themeKey: string;
   mode: "light" | "dark";
   options: FeatureBlocksOptionState;
+  topContent?: ReactNode;
 };
 
 export function FeatureBlocksShowcaseSection({
@@ -23,6 +26,7 @@ export function FeatureBlocksShowcaseSection({
   themeKey,
   mode,
   options,
+  topContent,
 }: FeatureBlocksShowcaseSectionProps) {
   return (
     <section className="bg-bg py-8 text-text-main">
@@ -32,6 +36,7 @@ export function FeatureBlocksShowcaseSection({
             sections={featureBlocksSectionNavItems}
             title="Feature blocks"
             ariaLabel="Feature blocks sections"
+            topContent={topContent}
           />
           <ProjectRenderer
             name="Component Showcase"

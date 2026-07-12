@@ -8,7 +8,7 @@ import { UICard } from "@/components/ui/card";
 import { UIDivider } from "@/components/ui/divider";
 import { UIMenu, UIMenuItem, UIMenuLabel, UIMenuSeparator } from "@/components/ui/menu";
 
-import type { UiSize } from "../uikit-sections";
+import type { UiSize } from "@/app/showcase/_shared/uikit-sections";
 
 export function MenuCard({ uiSize }: { uiSize: UiSize }) {
   const [menuAction, setMenuAction] = useState("none");

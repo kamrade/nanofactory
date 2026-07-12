@@ -1,24 +1,34 @@
 "use client";
 
 import { useEffect, useState, type CSSProperties } from "react";
+import { usePathname, useRouter, useSearchParams } from "next/navigation";
 
 import {
   BorderlessFormLayoutSection,
   FormLayoutSection,
   type UiSize,
-} from "@/app/showcase/uikit-sections";
-import { AnimationsSection } from "@/app/showcase/animation-sections";
-import { animationsSectionNavItems } from "@/app/showcase/animation-sections/nav";
-import { ComponentsShowcaseSection } from "@/app/showcase/components/components-showcase-section";
-import { COMPONENTS_SECTION_PAGE_KEYS, type ComponentsSectionPageKey } from "@/app/showcase/components/section-pages";
-import { FeatureBlocksShowcaseSection } from "@/app/showcase/feature-blocks/showcase-section";
-import type { FeatureBlocksOptionState } from "@/app/showcase/feature-blocks/options-panel";
-import { FeatureBlocksOptionsPanel } from "@/app/showcase/feature-blocks/options-panel";
-import { LayoutsShowcaseSection } from "@/app/showcase/layouts/layouts-showcase-section";
-import { LAYOUTS_SECTION_PAGE_KEYS, type LayoutsSectionPageKey } from "@/app/showcase/layouts/section-pages";
-import { ShowcaseSidebar } from "@/app/showcase/showcase-sidebar";
-import { ShowcaseTabSettings } from "@/app/showcase/showcase-tab-settings";
-import { ShowcaseTabToolbar } from "@/app/showcase/showcase-tab-toolbar";
+} from "@/app/showcase/_shared/uikit-sections";
+import { AnimationsSection } from "@/app/showcase/_shared/animation-sections";
+import { animationsSectionNavItems } from "@/app/showcase/_shared/animation-sections/nav";
+import { ComponentsShowcaseSection } from "@/app/showcase/_shared/components/components-showcase-section";
+import {
+  COMPONENTS_SECTION_PAGE_KEYS,
+  type ComponentsSectionPageKey,
+} from "@/app/showcase/_shared/components/section-pages";
+import { FeatureBlocksShowcaseSection } from "@/app/showcase/_shared/feature-blocks/showcase-section";
+import type { FeatureBlocksOptionState } from "@/app/showcase/_shared/feature-blocks/options-panel";
+import { LayoutsShowcaseSection } from "@/app/showcase/_shared/layouts/layouts-showcase-section";
+import {
+  LAYOUTS_SECTION_PAGE_KEYS,
+  type LayoutsSectionPageKey,
+} from "@/app/showcase/_shared/layouts/section-pages";
+import { ShowcaseSidebar } from "@/app/showcase/_shared/showcase-sidebar";
+import { ShowcaseTabSettings } from "@/app/showcase/_shared/showcase-tab-settings";
+import { ShowcaseTabToolbar } from "@/app/showcase/_shared/showcase-tab-toolbar";
+import {
+  DEFAULT_FEATURE_BLOCKS_OPTIONS,
+  applyFeatureBlocksOptionsToSearchParams,
+} from "@/app/showcase/_shared/feature-blocks/url-state";
 import { AppStickyHeader } from "@/components/navigation/app-sticky-header";
 import { UISegmentedControl } from "@/components/ui/segmented-control";
 import { UITabs } from "@/components/ui/tabs";
@@ -29,6 +39,7 @@ import {
 } from "@/lib/projects/border-radius-policy";
 import { DEFAULT_THEME_KEY, THEME_OPTIONS, type ThemeKey } from "@/lib/themes";
 import { UI_COOKIE_MAX_AGE, UI_MODE_COOKIE, UI_THEME_COOKIE } from "@/lib/ui-preferences";
+import { FeatureBlocksSidebarControls } from "@/app/showcase/_shared/feature-blocks/sidebar-controls";
 
 type ShowcaseTab = "components" | "layouts" | "animations" | "sections";
 type ShowcaseMode = "light" | "dark";
@@ -39,6 +50,7 @@ type ShowcaseClientProps = {
   isAdmin?: boolean;
   initialThemeKey?: ThemeKey;
   initialMode?: ShowcaseMode;
+  initialFeatureBlocksOptions?: FeatureBlocksOptionState;
   activeComponentSection?: ComponentsSectionPageKey;
   activeLayoutSection?: LayoutsSectionPageKey;
 };
@@ -49,19 +61,20 @@ export function ShowcaseClient({
   isAdmin = false,
   initialThemeKey = DEFAULT_THEME_KEY,
   initialMode = "light",
+  initialFeatureBlocksOptions = DEFAULT_FEATURE_BLOCKS_OPTIONS,
   activeComponentSection = COMPONENTS_SECTION_PAGE_KEYS[0],
   activeLayoutSection = LAYOUTS_SECTION_PAGE_KEYS[0],
 }: ShowcaseClientProps) {
+  const pathname = usePathname();
+  const router = useRouter();
+  const searchParams = useSearchParams();
   const [themeKey, setThemeKey] = useState<ThemeKey>(initialThemeKey);
   const [mode, setMode] = useState<ShowcaseMode>(initialMode);
   const [uiSize, setUiSize] = useState<UiSize>("sm");
   const [borderRadiusPolicy, setBorderRadiusPolicy] = useState<ProjectBorderRadiusPolicy>("lg");
-  const [featureBlocksOptions, setFeatureBlocksOptions] = useState<FeatureBlocksOptionState>({
-    borderRadiusPolicy: "lg",
-    spacingScale: "md",
-    surfaceStyle: "default",
-    headingFont: "onest",
-  });
+  const [featureBlocksOptions, setFeatureBlocksOptions] = useState<FeatureBlocksOptionState>(
+    initialFeatureBlocksOptions
+  );
 
   useEffect(() => {
     document.documentElement.setAttribute("data-theme", themeKey);
@@ -69,6 +82,21 @@ export function ShowcaseClient({
     document.cookie = `${UI_THEME_COOKIE}=${themeKey}; path=/; max-age=${UI_COOKIE_MAX_AGE}; samesite=lax`;
     document.cookie = `${UI_MODE_COOKIE}=${mode}; path=/; max-age=${UI_COOKIE_MAX_AGE}; samesite=lax`;
   }, [mode, themeKey]);
+
+  useEffect(() => {
+    if (activeTab !== "sections") {
+      return;
+    }
+
+    const nextSearchParams = new URLSearchParams(searchParams.toString());
+    applyFeatureBlocksOptionsToSearchParams(nextSearchParams, featureBlocksOptions);
+    const nextSearch = nextSearchParams.toString();
+    const currentSearch = searchParams.toString();
+
+    if (nextSearch !== currentSearch) {
+      router.replace(nextSearch ? `${pathname}?${nextSearch}` : pathname);
+    }
+  }, [activeTab, featureBlocksOptions, pathname, router, searchParams]);
 
   const cardRadiusByPolicy: Record<ProjectBorderRadiusPolicy, string> = {
     none: "0px",
@@ -176,10 +204,13 @@ export function ShowcaseClient({
 
       {activeTab === "sections" ? (
         <>
-          <ShowcaseTabToolbar>
-            <FeatureBlocksOptionsPanel value={featureBlocksOptions} onChange={setFeatureBlocksOptions} />
-          </ShowcaseTabToolbar>
-          <FeatureBlocksShowcaseSection content={content} themeKey={themeKey} mode={mode} options={featureBlocksOptions} />
+          <FeatureBlocksShowcaseSection
+            content={content}
+            themeKey={themeKey}
+            mode={mode}
+            options={featureBlocksOptions}
+            topContent={<FeatureBlocksSidebarControls value={featureBlocksOptions} onChange={setFeatureBlocksOptions} />}
+          />
         </>
       ) : null}
     </div>

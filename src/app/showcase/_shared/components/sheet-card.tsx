@@ -14,7 +14,7 @@ import {
 } from "@/components/ui/sheet";
 import { UITextInput } from "@/components/ui/text-input";
 
-import type { UiSize } from "../uikit-sections";
+import type { UiSize } from "@/app/showcase/_shared/uikit-sections";
 
 export function SheetCard({ uiSize }: { uiSize: UiSize }) {
   return (

@@ -3,7 +3,7 @@
 import { UIButton } from "@/components/ui/button";
 import { UICard } from "@/components/ui/card";
 
-import type { ToastInput, UiSize } from "../uikit-sections";
+import type { ToastInput, UiSize } from "@/app/showcase/_shared/uikit-sections";
 
 export function ToastCard({
   uiSize,
