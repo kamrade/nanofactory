@@ -1,0 +1,181 @@
+.root {
+  display: grid;
+  gap: 0.5rem;
+}
+
+.search {
+  width: 100%;
+  outline: none;
+  transition:
+    background-color 150ms ease,
+    color 150ms ease,
+    border-color 150ms ease,
+    box-shadow 150ms ease,
+    opacity 150ms ease;
+}
+
+.search:focus,
+.search:focus-visible {
+  box-shadow: 0 0 0 2px color-mix(in srgb, var(--focus) 50%, transparent);
+  outline: none;
+}
+
+.searchSm {
+  min-height: 1.75rem;
+  padding: 0.25rem 0.5rem;
+  font-size: 0.875rem;
+  line-height: 1.25rem;
+}
+
+.searchMd {
+  min-height: 2.5rem;
+  padding: 0.5rem 0.75rem;
+  font-size: 0.875rem;
+  line-height: 1.25rem;
+}
+
+.searchLg {
+  min-height: 3.5rem;
+  padding: 0.75rem 1rem;
+  font-size: 1rem;
+  line-height: 1.5rem;
+}
+
+.searchDefault {
+  border: 1px solid var(--line);
+  background: var(--surface);
+}
+
+.searchInvalid {
+  border: 1px solid var(--danger-line);
+  background: var(--danger-100);
+}
+
+.searchSuccess {
+  border: 1px solid var(--primary-line);
+  background: var(--surface);
+}
+
+.list {
+  display: flex;
+  width: 100%;
+  max-height: min(24rem, calc(100vh - 2rem));
+  flex-direction: column;
+  gap: 0.125rem;
+  overflow-y: auto;
+  padding: 0.25rem;
+  background: var(--surface);
+  outline: none;
+}
+
+.listPadding {
+  padding: 0.25rem;
+}
+
+.list:focus,
+.list:focus-visible {
+  box-shadow: 0 0 0 2px color-mix(in srgb, var(--focus) 50%, transparent);
+  outline: none;
+}
+
+.listRadiusNone {
+  border-radius: 0;
+}
+
+.listRadiusMd {
+  border-radius: 0.5rem;
+}
+
+.listRadiusLg {
+  border-radius: 0.75rem;
+}
+
+.listDefault {
+  border: 1px solid var(--line);
+}
+
+.listInvalid {
+  border: 1px solid var(--danger-line);
+  background: var(--danger-100);
+}
+
+.listSuccess {
+  border: 1px solid var(--primary-line);
+  background: var(--surface);
+}
+
+.empty {
+  padding: 0.5rem 0.75rem;
+  font-size: 0.875rem;
+  color: var(--text-muted);
+}
+
+.option {
+  display: flex;
+  width: 100%;
+  align-items: center;
+  gap: 0.5rem;
+  text-align: left;
+  transition:
+    background-color 150ms ease,
+    color 150ms ease,
+    opacity 150ms ease;
+  outline: none;
+  border: 0;
+  background: transparent;
+  color: var(--text-main);
+}
+
+.option:focus,
+.option:focus-visible {
+  box-shadow: 0 0 0 2px color-mix(in srgb, var(--focus) 50%, transparent);
+  outline: none;
+}
+
+.optionSm {
+  min-height: 1.75rem;
+  padding: 0.25rem 0.5rem;
+  font-size: 0.875rem;
+  line-height: 1.25rem;
+}
+
+.optionMd {
+  min-height: 2.5rem;
+  padding: 0.5rem 0.75rem;
+  font-size: 0.875rem;
+  line-height: 1.25rem;
+}
+
+.optionLg {
+  min-height: 3.5rem;
+  padding: 0.75rem 1rem;
+  font-size: 1rem;
+  line-height: 1.5rem;
+}
+
+.optionRadiusNone {
+  border-radius: 0;
+}
+
+.optionRadiusMd {
+  border-radius: 0.5rem;
+}
+
+.optionRadiusLg {
+  border-radius: 0.75rem;
+}
+
+.optionDisabled {
+  cursor: not-allowed;
+  opacity: 0.6;
+}
+
+.optionSelected {
+  background: var(--surface-alt);
+  color: var(--text-main);
+}
+
+.optionHover:hover {
+  background: var(--surface-alt);
+  color: var(--text-main);
+}

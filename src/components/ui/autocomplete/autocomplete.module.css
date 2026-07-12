@@ -1,0 +1,278 @@
+.root {
+  width: 100%;
+}
+
+.trigger {
+  display: flex;
+  width: 100%;
+  align-items: center;
+  outline: none;
+  transition:
+    background-color 150ms ease,
+    color 150ms ease,
+    border-color 150ms ease,
+    box-shadow 150ms ease,
+    opacity 150ms ease;
+}
+
+.trigger:focus,
+.trigger:focus-visible {
+  box-shadow: 0 0 0 2px color-mix(in srgb, var(--focus) 50%, transparent);
+  outline: none;
+}
+
+.triggerDisabled {
+  cursor: not-allowed;
+  opacity: 0.6;
+}
+
+.triggerBordered {
+  border: 1px solid var(--line);
+}
+
+.triggerInvalid {
+  border-color: var(--danger-line);
+  background: var(--danger-100);
+}
+
+.triggerSuccess {
+  border-color: var(--primary-line);
+  background: var(--surface);
+}
+
+.triggerDefault {
+  background: var(--surface);
+}
+
+.triggerReadOnly {
+  background: var(--surface-alt);
+}
+
+.triggerBorderless {
+  border: 0;
+}
+
+.triggerSm {
+  height: 1.75rem;
+}
+
+.triggerMd {
+  height: 2.5rem;
+}
+
+.triggerLg {
+  height: 3.5rem;
+}
+
+.triggerPaddingSm {
+  padding-inline: 0.5rem;
+}
+
+.triggerPaddingMd {
+  padding-inline: 0.75rem;
+}
+
+.triggerPaddingLg {
+  padding-inline: 1rem;
+}
+
+.triggerBorderless.triggerPaddingSm,
+.triggerBorderless.triggerPaddingMd,
+.triggerBorderless.triggerPaddingLg {
+  padding-inline: 0;
+}
+
+.triggerRadiusNone {
+  border-radius: 0;
+}
+
+.triggerRadiusMd {
+  border-radius: 0.5rem;
+}
+
+.triggerRadiusLg {
+  border-radius: 0.75rem;
+}
+
+.triggerTextSm {
+  font-size: 0.875rem;
+  line-height: 1.25rem;
+}
+
+.triggerTextLg {
+  font-size: 1rem;
+  line-height: 1.5rem;
+}
+
+.triggerGapSm {
+  gap: 0.375rem;
+}
+
+.triggerGapMd {
+  gap: 0.5rem;
+}
+
+.triggerIconSm {
+  height: 0.875rem;
+  width: 0.875rem;
+}
+
+.triggerIconMd {
+  height: 1rem;
+  width: 1rem;
+}
+
+.triggerIconLg {
+  height: 1rem;
+  width: 1rem;
+}
+
+.clearSm {
+  height: 1.25rem;
+  width: 1.25rem;
+}
+
+.clearMd {
+  height: 1.5rem;
+  width: 1.5rem;
+}
+
+.clearLg {
+  height: 1.75rem;
+  width: 1.75rem;
+}
+
+.clearButton {
+  display: inline-flex;
+  flex-shrink: 0;
+  align-items: center;
+  justify-content: center;
+  border-radius: 0.375rem;
+  color: var(--text-muted);
+  transition:
+    background-color 150ms ease,
+    color 150ms ease,
+    opacity 150ms ease;
+  border: 0;
+  background: transparent;
+}
+
+.clearButton:hover {
+  background: var(--surface-alt);
+  color: var(--text-main);
+}
+
+.clearButtonHidden {
+  pointer-events: none;
+  opacity: 0;
+}
+
+.listbox {
+  display: flex;
+  min-width: 11rem;
+  flex-direction: column;
+  gap: 0.125rem;
+  overflow-y: auto;
+  background: var(--surface);
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.12);
+}
+
+.listPadding {
+  padding: 0.25rem;
+}
+
+.listRadiusNone {
+  border-radius: 0;
+}
+
+.listRadiusMd {
+  border-radius: 0.5rem;
+}
+
+.listRadiusLg {
+  border-radius: 0.75rem;
+}
+
+.listBordered {
+  border: 1px solid var(--line);
+}
+
+.option {
+  display: flex;
+  width: 100%;
+  align-items: center;
+  text-align: left;
+  transition:
+    background-color 150ms ease,
+    color 150ms ease,
+    opacity 150ms ease;
+  outline: none;
+  border: 0;
+  background: transparent;
+  color: var(--text-main);
+}
+
+.option:focus,
+.option:focus-visible {
+  box-shadow: 0 0 0 2px color-mix(in srgb, var(--focus) 50%, transparent);
+  outline: none;
+}
+
+.optionSm {
+  min-height: 1.75rem;
+  padding: 0.25rem 0.5rem;
+  font-size: 0.875rem;
+  line-height: 1.25rem;
+}
+
+.optionMd {
+  min-height: 2.5rem;
+  padding: 0.5rem 0.75rem;
+  font-size: 0.875rem;
+  line-height: 1.25rem;
+}
+
+.optionLg {
+  min-height: 3.5rem;
+  padding: 0.75rem 1rem;
+  font-size: 1rem;
+  line-height: 1.5rem;
+}
+
+.optionRadiusNone {
+  border-radius: 0;
+}
+
+.optionRadiusMd {
+  border-radius: 0.5rem;
+}
+
+.optionRadiusLg {
+  border-radius: 0.75rem;
+}
+
+.optionDisabled {
+  cursor: not-allowed;
+  opacity: 0.6;
+}
+
+.optionActive {
+  background: var(--surface-alt);
+}
+
+.optionHover:hover {
+  background: var(--surface-alt);
+  color: var(--text-main);
+}
+
+.placeholder {
+  color: var(--text-placeholder);
+}
+
+.icon {
+  display: inline-flex;
+  flex-shrink: 0;
+  align-items: center;
+  justify-content: center;
+  color: var(--text-muted);
+}

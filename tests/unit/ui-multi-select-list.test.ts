@@ -28,9 +28,9 @@ describe("UIMultiSelectList", () => {
       })
     );
 
-    expect(smallHtml).toContain("min-h-7");
-    expect(mediumHtml).toContain("min-h-10");
-    expect(largeHtml).toContain("min-h-14");
+    expect(smallHtml).toContain('data-size="sm"');
+    expect(mediumHtml).toContain('data-size="md"');
+    expect(largeHtml).toContain('data-size="lg"');
   });
 
   it("renders matching border radius values", () => {
@@ -56,9 +56,9 @@ describe("UIMultiSelectList", () => {
       })
     );
 
-    expect(noneHtml).toContain("rounded-none");
-    expect(mdHtml).toContain("rounded-lg");
-    expect(lgHtml).toContain("rounded-xl");
+    expect(noneHtml).toContain('data-border-radius="none"');
+    expect(mdHtml).toContain('data-border-radius="md"');
+    expect(lgHtml).toContain('data-border-radius="lg"');
   });
 
   it("applies border radius to selected checkbox markers", () => {
@@ -114,8 +114,7 @@ describe("UIMultiSelectList", () => {
       })
     );
 
-    expect(html).toContain("border-danger-line");
-    expect(html).toContain("bg-danger-100");
+    expect(html).toContain('data-invalid="true"');
   });
 
   it("renders selected option state", () => {

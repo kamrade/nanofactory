@@ -28,9 +28,9 @@ describe("UIMultiSelect", () => {
       })
     );
 
-    expect(smallHtml).toContain("h-7");
-    expect(mediumHtml).toContain("h-10");
-    expect(largeHtml).toContain("h-14");
+    expect(smallHtml).toContain('data-size="sm"');
+    expect(mediumHtml).toContain('data-size="md"');
+    expect(largeHtml).toContain('data-size="lg"');
   });
 
   it("renders matching border radius values", () => {
@@ -56,9 +56,9 @@ describe("UIMultiSelect", () => {
       })
     );
 
-    expect(noneHtml).toContain("rounded-none");
-    expect(mdHtml).toContain("rounded-lg");
-    expect(lgHtml).toContain("rounded-xl");
+    expect(noneHtml).toContain('data-border-radius="none"');
+    expect(mdHtml).toContain('data-border-radius="md"');
+    expect(lgHtml).toContain('data-border-radius="lg"');
   });
 
   it("uses listbox popup semantics", () => {
@@ -109,8 +109,7 @@ describe("UIMultiSelect", () => {
       })
     );
 
-    expect(html).toContain("border-danger-line");
-    expect(html).toContain("bg-danger-100");
+    expect(html).toContain('data-invalid="true"');
   });
 
   it("renders hidden inputs when name prop is provided", () => {

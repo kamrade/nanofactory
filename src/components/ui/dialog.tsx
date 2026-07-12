@@ -177,6 +177,9 @@ type UIDialogContentProps = HTMLAttributes<HTMLDivElement> & {
   closeOnOverlayClick?: boolean;
   closeOnEscape?: boolean;
   ariaLabel?: string;
+  paddingClassName?: string;
+  size?: "sm" | "md" | "lg";
+  borderRadius?: "none" | "md" | "lg";
 };
 
 export function UIDialogContent({
@@ -185,6 +188,9 @@ export function UIDialogContent({
   closeOnOverlayClick = true,
   closeOnEscape = true,
   ariaLabel,
+  paddingClassName,
+  size,
+  borderRadius,
   ...props
 }: UIDialogContentProps) {
   const {
@@ -198,6 +204,7 @@ export function UIDialogContent({
     hasDescription,
   } = useDialogContext();
   const [themeAttrs, setThemeAttrs] = useState<ThemeAttrs>({});
+  const resolvedBorderRadius = borderRadius ?? "lg";
 
   useEffect(() => {
     if (!open) {
@@ -292,7 +299,13 @@ export function UIDialogContent({
           aria-describedby={hasDescription ? descriptionId : undefined}
           tabIndex={-1}
           className={cx(
-            "w-full max-w-lg rounded-2xl border border-line bg-surface p-6 shadow-[0_16px_48px_rgba(0,0,0,0.2)] outline-none",
+            "w-full max-w-lg border border-line bg-surface shadow-[0_16px_48px_rgba(0,0,0,0.2)] outline-none",
+            paddingClassName ?? "p-6",
+            resolvedBorderRadius === "none"
+              ? "rounded-none"
+              : resolvedBorderRadius === "md"
+                ? "rounded-lg"
+                : "rounded-xl",
             "focus:ring-2 focus:ring-focus/50 focus:ring-offset-0",
             className
           )}

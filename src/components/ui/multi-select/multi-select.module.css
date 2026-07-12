@@ -1,0 +1,168 @@
+.root {
+  width: 100%;
+}
+
+.trigger {
+  display: flex;
+  width: 100%;
+  align-items: center;
+  outline: none;
+  transition:
+    background-color 150ms ease,
+    color 150ms ease,
+    border-color 150ms ease,
+    box-shadow 150ms ease,
+    opacity 150ms ease;
+}
+
+.trigger:focus,
+.trigger:focus-visible {
+  box-shadow: 0 0 0 2px color-mix(in srgb, var(--focus) 50%, transparent);
+  outline: none;
+}
+
+.triggerBordered {
+  border: 1px solid var(--line);
+}
+
+.triggerInvalid {
+  border-color: var(--danger-line);
+  background: var(--danger-100);
+}
+
+.triggerSuccess {
+  border-color: var(--primary-line);
+  background: var(--surface);
+}
+
+.triggerDefault {
+  background: var(--surface);
+}
+
+.triggerReadOnly {
+  background: var(--surface-alt);
+}
+
+.triggerBorderless {
+  border: 0;
+}
+
+.triggerSm {
+  height: 1.75rem;
+}
+
+.triggerMd {
+  height: 2.5rem;
+}
+
+.triggerLg {
+  height: 3.5rem;
+}
+
+.triggerPaddingSm {
+  padding-inline: 0.5rem;
+}
+
+.triggerPaddingMd {
+  padding-inline: 0.75rem;
+}
+
+.triggerPaddingLg {
+  padding-inline: 1rem;
+}
+
+.triggerBorderless.triggerPaddingSm,
+.triggerBorderless.triggerPaddingMd,
+.triggerBorderless.triggerPaddingLg {
+  padding-inline: 0;
+}
+
+.triggerRadiusNone {
+  border-radius: 0;
+}
+
+.triggerRadiusMd {
+  border-radius: 0.5rem;
+}
+
+.triggerRadiusLg {
+  border-radius: 0.75rem;
+}
+
+.triggerTextSm {
+  font-size: 0.875rem;
+  line-height: 1.25rem;
+}
+
+.triggerTextLg {
+  font-size: 1rem;
+  line-height: 1.5rem;
+}
+
+.triggerGapSm {
+  gap: 0.375rem;
+}
+
+.triggerGapMd {
+  gap: 0.5rem;
+}
+
+.triggerIconSm {
+  height: 0.875rem;
+  width: 0.875rem;
+}
+
+.triggerIconMd {
+  height: 1rem;
+  width: 1rem;
+}
+
+.triggerIconLg {
+  height: 1rem;
+  width: 1rem;
+}
+
+.clearSm {
+  height: 1.25rem;
+  width: 1.25rem;
+}
+
+.clearMd {
+  height: 1.5rem;
+  width: 1.5rem;
+}
+
+.clearLg {
+  height: 1.75rem;
+  width: 1.75rem;
+}
+
+.clearButton {
+  display: inline-flex;
+  flex-shrink: 0;
+  align-items: center;
+  justify-content: center;
+  border-radius: 0.375rem;
+  color: var(--text-muted);
+  transition:
+    background-color 150ms ease,
+    color 150ms ease,
+    opacity 150ms ease;
+  border: 0;
+  background: transparent;
+}
+
+.clearButton:hover {
+  background: var(--surface-alt);
+  color: var(--text-main);
+}
+
+.clearButtonHidden {
+  pointer-events: none;
+  opacity: 0;
+}
+
+.list {
+  width: min(100vw - 2rem, 26rem);
+}
+

@@ -85,21 +85,15 @@ describe("UI navigation components", () => {
       })
     );
 
-    expect(sm).toContain("h-7");
-    expect(md).toContain("h-10");
-    expect(lg).toContain("h-14");
-    expect(sm).toContain("rounded-none");
-    expect(md).toContain("rounded-lg");
-    expect(lg).toContain("rounded-xl");
+    expect(sm).toContain('data-size="sm"');
+    expect(md).toContain('data-size="md"');
+    expect(lg).toContain('data-size="lg"');
+    expect(sm).toContain('data-border-radius="none"');
+    expect(md).toContain('data-border-radius="md"');
+    expect(lg).toContain('data-border-radius="lg"');
     expect(sm).toContain('role="radio"');
     expect(md).toContain('role="radio"');
     expect(lg).toContain('role="radio"');
-    expect(sm).toContain("rounded-none");
-    expect(md).toContain("rounded-lg");
-    expect(lg).toContain("rounded-xl");
-    expect(sm).toContain("text-sm leading-5");
-    expect(md).toContain("text-sm leading-5");
-    expect(lg).toContain("text-base leading-6");
   });
 
   it("renders borderless segmented control without outer border", () => {
@@ -116,8 +110,7 @@ describe("UI navigation components", () => {
       })
     );
 
-    expect(html).not.toContain("border-line");
-    expect(html).not.toContain("focus:ring-2");
-    expect(html).toContain("bg-neutral-100");
+    expect(html).toContain('data-borderless="true"');
+    expect(html).toContain('role="radiogroup"');
   });
 });

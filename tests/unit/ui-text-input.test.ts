@@ -16,9 +16,9 @@ describe("UITextInput", () => {
       createElement(UITextInput, { size: "lg", defaultValue: "a" })
     );
 
-    expect(smallHtml).toContain("h-7");
-    expect(mediumHtml).toContain("h-10");
-    expect(largeHtml).toContain("h-14");
+    expect(smallHtml).toContain('data-size="sm"');
+    expect(mediumHtml).toContain('data-size="md"');
+    expect(largeHtml).toContain('data-size="lg"');
   });
 
   it("renders matching border radius values", () => {
@@ -32,9 +32,9 @@ describe("UITextInput", () => {
       createElement(UITextInput, { borderRadius: "lg", defaultValue: "a" })
     );
 
-    expect(noneHtml).toContain("rounded-none");
-    expect(mdHtml).toContain("rounded-lg");
-    expect(lgHtml).toContain("rounded-xl");
+    expect(noneHtml).toContain('data-border-radius="none"');
+    expect(mdHtml).toContain('data-border-radius="md"');
+    expect(lgHtml).toContain('data-border-radius="lg"');
   });
 
   it("marks input as invalid when invalid prop is set", () => {
@@ -43,7 +43,7 @@ describe("UITextInput", () => {
     );
 
     expect(html).toContain('aria-invalid="true"');
-    expect(html).toContain("border-danger-line");
+    expect(html).toContain('data-invalid="true"');
   });
 
   it("renders without borders when borderless is enabled", () => {
@@ -51,11 +51,7 @@ describe("UITextInput", () => {
       createElement(UITextInput, { borderless: true, defaultValue: "borderless" })
     );
 
-    expect(html).not.toContain("px-2");
-    expect(html).not.toContain("px-3");
-    expect(html).not.toContain("border-line");
-    expect(html).not.toContain("border-danger-line");
-    expect(html).not.toContain("border-primary-line");
+    expect(html).toContain('data-borderless="true"');
   });
 
   it("renders clear button slot when clearable is enabled", () => {

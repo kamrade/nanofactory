@@ -1,0 +1,120 @@
+.root {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.75rem;
+  text-align: left;
+  color: var(--text-main);
+  transition:
+    color 150ms ease,
+    opacity 150ms ease;
+}
+
+.rootDisabled {
+  cursor: not-allowed;
+  opacity: 0.6;
+}
+
+.track {
+  display: inline-flex;
+  flex-shrink: 0;
+  align-items: center;
+  border: 1px solid transparent;
+  border-radius: 9999px;
+  transition:
+    background-color 150ms ease,
+    border-color 150ms ease,
+    box-shadow 150ms ease;
+}
+
+.track:focus,
+.track:focus-visible {
+  box-shadow: 0 0 0 2px color-mix(in srgb, var(--focus) 100%, transparent);
+  outline: none;
+}
+
+.trackOff {
+  border-color: var(--neutral-line);
+  background: var(--surface);
+}
+
+.trackOn {
+  border-color: transparent;
+  background: var(--primary-100);
+}
+
+.trackSm {
+  height: 1rem;
+  width: 1.75rem;
+  padding: 2px;
+}
+
+.trackMd {
+  height: 1.25rem;
+  width: 2.25rem;
+  padding: 2px;
+}
+
+.trackLg {
+  height: 1.5rem;
+  width: 2.5rem;
+  padding: 3px;
+}
+
+.thumb {
+  display: block;
+  flex-shrink: 0;
+  border-radius: 9999px;
+  transition:
+    transform 150ms ease,
+    background-color 150ms ease;
+}
+
+.thumbOff {
+  background: var(--text-main);
+}
+
+.thumbOn {
+  background: var(--text-inverted-main);
+}
+
+.thumbSm {
+  height: 0.75rem;
+  width: 0.75rem;
+}
+
+.thumbMd {
+  height: 0.875rem;
+  width: 0.875rem;
+}
+
+.thumbLg {
+  height: 1rem;
+  width: 1rem;
+}
+
+.thumbCheckedSm {
+  transform: translateX(0.75rem);
+}
+
+.thumbCheckedMd {
+  transform: translateX(1rem);
+}
+
+.thumbCheckedLg {
+  transform: translateX(1rem);
+}
+
+.labelSm {
+  font-size: 0.875rem;
+  line-height: 1.25rem;
+}
+
+.labelMd {
+  font-size: 0.875rem;
+  line-height: 1.25rem;
+}
+
+.labelLg {
+  font-size: 1rem;
+  line-height: 1.5rem;
+}

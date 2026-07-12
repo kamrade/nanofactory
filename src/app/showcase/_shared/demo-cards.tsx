@@ -19,14 +19,45 @@ import {
 import { UIModal, UIModalForm } from "@/components/ui/modal";
 import { UISelect } from "@/components/ui/select";
 import { UITextInput } from "@/components/ui/text-input";
+import { cx } from "@/lib/cn";
 import { formatUiDateTime } from "@/lib/ui-date-time";
 
 import type { UiSize } from "./uikit-sections";
 import { UikitSectionAnchor } from "./uikit-sections/section-anchor";
 
-export function DialogDemoCard({ uiSize }: { uiSize: UiSize }) {
+export function DialogDemoCard({
+  uiSize,
+  borderRadius = "lg",
+}: {
+  uiSize: UiSize;
+  borderRadius?: "none" | "md" | "lg";
+}) {
   const [dialogOpen, setDialogOpen] = useState(false);
   const [dialogAction, setDialogAction] = useState("none");
+  const dialogShellClassName =
+    uiSize === "sm"
+      ? "p-4"
+      : uiSize === "md"
+        ? "p-5"
+        : "p-6";
+  const dialogHeaderClassName =
+    uiSize === "sm"
+      ? "gap-1"
+      : uiSize === "md"
+        ? "gap-1.5"
+        : "gap-2";
+  const dialogTitleClassName =
+    uiSize === "sm"
+      ? "text-base"
+      : uiSize === "md"
+        ? "text-lg"
+        : "text-xl";
+  const dialogFooterClassName =
+    uiSize === "sm"
+      ? "mt-4"
+      : uiSize === "md"
+        ? "mt-5"
+        : "mt-6";
 
   return (
     <UikitSectionAnchor id="dialog">
@@ -35,20 +66,24 @@ export function DialogDemoCard({ uiSize }: { uiSize: UiSize }) {
           <div className="flex flex-wrap items-center gap-3">
             <UIDialog open={dialogOpen} onOpenChange={setDialogOpen}>
               <UIDialogTrigger>
-                <UIButton theme="primary" variant="contained" size={uiSize}>
+                <UIButton theme="primary" variant="contained" size={uiSize} borderRadius={borderRadius}>
                   Open dialog
                 </UIButton>
               </UIDialogTrigger>
-              <UIDialogContent>
-                <UIDialogHeader>
-                  <UIDialogTitle>Publish changes</UIDialogTitle>
+              <UIDialogContent
+                size={uiSize}
+                borderRadius={borderRadius}
+                paddingClassName={dialogShellClassName}
+              >
+                <UIDialogHeader className={dialogHeaderClassName}>
+                  <UIDialogTitle className={dialogTitleClassName}>Publish changes</UIDialogTitle>
                   <UIDialogDescription>
                     Review content one more time before publishing this section.
                   </UIDialogDescription>
                 </UIDialogHeader>
-                <UIDialogFooter>
+                <UIDialogFooter className={dialogFooterClassName}>
                   <UIDialogClose>
-                    <UIButton theme="base" variant="outlined" size={uiSize}>
+                    <UIButton theme="base" variant="outlined" size={uiSize} borderRadius={borderRadius}>
                       Cancel
                     </UIButton>
                   </UIDialogClose>
@@ -57,6 +92,7 @@ export function DialogDemoCard({ uiSize }: { uiSize: UiSize }) {
                       theme="primary"
                       variant="contained"
                       size={uiSize}
+                      borderRadius={borderRadius}
                       onClick={() => setDialogAction("published")}
                     >
                       Publish
@@ -68,7 +104,7 @@ export function DialogDemoCard({ uiSize }: { uiSize: UiSize }) {
 
             <UIConfirmDialog
               trigger={
-                <UIButton theme="danger" variant="outlined" size={uiSize}>
+                <UIButton theme="danger" variant="outlined" size={uiSize} borderRadius={borderRadius}>
                   Open confirm
                 </UIButton>
               }
@@ -87,7 +123,19 @@ export function DialogDemoCard({ uiSize }: { uiSize: UiSize }) {
   );
 }
 
-export function ModalDemoCard({ uiSize }: { uiSize: UiSize }) {
+export function ModalDemoCard({
+  uiSize,
+  borderRadius = "lg",
+}: {
+  uiSize: UiSize;
+  borderRadius?: "none" | "md" | "lg";
+}) {
+  const fieldLabelClassName =
+    uiSize === "sm"
+      ? "text-sm"
+      : uiSize === "md"
+        ? "text-sm"
+        : "text-base";
   const [profileName, setProfileName] = useState("Jane Doe");
   const [profileEmail, setProfileEmail] = useState("jane@example.com");
   const [profileRole, setProfileRole] = useState("Designer");
@@ -100,9 +148,10 @@ export function ModalDemoCard({ uiSize }: { uiSize: UiSize }) {
         <div className="grid gap-4">
           <div className="flex flex-wrap items-center gap-3">
             <UIModal
-              size="lg"
+              size={uiSize}
+              borderRadius={borderRadius}
               trigger={
-                <UIButton theme="base" variant="outlined" size={uiSize}>
+                <UIButton theme="base" variant="outlined" size={uiSize} borderRadius={borderRadius}>
                   Open content modal
                 </UIButton>
               }
@@ -121,9 +170,10 @@ export function ModalDemoCard({ uiSize }: { uiSize: UiSize }) {
             </UIModal>
 
             <UIModalForm
-              size="md"
+              size={uiSize}
+              borderRadius={borderRadius}
               trigger={
-                <UIButton theme="primary" variant="contained" size={uiSize}>
+                <UIButton theme="primary" variant="contained" size={uiSize} borderRadius={borderRadius}>
                   Open form modal
                 </UIButton>
               }
@@ -139,29 +189,32 @@ export function ModalDemoCard({ uiSize }: { uiSize: UiSize }) {
               }}
             >
               <div className="grid gap-3">
-                <label className="grid gap-1.5 text-sm">
+                <label className={cx("grid gap-1.5", fieldLabelClassName)}>
                   <span className="font-medium text-text-main">Name</span>
                   <UITextInput
                     value={profileName}
                     onValueChange={setProfileName}
-                    size="sm"
+                    size={uiSize}
+                    borderRadius={borderRadius}
                     placeholder="Name"
                   />
                 </label>
-                <label className="grid gap-1.5 text-sm">
+                <label className={cx("grid gap-1.5", fieldLabelClassName)}>
                   <span className="font-medium text-text-main">Email</span>
                   <UITextInput
                     type="email"
                     value={profileEmail}
                     onValueChange={setProfileEmail}
-                    size="sm"
+                    size={uiSize}
+                    borderRadius={borderRadius}
                     placeholder="Email"
                   />
                 </label>
-                <label className="grid gap-1.5 text-sm">
+                <label className={cx("grid gap-1.5", fieldLabelClassName)}>
                   <span className="font-medium text-text-main">Role</span>
                   <UISelect
-                    size="sm"
+                    size={uiSize}
+                    borderRadius={borderRadius}
                     value={profileRole}
                     onValueChange={setProfileRole}
                     options={[

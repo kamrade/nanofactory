@@ -1,0 +1,242 @@
+.root {
+  width: 100%;
+}
+
+.control {
+  display: flex;
+  width: 100%;
+  align-items: center;
+  transition:
+    background-color 150ms ease,
+    color 150ms ease,
+    border-color 150ms ease,
+    box-shadow 150ms ease,
+    opacity 150ms ease;
+  outline: none;
+}
+
+.control:focus-within {
+  box-shadow: 0 0 0 2px color-mix(in srgb, var(--focus) 50%, transparent);
+}
+
+.controlDisabled {
+  cursor: not-allowed;
+  opacity: 0.6;
+}
+
+.controlBordered {
+  border: 1px solid var(--line);
+}
+
+.controlInvalid {
+  border-color: var(--danger-line);
+  background: var(--danger-100);
+}
+
+.controlSuccess {
+  border-color: var(--primary-line);
+  background: var(--surface);
+}
+
+.controlDefault {
+  background: var(--surface);
+}
+
+.controlReadOnly {
+  background: var(--surface-alt);
+}
+
+.controlBorderless {
+  border: 0;
+}
+
+.controlBorderless.controlInvalid {
+  border-color: transparent;
+}
+
+.controlSm {
+  height: 1.75rem;
+}
+
+.controlMd {
+  height: 2.5rem;
+}
+
+.controlLg {
+  height: 3.5rem;
+}
+
+.controlBorderless.controlSm {
+  height: 1.75rem;
+}
+
+.controlBorderless.controlMd {
+  height: 2.5rem;
+}
+
+.controlBorderless.controlLg {
+  height: 3.5rem;
+}
+
+.controlPaddingSm {
+  padding-inline: 0.75rem;
+}
+
+.controlPaddingMd {
+  padding-inline: 1rem;
+}
+
+.controlPaddingLg {
+  padding-inline: 1.25rem;
+}
+
+.controlBorderless.controlPaddingSm,
+.controlBorderless.controlPaddingMd,
+.controlBorderless.controlPaddingLg {
+  padding-inline: 0;
+}
+
+.controlRadiusNone {
+  border-radius: 0;
+}
+
+.controlRadiusMd {
+  border-radius: 0.5rem;
+}
+
+.controlRadiusLg {
+  border-radius: 0.75rem;
+}
+
+.controlGapSm {
+  gap: 0.375rem;
+}
+
+.controlGapMd {
+  gap: 0.5rem;
+}
+
+.controlGapLg {
+  gap: 0.5rem;
+}
+
+.iconSm {
+  height: 0.875rem;
+  width: 0.875rem;
+}
+
+.iconMd {
+  height: 1rem;
+  width: 1rem;
+}
+
+.iconLg {
+  height: 1rem;
+  width: 1rem;
+}
+
+.clearSm {
+  height: 1.25rem;
+  width: 1.25rem;
+}
+
+.clearMd {
+  height: 1.5rem;
+  width: 1.5rem;
+}
+
+.clearLg {
+  height: 1.75rem;
+  width: 1.75rem;
+}
+
+.toggleSm {
+  height: 1.25rem;
+  min-width: 2.5rem;
+  padding-inline: 0.375rem;
+  font-size: 0.6875rem;
+  line-height: 1rem;
+}
+
+.toggleMd {
+  height: 1.5rem;
+  min-width: 3rem;
+  padding-inline: 0.5rem;
+  font-size: 0.75rem;
+  line-height: 1rem;
+}
+
+.toggleLg {
+  height: 1.75rem;
+  min-width: 3.5rem;
+  padding-inline: 0.625rem;
+  font-size: 0.875rem;
+  line-height: 1.25rem;
+}
+
+.inputSm {
+  font-size: 0.875rem;
+  line-height: 1.25rem;
+}
+
+.inputMd {
+  font-size: 0.875rem;
+  line-height: 1.25rem;
+}
+
+.inputLg {
+  font-size: 1rem;
+  line-height: 1.5rem;
+}
+
+.labelIcon {
+  display: inline-flex;
+  flex-shrink: 0;
+  align-items: center;
+  justify-content: center;
+  color: var(--text-muted);
+}
+
+.field {
+  width: 100%;
+  min-width: 0;
+  background: transparent;
+  color: var(--text-main);
+  outline: none;
+  border: 0;
+}
+
+.field::placeholder {
+  color: var(--text-placeholder);
+}
+
+.field::-webkit-search-cancel-button,
+.field::-webkit-search-decoration {
+  appearance: none;
+}
+
+.actionButton {
+  display: inline-flex;
+  flex-shrink: 0;
+  align-items: center;
+  justify-content: center;
+  border-radius: 0.375rem;
+  color: var(--text-muted);
+  transition:
+    background-color 150ms ease,
+    color 150ms ease,
+    opacity 150ms ease;
+  border: 0;
+  background: transparent;
+  cursor: pointer;
+}
+
+.actionButton:hover {
+  background: var(--surface-alt);
+  color: var(--text-main);
+}
+
+.actionButtonDisabled {
+  pointer-events: none;
+  opacity: 0;
+}

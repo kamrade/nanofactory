@@ -78,9 +78,9 @@ export function ComponentsShowcaseSection({
       case "feedback-sheet":
         return <SheetCard uiSize={uiSize} />;
       case "dialog":
-        return <DialogDemoCard uiSize={uiSize} />;
+        return <DialogDemoCard uiSize={uiSize} borderRadius={borderRadius} />;
       case "modal":
-        return <ModalDemoCard uiSize={uiSize} />;
+        return <ModalDemoCard uiSize={uiSize} borderRadius={borderRadius} />;
       case "markdown":
         return <MarkdownDemoCard />;
       default:
