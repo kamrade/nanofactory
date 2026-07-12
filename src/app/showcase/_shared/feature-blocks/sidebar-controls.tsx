@@ -2,6 +2,7 @@
 
 import type { Dispatch, ReactNode, SetStateAction } from "react";
 
+import { UISegmentedControl } from "@/components/ui/segmented-control";
 import { UISelect } from "@/components/ui/select";
 import {
   PROJECT_BORDER_RADIUS_POLICIES,
@@ -42,14 +43,19 @@ function SidebarField({
   );
 }
 
+function toLabel(value: string) {
+  return value
+    .split("-")
+    .map((part) => part.charAt(0).toUpperCase() + part.slice(1))
+    .join(" ");
+}
+
 export function FeatureBlocksSidebarControls({ value, onChange }: FeatureBlocksSidebarControlsProps) {
   return (
     <div className="grid gap-4">
       <SidebarField label="Border radius">
-        <UISelect
+        <UISegmentedControl
           ariaLabel="Border radius"
-          size="sm"
-          className="w-full"
           value={value.borderRadiusPolicy}
           onValueChange={(nextValue) =>
             onChange((current) => ({
@@ -59,17 +65,14 @@ export function FeatureBlocksSidebarControls({ value, onChange }: FeatureBlocksS
           }
           options={PROJECT_BORDER_RADIUS_POLICIES.map((policy) => ({
             value: policy,
-            label: policy,
-            textValue: policy,
+            label: toLabel(policy),
           }))}
         />
       </SidebarField>
 
       <SidebarField label="Spacing scale">
-        <UISelect
+        <UISegmentedControl
           ariaLabel="Spacing scale"
-          size="sm"
-          className="w-full"
           value={value.spacingScale}
           onValueChange={(nextValue) =>
             onChange((current) => ({
@@ -79,17 +82,14 @@ export function FeatureBlocksSidebarControls({ value, onChange }: FeatureBlocksS
           }
           options={PROJECT_SPACING_SCALES.map((scale) => ({
             value: scale,
-            label: scale,
-            textValue: scale,
+            label: toLabel(scale),
           }))}
         />
       </SidebarField>
 
       <SidebarField label="Surface style">
-        <UISelect
+        <UISegmentedControl
           ariaLabel="Surface style"
-          size="sm"
-          className="w-full"
           value={value.surfaceStyle}
           onValueChange={(nextValue) =>
             onChange((current) => ({
@@ -99,8 +99,7 @@ export function FeatureBlocksSidebarControls({ value, onChange }: FeatureBlocksS
           }
           options={PROJECT_SURFACE_STYLES.map((style) => ({
             value: style,
-            label: style,
-            textValue: style,
+            label: toLabel(style),
           }))}
         />
       </SidebarField>

@@ -1,5 +1,6 @@
 "use client";
 
+import type { ReactNode } from "react";
 import { useToast } from "@/hooks/use-toast";
 
 import { DialogDemoCard, MarkdownDemoCard, ModalDemoCard } from "@/app/showcase/_shared/demo-cards";
@@ -28,9 +29,14 @@ import type { ComponentsSectionPageKey } from "./section-pages";
 type ComponentsShowcaseSectionProps = {
   activeSection: ComponentsSectionPageKey;
   uiSize: UiSize;
+  topContent?: ReactNode;
 };
 
-export function ComponentsShowcaseSection({ activeSection, uiSize }: ComponentsShowcaseSectionProps) {
+export function ComponentsShowcaseSection({
+  activeSection,
+  uiSize,
+  topContent,
+}: ComponentsShowcaseSectionProps) {
   const { showToast, clearToasts } = useToast();
 
   const content = (() => {
@@ -87,6 +93,7 @@ export function ComponentsShowcaseSection({ activeSection, uiSize }: ComponentsS
             title="Components"
             ariaLabel="Components sections"
             activeSectionId={activeSection}
+            topContent={topContent}
           />
           {content}
         </div>

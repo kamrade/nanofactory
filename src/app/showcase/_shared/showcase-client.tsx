@@ -11,6 +11,7 @@ import {
 import { AnimationsSection } from "@/app/showcase/_shared/animation-sections";
 import { animationsSectionNavItems } from "@/app/showcase/_shared/animation-sections/nav";
 import { ComponentsShowcaseSection } from "@/app/showcase/_shared/components/components-showcase-section";
+import { ComponentsSidebarControls } from "@/app/showcase/_shared/components/sidebar-controls";
 import {
   COMPONENTS_SECTION_PAGE_KEYS,
   type ComponentsSectionPageKey,
@@ -190,15 +191,18 @@ export function ShowcaseClient({
 
       {activeTab === "components" ? (
         <>
-          <ShowcaseTabToolbar>
-            <ShowcaseTabSettings
-              uiSize={uiSize}
-              borderRadiusPolicy={borderRadiusPolicy}
-              onUiSizeChange={setUiSize}
-              onBorderRadiusPolicyChange={setBorderRadiusPolicy}
-            />
-          </ShowcaseTabToolbar>
-          <ComponentsShowcaseSection activeSection={activeComponentSection} uiSize={uiSize} />
+          <ComponentsShowcaseSection
+            activeSection={activeComponentSection}
+            uiSize={uiSize}
+            topContent={
+              <ComponentsSidebarControls
+                uiSize={uiSize}
+                borderRadiusPolicy={borderRadiusPolicy}
+                onUiSizeChange={setUiSize}
+                onBorderRadiusPolicyChange={setBorderRadiusPolicy}
+              />
+            }
+          />
         </>
       ) : null}
 
