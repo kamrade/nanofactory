@@ -12,6 +12,7 @@ describe("feature blocks url state", () => {
     expect(
       resolveFeatureBlocksOptionsFromSearchParams({
         borderRadius: "xl",
+        size: undefined,
         spacingScale: undefined,
         surfaceStyle: "glass",
         headingFont: "geist",
@@ -19,17 +20,27 @@ describe("feature blocks url state", () => {
     ).toEqual(DEFAULT_FEATURE_BLOCKS_OPTIONS);
   });
 
+  it("supports the legacy spacingScale query param", () => {
+    expect(
+      resolveFeatureBlocksOptionsFromSearchParams({
+        spacingScale: "lg",
+      })
+    ).toMatchObject({
+      size: "lg",
+    });
+  });
+
   it("uses the first value when a query param is repeated", () => {
     expect(
       resolveFeatureBlocksOptionsFromSearchParams({
         borderRadius: ["md", "lg"],
-        spacingScale: ["lg", "sm"],
+        size: ["lg", "sm"],
         surfaceStyle: ["flat", "default"],
         headingFont: ["playfair-display", "onest"],
       })
     ).toEqual({
       borderRadiusPolicy: "md",
-      spacingScale: "lg",
+      size: "lg",
       surfaceStyle: "flat",
       headingFont: "playfair-display",
     });
@@ -40,14 +51,14 @@ describe("feature blocks url state", () => {
 
     applyFeatureBlocksOptionsToSearchParams(searchParams, {
       borderRadiusPolicy: "none",
-      spacingScale: "sm",
+      size: "sm",
       surfaceStyle: "flat",
       headingFont: "ibm-plex-mono",
     });
 
     expect(searchParams.get("foo")).toBe("bar");
     expect(searchParams.get(FEATURE_BLOCKS_QUERY_KEYS.borderRadiusPolicy)).toBe("none");
-    expect(searchParams.get(FEATURE_BLOCKS_QUERY_KEYS.spacingScale)).toBe("sm");
+    expect(searchParams.get(FEATURE_BLOCKS_QUERY_KEYS.size)).toBe("sm");
     expect(searchParams.get(FEATURE_BLOCKS_QUERY_KEYS.surfaceStyle)).toBe("flat");
     expect(searchParams.get(FEATURE_BLOCKS_QUERY_KEYS.headingFont)).toBe("ibm-plex-mono");
   });

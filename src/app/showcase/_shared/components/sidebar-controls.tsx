@@ -7,9 +7,9 @@ import type { UiSize } from "@/app/showcase/_shared/uikit-sections";
 
 type ComponentsSidebarControlsProps = {
   uiSize: UiSize;
-  buttonBorderRadius: "none" | "md" | "lg";
+  borderRadius: "none" | "md" | "lg";
   onUiSizeChange: Dispatch<SetStateAction<UiSize>>;
-  onButtonBorderRadiusChange: Dispatch<SetStateAction<"none" | "md" | "lg">>;
+  onBorderRadiusChange: Dispatch<SetStateAction<"none" | "md" | "lg">>;
 };
 
 function SidebarField({
@@ -29,9 +29,9 @@ function SidebarField({
 
 export function ComponentsSidebarControls({
   uiSize,
-  buttonBorderRadius,
+  borderRadius,
   onUiSizeChange,
-  onButtonBorderRadiusChange,
+  onBorderRadiusChange,
 }: ComponentsSidebarControlsProps) {
   return (
     <div className="grid gap-4">
@@ -50,9 +50,9 @@ export function ComponentsSidebarControls({
 
       <SidebarField label="Border radius">
         <UISegmentedControl
-          ariaLabel="Button border radius"
-          value={buttonBorderRadius}
-          onValueChange={(nextValue) => onButtonBorderRadiusChange(nextValue as "none" | "md" | "lg")}
+          ariaLabel="Border radius"
+          value={borderRadius}
+          onValueChange={(nextValue) => onBorderRadiusChange(nextValue as "none" | "md" | "lg")}
           options={[
             { value: "none", label: "none" },
             { value: "md", label: "md" },

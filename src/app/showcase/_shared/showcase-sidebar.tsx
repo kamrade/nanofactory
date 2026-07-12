@@ -16,6 +16,7 @@ import {
 } from "@/components/ui/sheet";
 import { cx } from "@/lib/cn";
 
+import { appendSearchParamsToPath } from "./showcase-url-state";
 import type { UikitSectionNavItem } from "./uikit-sections/nav";
 
 type ShowcaseSidebarProps = {
@@ -24,6 +25,7 @@ type ShowcaseSidebarProps = {
   ariaLabel?: string;
   activeSectionId?: string;
   topContent?: ReactNode;
+  linkSearchParams?: URLSearchParams;
 };
 
 function scrollToSection(id: string) {
@@ -41,12 +43,14 @@ function ShowcaseSectionButton({
   active,
   onSelect,
   onItemClick,
+  linkSearchParams,
   className,
 }: {
   section: UikitSectionNavItem;
   active: boolean;
   onSelect: (id: string) => void;
   onItemClick?: () => void;
+  linkSearchParams?: URLSearchParams;
   className?: string;
 }) {
   const sharedClassName = cx(
@@ -60,7 +64,7 @@ function ShowcaseSectionButton({
   if (section.href) {
     return (
       <Link
-        href={section.href}
+        href={linkSearchParams ? appendSearchParamsToPath(section.href, linkSearchParams) : section.href}
         aria-current={active ? "page" : undefined}
         onClick={onItemClick}
         className={sharedClassName}
@@ -91,12 +95,14 @@ function ShowcaseSidebarList({
   activeSectionId,
   onSelect,
   onItemClick,
+  linkSearchParams,
   compact = false,
 }: {
   sections: UikitSectionNavItem[];
   activeSectionId: string;
   onSelect: (id: string) => void;
   onItemClick?: () => void;
+  linkSearchParams?: URLSearchParams;
   compact?: boolean;
 }) {
   return (
@@ -108,6 +114,7 @@ function ShowcaseSidebarList({
           active={section.id === activeSectionId}
           onSelect={onSelect}
           onItemClick={onItemClick}
+          linkSearchParams={linkSearchParams}
           className={compact ? "text-xs leading-4" : "text-sm leading-5"}
         />
       ))}
@@ -121,6 +128,7 @@ export function ShowcaseSidebar({
   ariaLabel = "UIKit sections",
   activeSectionId: controlledActiveSectionId,
   topContent,
+  linkSearchParams,
 }: ShowcaseSidebarProps) {
   const [activeSectionId, setActiveSectionId] = useState(
     () => controlledActiveSectionId ?? sections[0]?.id ?? ""
@@ -205,6 +213,7 @@ export function ShowcaseSidebar({
               <ShowcaseSidebarList
                 sections={sections}
                 activeSectionId={activeSectionId}
+                linkSearchParams={linkSearchParams}
                 onSelect={(id) => {
                   handleSelect(id);
                   setMobileOpen(false);
@@ -238,6 +247,7 @@ export function ShowcaseSidebar({
           <ShowcaseSidebarList
             sections={sections}
             activeSectionId={activeSectionId}
+            linkSearchParams={linkSearchParams}
             onSelect={hasLinkedItems ? () => {} : handleSelect}
             onItemClick={hasLinkedItems ? () => setMobileOpen(false) : undefined}
           />

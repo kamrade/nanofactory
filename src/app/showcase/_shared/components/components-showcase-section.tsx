@@ -29,14 +29,16 @@ import type { ComponentsSectionPageKey } from "./section-pages";
 type ComponentsShowcaseSectionProps = {
   activeSection: ComponentsSectionPageKey;
   uiSize: UiSize;
-  buttonBorderRadius: "none" | "md" | "lg";
+  borderRadius: "none" | "md" | "lg";
+  linkSearchParams?: URLSearchParams;
   topContent?: ReactNode;
 };
 
 export function ComponentsShowcaseSection({
   activeSection,
   uiSize,
-  buttonBorderRadius,
+  borderRadius,
+  linkSearchParams,
   topContent,
 }: ComponentsShowcaseSectionProps) {
   const { showToast, clearToasts } = useToast();
@@ -46,11 +48,11 @@ export function ComponentsShowcaseSection({
       case "typography-headings":
         return <TypographyHeadingsCard />;
       case "typography-buttons":
-        return <TypographyButtonsCard uiSize={uiSize} buttonBorderRadius={buttonBorderRadius} />;
+        return <TypographyButtonsCard uiSize={uiSize} borderRadius={borderRadius} />;
       case "typography-badges":
-        return <TypographyBadgesCard uiSize={uiSize} />;
+        return <TypographyBadgesCard uiSize={uiSize} borderRadius={borderRadius} />;
       case "controls-menu":
-        return <MenuCard uiSize={uiSize} />;
+        return <MenuCard uiSize={uiSize} borderRadius={borderRadius} />;
       case "controls-checkbox":
         return <ControlsCheckboxCard />;
       case "controls-switcher":
@@ -95,6 +97,7 @@ export function ComponentsShowcaseSection({
             title="Components"
             ariaLabel="Components sections"
             activeSectionId={activeSection}
+            linkSearchParams={linkSearchParams}
             topContent={topContent}
           />
           {content}

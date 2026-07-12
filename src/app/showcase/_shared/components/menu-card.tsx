@@ -9,8 +9,13 @@ import { UIDivider } from "@/components/ui/divider";
 import { UIMenu, UIMenuItem, UIMenuLabel, UIMenuSeparator } from "@/components/ui/menu";
 
 import type { UiSize } from "@/app/showcase/_shared/uikit-sections";
+import {
+  menuRadiusStyles,
+  resolveMenuBorderRadiusValue,
+  type UIMenuBorderRadius,
+} from "@/components/ui/menu/menu-radius";
 
-export function MenuCard({ uiSize }: { uiSize: UiSize }) {
+export function MenuCard({ uiSize, borderRadius }: { uiSize: UiSize; borderRadius: UIMenuBorderRadius }) {
   const [menuAction, setMenuAction] = useState("none");
   const [manualMenuAction, setManualMenuAction] = useState("none");
   const [inlineMenuAction, setInlineMenuAction] = useState("none");
@@ -23,6 +28,7 @@ export function MenuCard({ uiSize }: { uiSize: UiSize }) {
             ariaLabel="Card actions"
             placement="bottom-start"
             size={uiSize}
+            borderRadius={borderRadius}
             onAction={setMenuAction}
             items={[
               { id: "edit", label: "Edit", textValue: "Edit", icon: <FiEdit2 aria-hidden className="h-4 w-4" /> },
@@ -31,7 +37,14 @@ export function MenuCard({ uiSize }: { uiSize: UiSize }) {
               { id: "delete", label: "Delete", textValue: "Delete", icon: <FiTrash2 aria-hidden className="h-4 w-4" />, tone: "danger" },
             ]}
             trigger={
-              <UIButton aria-label="Open menu" theme="base" variant="outlined" size={uiSize} iconButton>
+              <UIButton
+                aria-label="Open menu"
+                theme="base"
+                variant="outlined"
+                size={uiSize}
+                borderRadius={borderRadius}
+                iconButton
+              >
                 <FiMoreVertical aria-hidden className="h-4 w-4" />
               </UIButton>
             }
@@ -44,8 +57,16 @@ export function MenuCard({ uiSize }: { uiSize: UiSize }) {
             ariaLabel="Card actions manual"
             placement="bottom-start"
             size={uiSize}
+            borderRadius={borderRadius}
             trigger={
-              <UIButton aria-label="Open manual menu" theme="base" variant="outlined" size={uiSize} iconButton>
+              <UIButton
+                aria-label="Open manual menu"
+                theme="base"
+                variant="outlined"
+                size={uiSize}
+                borderRadius={borderRadius}
+                iconButton
+              >
                 <FiMoreVertical aria-hidden className="h-4 w-4" />
               </UIButton>
             }
@@ -75,28 +96,62 @@ export function MenuCard({ uiSize }: { uiSize: UiSize }) {
           <p className="text-sm font-medium text-text-muted">Inline Menu List (without Dropdown)</p>
           <div className="max-w-56">
             <div
-              className="flex min-w-44 flex-col gap-[2px] rounded-xl border border-line bg-surface p-1"
+              className="flex min-w-44 flex-col gap-[2px] border border-line bg-surface p-1"
               role="menu"
               aria-label="Inline card actions"
+              style={{
+                ...menuRadiusStyles[borderRadius],
+                borderRadius: resolveMenuBorderRadiusValue(borderRadius),
+              }}
             >
               <UIMenuLabel size={uiSize}>Actions</UIMenuLabel>
-              <UIMenuItem size={uiSize} icon={<FiEdit2 aria-hidden className="h-4 w-4" />} closeOnSelect={false} onSelect={() => setInlineMenuAction("edit")}>
+              <UIMenuItem
+                size={uiSize}
+                borderRadius={borderRadius}
+                icon={<FiEdit2 aria-hidden className="h-4 w-4" />}
+                closeOnSelect={false}
+                onSelect={() => setInlineMenuAction("edit")}
+              >
                 Edit
               </UIMenuItem>
-              <UIMenuItem size={uiSize} icon={<FiCopy aria-hidden className="h-4 w-4" />} closeOnSelect={false} onSelect={() => setInlineMenuAction("duplicate")}>
+              <UIMenuItem
+                size={uiSize}
+                borderRadius={borderRadius}
+                icon={<FiCopy aria-hidden className="h-4 w-4" />}
+                closeOnSelect={false}
+                onSelect={() => setInlineMenuAction("duplicate")}
+              >
                 Duplicate
               </UIMenuItem>
               <UIMenuSeparator />
               <UIMenuLabel size={uiSize}>Danger Zone</UIMenuLabel>
-              <UIMenuItem size={uiSize} icon={<FiArchive aria-hidden className="h-4 w-4" />} closeOnSelect={false} onSelect={() => setInlineMenuAction("archive")}>
+              <UIMenuItem
+                size={uiSize}
+                borderRadius={borderRadius}
+                icon={<FiArchive aria-hidden className="h-4 w-4" />}
+                closeOnSelect={false}
+                onSelect={() => setInlineMenuAction("archive")}
+              >
                 Archive
               </UIMenuItem>
-              <UIMenuItem size={uiSize} tone="danger" icon={<FiTrash2 aria-hidden className="h-4 w-4" />} closeOnSelect={false} onSelect={() => setInlineMenuAction("delete")}>
+              <UIMenuItem
+                size={uiSize}
+                borderRadius={borderRadius}
+                tone="danger"
+                icon={<FiTrash2 aria-hidden className="h-4 w-4" />}
+                closeOnSelect={false}
+                onSelect={() => setInlineMenuAction("delete")}
+              >
                 Delete
               </UIMenuItem>
             </div>
           </div>
-          <p className="text-sm text-text-muted">Inline action: {inlineMenuAction}</p>
+          <p
+            className="inline-flex w-fit border border-line bg-surface px-2 py-1 text-sm text-text-muted"
+            style={{ borderRadius: resolveMenuBorderRadiusValue(borderRadius) }}
+          >
+            Inline action: {inlineMenuAction}
+          </p>
         </div>
       </div>
     </UICard>

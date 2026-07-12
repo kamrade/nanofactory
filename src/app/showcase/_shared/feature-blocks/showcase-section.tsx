@@ -45,7 +45,7 @@ export function FeatureBlocksShowcaseSection({
             content={content}
             assets={assets}
             borderRadiusPolicy={options.borderRadiusPolicy}
-            spacingScale={options.spacingScale}
+            spacingScale={options.size}
             surfaceStyle={options.surfaceStyle}
             headingFont={options.headingFont}
           />

@@ -1,8 +1,16 @@
 "use client";
 
-import { useRef, useState, type KeyboardEvent, type ReactNode } from "react";
+import { useRef, useState, type CSSProperties, type KeyboardEvent, type ReactNode } from "react";
+
 import { cx } from "@/lib/cn";
 
+import {
+  menuRadiusStyles,
+  resolveMenuBorderRadiusValue,
+  type UIMenuBorderRadius,
+} from "./menu-radius";
+import { UIMenuItemSizeClassName, type UIMenuSize } from "./menu-size";
+import styles from "./menu.module.css";
 
 export type UIMenuItem = {
   id: string;
@@ -19,9 +27,11 @@ export type UIMenuListProps = {
   onAction?: (id: string) => void;
   onRequestClose?: () => void;
   closeOnSelect?: boolean;
-  size?: "sm" | "md" | "lg";
+  size?: UIMenuSize;
+  borderRadius?: UIMenuBorderRadius;
   ariaLabel?: string;
   className?: string;
+  style?: CSSProperties;
 };
 
 function getFirstEnabledIndex(items: UIMenuItem[]) {
@@ -34,23 +44,16 @@ export function UIMenuList({
   onRequestClose,
   closeOnSelect = true,
   size = "lg",
+  borderRadius = "lg",
   ariaLabel = "Menu",
   className,
+  style,
 }: UIMenuListProps) {
   const [activeIndex, setActiveIndex] = useState(() => getFirstEnabledIndex(items));
   const itemRefs = useRef<Array<HTMLButtonElement | null>>([]);
   const typeaheadBuffer = useRef("");
   const typeaheadResetTimer = useRef<number | null>(null);
-  const sizeClasses =
-    size === "sm"
-      ? {
-          item: "min-h-7 rounded-md px-2 py-1 text-sm",
-          icon: "mr-1.5 h-3.5 w-3.5",
-        }
-      : {
-          item: "min-h-10 rounded-lg px-3 py-2.5 text-sm",
-          icon: "mr-2 h-4 w-4",
-        };
+  const sizeClasses = UIMenuItemSizeClassName[size];
 
   function setAndFocus(index: number) {
     setActiveIndex(index);
@@ -164,11 +167,14 @@ export function UIMenuList({
     <div
       role="menu"
       aria-label={ariaLabel}
+      data-border-radius={borderRadius}
       onKeyDown={handleKeyDown}
-      className={cx(
-        "scrollbar-macos flex min-w-44 max-h-[min(24rem,calc(100vh-2rem))] flex-col gap-[2px] overflow-y-auto rounded-xl border border-line bg-surface p-1",
-        className
-      )}
+      className={cx(styles.surface, className)}
+      style={{
+        ...menuRadiusStyles[borderRadius],
+        borderRadius: resolveMenuBorderRadiusValue(borderRadius),
+        ...style,
+      }}
     >
       {items.map((item, index) => (
         <button
@@ -178,6 +184,8 @@ export function UIMenuList({
           }}
           type="button"
           role="menuitem"
+          data-size={size}
+          data-tone={item.tone ?? "default"}
           tabIndex={activeIndex === index ? 0 : -1}
           disabled={item.disabled}
           onMouseEnter={() => {
@@ -186,20 +194,19 @@ export function UIMenuList({
             }
           }}
           onClick={() => handleSelect(item)}
+          style={{ borderRadius: resolveMenuBorderRadiusValue(borderRadius) }}
           className={cx(
-            "flex w-full items-center text-left transition outline-none",
+            styles.item,
             sizeClasses.item,
-            "focus:ring-2 focus:ring-focus/50 focus:ring-offset-0 focus:ring-offset-surface",
-            "focus-visible:ring-2 focus-visible:ring-focus/50 focus-visible:ring-offset-0 focus-visible:ring-offset-surface",
-            item.disabled
-              ? "cursor-not-allowed text-text-placeholder opacity-60"
-              : item.tone === "danger"
-                ? "text-danger hover:bg-danger-100 active:bg-danger-200"
-                : "text-text-main hover:bg-surface-alt active:bg-neutral-100"
+            item.disabled ? styles.itemDisabled : item.tone === "danger" ? styles.toneDanger : styles.toneDefault
           )}
         >
           {item.icon ? (
-            <span className={cx("inline-flex shrink-0 items-center justify-center", sizeClasses.icon)}>
+            <span
+              className={cx(styles.icon, sizeClasses.icon)}
+              data-size={size}
+              aria-hidden
+            >
               {item.icon}
             </span>
           ) : null}

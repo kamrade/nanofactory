@@ -6,46 +6,47 @@ import { resolveProjectSpacingScale } from "@/lib/projects/spacing-scale";
 import {
   resolveProjectSurfaceStyle,
 } from "@/lib/projects/surface-style";
+import { resolveShowcaseStateFromSearchParams } from "@/app/showcase/_shared/showcase-state";
 
 import type { FeatureBlocksOptionState } from "./options-panel";
 
 export const DEFAULT_FEATURE_BLOCKS_OPTIONS: FeatureBlocksOptionState = {
   borderRadiusPolicy: "lg",
-  spacingScale: "md",
+  size: "md",
   surfaceStyle: "default",
   headingFont: "onest",
 };
 
 export const FEATURE_BLOCKS_QUERY_KEYS = {
   borderRadiusPolicy: "borderRadius",
-  spacingScale: "spacingScale",
+  size: "size",
   surfaceStyle: "surfaceStyle",
   headingFont: "headingFont",
 } as const;
 
 type FeatureBlocksSearchParams = {
   borderRadius?: string | string[];
+  size?: string | string[];
   spacingScale?: string | string[];
   surfaceStyle?: string | string[];
   headingFont?: string | string[];
 };
 
-function readSearchParam(value: string | string[] | undefined): string | undefined {
-  if (Array.isArray(value)) {
-    return value[0];
-  }
-
-  return value;
-}
-
 export function resolveFeatureBlocksOptionsFromSearchParams(
   searchParams: FeatureBlocksSearchParams
 ): FeatureBlocksOptionState {
+  const state = resolveShowcaseStateFromSearchParams(searchParams, {
+    size: DEFAULT_FEATURE_BLOCKS_OPTIONS.size,
+    borderRadius: DEFAULT_FEATURE_BLOCKS_OPTIONS.borderRadiusPolicy,
+    surfaceStyle: DEFAULT_FEATURE_BLOCKS_OPTIONS.surfaceStyle,
+    headingFont: DEFAULT_FEATURE_BLOCKS_OPTIONS.headingFont,
+  });
+
   return {
-    borderRadiusPolicy: resolveProjectBorderRadiusPolicy(readSearchParam(searchParams.borderRadius)),
-    spacingScale: resolveProjectSpacingScale(readSearchParam(searchParams.spacingScale)),
-    surfaceStyle: resolveProjectSurfaceStyle(readSearchParam(searchParams.surfaceStyle)),
-    headingFont: resolveProjectHeadingFont(readSearchParam(searchParams.headingFont)),
+    borderRadiusPolicy: resolveProjectBorderRadiusPolicy(state.borderRadius),
+    size: resolveProjectSpacingScale(state.size),
+    surfaceStyle: resolveProjectSurfaceStyle(state.surfaceStyle),
+    headingFont: resolveProjectHeadingFont(state.headingFont),
   };
 }
 
@@ -54,7 +55,7 @@ export function applyFeatureBlocksOptionsToSearchParams(
   options: FeatureBlocksOptionState
 ) {
   searchParams.set(FEATURE_BLOCKS_QUERY_KEYS.borderRadiusPolicy, options.borderRadiusPolicy);
-  searchParams.set(FEATURE_BLOCKS_QUERY_KEYS.spacingScale, options.spacingScale);
+  searchParams.set(FEATURE_BLOCKS_QUERY_KEYS.size, options.size);
   searchParams.set(FEATURE_BLOCKS_QUERY_KEYS.surfaceStyle, options.surfaceStyle);
   searchParams.set(FEATURE_BLOCKS_QUERY_KEYS.headingFont, options.headingFont);
 }

@@ -10,10 +10,10 @@ import type { UiSize } from "./types";
 
 export function TypographyButtonsCard({
   uiSize,
-  buttonBorderRadius = "lg",
+  borderRadius = "lg",
 }: {
   uiSize: UiSize;
-  buttonBorderRadius?: "none" | "md" | "lg";
+  borderRadius?: "none" | "md" | "lg";
 }) {
   const buttonThemes = ["base", "primary", "danger"] as const;
   const buttonVariants = ["text", "contained", "outlined"] as const;
@@ -34,7 +34,7 @@ export function TypographyButtonsCard({
                 theme={buttonTheme}
                 variant={variant}
                 size={uiSize}
-                borderRadius={buttonBorderRadius}
+                borderRadius={borderRadius}
               >
                 {buttonTheme} · {variant} · {uiSize}
               </UIButton>
@@ -49,11 +49,11 @@ export function TypographyButtonsCard({
       <div className="grid gap-3">
         <p className="text-sm font-medium text-text-muted">With Icons</p>
         <div className="flex flex-wrap items-center gap-3">
-          <UIButton theme="primary" variant="contained" size={uiSize} borderRadius={buttonBorderRadius}>
+          <UIButton theme="primary" variant="contained" size={uiSize} borderRadius={borderRadius}>
             <FiPlus aria-hidden className="h-4 w-4" />
             <span>Create</span>
           </UIButton>
-          <UIButton theme="base" variant="outlined" size={uiSize} borderRadius={buttonBorderRadius}>
+          <UIButton theme="base" variant="outlined" size={uiSize} borderRadius={borderRadius}>
             <span>Continue</span>
             <FiArrowRight aria-hidden className="h-4 w-4" />
           </UIButton>
@@ -62,7 +62,7 @@ export function TypographyButtonsCard({
             theme="base"
             variant="text"
             size={uiSize}
-            borderRadius={buttonBorderRadius}
+            borderRadius={borderRadius}
             iconButton
           >
             <FiSettings aria-hidden className="h-4 w-4" />
@@ -73,7 +73,7 @@ export function TypographyButtonsCard({
       <UIDivider spacing="md" />
       <div className="grid gap-3">
         <p className="text-sm font-medium text-text-muted">Block</p>
-        <UIButton theme="primary" variant="contained" size={uiSize} borderRadius={buttonBorderRadius} block>
+        <UIButton theme="primary" variant="contained" size={uiSize} borderRadius={borderRadius} block>
           Primary Block Button
         </UIButton>
       </div>
@@ -82,14 +82,14 @@ export function TypographyButtonsCard({
       <div className="grid gap-3">
         <p className="text-sm font-medium text-text-muted">Disabled</p>
         <div className="flex flex-wrap items-center gap-3">
-          <UIButton theme="base" variant="contained" size={uiSize} borderRadius={buttonBorderRadius} disabled>
+          <UIButton theme="base" variant="contained" size={uiSize} borderRadius={borderRadius} disabled>
             Base Disabled
           </UIButton>
           <UIButton
             theme="primary"
             variant="contained"
             size={uiSize}
-            borderRadius={buttonBorderRadius}
+            borderRadius={borderRadius}
             disabled
           >
             Primary Disabled

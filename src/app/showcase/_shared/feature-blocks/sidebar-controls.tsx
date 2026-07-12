@@ -18,7 +18,7 @@ import { PROJECT_SURFACE_STYLES, type ProjectSurfaceStyle } from "@/lib/projects
 
 export type FeatureBlocksOptionState = {
   borderRadiusPolicy: ProjectBorderRadiusPolicy;
-  spacingScale: ProjectSpacingScale;
+  size: ProjectSpacingScale;
   surfaceStyle: ProjectSurfaceStyle;
   headingFont: ProjectHeadingFont;
 };
@@ -44,15 +44,29 @@ function SidebarField({
 }
 
 function toLabel(value: string) {
-  return value
-    .split("-")
-    .map((part) => part.charAt(0).toUpperCase() + part.slice(1))
-    .join(" ");
+  return value.toLowerCase();
 }
 
 export function FeatureBlocksSidebarControls({ value, onChange }: FeatureBlocksSidebarControlsProps) {
   return (
     <div className="grid gap-4">
+      <SidebarField label="Size">
+        <UISegmentedControl
+          ariaLabel="Size"
+          value={value.size}
+          onValueChange={(nextValue) =>
+            onChange((current) => ({
+              ...current,
+              size: nextValue as ProjectSpacingScale,
+            }))
+          }
+          options={PROJECT_SPACING_SCALES.map((scale) => ({
+            value: scale,
+            label: toLabel(scale),
+          }))}
+        />
+      </SidebarField>
+
       <SidebarField label="Border radius">
         <UISegmentedControl
           ariaLabel="Border radius"
@@ -66,23 +80,6 @@ export function FeatureBlocksSidebarControls({ value, onChange }: FeatureBlocksS
           options={PROJECT_BORDER_RADIUS_POLICIES.map((policy) => ({
             value: policy,
             label: toLabel(policy),
-          }))}
-        />
-      </SidebarField>
-
-      <SidebarField label="Spacing scale">
-        <UISegmentedControl
-          ariaLabel="Spacing scale"
-          value={value.spacingScale}
-          onValueChange={(nextValue) =>
-            onChange((current) => ({
-              ...current,
-              spacingScale: nextValue as ProjectSpacingScale,
-            }))
-          }
-          options={PROJECT_SPACING_SCALES.map((scale) => ({
-            value: scale,
-            label: toLabel(scale),
           }))}
         />
       </SidebarField>

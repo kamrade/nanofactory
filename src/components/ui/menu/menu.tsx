@@ -15,18 +15,26 @@ import {
 import type { Placement } from "@floating-ui/react";
 
 import { UIDropdown } from "@/components/ui/dropdown";
-import { UIMenuList, type UIMenuItem as UIMenuDataItem } from "@/components/ui/menu-list";
 import { cx } from "@/lib/cn";
 
+import {
+  menuRadiusStyles,
+  resolveMenuBorderRadiusValue,
+  type UIMenuBorderRadius,
+} from "./menu-radius";
+import { UIMenuList, type UIMenuItem as UIMenuDataItem } from "./menu-list";
+import { UIMenuItemSizeClassName, type UIMenuSize } from "./menu-size";
+import styles from "./menu.module.css";
 
 export type { UIMenuDataItem };
-export type UIMenuSize = "sm" | "md" | "lg";
+export type { UIMenuBorderRadius } from "./menu-radius";
 
 type UIMenuCommonProps = {
   trigger: ReactElement;
   placement?: Placement;
   offsetPx?: number;
   size?: UIMenuSize;
+  borderRadius?: UIMenuBorderRadius;
   ariaLabel?: string;
   className?: string;
 };
@@ -56,6 +64,7 @@ type MenuContextValue = {
   activeItemId: string | null;
   setActiveItemId: (id: string | null) => void;
   size: UIMenuSize;
+  borderRadius: UIMenuBorderRadius;
 };
 
 const MenuContext = createContext<MenuContextValue>({
@@ -63,6 +72,7 @@ const MenuContext = createContext<MenuContextValue>({
   activeItemId: null,
   setActiveItemId: () => undefined,
   size: "lg",
+  borderRadius: "lg",
 });
 
 type UIMenuItemButtonProps = {
@@ -71,6 +81,7 @@ type UIMenuItemButtonProps = {
   textValue?: string;
   tone?: "default" | "danger";
   size?: UIMenuSize;
+  borderRadius?: UIMenuBorderRadius;
   disabled?: boolean;
   closeOnSelect?: boolean;
   className?: string;
@@ -83,24 +94,23 @@ export function UIMenuItem({
   textValue,
   tone = "default",
   size,
+  borderRadius,
   disabled,
   closeOnSelect = true,
   className,
   onSelect,
 }: UIMenuItemButtonProps) {
   const id = useId();
-  const { requestClose, activeItemId, setActiveItemId, size: contextSize } = useContext(MenuContext);
+  const {
+    requestClose,
+    activeItemId,
+    setActiveItemId,
+    size: contextSize,
+    borderRadius: contextBorderRadius,
+  } = useContext(MenuContext);
   const resolvedSize = size ?? contextSize;
-    const sizeClasses =
-      resolvedSize === "sm"
-        ? {
-          item: "min-h-7 rounded-md px-2 py-1 text-sm",
-          icon: "mr-1.5 h-3.5 w-3.5",
-        }
-        : {
-          item: "min-h-10 rounded-lg px-3 py-2.5 text-sm",
-          icon: "mr-2 h-4 w-4",
-        };
+  const resolvedBorderRadius = borderRadius ?? contextBorderRadius;
+  const sizeClasses = UIMenuItemSizeClassName[resolvedSize];
 
   function handleClick(event: MouseEvent<HTMLButtonElement>) {
     if (disabled) {
@@ -123,6 +133,8 @@ export function UIMenuItem({
       data-menu-item="true"
       data-menu-item-id={id}
       data-menu-text={menuText}
+      data-size={resolvedSize}
+      data-tone={tone}
       disabled={disabled}
       tabIndex={activeItemId ? (activeItemId === id ? 0 : -1) : 0}
       onFocus={() => setActiveItemId(id)}
@@ -132,21 +144,16 @@ export function UIMenuItem({
         }
       }}
       onClick={handleClick}
+      style={{ borderRadius: resolveMenuBorderRadiusValue(resolvedBorderRadius) }}
       className={cx(
-        "flex w-full items-center text-left transition outline-none",
+        styles.item,
         sizeClasses.item,
-        "focus:ring-2 focus:ring-focus/50 focus:ring-offset-0 focus:ring-offset-surface",
-        "focus-visible:ring-2 focus-visible:ring-focus/50 focus-visible:ring-offset-0 focus-visible:ring-offset-surface",
-        disabled
-          ? "cursor-not-allowed text-text-placeholder opacity-60"
-          : tone === "danger"
-            ? "text-danger hover:bg-danger-100 active:bg-danger-200"
-            : "text-text-main hover:bg-surface-alt active:bg-neutral-100",
+        disabled ? styles.itemDisabled : tone === "danger" ? styles.toneDanger : styles.toneDefault,
         className
       )}
     >
       {icon ? (
-        <span className={cx("inline-flex shrink-0 items-center justify-center", sizeClasses.icon)}>
+        <span className={cx(styles.icon, sizeClasses.icon)} aria-hidden>
           {icon}
         </span>
       ) : null}
@@ -156,7 +163,7 @@ export function UIMenuItem({
 }
 
 export function UIMenuSeparator({ className }: { className?: string }) {
-  return <div role="separator" className={cx("my-1 h-px bg-line", className)} />;
+  return <div role="separator" className={cx(styles.separator, className)} />;
 }
 
 export function UIMenuLabel({
@@ -170,15 +177,9 @@ export function UIMenuLabel({
 }) {
   const { size: contextSize } = useContext(MenuContext);
   const resolvedSize = size ?? contextSize;
+  const sizeClasses = UIMenuItemSizeClassName[resolvedSize];
   return (
-    <div
-      className={cx(
-        resolvedSize === "sm"
-          ? "px-2 py-1 text-sm font-medium text-text-muted"
-          : "px-3 py-1 text-sm font-medium text-text-muted",
-        className
-      )}
-    >
+    <div data-size={resolvedSize} className={cx(styles.label, sizeClasses.label, className)}>
       {children}
     </div>
   );
@@ -190,6 +191,7 @@ export function UIMenu(allProps: UIMenuProps) {
     placement = "bottom-end",
     offsetPx = 8,
     size = "lg",
+    borderRadius = "lg",
     ariaLabel = "Menu",
     className,
   } = allProps;
@@ -243,9 +245,7 @@ export function UIMenu(allProps: UIMenuProps) {
     }, 350);
 
     const buffer = typeaheadBufferRef.current;
-    const currentIndex = items.findIndex(
-      (item) => item.dataset.menuItemId === manualActiveItemId
-    );
+    const currentIndex = items.findIndex((item) => item.dataset.menuItemId === manualActiveItemId);
 
     for (let step = 1; step <= items.length; step += 1) {
       const index = (Math.max(currentIndex, -1) + step) % items.length;
@@ -264,9 +264,7 @@ export function UIMenu(allProps: UIMenuProps) {
       return;
     }
 
-    const currentIndex = items.findIndex(
-      (item) => item.dataset.menuItemId === manualActiveItemId
-    );
+    const currentIndex = items.findIndex((item) => item.dataset.menuItemId === manualActiveItemId);
 
     if (event.key === "ArrowDown") {
       event.preventDefault();
@@ -277,8 +275,7 @@ export function UIMenu(allProps: UIMenuProps) {
 
     if (event.key === "ArrowUp") {
       event.preventDefault();
-      const nextIndex =
-        currentIndex < 0 ? items.length - 1 : (currentIndex - 1 + items.length) % items.length;
+      const nextIndex = currentIndex < 0 ? items.length - 1 : (currentIndex - 1 + items.length) % items.length;
       focusManualItem(items[nextIndex]);
       return;
     }
@@ -315,29 +312,30 @@ export function UIMenu(allProps: UIMenuProps) {
         onRequestClose={requestClose}
         closeOnSelect={allProps.closeOnSelect}
         size={size}
+        borderRadius={borderRadius}
         ariaLabel={ariaLabel}
-        className={cx("shadow-[0_10px_30px_rgba(0,0,0,0.12)]", className)}
+        className={cx(styles.shadow, className)}
       />
     );
   } else {
     menuContent = (
-      <MenuContext.Provider
-        value={{
-          requestClose,
-          activeItemId: manualActiveItemId,
-          setActiveItemId: setManualActiveItemId,
-          size,
-        }}
-      >
+        <MenuContext.Provider
+          value={{
+            requestClose,
+            activeItemId: manualActiveItemId,
+            setActiveItemId: setManualActiveItemId,
+            size,
+            borderRadius,
+          }}
+        >
         <div
           ref={manualContainerRef}
           role="menu"
           aria-label={ariaLabel}
+          data-border-radius={borderRadius}
           onKeyDown={handleManualKeyDown}
-          className={cx(
-            "scrollbar-macos flex min-w-44 max-h-[min(24rem,calc(100vh-2rem))] flex-col gap-0.5 overflow-y-auto rounded-xl border border-line bg-surface p-1 shadow-[0_10px_30px_rgba(0,0,0,0.12)]",
-            className
-          )}
+          className={cx(styles.surface, styles.shadow, className)}
+          style={{ ...menuRadiusStyles[borderRadius], borderRadius: resolveMenuBorderRadiusValue(borderRadius) }}
         >
           {allProps.children}
         </div>
