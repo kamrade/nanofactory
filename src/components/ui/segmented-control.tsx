@@ -12,7 +12,7 @@ export type UISegmentedControlProps<T extends string> = {
   value: T;
   options: UISegmentedControlOption<T>[];
   onValueChange?: (value: T) => void;
-  size?: "sm" | "lg";
+  size?: "sm" | "md" | "lg";
   borderless?: boolean;
   ariaLabel?: string;
   className?: string;

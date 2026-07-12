@@ -4,16 +4,12 @@ import type { Dispatch, ReactNode, SetStateAction } from "react";
 
 import { UISegmentedControl } from "@/components/ui/segmented-control";
 import type { UiSize } from "@/app/showcase/_shared/uikit-sections";
-import {
-  PROJECT_BORDER_RADIUS_POLICIES,
-  type ProjectBorderRadiusPolicy,
-} from "@/lib/projects/border-radius-policy";
 
 type ComponentsSidebarControlsProps = {
   uiSize: UiSize;
-  borderRadiusPolicy: ProjectBorderRadiusPolicy;
+  buttonBorderRadius: "none" | "md" | "lg";
   onUiSizeChange: Dispatch<SetStateAction<UiSize>>;
-  onBorderRadiusPolicyChange: Dispatch<SetStateAction<ProjectBorderRadiusPolicy>>;
+  onButtonBorderRadiusChange: Dispatch<SetStateAction<"none" | "md" | "lg">>;
 };
 
 function SidebarField({
@@ -31,18 +27,11 @@ function SidebarField({
   );
 }
 
-function toTitle(value: string) {
-  return value
-    .split("-")
-    .map((part) => part.charAt(0).toUpperCase() + part.slice(1))
-    .join(" ");
-}
-
 export function ComponentsSidebarControls({
   uiSize,
-  borderRadiusPolicy,
+  buttonBorderRadius,
   onUiSizeChange,
-  onBorderRadiusPolicyChange,
+  onButtonBorderRadiusChange,
 }: ComponentsSidebarControlsProps) {
   return (
     <div className="grid gap-4">
@@ -52,21 +41,23 @@ export function ComponentsSidebarControls({
           value={uiSize}
           onValueChange={(nextValue) => onUiSizeChange(nextValue as UiSize)}
           options={[
-            { value: "sm", label: "Small" },
-            { value: "lg", label: "Large" },
+            { value: "sm", label: "sm" },
+            { value: "md", label: "md" },
+            { value: "lg", label: "lg" },
           ]}
         />
       </SidebarField>
 
       <SidebarField label="Border radius">
         <UISegmentedControl
-          ariaLabel="Showcase border radius"
-          value={borderRadiusPolicy}
-          onValueChange={(nextValue) => onBorderRadiusPolicyChange(nextValue as ProjectBorderRadiusPolicy)}
-          options={PROJECT_BORDER_RADIUS_POLICIES.map((policy) => ({
-            value: policy,
-            label: toTitle(policy),
-          }))}
+          ariaLabel="Button border radius"
+          value={buttonBorderRadius}
+          onValueChange={(nextValue) => onButtonBorderRadiusChange(nextValue as "none" | "md" | "lg")}
+          options={[
+            { value: "none", label: "none" },
+            { value: "md", label: "md" },
+            { value: "lg", label: "lg" },
+          ]}
         />
       </SidebarField>
     </div>

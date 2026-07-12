@@ -5,7 +5,7 @@ import { cx } from "@/lib/cn";
 
 export type UICheckboxProps = Omit<InputHTMLAttributes<HTMLInputElement>, "size" | "type"> & {
   label?: ReactNode;
-  size?: "sm" | "lg";
+  size?: "sm" | "md" | "lg";
 };
 
 export function UICheckbox({

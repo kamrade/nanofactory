@@ -5,7 +5,7 @@ import { cx } from "@/lib/cn";
 
 
 type ValidationState = "default" | "error" | "success";
-type UIMultiSelectListSize = "sm" | "lg";
+type UIMultiSelectListSize = "sm" | "md" | "lg";
 
 export type UIMultiSelectListOption = {
   value: string;

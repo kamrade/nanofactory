@@ -10,7 +10,7 @@ import {
 
 import { cx } from "@/lib/cn";
 
-type UIMultiSelectSize = "sm" | "lg";
+type UIMultiSelectSize = "sm" | "md" | "lg";
 type ValidationState = "default" | "error" | "success";
 
 export type UIMultiSelectProps = {

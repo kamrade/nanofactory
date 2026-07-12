@@ -29,12 +29,14 @@ import type { ComponentsSectionPageKey } from "./section-pages";
 type ComponentsShowcaseSectionProps = {
   activeSection: ComponentsSectionPageKey;
   uiSize: UiSize;
+  buttonBorderRadius: "none" | "md" | "lg";
   topContent?: ReactNode;
 };
 
 export function ComponentsShowcaseSection({
   activeSection,
   uiSize,
+  buttonBorderRadius,
   topContent,
 }: ComponentsShowcaseSectionProps) {
   const { showToast, clearToasts } = useToast();
@@ -44,7 +46,7 @@ export function ComponentsShowcaseSection({
       case "typography-headings":
         return <TypographyHeadingsCard />;
       case "typography-buttons":
-        return <TypographyButtonsCard uiSize={uiSize} />;
+        return <TypographyButtonsCard uiSize={uiSize} buttonBorderRadius={buttonBorderRadius} />;
       case "typography-badges":
         return <TypographyBadgesCard uiSize={uiSize} />;
       case "controls-menu":

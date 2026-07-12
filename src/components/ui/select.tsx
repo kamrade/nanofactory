@@ -5,7 +5,7 @@ import { useEffect, useId, useMemo, useRef, useState, type ReactNode } from "rea
 import { UIDropdown } from "@/components/ui/dropdown";
 import { cx } from "@/lib/cn";
 
-type UISelectSize = "sm" | "lg";
+type UISelectSize = "sm" | "md" | "lg";
 type ValidationState = "default" | "error" | "success";
 
 export type UISelectOption = {

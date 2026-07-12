@@ -50,6 +50,7 @@ export function ShowcaseTabSettings({
             onValueChange={(nextValue) => onUiSizeChange(nextValue as UiSize)}
             options={[
               { value: "sm", label: "Small", textValue: "Small" },
+              { value: "md", label: "Medium", textValue: "Medium" },
               { value: "lg", label: "Large", textValue: "Large" },
             ]}
           />

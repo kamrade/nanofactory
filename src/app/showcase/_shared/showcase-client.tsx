@@ -73,6 +73,7 @@ export function ShowcaseClient({
   const [mode, setMode] = useState<ShowcaseMode>(initialMode);
   const [uiSize, setUiSize] = useState<UiSize>("sm");
   const [borderRadiusPolicy, setBorderRadiusPolicy] = useState<ProjectBorderRadiusPolicy>("lg");
+  const [buttonBorderRadius, setButtonBorderRadius] = useState<"none" | "md" | "lg">("lg");
   const [featureBlocksOptions, setFeatureBlocksOptions] = useState<FeatureBlocksOptionState>(
     initialFeatureBlocksOptions
   );
@@ -194,12 +195,13 @@ export function ShowcaseClient({
           <ComponentsShowcaseSection
             activeSection={activeComponentSection}
             uiSize={uiSize}
+            buttonBorderRadius={buttonBorderRadius}
             topContent={
               <ComponentsSidebarControls
                 uiSize={uiSize}
-                borderRadiusPolicy={borderRadiusPolicy}
+                buttonBorderRadius={buttonBorderRadius}
                 onUiSizeChange={setUiSize}
-                onBorderRadiusPolicyChange={setBorderRadiusPolicy}
+                onButtonBorderRadiusChange={setButtonBorderRadius}
               />
             }
           />

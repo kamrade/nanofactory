@@ -5,7 +5,7 @@ import { FiChevronDown } from "react-icons/fi";
 
 import { cx } from "@/lib/cn";
 
-type UIAccordionSize = "sm" | "lg";
+type UIAccordionSize = "sm" | "md" | "lg";
 
 export type UIAccordionItem = {
   id: string;

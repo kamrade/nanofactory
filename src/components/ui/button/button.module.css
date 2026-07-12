@@ -1,0 +1,216 @@
+.button {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.375em;
+  white-space: nowrap;
+  font-weight: 500;
+  transition:
+    background-color 150ms ease,
+    color 150ms ease,
+    border-color 150ms ease,
+    box-shadow 150ms ease,
+    opacity 150ms ease;
+  outline: none;
+  border-style: solid;
+  border-width: 1px;
+  border-color: transparent;
+  cursor: pointer;
+  box-shadow: none;
+}
+
+.button:focus,
+.button:focus-visible {
+  box-shadow: 0 0 0 2px color-mix(in srgb, var(--focus) 50%, transparent);
+}
+
+.button:disabled {
+  pointer-events: none;
+  opacity: 0.5;
+}
+
+.block {
+  width: 100%;
+}
+
+.sizeSm {
+  height: 1.75rem;
+  min-width: 1.75rem;
+  padding-inline: 0.75rem;
+  font-size: 0.875rem;
+  line-height: 1.25rem;
+}
+
+.sizeMd {
+  height: 2.5rem;
+  min-width: 2.5rem;
+  padding-inline: 1rem;
+  font-size: 0.875rem;
+  line-height: 1.25rem;
+}
+
+.sizeLg {
+  height: 3.5rem;
+  min-width: 3.5rem;
+  padding-inline: 1.25rem;
+  font-size: 1rem;
+  line-height: 1.5rem;
+}
+
+.iconSm {
+  height: 1.75rem;
+  width: 1.75rem;
+  padding-inline: 0;
+  gap: 0;
+}
+
+.iconMd {
+  height: 2.5rem;
+  width: 2.5rem;
+  padding-inline: 0;
+  gap: 0;
+}
+
+.iconLg {
+  height: 3.5rem;
+  width: 3.5rem;
+  padding-inline: 0;
+  gap: 0;
+}
+
+.radiusNone {
+  border-radius: 0;
+}
+
+.radiusMd {
+  border-radius: 0.5rem;
+}
+
+.radiusLg {
+  border-radius: 0.75rem;
+}
+
+.themeBase.variantText {
+  background-color: transparent;
+  color: var(--text-main);
+}
+
+.themeBase.variantText:hover {
+  background-color: var(--neutral-200);
+}
+
+.themeBase.variantText:active {
+  background-color: var(--neutral-300);
+}
+
+.themePrimary.variantText {
+  background-color: transparent;
+  color: var(--text-main);
+}
+
+.themePrimary.variantText:hover {
+  background-color: var(--primary-200);
+  color: var(--text-inverted-main);
+}
+
+.themePrimary.variantText:active {
+  background-color: var(--primary-300);
+  color: var(--text-inverted-main);
+}
+
+.themeDanger.variantText {
+  background-color: transparent;
+  color: var(--text-danger);
+}
+
+.themeDanger.variantText:hover {
+  background-color: var(--danger-100);
+}
+
+.themeDanger.variantText:active {
+  background-color: var(--danger-200);
+}
+
+.themeBase.variantContained {
+  background-color: var(--neutral-100);
+  color: var(--text-main);
+}
+
+.themeBase.variantContained:hover {
+  background-color: var(--neutral-200);
+}
+
+.themeBase.variantContained:active {
+  background-color: var(--neutral-300);
+}
+
+.themePrimary.variantContained {
+  background-color: var(--primary-100);
+  border-color: var(--primary-line);
+  color: var(--text-inverted-main);
+}
+
+.themePrimary.variantContained:hover {
+  background-color: var(--primary-200);
+}
+
+.themePrimary.variantContained:active {
+  background-color: var(--primary-300);
+}
+
+.themeDanger.variantContained {
+  background-color: var(--danger-100);
+  color: var(--text-danger);
+}
+
+.themeDanger.variantContained:hover {
+  background-color: var(--danger-200);
+}
+
+.themeDanger.variantContained:active {
+  background-color: var(--danger-300);
+}
+
+.themeBase.variantOutlined {
+  background-color: transparent;
+  border-color: var(--neutral-line);
+  color: var(--text-main);
+}
+
+.themeBase.variantOutlined:hover {
+  background-color: var(--neutral-200);
+}
+
+.themeBase.variantOutlined:active {
+  background-color: var(--neutral-300);
+}
+
+.themePrimary.variantOutlined {
+  background-color: transparent;
+  border-color: var(--primary-line);
+  color: var(--text-main);
+}
+
+.themePrimary.variantOutlined:hover {
+  background-color: var(--primary-200);
+  color: var(--text-inverted-main);
+}
+
+.themePrimary.variantOutlined:active {
+  background-color: var(--primary-300);
+  color: var(--text-inverted-main);
+}
+
+.themeDanger.variantOutlined {
+  background-color: transparent;
+  border-color: var(--danger-line);
+  color: var(--text-danger);
+}
+
+.themeDanger.variantOutlined:hover {
+  background-color: var(--danger-100);
+}
+
+.themeDanger.variantOutlined:active {
+  background-color: var(--danger-200);
+}

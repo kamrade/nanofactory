@@ -13,7 +13,7 @@ import {
 import { cx } from "@/lib/cn";
 
 type ValidationState = "default" | "error" | "success";
-type UITextInputSize = "sm" | "lg";
+type UITextInputSize = "sm" | "md" | "lg";
 
 export type UITextInputProps = Omit<InputHTMLAttributes<HTMLInputElement>, "size" | "prefix"> & {
   size?: UITextInputSize;

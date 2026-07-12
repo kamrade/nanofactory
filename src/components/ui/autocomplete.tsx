@@ -6,7 +6,7 @@ import { UIDropdown } from "@/components/ui/dropdown";
 import { cx } from "@/lib/cn";
 
 
-type UIAutocompleteSize = "sm" | "lg";
+type UIAutocompleteSize = "sm" | "md" | "lg";
 type ValidationState = "default" | "error" | "success";
 
 export type UIAutocompleteItem = {

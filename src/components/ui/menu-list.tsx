@@ -19,7 +19,7 @@ export type UIMenuListProps = {
   onAction?: (id: string) => void;
   onRequestClose?: () => void;
   closeOnSelect?: boolean;
-  size?: "sm" | "lg";
+  size?: "sm" | "md" | "lg";
   ariaLabel?: string;
   className?: string;
 };

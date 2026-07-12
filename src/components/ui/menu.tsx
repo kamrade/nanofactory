@@ -20,7 +20,7 @@ import { cx } from "@/lib/cn";
 
 
 export type { UIMenuDataItem };
-export type UIMenuSize = "sm" | "lg";
+export type UIMenuSize = "sm" | "md" | "lg";
 
 type UIMenuCommonProps = {
   trigger: ReactElement;
@@ -91,13 +91,13 @@ export function UIMenuItem({
   const id = useId();
   const { requestClose, activeItemId, setActiveItemId, size: contextSize } = useContext(MenuContext);
   const resolvedSize = size ?? contextSize;
-  const sizeClasses =
-    resolvedSize === "sm"
-      ? {
+    const sizeClasses =
+      resolvedSize === "sm"
+        ? {
           item: "min-h-7 rounded-md px-2 py-1 text-sm",
           icon: "mr-1.5 h-3.5 w-3.5",
         }
-      : {
+        : {
           item: "min-h-10 rounded-lg px-3 py-2.5 text-sm",
           icon: "mr-2 h-4 w-4",
         };

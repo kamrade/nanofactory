@@ -6,7 +6,7 @@ export type UISwitcherProps = Omit<ButtonHTMLAttributes<HTMLButtonElement>, "onC
   checked: boolean;
   onCheckedChange?: (checked: boolean) => void;
   label?: ReactNode;
-  size?: "sm" | "lg";
+  size?: "sm" | "md" | "lg";
 };
 
 export function UISwitcher({

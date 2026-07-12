@@ -4,7 +4,7 @@ import { cx } from "@/lib/cn";
 
 type BadgeTheme = "base" | "primary" | "danger";
 type BadgeVariant = "contained" | "outlined";
-type BadgeSize = "sm" | "lg";
+type BadgeSize = "sm" | "md" | "lg";
 
 export type UIBadgeProps = HTMLAttributes<HTMLSpanElement> & {
   theme?: BadgeTheme;
@@ -14,6 +14,7 @@ export type UIBadgeProps = HTMLAttributes<HTMLSpanElement> & {
 
 const sizeClasses: Record<BadgeSize, string> = {
   sm: "h-6 rounded-full px-3 text-sm",
+  md: "h-8 rounded-full px-4 text-sm leading-5",
   lg: "h-8 rounded-full px-4 text-sm leading-5",
 };
 

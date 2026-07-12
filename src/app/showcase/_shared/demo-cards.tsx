@@ -21,9 +21,8 @@ import { UISelect } from "@/components/ui/select";
 import { UITextInput } from "@/components/ui/text-input";
 import { formatUiDateTime } from "@/lib/ui-date-time";
 
+import type { UiSize } from "./uikit-sections";
 import { UikitSectionAnchor } from "./uikit-sections/section-anchor";
-
-type UiSize = "sm" | "lg";
 
 export function DialogDemoCard({ uiSize }: { uiSize: UiSize }) {
   const [dialogOpen, setDialogOpen] = useState(false);
