@@ -7,7 +7,13 @@ import { UIMultiSelectList } from "@/components/ui/multi-select-list";
 
 import type { UiSize } from "@/app/showcase/_shared/uikit-sections";
 
-export function MultiSelectListCard({ uiSize }: { uiSize: UiSize }) {
+export function MultiSelectListCard({
+  uiSize,
+  borderRadius,
+}: {
+  uiSize: UiSize;
+  borderRadius: "none" | "md" | "lg";
+}) {
   const [value, setValue] = useState<string[]>(["react", "typescript"]);
 
   return (
@@ -19,6 +25,7 @@ export function MultiSelectListCard({ uiSize }: { uiSize: UiSize }) {
             searchable
             searchPlaceholder="Search options..."
             size={uiSize}
+            borderRadius={borderRadius}
             value={value}
             onValueChange={setValue}
             options={[

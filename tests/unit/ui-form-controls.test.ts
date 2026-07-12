@@ -7,18 +7,44 @@ import { UISwitcher } from "@/components/ui/switcher";
 
 describe("UI form controls", () => {
   it("renders checkbox sizes", () => {
-    const smallHtml = renderToStaticMarkup(createElement(UICheckbox, { size: "sm" }));
-    const largeHtml = renderToStaticMarkup(createElement(UICheckbox, { size: "lg" }));
+    const smallHtml = renderToStaticMarkup(createElement(UICheckbox, { size: "sm", label: "Label" }));
+    const mediumHtml = renderToStaticMarkup(createElement(UICheckbox, { size: "md", label: "Label" }));
+    const largeHtml = renderToStaticMarkup(createElement(UICheckbox, { size: "lg", label: "Label" }));
 
     expect(smallHtml).toContain("h-4 w-4");
-    expect(largeHtml).toContain("h-5 w-5");
+    expect(mediumHtml).toContain("h-5 w-5");
+    expect(largeHtml).toContain("h-6 w-6");
+    expect(smallHtml).toContain("text-sm leading-5");
+    expect(mediumHtml).toContain("text-sm leading-5");
+    expect(largeHtml).toContain("text-base leading-6");
+  });
+
+  it("renders checkbox border radius values", () => {
+    const noneHtml = renderToStaticMarkup(createElement(UICheckbox, { borderRadius: "none" }));
+    const mdHtml = renderToStaticMarkup(createElement(UICheckbox, { borderRadius: "md" }));
+    const lgHtml = renderToStaticMarkup(createElement(UICheckbox, { borderRadius: "lg" }));
+
+    expect(noneHtml).toContain("rounded-none");
+    expect(mdHtml).toContain("rounded-[4px]");
+    expect(lgHtml).toContain("rounded-[6px]");
   });
 
   it("renders switcher sizes", () => {
-    const smallHtml = renderToStaticMarkup(createElement(UISwitcher, { size: "sm", checked: false }));
-    const largeHtml = renderToStaticMarkup(createElement(UISwitcher, { size: "lg", checked: false }));
+    const smallHtml = renderToStaticMarkup(
+      createElement(UISwitcher, { size: "sm", checked: false, label: "Label" })
+    );
+    const mediumHtml = renderToStaticMarkup(
+      createElement(UISwitcher, { size: "md", checked: false, label: "Label" })
+    );
+    const largeHtml = renderToStaticMarkup(
+      createElement(UISwitcher, { size: "lg", checked: false, label: "Label" })
+    );
 
-    expect(smallHtml).toContain("h-[18px] w-[28px]");
-    expect(largeHtml).toContain("h-[22px] w-[36px]");
+    expect(smallHtml).toContain("h-4 w-7");
+    expect(mediumHtml).toContain("h-5 w-9");
+    expect(largeHtml).toContain("h-6 w-10");
+    expect(smallHtml).toContain("text-sm leading-5");
+    expect(mediumHtml).toContain("text-sm leading-5");
+    expect(largeHtml).toContain("text-base leading-6");
   });
 });

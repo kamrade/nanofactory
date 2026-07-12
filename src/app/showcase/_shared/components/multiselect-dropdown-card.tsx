@@ -7,7 +7,13 @@ import { UIMultiSelect } from "@/components/ui/multi-select";
 
 import type { UiSize } from "@/app/showcase/_shared/uikit-sections";
 
-export function MultiSelectDropdownCard({ uiSize }: { uiSize: UiSize }) {
+export function MultiSelectDropdownCard({
+  uiSize,
+  borderRadius,
+}: {
+  uiSize: UiSize;
+  borderRadius: "none" | "md" | "lg";
+}) {
   const [value, setValue] = useState<string[]>(["nextjs"]);
   const [borderlessValue, setBorderlessValue] = useState<string[]>(["react"]);
 
@@ -34,6 +40,7 @@ export function MultiSelectDropdownCard({ uiSize }: { uiSize: UiSize }) {
             clearable
             searchPlaceholder="Search options..."
             size={uiSize}
+            borderRadius={borderRadius}
             value={value}
             onValueChange={setValue}
             options={[
@@ -53,6 +60,7 @@ export function MultiSelectDropdownCard({ uiSize }: { uiSize: UiSize }) {
             clearable
             searchPlaceholder="Search options..."
             size={uiSize}
+            borderRadius={borderRadius}
             borderless
             value={borderlessValue}
             onValueChange={setBorderlessValue}
@@ -73,6 +81,7 @@ export function MultiSelectDropdownCard({ uiSize }: { uiSize: UiSize }) {
             clearable
             searchPlaceholder="Search 40 options..."
             size={uiSize}
+            borderRadius={borderRadius}
             options={longListOptions}
           />
         </div>

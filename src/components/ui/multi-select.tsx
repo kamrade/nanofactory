@@ -11,6 +11,7 @@ import {
 import { cx } from "@/lib/cn";
 
 type UIMultiSelectSize = "sm" | "md" | "lg";
+type UIMultiSelectBorderRadius = "none" | "md" | "lg";
 type ValidationState = "default" | "error" | "success";
 
 export type UIMultiSelectProps = {
@@ -29,6 +30,7 @@ export type UIMultiSelectProps = {
   searchPlaceholder?: string;
   emptyLabel?: string;
   clearable?: boolean;
+  borderRadius?: UIMultiSelectBorderRadius;
   name?: string;
   ariaLabel?: string;
   className?: string;
@@ -50,6 +52,7 @@ export function UIMultiSelect({
   searchPlaceholder = "Search...",
   emptyLabel = "No options",
   clearable = false,
+  borderRadius = "lg",
   name,
   ariaLabel = "Multi select",
   className,
@@ -68,19 +71,30 @@ export function UIMultiSelect({
   const sizeClasses =
     size === "sm"
       ? {
-          container: "h-7 rounded-lg px-2 gap-1.5",
-          borderlessContainer: "h-7 rounded-lg gap-1.5",
+          container: "h-7 px-2 gap-1.5",
+          borderlessContainer: "h-7 gap-1.5",
           icon: "h-3.5 w-3.5",
           clear: "h-5 w-5",
-          text: "text-sm",
+          text: "text-sm leading-5",
         }
-      : {
-          container: "h-10 rounded-xl px-3 gap-2",
-          borderlessContainer: "h-10 rounded-xl gap-2",
-          icon: "h-4 w-4",
-          clear: "h-6 w-6",
-          text: "text-sm",
-        };
+      : size === "md"
+        ? {
+            container: "h-10 px-3 gap-2",
+            borderlessContainer: "h-10 gap-2",
+            icon: "h-4 w-4",
+            clear: "h-6 w-6",
+            text: "text-sm leading-5",
+          }
+        : {
+            container: "h-14 px-4 gap-2",
+            borderlessContainer: "h-14 gap-2",
+            icon: "h-4 w-4",
+            clear: "h-7 w-7",
+            text: "text-base leading-6",
+          };
+
+  const radiusClassName =
+    borderRadius === "none" ? "rounded-none" : borderRadius === "md" ? "rounded-lg" : "rounded-xl";
 
   function commitValue(nextValue: string[]) {
     if (!isControlled) {
@@ -133,6 +147,7 @@ export function UIMultiSelect({
               !borderless && "focus:ring-2 focus:ring-focus/50 focus:ring-offset-0 focus:ring-offset-bg",
               "focus:outline-none focus-visible:outline-none",
               borderless ? sizeClasses.borderlessContainer : sizeClasses.container,
+              radiusClassName,
               sizeClasses.text,
               disabled && "cursor-not-allowed opacity-60",
               borderless
@@ -217,7 +232,8 @@ export function UIMultiSelect({
           searchPlaceholder={searchPlaceholder}
           emptyLabel={emptyLabel}
           name={name}
-          className="rounded-xl bg-surface p-1 shadow-[0_10px_30px_rgba(0,0,0,0.12)]"
+          borderRadius={borderRadius}
+          className={cx("bg-surface p-1 shadow-[0_10px_30px_rgba(0,0,0,0.12)]", radiusClassName)}
         />
       </UIDropdown>
       {name ? currentValue.map((item) => <input key={item} type="hidden" name={name} value={item} />) : null}

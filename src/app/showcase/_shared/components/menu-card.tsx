@@ -15,6 +15,60 @@ import {
   type UIMenuBorderRadius,
 } from "@/components/ui/menu/menu-radius";
 
+type MenuActionContentProps = {
+  size: UiSize;
+  borderRadius: UIMenuBorderRadius;
+  closeOnSelect?: boolean;
+  onAction: (action: "edit" | "duplicate" | "archive" | "delete") => void;
+};
+
+function MenuActionContent({ size, borderRadius, closeOnSelect = true, onAction }: MenuActionContentProps) {
+  return (
+    <>
+      <UIMenuLabel size={size}>Actions</UIMenuLabel>
+      <UIMenuItem
+        size={size}
+        borderRadius={borderRadius}
+        icon={<FiEdit2 aria-hidden className="h-4 w-4" />}
+        closeOnSelect={closeOnSelect}
+        onSelect={() => onAction("edit")}
+      >
+        Edit
+      </UIMenuItem>
+      <UIMenuItem
+        size={size}
+        borderRadius={borderRadius}
+        icon={<FiCopy aria-hidden className="h-4 w-4" />}
+        closeOnSelect={closeOnSelect}
+        onSelect={() => onAction("duplicate")}
+      >
+        Duplicate
+      </UIMenuItem>
+      <UIMenuSeparator />
+      <UIMenuLabel size={size}>Danger Zone</UIMenuLabel>
+      <UIMenuItem
+        size={size}
+        borderRadius={borderRadius}
+        icon={<FiArchive aria-hidden className="h-4 w-4" />}
+        closeOnSelect={closeOnSelect}
+        onSelect={() => onAction("archive")}
+      >
+        Archive
+      </UIMenuItem>
+      <UIMenuItem
+        size={size}
+        borderRadius={borderRadius}
+        tone="danger"
+        icon={<FiTrash2 aria-hidden className="h-4 w-4" />}
+        closeOnSelect={closeOnSelect}
+        onSelect={() => onAction("delete")}
+      >
+        Delete
+      </UIMenuItem>
+    </>
+  );
+}
+
 export function MenuCard({ uiSize, borderRadius }: { uiSize: UiSize; borderRadius: UIMenuBorderRadius }) {
   const [menuAction, setMenuAction] = useState("none");
   const [manualMenuAction, setManualMenuAction] = useState("none");
@@ -71,21 +125,7 @@ export function MenuCard({ uiSize, borderRadius }: { uiSize: UiSize; borderRadiu
               </UIButton>
             }
           >
-            <UIMenuLabel>Actions</UIMenuLabel>
-            <UIMenuItem icon={<FiEdit2 aria-hidden className="h-4 w-4" />} onSelect={() => setManualMenuAction("edit")}>
-              Edit
-            </UIMenuItem>
-            <UIMenuItem icon={<FiCopy aria-hidden className="h-4 w-4" />} onSelect={() => setManualMenuAction("duplicate")}>
-              Duplicate
-            </UIMenuItem>
-            <UIMenuSeparator />
-            <UIMenuLabel>Danger Zone</UIMenuLabel>
-            <UIMenuItem icon={<FiArchive aria-hidden className="h-4 w-4" />} onSelect={() => setManualMenuAction("archive")}>
-              Archive
-            </UIMenuItem>
-            <UIMenuItem tone="danger" icon={<FiTrash2 aria-hidden className="h-4 w-4" />} onSelect={() => setManualMenuAction("delete")}>
-              Delete
-            </UIMenuItem>
+            <MenuActionContent size={uiSize} borderRadius={borderRadius} onAction={setManualMenuAction} />
           </UIMenu>
           <p className="text-sm text-text-muted">Dropdown manual action: {manualMenuAction}</p>
         </div>
@@ -104,46 +144,12 @@ export function MenuCard({ uiSize, borderRadius }: { uiSize: UiSize; borderRadiu
                 borderRadius: resolveMenuBorderRadiusValue(borderRadius),
               }}
             >
-              <UIMenuLabel size={uiSize}>Actions</UIMenuLabel>
-              <UIMenuItem
+              <MenuActionContent
                 size={uiSize}
                 borderRadius={borderRadius}
-                icon={<FiEdit2 aria-hidden className="h-4 w-4" />}
                 closeOnSelect={false}
-                onSelect={() => setInlineMenuAction("edit")}
-              >
-                Edit
-              </UIMenuItem>
-              <UIMenuItem
-                size={uiSize}
-                borderRadius={borderRadius}
-                icon={<FiCopy aria-hidden className="h-4 w-4" />}
-                closeOnSelect={false}
-                onSelect={() => setInlineMenuAction("duplicate")}
-              >
-                Duplicate
-              </UIMenuItem>
-              <UIMenuSeparator />
-              <UIMenuLabel size={uiSize}>Danger Zone</UIMenuLabel>
-              <UIMenuItem
-                size={uiSize}
-                borderRadius={borderRadius}
-                icon={<FiArchive aria-hidden className="h-4 w-4" />}
-                closeOnSelect={false}
-                onSelect={() => setInlineMenuAction("archive")}
-              >
-                Archive
-              </UIMenuItem>
-              <UIMenuItem
-                size={uiSize}
-                borderRadius={borderRadius}
-                tone="danger"
-                icon={<FiTrash2 aria-hidden className="h-4 w-4" />}
-                closeOnSelect={false}
-                onSelect={() => setInlineMenuAction("delete")}
-              >
-                Delete
-              </UIMenuItem>
+                onAction={setInlineMenuAction}
+              />
             </div>
           </div>
           <p

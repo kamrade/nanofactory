@@ -1,6 +1,9 @@
 import type { KeyboardEvent, ReactNode } from "react";
+
 import { cx } from "@/lib/cn";
 
+export type UISegmentedControlSize = "sm" | "md" | "lg";
+export type UISegmentedControlBorderRadius = "none" | "md" | "lg";
 
 type UISegmentedControlOption<T extends string> = {
   value: T;
@@ -12,32 +15,44 @@ export type UISegmentedControlProps<T extends string> = {
   value: T;
   options: UISegmentedControlOption<T>[];
   onValueChange?: (value: T) => void;
-  size?: "sm" | "md" | "lg";
+  size?: UISegmentedControlSize;
+  borderRadius?: UISegmentedControlBorderRadius;
   borderless?: boolean;
   ariaLabel?: string;
   className?: string;
 };
+
+const sizeClasses = {
+  sm: {
+    group: "h-7 p-0.5",
+    item: "px-2.5 text-sm leading-5",
+  },
+  md: {
+    group: "h-10 p-1",
+    item: "px-3.5 text-sm leading-5",
+  },
+  lg: {
+    group: "h-14 p-1.5",
+    item: "px-4 text-base leading-6",
+  },
+} as const;
+
+const borderRadiusClassName = {
+  none: "rounded-none",
+  md: "rounded-lg",
+  lg: "rounded-xl",
+} as const;
 
 export function UISegmentedControl<T extends string>({
   value,
   options,
   onValueChange,
   size = "sm",
+  borderRadius = "lg",
   borderless = false,
   ariaLabel = "Segmented control",
   className,
 }: UISegmentedControlProps<T>) {
-  const sizeClasses =
-    size === "sm"
-      ? {
-          group: "h-7 rounded-lg p-0.5",
-          item: "rounded-md px-2.5 text-sm",
-        }
-      : {
-          group: "h-10 rounded-xl p-0.5",
-          item: "rounded-lg px-3.5 text-sm",
-        };
-
   function moveSelection(direction: 1 | -1) {
     const currentIndex = options.findIndex((option) => option.value === value);
     if (currentIndex < 0) {
@@ -72,9 +87,10 @@ export function UISegmentedControl<T extends string>({
       role="radiogroup"
       aria-label={ariaLabel}
       className={cx(
-        "inline-flex items-center gap-1",
+        "inline-flex items-stretch gap-1",
         borderless ? "bg-transparent" : "border border-line bg-surface",
-        sizeClasses.group,
+        sizeClasses[size].group,
+        borderRadiusClassName[borderRadius],
         className
       )}
       onKeyDown={handleKeyDown}
@@ -96,10 +112,11 @@ export function UISegmentedControl<T extends string>({
             }}
             className={cx(
               "inline-flex h-full items-center justify-center font-medium transition outline-none",
-              sizeClasses.item,
+              sizeClasses[size].item,
+              borderRadiusClassName[borderRadius],
               !borderless && "focus:ring-2 focus:ring-focus/50 focus:ring-offset-0 focus:ring-offset-bg",
               !borderless &&
-                "focus-visible:ring-2 focus-visible:ring-focus/50 focus-visible:ring-offset-0 focus-visible:ring-offset-bg",
+                "focus-visible:ring-2 focus-visible:ring-focus/50 focus-visible:ring-offset-0 focus:ring-offset-bg",
               option.disabled && "cursor-not-allowed opacity-50",
               active
                 ? borderless

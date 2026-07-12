@@ -9,12 +9,32 @@ describe("UITextInput", () => {
     const smallHtml = renderToStaticMarkup(
       createElement(UITextInput, { size: "sm", defaultValue: "a" })
     );
+    const mediumHtml = renderToStaticMarkup(
+      createElement(UITextInput, { size: "md", defaultValue: "a" })
+    );
     const largeHtml = renderToStaticMarkup(
       createElement(UITextInput, { size: "lg", defaultValue: "a" })
     );
 
     expect(smallHtml).toContain("h-7");
-    expect(largeHtml).toContain("h-10");
+    expect(mediumHtml).toContain("h-10");
+    expect(largeHtml).toContain("h-14");
+  });
+
+  it("renders matching border radius values", () => {
+    const noneHtml = renderToStaticMarkup(
+      createElement(UITextInput, { borderRadius: "none", defaultValue: "a" })
+    );
+    const mdHtml = renderToStaticMarkup(
+      createElement(UITextInput, { borderRadius: "md", defaultValue: "a" })
+    );
+    const lgHtml = renderToStaticMarkup(
+      createElement(UITextInput, { borderRadius: "lg", defaultValue: "a" })
+    );
+
+    expect(noneHtml).toContain("rounded-none");
+    expect(mdHtml).toContain("rounded-lg");
+    expect(lgHtml).toContain("rounded-xl");
   });
 
   it("marks input as invalid when invalid prop is set", () => {

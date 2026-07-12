@@ -5,10 +5,17 @@ import { describe, expect, it } from "vitest";
 import { UIMultiSelectList } from "@/components/ui/multi-select-list";
 
 describe("UIMultiSelectList", () => {
-  it("renders with small and large fixed option heights", () => {
+  it("renders with size-dependent option heights", () => {
     const smallHtml = renderToStaticMarkup(
       createElement(UIMultiSelectList, {
         size: "sm",
+        defaultValue: ["react"],
+        options: [{ value: "react", label: "React" }],
+      })
+    );
+    const mediumHtml = renderToStaticMarkup(
+      createElement(UIMultiSelectList, {
+        size: "md",
         defaultValue: ["react"],
         options: [{ value: "react", label: "React" }],
       })
@@ -22,7 +29,64 @@ describe("UIMultiSelectList", () => {
     );
 
     expect(smallHtml).toContain("min-h-7");
-    expect(largeHtml).toContain("min-h-10");
+    expect(mediumHtml).toContain("min-h-10");
+    expect(largeHtml).toContain("min-h-14");
+  });
+
+  it("renders matching border radius values", () => {
+    const noneHtml = renderToStaticMarkup(
+      createElement(UIMultiSelectList, {
+        borderRadius: "none",
+        defaultValue: ["react"],
+        options: [{ value: "react", label: "React" }],
+      })
+    );
+    const mdHtml = renderToStaticMarkup(
+      createElement(UIMultiSelectList, {
+        borderRadius: "md",
+        defaultValue: ["react"],
+        options: [{ value: "react", label: "React" }],
+      })
+    );
+    const lgHtml = renderToStaticMarkup(
+      createElement(UIMultiSelectList, {
+        borderRadius: "lg",
+        defaultValue: ["react"],
+        options: [{ value: "react", label: "React" }],
+      })
+    );
+
+    expect(noneHtml).toContain("rounded-none");
+    expect(mdHtml).toContain("rounded-lg");
+    expect(lgHtml).toContain("rounded-xl");
+  });
+
+  it("applies border radius to selected checkbox markers", () => {
+    const noneHtml = renderToStaticMarkup(
+      createElement(UIMultiSelectList, {
+        borderRadius: "none",
+        defaultValue: ["react"],
+        options: [{ value: "react", label: "React" }],
+      })
+    );
+    const mdHtml = renderToStaticMarkup(
+      createElement(UIMultiSelectList, {
+        borderRadius: "md",
+        defaultValue: ["react"],
+        options: [{ value: "react", label: "React" }],
+      })
+    );
+    const lgHtml = renderToStaticMarkup(
+      createElement(UIMultiSelectList, {
+        borderRadius: "lg",
+        defaultValue: ["react"],
+        options: [{ value: "react", label: "React" }],
+      })
+    );
+
+    expect(noneHtml).toContain("rounded-none");
+    expect(mdHtml).toContain("rounded-[4px]");
+    expect(lgHtml).toContain("rounded-[6px]");
   });
 
   it("renders listbox semantics for multiselect", () => {
@@ -99,4 +163,3 @@ describe("UIMultiSelectList", () => {
     expect(html).toContain('value="typescript"');
   });
 });
-

@@ -44,6 +44,64 @@ describe("UI navigation components", () => {
     expect(html).toContain("Dark");
   });
 
+  it("renders segmented control sizes and border radius values", () => {
+    const sm = renderToStaticMarkup(
+      createElement(UISegmentedControl, {
+        ariaLabel: "Mode sm",
+        value: "light",
+        size: "sm",
+        borderRadius: "none",
+        onValueChange: () => undefined,
+        options: [
+          { value: "light", label: "Light" },
+          { value: "dark", label: "Dark" },
+        ],
+      })
+    );
+    const md = renderToStaticMarkup(
+      createElement(UISegmentedControl, {
+        ariaLabel: "Mode md",
+        value: "light",
+        size: "md",
+        borderRadius: "md",
+        onValueChange: () => undefined,
+        options: [
+          { value: "light", label: "Light" },
+          { value: "dark", label: "Dark" },
+        ],
+      })
+    );
+    const lg = renderToStaticMarkup(
+      createElement(UISegmentedControl, {
+        ariaLabel: "Mode lg",
+        value: "light",
+        size: "lg",
+        borderRadius: "lg",
+        onValueChange: () => undefined,
+        options: [
+          { value: "light", label: "Light" },
+          { value: "dark", label: "Dark" },
+        ],
+      })
+    );
+
+    expect(sm).toContain("h-7");
+    expect(md).toContain("h-10");
+    expect(lg).toContain("h-14");
+    expect(sm).toContain("rounded-none");
+    expect(md).toContain("rounded-lg");
+    expect(lg).toContain("rounded-xl");
+    expect(sm).toContain('role="radio"');
+    expect(md).toContain('role="radio"');
+    expect(lg).toContain('role="radio"');
+    expect(sm).toContain("rounded-none");
+    expect(md).toContain("rounded-lg");
+    expect(lg).toContain("rounded-xl");
+    expect(sm).toContain("text-sm leading-5");
+    expect(md).toContain("text-sm leading-5");
+    expect(lg).toContain("text-base leading-6");
+  });
+
   it("renders borderless segmented control without outer border", () => {
     const html = renderToStaticMarkup(
       createElement(UISegmentedControl, {

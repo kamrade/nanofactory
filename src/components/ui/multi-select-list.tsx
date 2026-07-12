@@ -1,11 +1,13 @@
 "use client";
 
 import { useMemo, useRef, useState, type KeyboardEvent, type ReactNode } from "react";
+import { UICheckboxMark } from "@/components/ui/checkbox";
 import { cx } from "@/lib/cn";
 
 
 type ValidationState = "default" | "error" | "success";
 type UIMultiSelectListSize = "sm" | "md" | "lg";
+type UIMultiSelectBorderRadius = "none" | "md" | "lg";
 
 export type UIMultiSelectListOption = {
   value: string;
@@ -30,6 +32,7 @@ export type UIMultiSelectListProps = {
   ariaLabel?: string;
   className?: string;
   name?: string;
+  borderRadius?: UIMultiSelectBorderRadius;
 };
 
 function getOptionText(option: UIMultiSelectListOption) {
@@ -79,6 +82,7 @@ export function UIMultiSelectList({
   ariaLabel = "Multi select list",
   className,
   name,
+  borderRadius = "lg",
 }: UIMultiSelectListProps) {
   const isControlled = value !== undefined;
   const [uncontrolledValue, setUncontrolledValue] = useState<string[]>(defaultValue ?? []);
@@ -104,19 +108,21 @@ export function UIMultiSelectList({
   const sizeClasses =
     size === "sm"
       ? {
-          list: "rounded-lg",
-          option: "min-h-7 rounded-md px-2 py-1 text-sm",
-          check: "h-4 w-4 rounded-md",
-          icon: "h-2.5 w-2.5",
-          search: "h-7 rounded-lg px-2 text-sm",
+          option: "min-h-7 px-2 py-1 text-sm leading-5",
+          search: "h-7 px-2 text-sm leading-5",
         }
-      : {
-          list: "rounded-xl",
-          option: "min-h-10 rounded-lg px-3 py-2.5 text-sm",
-          check: "h-5 w-5 rounded-lg",
-          icon: "h-3 w-3",
-          search: "h-10 rounded-xl px-3 text-sm",
-        };
+      : size === "md"
+        ? {
+            option: "min-h-10 px-3 py-2 text-sm leading-5",
+            search: "h-10 px-3 text-sm leading-5",
+          }
+        : {
+            option: "min-h-14 px-4 py-3 text-base leading-6",
+            search: "h-14 px-4 text-base leading-6",
+          };
+
+  const radiusClassName =
+    borderRadius === "none" ? "rounded-none" : borderRadius === "md" ? "rounded-lg" : "rounded-xl";
 
   function commitValue(nextValue: string[]) {
     if (!isControlled) {
@@ -219,6 +225,7 @@ export function UIMultiSelectList({
           className={cx(
             "w-full border bg-surface text-text-main outline-none transition placeholder:text-text-placeholder",
             "focus:ring-2 focus:ring-focus/50 focus:ring-offset-0 focus:ring-offset-bg",
+            radiusClassName,
             sizeClasses.search,
             isInvalid
               ? "border-danger-line bg-danger-100"
@@ -235,10 +242,10 @@ export function UIMultiSelectList({
         aria-multiselectable="true"
         tabIndex={0}
         onKeyDown={handleKeyDown}
-        className={cx(
+          className={cx(
           "scrollbar-macos flex max-h-[min(24rem,calc(100vh-2rem))] w-full flex-col gap-0.5 overflow-y-auto bg-surface p-1 outline-none",
           "focus:ring-2 focus:ring-focus/50 focus:ring-offset-0 focus:ring-offset-bg",
-          sizeClasses.list,
+          radiusClassName,
           disabled && "cursor-not-allowed opacity-60",
           isInvalid
             ? "border-danger-line bg-danger-100"
@@ -275,6 +282,7 @@ export function UIMultiSelectList({
               className={cx(
                 "flex w-full items-center gap-2 text-left transition outline-none",
                 "focus:ring-2 focus:ring-focus/50 focus:ring-offset-0 focus:ring-offset-surface",
+                radiusClassName,
                 sizeClasses.option,
                 (disabled || option.disabled) && "cursor-not-allowed opacity-60",
                 !disabled && !option.disabled && "hover:bg-surface-alt",
@@ -282,28 +290,7 @@ export function UIMultiSelectList({
                 active && !disabled && !option.disabled && "bg-surface-alt"
               )}
             >
-              <span
-                aria-hidden
-                className={cx(
-                  "inline-flex shrink-0 items-center justify-center border transition",
-                  sizeClasses.check,
-                  selected
-                    ? "border-transparent bg-primary-100 text-text-inverted-main"
-                    : "border-neutral-line bg-surface text-transparent"
-                )}
-              >
-                <svg
-                  viewBox="0 0 16 16"
-                  className={sizeClasses.icon}
-                  fill="none"
-                  stroke="currentColor"
-                  strokeWidth="2.25"
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                >
-                  <path d="M3.5 8.5L6.6 11.4L12.5 5.5" />
-                </svg>
-              </span>
+              <UICheckboxMark size={size} borderRadius={borderRadius} checked={selected} />
               <span className="min-w-0 flex-1 truncate">{option.label}</span>
             </button>
           );

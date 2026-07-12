@@ -5,10 +5,17 @@ import { describe, expect, it } from "vitest";
 import { UIAutocomplete } from "@/components/ui/autocomplete";
 
 describe("UIAutocomplete", () => {
-  it("renders with small and large fixed heights", () => {
+  it("renders with size-dependent fixed heights", () => {
     const smallHtml = renderToStaticMarkup(
       createElement(UIAutocomplete, {
         size: "sm",
+        value: "re",
+        items: [{ value: "react", label: "React" }],
+      })
+    );
+    const mediumHtml = renderToStaticMarkup(
+      createElement(UIAutocomplete, {
+        size: "md",
         value: "re",
         items: [{ value: "react", label: "React" }],
       })
@@ -22,7 +29,36 @@ describe("UIAutocomplete", () => {
     );
 
     expect(smallHtml).toContain("h-7");
-    expect(largeHtml).toContain("h-10");
+    expect(mediumHtml).toContain("h-10");
+    expect(largeHtml).toContain("h-14");
+  });
+
+  it("renders matching border radius values", () => {
+    const noneHtml = renderToStaticMarkup(
+      createElement(UIAutocomplete, {
+        borderRadius: "none",
+        value: "re",
+        items: [{ value: "react", label: "React" }],
+      })
+    );
+    const mdHtml = renderToStaticMarkup(
+      createElement(UIAutocomplete, {
+        borderRadius: "md",
+        value: "re",
+        items: [{ value: "react", label: "React" }],
+      })
+    );
+    const lgHtml = renderToStaticMarkup(
+      createElement(UIAutocomplete, {
+        borderRadius: "lg",
+        value: "re",
+        items: [{ value: "react", label: "React" }],
+      })
+    );
+
+    expect(noneHtml).toContain("rounded-none");
+    expect(mdHtml).toContain("rounded-lg");
+    expect(lgHtml).toContain("rounded-xl");
   });
 
   it("renders combobox and listbox semantics", () => {

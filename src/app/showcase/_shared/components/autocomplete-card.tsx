@@ -7,7 +7,13 @@ import { UIAutocomplete } from "@/components/ui/autocomplete";
 
 import type { UiSize } from "@/app/showcase/_shared/uikit-sections";
 
-export function AutocompleteCard({ uiSize }: { uiSize: UiSize }) {
+export function AutocompleteCard({
+  uiSize,
+  borderRadius,
+}: {
+  uiSize: UiSize;
+  borderRadius: "none" | "md" | "lg";
+}) {
   const [value, setValue] = useState("");
   const [selection, setSelection] = useState("none");
   const [borderlessValue, setBorderlessValue] = useState("");
@@ -20,6 +26,7 @@ export function AutocompleteCard({ uiSize }: { uiSize: UiSize }) {
           <UIAutocomplete
             ariaLabel="Framework autocomplete"
             size={uiSize}
+            borderRadius={borderRadius}
             value={value}
             onValueChange={setValue}
             onSelect={(item) => setSelection(item.value)}
@@ -39,6 +46,7 @@ export function AutocompleteCard({ uiSize }: { uiSize: UiSize }) {
           <UIAutocomplete
             ariaLabel="Borderless framework autocomplete"
             size={uiSize}
+            borderRadius={borderRadius}
             borderless
             value={borderlessValue}
             onValueChange={setBorderlessValue}
@@ -59,6 +67,7 @@ export function AutocompleteCard({ uiSize }: { uiSize: UiSize }) {
           <UIAutocomplete
             ariaLabel="Autocomplete invalid"
             size={uiSize}
+            borderRadius={borderRadius}
             placeholder="Invalid state"
             invalid
             validationState="error"

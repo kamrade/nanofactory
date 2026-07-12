@@ -54,25 +54,25 @@ export function ComponentsShowcaseSection({
       case "controls-menu":
         return <MenuCard uiSize={uiSize} borderRadius={borderRadius} />;
       case "controls-checkbox":
-        return <ControlsCheckboxCard />;
+        return <ControlsCheckboxCard uiSize={uiSize} borderRadius={borderRadius} />;
       case "controls-switcher":
-        return <ControlsSwitcherCard />;
+        return <ControlsSwitcherCard uiSize={uiSize} />;
       case "controls-segmented-control":
-        return <ControlsSegmentedControlCard uiSize={uiSize} />;
+        return <ControlsSegmentedControlCard uiSize={uiSize} borderRadius={borderRadius} />;
       case "controls-accordion":
         return <AccordionCard uiSize={uiSize} />;
       case "inputs-text-input":
-        return <InputsTextInputCard uiSize={uiSize} />;
+        return <InputsTextInputCard uiSize={uiSize} borderRadius={borderRadius} />;
       case "inputs-select":
-        return <InputsSelectCard uiSize={uiSize} />;
+        return <InputsSelectCard uiSize={uiSize} borderRadius={borderRadius} />;
       case "inputs-slider":
         return <InputsSliderCard />;
       case "inputs-multiselect-list":
-        return <MultiSelectListCard uiSize={uiSize} />;
+        return <MultiSelectListCard uiSize={uiSize} borderRadius={borderRadius} />;
       case "inputs-multiselect-dropdown":
-        return <MultiSelectDropdownCard uiSize={uiSize} />;
+        return <MultiSelectDropdownCard uiSize={uiSize} borderRadius={borderRadius} />;
       case "inputs-autocomplete":
-        return <AutocompleteCard uiSize={uiSize} />;
+        return <AutocompleteCard uiSize={uiSize} borderRadius={borderRadius} />;
       case "feedback-toast":
         return <ToastCard uiSize={uiSize} showToast={showToast} clearToasts={clearToasts} />;
       case "feedback-sheet":

@@ -7,7 +7,13 @@ import { UISelect } from "@/components/ui/select";
 
 import type { UiSize } from "./types";
 
-export function InputsSelectCard({ uiSize }: { uiSize: UiSize }) {
+export function InputsSelectCard({
+  uiSize,
+  borderRadius,
+}: {
+  uiSize: UiSize;
+  borderRadius: "none" | "md" | "lg";
+}) {
   const [selectValue, setSelectValue] = useState("react");
   const [selectSearchValue, setSelectSearchValue] = useState("typescript");
   const [selectLongValue, setSelectLongValue] = useState("item-18");
@@ -31,6 +37,7 @@ export function InputsSelectCard({ uiSize }: { uiSize: UiSize }) {
         <div className="max-w-xl">
           <UISelect
             size={uiSize}
+            borderRadius={borderRadius}
             value={selectValue}
             onValueChange={setSelectValue}
             placeholder="Pick framework"
@@ -47,6 +54,7 @@ export function InputsSelectCard({ uiSize }: { uiSize: UiSize }) {
         <div className="max-w-xl">
           <UISelect
             size={uiSize}
+            borderRadius={borderRadius}
             defaultValue="nextjs"
             placeholder="Borderless select"
             borderless
@@ -61,6 +69,7 @@ export function InputsSelectCard({ uiSize }: { uiSize: UiSize }) {
         <div className="max-w-xl">
           <UISelect
             size={uiSize}
+            borderRadius={borderRadius}
             value={selectSearchValue}
             onValueChange={setSelectSearchValue}
             placeholder="Search and select language"
@@ -80,6 +89,7 @@ export function InputsSelectCard({ uiSize }: { uiSize: UiSize }) {
         <div className="max-w-xl">
           <UISelect
             size={uiSize}
+            borderRadius={borderRadius}
             placeholder="Invalid state"
             invalid
             validationState="error"
@@ -93,6 +103,7 @@ export function InputsSelectCard({ uiSize }: { uiSize: UiSize }) {
         <div className="max-w-xl">
           <UISelect
             size={uiSize}
+            borderRadius={borderRadius}
             value={selectLongValue}
             onValueChange={setSelectLongValue}
             placeholder="Long list example"

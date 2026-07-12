@@ -5,10 +5,17 @@ import { describe, expect, it } from "vitest";
 import { UIMultiSelect } from "@/components/ui/multi-select";
 
 describe("UIMultiSelect", () => {
-  it("renders with small and large fixed heights", () => {
+  it("renders with size-dependent fixed heights", () => {
     const smallHtml = renderToStaticMarkup(
       createElement(UIMultiSelect, {
         size: "sm",
+        value: ["react"],
+        options: [{ value: "react", label: "React" }],
+      })
+    );
+    const mediumHtml = renderToStaticMarkup(
+      createElement(UIMultiSelect, {
+        size: "md",
         value: ["react"],
         options: [{ value: "react", label: "React" }],
       })
@@ -22,7 +29,36 @@ describe("UIMultiSelect", () => {
     );
 
     expect(smallHtml).toContain("h-7");
-    expect(largeHtml).toContain("h-10");
+    expect(mediumHtml).toContain("h-10");
+    expect(largeHtml).toContain("h-14");
+  });
+
+  it("renders matching border radius values", () => {
+    const noneHtml = renderToStaticMarkup(
+      createElement(UIMultiSelect, {
+        borderRadius: "none",
+        value: ["react"],
+        options: [{ value: "react", label: "React" }],
+      })
+    );
+    const mdHtml = renderToStaticMarkup(
+      createElement(UIMultiSelect, {
+        borderRadius: "md",
+        value: ["react"],
+        options: [{ value: "react", label: "React" }],
+      })
+    );
+    const lgHtml = renderToStaticMarkup(
+      createElement(UIMultiSelect, {
+        borderRadius: "lg",
+        value: ["react"],
+        options: [{ value: "react", label: "React" }],
+      })
+    );
+
+    expect(noneHtml).toContain("rounded-none");
+    expect(mdHtml).toContain("rounded-lg");
+    expect(lgHtml).toContain("rounded-xl");
   });
 
   it("uses listbox popup semantics", () => {

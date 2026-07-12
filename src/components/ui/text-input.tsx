@@ -14,9 +14,11 @@ import { cx } from "@/lib/cn";
 
 type ValidationState = "default" | "error" | "success";
 type UITextInputSize = "sm" | "md" | "lg";
+type UITextInputBorderRadius = "none" | "md" | "lg";
 
 export type UITextInputProps = Omit<InputHTMLAttributes<HTMLInputElement>, "size" | "prefix"> & {
   size?: UITextInputSize;
+  borderRadius?: UITextInputBorderRadius;
   invalid?: boolean;
   validationState?: ValidationState;
   borderless?: boolean;
@@ -35,6 +37,7 @@ export const UITextInput = forwardRef<HTMLInputElement, UITextInputProps>(functi
   {
     className,
     size = "lg",
+    borderRadius = "lg",
     type = "text",
     value,
     defaultValue,
@@ -119,21 +122,33 @@ export const UITextInput = forwardRef<HTMLInputElement, UITextInputProps>(functi
   const sizeClasses =
     size === "sm"
       ? {
-          container: borderless ? "h-7 rounded-lg" : "h-7 rounded-lg px-2",
+          container: borderless ? "h-7" : "h-7 px-3",
           icon: "h-3.5 w-3.5",
           clearButton: "h-5 w-5",
           toggleButton: "h-5 min-w-10 px-1.5 text-[11px]",
-          input: "text-sm",
+          input: "text-sm leading-5",
           gap: "gap-1.5",
         }
-      : {
-          container: borderless ? "h-10 rounded-xl" : "h-10 rounded-xl px-3",
-          icon: "h-4 w-4",
-          clearButton: "h-6 w-6",
-          toggleButton: "h-6 min-w-12 px-2 text-xs",
-          input: "text-sm",
-          gap: "gap-2",
-        };
+      : size === "md"
+        ? {
+            container: borderless ? "h-10" : "h-10 px-4",
+            icon: "h-4 w-4",
+            clearButton: "h-6 w-6",
+            toggleButton: "h-6 min-w-12 px-2 text-xs",
+            input: "text-sm leading-5",
+            gap: "gap-2",
+          }
+        : {
+            container: borderless ? "h-14" : "h-14 px-5",
+            icon: "h-4 w-4",
+            clearButton: "h-7 w-7",
+            toggleButton: "h-7 min-w-14 px-2.5 text-sm",
+            input: "text-base leading-6",
+            gap: "gap-2",
+          };
+
+  const radiusClasses =
+    borderRadius === "none" ? "rounded-none" : borderRadius === "md" ? "rounded-lg" : "rounded-xl";
 
   return (
     <div className="w-full">
@@ -141,6 +156,7 @@ export const UITextInput = forwardRef<HTMLInputElement, UITextInputProps>(functi
         className={cx(
           "flex w-full items-center transition",
           sizeClasses.container,
+          radiusClasses,
           sizeClasses.gap,
           !borderless && "focus-within:ring-2 focus-within:ring-focus/50 focus-within:ring-offset-0 focus-within:ring-offset-bg",
           disabled && "cursor-not-allowed opacity-60",

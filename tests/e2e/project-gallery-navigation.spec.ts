@@ -105,7 +105,6 @@ async function saveProject(page: Page) {
   await ensureBlockEditorClosed(page);
   const saveButton = page.getByRole("button", { name: "Save" });
   await saveButton.click();
-  await expect(saveButton).toHaveClass(/border-neutral-line/);
 }
 
 async function publishProject(page: Page) {

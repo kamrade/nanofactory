@@ -6,6 +6,7 @@ import { UIDropdown } from "@/components/ui/dropdown";
 import { cx } from "@/lib/cn";
 
 type UISelectSize = "sm" | "md" | "lg";
+type UISelectBorderRadius = "none" | "md" | "lg";
 type ValidationState = "default" | "error" | "success";
 
 export type UISelectOption = {
@@ -29,6 +30,7 @@ export type UISelectProps = {
   validationState?: ValidationState;
   borderless?: boolean;
   size?: UISelectSize;
+  borderRadius?: UISelectBorderRadius;
   prefix?: ReactNode;
   suffix?: ReactNode;
   searchable?: boolean;
@@ -98,6 +100,7 @@ export function UISelect({
   validationState = "default",
   borderless = false,
   size = "lg",
+  borderRadius = "lg",
   prefix,
   suffix,
   searchable = false,
@@ -137,23 +140,36 @@ export function UISelect({
   const sizeClasses =
     size === "sm"
       ? {
-          container: borderless ? "h-7 rounded-lg gap-1.5" : "h-7 rounded-lg px-2 gap-1.5",
+          container: borderless ? "h-7 gap-1.5" : "h-7 px-2 gap-1.5",
           icon: "h-3.5 w-3.5",
           clear: "h-5 w-5",
-          text: "text-sm",
+          text: "text-sm leading-5",
           listPadding: "p-1",
-          option: "min-h-7 rounded-md px-2 py-1 text-sm",
-          searchInput: "h-7 text-sm",
+          option: "min-h-7 px-2 py-1 text-sm leading-5",
+          searchInput: "h-7 text-sm leading-5",
         }
-      : {
-          container: borderless ? "h-10 rounded-xl gap-2" : "h-10 rounded-xl px-3 gap-2",
-          icon: "h-4 w-4",
-          clear: "h-6 w-6",
-          text: "text-sm",
-          listPadding: "p-1",
-          option: "min-h-10 rounded-lg px-3 py-2.5 text-sm",
-          searchInput: "h-8 text-sm",
-        };
+      : size === "md"
+        ? {
+            container: borderless ? "h-10 gap-2" : "h-10 px-3 gap-2",
+            icon: "h-4 w-4",
+            clear: "h-6 w-6",
+            text: "text-sm leading-5",
+            listPadding: "p-1",
+            option: "min-h-10 px-3 py-2 text-sm leading-5",
+            searchInput: "h-8 text-sm leading-5",
+          }
+        : {
+            container: borderless ? "h-14 gap-2" : "h-14 px-4 gap-2",
+            icon: "h-4 w-4",
+            clear: "h-7 w-7",
+            text: "text-base leading-6",
+            listPadding: "p-1",
+            option: "min-h-14 px-4 py-3 text-base leading-6",
+            searchInput: "h-10 text-sm leading-5",
+          };
+
+  const radiusClassName =
+    borderRadius === "none" ? "rounded-none" : borderRadius === "md" ? "rounded-lg" : "rounded-xl";
 
   const canClear = clearable && !disabled && !readOnly && selectedOption;
 
@@ -316,6 +332,7 @@ export function UISelect({
               !borderless && "focus:ring-2 focus:ring-focus/50 focus:ring-offset-0 focus:ring-offset-bg",
               "focus:outline-none focus-visible:outline-none",
               sizeClasses.container,
+              radiusClassName,
               sizeClasses.text,
               disabled && "cursor-not-allowed opacity-60",
               borderless
@@ -486,7 +503,8 @@ export function UISelect({
           role="listbox"
           aria-label={ariaLabel}
           className={cx(
-            "scrollbar-macos flex min-w-44 max-h-[min(24rem,calc(100vh-2rem))] flex-col gap-[2px] overflow-y-auto rounded-xl bg-surface shadow-[0_10px_30px_rgba(0,0,0,0.12)]",
+            "scrollbar-macos flex min-w-44 max-h-[min(24rem,calc(100vh-2rem))] flex-col gap-[2px] overflow-y-auto bg-surface shadow-[0_10px_30px_rgba(0,0,0,0.12)]",
+            radiusClassName,
             !borderless && "border border-neutral-line",
             sizeClasses.listPadding
           )}
@@ -559,9 +577,10 @@ export function UISelect({
                 }}
                 placeholder={searchPlaceholder}
                 className={cx(
-                  "w-full rounded-lg border border-neutral-line bg-surface px-2 text-text-main outline-none placeholder:text-text-placeholder",
+                  "w-full border border-neutral-line bg-surface px-2 text-text-main outline-none placeholder:text-text-placeholder",
                   "focus:ring-2 focus:ring-focus/50 focus:ring-offset-0 focus:ring-offset-surface",
-                  sizeClasses.searchInput
+                  sizeClasses.searchInput,
+                  radiusClassName
                 )}
                 onKeyDown={(event) => {
                   if (event.key === "ArrowDown") {
@@ -616,6 +635,7 @@ export function UISelect({
                 className={cx(
                   "flex w-full items-center text-left transition outline-none",
                   sizeClasses.option,
+                  radiusClassName,
                   "focus:ring-2 focus:ring-focus/50 focus:ring-offset-0 focus:ring-offset-surface",
                   option.disabled
                     ? "cursor-not-allowed text-text-placeholder opacity-60"

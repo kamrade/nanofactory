@@ -8,7 +8,12 @@ import { UITextInput } from "@/components/ui/text-input";
 
 import type { UiSize } from "./types";
 
-export function InputsTextInputCard({ uiSize }: { uiSize: UiSize }) {
+type InputsTextInputCardProps = {
+  uiSize: UiSize;
+  borderRadius: "none" | "md" | "lg";
+};
+
+export function InputsTextInputCard({ uiSize, borderRadius }: InputsTextInputCardProps) {
   const [searchValue, setSearchValue] = useState("");
   const [emailValue, setEmailValue] = useState("john@");
   const [passwordValue, setPasswordValue] = useState("");
@@ -20,6 +25,7 @@ export function InputsTextInputCard({ uiSize }: { uiSize: UiSize }) {
         <div className="max-w-xl">
           <UITextInput
             size={uiSize}
+            borderRadius={borderRadius}
             type="search"
             placeholder="Search components..."
             value={searchValue}
@@ -34,6 +40,7 @@ export function InputsTextInputCard({ uiSize }: { uiSize: UiSize }) {
         <div className="max-w-xl">
           <UITextInput
             size={uiSize}
+            borderRadius={borderRadius}
             placeholder="Borderless input"
             defaultValue="Borderless example"
             borderless
@@ -43,6 +50,7 @@ export function InputsTextInputCard({ uiSize }: { uiSize: UiSize }) {
         <div className="max-w-xl">
           <UITextInput
             size={uiSize}
+            borderRadius={borderRadius}
             type="email"
             value={emailValue}
             onValueChange={setEmailValue}
@@ -58,6 +66,7 @@ export function InputsTextInputCard({ uiSize }: { uiSize: UiSize }) {
         <div className="max-w-xl">
           <UITextInput
             size={uiSize}
+            borderRadius={borderRadius}
             type="password"
             value={passwordValue}
             onValueChange={setPasswordValue}
@@ -69,9 +78,9 @@ export function InputsTextInputCard({ uiSize }: { uiSize: UiSize }) {
         </div>
 
         <div className="grid max-w-xl gap-3">
-          <UITextInput size={uiSize} value="Loading state" readOnly loading />
-          <UITextInput size={uiSize} value="Read-only state" readOnly />
-          <UITextInput size={uiSize} value="Disabled state" disabled />
+          <UITextInput size={uiSize} borderRadius={borderRadius} value="Loading state" readOnly loading />
+          <UITextInput size={uiSize} borderRadius={borderRadius} value="Read-only state" readOnly />
+          <UITextInput size={uiSize} borderRadius={borderRadius} value="Disabled state" disabled />
         </div>
 
         <p className="text-sm text-text-muted">Keyboard event: {keyboardEventLog}</p>

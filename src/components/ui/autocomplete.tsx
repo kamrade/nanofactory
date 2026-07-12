@@ -7,6 +7,7 @@ import { cx } from "@/lib/cn";
 
 
 type UIAutocompleteSize = "sm" | "md" | "lg";
+type UIAutocompleteBorderRadius = "none" | "md" | "lg";
 type ValidationState = "default" | "error" | "success";
 
 export type UIAutocompleteItem = {
@@ -32,6 +33,7 @@ export type UIAutocompleteProps = {
   validationState?: ValidationState;
   borderless?: boolean;
   size?: UIAutocompleteSize;
+  borderRadius?: UIAutocompleteBorderRadius;
   emptyLabel?: ReactNode;
   ariaLabel?: string;
   className?: string;
@@ -88,6 +90,7 @@ export function UIAutocomplete({
   validationState = "default",
   borderless = false,
   size = "lg",
+  borderRadius = "lg",
   emptyLabel = "No results",
   ariaLabel = "Autocomplete",
   className,
@@ -116,25 +119,39 @@ export function UIAutocomplete({
   const sizeClasses =
     size === "sm"
       ? {
-          container: "h-7 rounded-lg px-2",
-          borderlessContainer: "h-7 rounded-lg",
+          container: "h-7 px-2",
+          borderlessContainer: "h-7",
           icon: "h-3.5 w-3.5",
           clear: "h-5 w-5",
-          input: "text-sm",
+          input: "text-sm leading-5",
           listPadding: "p-1",
-          option: "px-2 py-1.5 text-sm",
+          option: "min-h-7 px-2 py-1 text-sm leading-5",
           gap: "gap-1.5",
         }
-      : {
-          container: "h-10 rounded-xl px-3",
-          borderlessContainer: "h-10 rounded-xl",
-          icon: "h-4 w-4",
-          clear: "h-6 w-6",
-          input: "text-sm",
-          listPadding: "p-1",
-          option: "px-3 py-2 text-sm",
-          gap: "gap-2",
-        };
+      : size === "md"
+        ? {
+            container: "h-10 px-3",
+            borderlessContainer: "h-10",
+            icon: "h-4 w-4",
+            clear: "h-6 w-6",
+            input: "text-sm leading-5",
+            listPadding: "p-1",
+            option: "min-h-10 px-3 py-2 text-sm leading-5",
+            gap: "gap-2",
+          }
+        : {
+            container: "h-14 px-4",
+            borderlessContainer: "h-14",
+            icon: "h-4 w-4",
+            clear: "h-7 w-7",
+            input: "text-base leading-6",
+            listPadding: "p-1",
+            option: "min-h-14 px-4 py-3 text-base leading-6",
+            gap: "gap-2",
+          };
+
+  const radiusClassName =
+    borderRadius === "none" ? "rounded-none" : borderRadius === "md" ? "rounded-lg" : "rounded-xl";
 
   function commitValue(nextValue: string) {
     if (!isControlled) {
@@ -174,6 +191,7 @@ export function UIAutocomplete({
             className={cx(
               "flex w-full items-center outline-none transition",
               borderless ? sizeClasses.borderlessContainer : sizeClasses.container,
+              radiusClassName,
               sizeClasses.gap,
               !borderless && "border",
               !borderless && "focus-within:ring-2 focus-within:ring-focus/50 focus-within:ring-offset-0",
@@ -362,7 +380,8 @@ export function UIAutocomplete({
           role="listbox"
           aria-label={ariaLabel}
           className={cx(
-            "flex min-w-44 flex-col gap-0.5 rounded-xl border border-line bg-surface shadow-[0_10px_30px_rgba(0,0,0,0.12)]",
+            "flex min-w-44 flex-col gap-0.5 border border-line bg-surface shadow-[0_10px_30px_rgba(0,0,0,0.12)]",
+            radiusClassName,
             sizeClasses.listPadding
           )}
         >
@@ -388,7 +407,8 @@ export function UIAutocomplete({
                 onMouseDown={(event) => event.preventDefault()}
                 onClick={() => handleSelect(item)}
                 className={cx(
-                  "flex w-full items-center rounded-lg text-left transition outline-none",
+                  "flex w-full items-center text-left transition outline-none",
+                  radiusClassName,
                   sizeClasses.option,
                   item.disabled
                     ? "cursor-not-allowed text-text-placeholder opacity-60"

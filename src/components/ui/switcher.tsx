@@ -2,12 +2,35 @@ import type { ButtonHTMLAttributes, ReactNode } from "react";
 import { cx } from "@/lib/cn";
 
 
+export type UISwitcherSize = "sm" | "md" | "lg";
+
 export type UISwitcherProps = Omit<ButtonHTMLAttributes<HTMLButtonElement>, "onChange" | "children"> & {
   checked: boolean;
   onCheckedChange?: (checked: boolean) => void;
   label?: ReactNode;
-  size?: "sm" | "md" | "lg";
+  size?: UISwitcherSize;
 };
+
+const sizeClasses = {
+  sm: {
+    track: "h-4 w-7 p-[2px]",
+    thumb: "h-3 w-3",
+    thumbChecked: "translate-x-3",
+    label: "text-sm leading-5",
+  },
+  md: {
+    track: "h-5 w-9 p-[2px]",
+    thumb: "h-3.5 w-3.5",
+    thumbChecked: "translate-x-4",
+    label: "text-sm leading-5",
+  },
+  lg: {
+    track: "h-6 w-10 p-[3px]",
+    thumb: "h-4 w-4",
+    thumbChecked: "translate-x-4",
+    label: "text-base leading-6",
+  },
+} as const;
 
 export function UISwitcher({
   checked,
@@ -41,9 +64,9 @@ export function UISwitcher({
     >
       <span
         className={cx(
-          "inline-flex shrink-0 items-center rounded-full border p-[3px] transition",
+          "inline-flex shrink-0 items-center rounded-full border transition",
           "focus-visible:ring-2 focus-visible:ring-focus focus-visible:ring-offset-0 focus-visible:ring-offset-bg",
-          size === "sm" ? "h-[18px] w-[28px]" : "h-[22px] w-[36px]",
+          sizeClasses[size].track,
           checked ? "border-transparent bg-primary-100" : "border-neutral-line bg-surface"
         )}
         aria-hidden
@@ -51,13 +74,13 @@ export function UISwitcher({
         <span
           className={cx(
             "rounded-full transition-transform",
-            size === "sm" ? "h-3 w-3" : "h-4 w-4",
+            sizeClasses[size].thumb,
             checked ? "bg-text-inverted-main" : "bg-text-main",
-            checked && (size === "sm" ? "translate-x-2" : "translate-x-3")
+            checked && sizeClasses[size].thumbChecked
           )}
         />
       </span>
-      {label ? <span className="text-sm">{label}</span> : null}
+      {label ? <span className={sizeClasses[size].label}>{label}</span> : null}
     </button>
   );
 }

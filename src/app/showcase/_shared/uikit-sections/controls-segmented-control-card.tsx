@@ -7,27 +7,26 @@ import { UISegmentedControl } from "@/components/ui/segmented-control";
 
 import type { UiSize } from "./types";
 
-export function ControlsSegmentedControlCard({ uiSize }: { uiSize: UiSize }) {
+export function ControlsSegmentedControlCard({
+  uiSize,
+  borderRadius = "lg",
+}: {
+  uiSize: UiSize;
+  borderRadius?: "none" | "md" | "lg";
+}) {
   const [segmentedValue, setSegmentedValue] = useState<"light" | "dark">("light");
 
   return (
     <UICard title="Segmented Control">
       <div className="grid gap-4">
+        <p className="text-sm text-text-muted">
+          Size follows the shared showcase setting. Border radius follows the shared showcase setting.
+        </p>
         <div className="flex flex-wrap items-center gap-4">
-          <p className="w-10 text-sm text-text-muted">sm</p>
           <UISegmentedControl
-            ariaLabel="Mode small"
-            size="sm"
-            value={segmentedValue}
-            onValueChange={setSegmentedValue}
-            options={[{ value: "light", label: "Light" }, { value: "dark", label: "Dark" }]}
-          />
-        </div>
-        <div className="flex flex-wrap items-center gap-4">
-          <p className="w-10 text-sm text-text-muted">lg</p>
-          <UISegmentedControl
-            ariaLabel="Mode large"
-            size="lg"
+            ariaLabel="Mode"
+            size={uiSize}
+            borderRadius={borderRadius}
             value={segmentedValue}
             onValueChange={setSegmentedValue}
             options={[{ value: "light", label: "Light" }, { value: "dark", label: "Dark" }]}

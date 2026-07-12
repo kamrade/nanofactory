@@ -7,19 +7,18 @@ export type UIMenuRadiusStyle = CSSProperties & {
   "--menu-item-radius": string;
 };
 
+const menuRadiusValueMap: Record<UIMenuBorderRadius, string> = {
+  none: "0px",
+  md: "0.5rem",
+  lg: "0.75rem",
+};
+
 export function resolveMenuBorderRadiusValue(borderRadius: UIMenuBorderRadius): string {
-  switch (borderRadius) {
-    case "none":
-      return "0px";
-    case "md":
-      return "0.5rem";
-    case "lg":
-      return "0.75rem";
-  }
+  return menuRadiusValueMap[borderRadius];
 }
 
 export const menuRadiusStyles: Record<UIMenuBorderRadius, UIMenuRadiusStyle> = {
-  none: { "--menu-radius": "0px", "--menu-item-radius": "0px" },
-  md: { "--menu-radius": "0.5rem", "--menu-item-radius": "0.5rem" },
-  lg: { "--menu-radius": "0.75rem", "--menu-item-radius": "0.75rem" },
+  none: { "--menu-radius": menuRadiusValueMap.none, "--menu-item-radius": menuRadiusValueMap.none },
+  md: { "--menu-radius": menuRadiusValueMap.md, "--menu-item-radius": menuRadiusValueMap.md },
+  lg: { "--menu-radius": menuRadiusValueMap.lg, "--menu-item-radius": menuRadiusValueMap.lg },
 };
