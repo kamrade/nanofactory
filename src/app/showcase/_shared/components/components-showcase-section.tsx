@@ -9,6 +9,7 @@ import { ToastCard } from "@/app/showcase/_shared/components/toast-card";
 import { ShowcaseSidebar } from "@/app/showcase/_shared/showcase-sidebar";
 import { AutocompleteCard } from "@/app/showcase/_shared/components/autocomplete-card";
 import { AccordionCard } from "@/app/showcase/_shared/uikit-sections/accordion-card";
+import { DropdownCard } from "@/app/showcase/_shared/components/dropdown-card";
 import { TypographyButtonsCard } from "@/app/showcase/_shared/uikit-sections/typography-buttons-card";
 import { TypographyBadgesCard } from "@/app/showcase/_shared/uikit-sections/typography-badges-card";
 import { ControlsCheckboxCard } from "@/app/showcase/_shared/uikit-sections/controls-checkbox-card";
@@ -61,6 +62,8 @@ export function ComponentsShowcaseSection({
         return <ControlsSegmentedControlCard uiSize={uiSize} borderRadius={borderRadius} />;
       case "controls-accordion":
         return <AccordionCard uiSize={uiSize} />;
+      case "controls-dropdown":
+        return <DropdownCard uiSize={uiSize} borderRadius={borderRadius} />;
       case "inputs-text-input":
         return <InputsTextInputCard uiSize={uiSize} borderRadius={borderRadius} />;
       case "inputs-select":

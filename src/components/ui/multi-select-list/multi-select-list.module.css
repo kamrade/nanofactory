@@ -94,6 +94,10 @@
   border: 1px solid var(--line);
 }
 
+.listBorderless {
+  border: 0;
+}
+
 .listInvalid {
   border: 1px solid var(--danger-line);
   background: var(--danger-100);

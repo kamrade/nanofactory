@@ -7,6 +7,7 @@ export const COMPONENTS_SECTION_PAGE_KEYS = [
   "controls-switcher",
   "controls-segmented-control",
   "controls-accordion",
+  "controls-dropdown",
   "inputs-text-input",
   "inputs-select",
   "inputs-slider",
@@ -31,6 +32,7 @@ export const componentsSectionPageNavItems = [
   { id: "controls-switcher", label: "Switcher", href: "/showcase/components/controls-switcher" },
   { id: "controls-segmented-control", label: "Segmented Control", href: "/showcase/components/controls-segmented-control" },
   { id: "controls-accordion", label: "Accordion", href: "/showcase/components/controls-accordion" },
+  { id: "controls-dropdown", label: "Dropdown", href: "/showcase/components/controls-dropdown" },
   { id: "inputs-text-input", label: "Text Input", href: "/showcase/components/inputs-text-input" },
   { id: "inputs-select", label: "Select", href: "/showcase/components/inputs-select" },
   { id: "inputs-slider", label: "Slider", href: "/showcase/components/inputs-slider" },
@@ -70,6 +72,8 @@ export function getComponentsSectionPageTitle(section: ComponentsSectionPageKey)
       return "Segmented Control";
     case "controls-accordion":
       return "Accordion";
+    case "controls-dropdown":
+      return "Dropdown";
     case "inputs-text-input":
       return "Text Input";
     case "inputs-select":

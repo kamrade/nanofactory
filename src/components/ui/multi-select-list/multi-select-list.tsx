@@ -28,6 +28,7 @@ export type UIMultiSelectListProps = {
   readOnly?: boolean;
   invalid?: boolean;
   validationState?: ValidationState;
+  borderless?: boolean;
   searchable?: boolean;
   searchPlaceholder?: string;
   emptyLabel?: ReactNode;
@@ -99,6 +100,7 @@ export function UIMultiSelectList({
   readOnly = false,
   invalid = false,
   validationState = "default",
+  borderless = false,
   searchable = false,
   searchPlaceholder = "Search...",
   emptyLabel = "No options",
@@ -214,7 +216,6 @@ export function UIMultiSelectList({
           type="text"
           data-size={size}
           data-border-radius={borderRadius}
-          data-borderless="false"
           data-invalid={isInvalid ? "true" : undefined}
           value={searchQuery}
           onChange={(event) => {
@@ -247,13 +248,13 @@ export function UIMultiSelectList({
         onKeyDown={handleKeyDown}
         data-size={size}
         data-border-radius={borderRadius}
-        data-borderless="false"
+        data-borderless={borderless ? "true" : "false"}
         data-invalid={isInvalid ? "true" : undefined}
         className={cx(
           styles.list,
           borderRadiusClassName[borderRadius],
           disabled && "cursor-not-allowed opacity-60",
-          isInvalid ? styles.listInvalid : isSuccess ? styles.listSuccess : styles.listDefault,
+          borderless ? styles.listBorderless : isInvalid ? styles.listInvalid : isSuccess ? styles.listSuccess : styles.listDefault,
           className
         )}
       >

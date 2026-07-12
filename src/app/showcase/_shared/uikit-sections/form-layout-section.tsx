@@ -57,7 +57,13 @@ function FormRow({ label, labelId, htmlFor, onLabelClick, error, children }: For
   );
 }
 
-export function FormLayoutSection({ uiSize }: { uiSize: UiSize }) {
+export function FormLayoutSection({
+  uiSize,
+  borderRadius,
+}: {
+  uiSize: UiSize;
+  borderRadius: "none" | "md" | "lg";
+}) {
   const selectContainerRef = useRef<HTMLDivElement | null>(null);
   const multiSelectContainerRef = useRef<HTMLDivElement | null>(null);
   const segmentedContainerRef = useRef<HTMLDivElement | null>(null);
@@ -118,6 +124,7 @@ export function FormLayoutSection({ uiSize }: { uiSize: UiSize }) {
               <div ref={selectContainerRef}>
                 <UISelect
                   size={uiSize}
+                  borderRadius={borderRadius}
                   value={selectValue}
                   onValueChange={setSelectValue}
                   invalid={showErrors && !!frameworkError}
@@ -142,6 +149,7 @@ export function FormLayoutSection({ uiSize }: { uiSize: UiSize }) {
               <UIAutocomplete
                 id="framework-search-field"
                 size={uiSize}
+                borderRadius={borderRadius}
                 value={autocompleteValue}
                 onValueChange={setAutocompleteValue}
                 onSelect={(item) => setAutocompleteSelection(item.value)}
@@ -166,6 +174,7 @@ export function FormLayoutSection({ uiSize }: { uiSize: UiSize }) {
               <div ref={multiSelectContainerRef}>
                 <UIMultiSelect
                   size={uiSize}
+                  borderRadius={borderRadius}
                   value={multiSelectValue}
                   onValueChange={setMultiSelectValue}
                   searchable
@@ -192,6 +201,7 @@ export function FormLayoutSection({ uiSize }: { uiSize: UiSize }) {
               <UITextInput
                 id="project-name-field"
                 size={uiSize}
+                borderRadius={borderRadius}
                 value={nameValue}
                 onValueChange={setNameValue}
                 invalid={showErrors && !!projectNameError}
@@ -208,6 +218,7 @@ export function FormLayoutSection({ uiSize }: { uiSize: UiSize }) {
             >
               <UICheckbox
                 size={uiSize}
+                borderRadius={borderRadius}
                 id="published-field"
                 checked={isPublished}
                 onChange={(event) => setIsPublished(event.currentTarget.checked)}
@@ -241,6 +252,7 @@ export function FormLayoutSection({ uiSize }: { uiSize: UiSize }) {
                 <UISegmentedControl
                   ariaLabel="Appearance"
                   size={uiSize}
+                  borderRadius={borderRadius}
                   value={appearance}
                   onValueChange={setAppearance}
                   options={[
@@ -261,7 +273,7 @@ export function FormLayoutSection({ uiSize }: { uiSize: UiSize }) {
       </UikitSectionAnchor>
 
       <UIDialog open={isResultOpen} onOpenChange={setIsResultOpen}>
-        <UIDialogContent className="max-w-xl" ariaLabel="Submitted form data">
+        <UIDialogContent className="max-w-xl" borderRadius={borderRadius} ariaLabel="Submitted form data">
           <UIDialogHeader>
             <UIDialogTitle>Form submitted</UIDialogTitle>
             <UIDialogDescription>All required fields are valid.</UIDialogDescription>

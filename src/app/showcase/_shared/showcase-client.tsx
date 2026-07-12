@@ -263,6 +263,7 @@ export function ShowcaseClient({
         <LayoutsShowcaseSection
           activeSection={activeLayoutSection}
           uiSize={uiSize}
+          borderRadius={borderRadius}
           linkSearchParams={showcaseSearchParams}
           topContent={sidebarControls}
         />

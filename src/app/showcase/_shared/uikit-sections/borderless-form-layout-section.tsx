@@ -25,7 +25,13 @@ import { UIMultiSelect } from "@/components/ui/multi-select";
 import { UikitSectionAnchor } from "./section-anchor";
 import type { UiSize } from "./types";
 
-export function BorderlessFormLayoutSection({ uiSize }: { uiSize: UiSize }) {
+export function BorderlessFormLayoutSection({
+  uiSize,
+  borderRadius,
+}: {
+  uiSize: UiSize;
+  borderRadius: "none" | "md" | "lg";
+}) {
   const selectContainerRef = useRef<HTMLDivElement | null>(null);
   const autocompleteContainerRef = useRef<HTMLDivElement | null>(null);
   const multiSelectContainerRef = useRef<HTMLDivElement | null>(null);
@@ -88,6 +94,7 @@ export function BorderlessFormLayoutSection({ uiSize }: { uiSize: UiSize }) {
               <div ref={selectContainerRef}>
                 <UISelect
                   size={uiSize}
+                  borderRadius={borderRadius}
                   value={selectValue}
                   onValueChange={setSelectValue}
                   invalid={showErrors && !!frameworkError}
@@ -115,6 +122,7 @@ export function BorderlessFormLayoutSection({ uiSize }: { uiSize: UiSize }) {
               <div ref={autocompleteContainerRef}>
                 <UIAutocomplete
                   size={uiSize}
+                  borderRadius={borderRadius}
                   value={autocompleteValue}
                   onValueChange={setAutocompleteValue}
                   onSelect={(item) => setAutocompleteSelection(item.value)}
@@ -144,6 +152,7 @@ export function BorderlessFormLayoutSection({ uiSize }: { uiSize: UiSize }) {
               <div ref={multiSelectContainerRef}>
                 <UIMultiSelect
                   size={uiSize}
+                  borderRadius={borderRadius}
                   value={multiSelectValue}
                   onValueChange={setMultiSelectValue}
                   borderless
@@ -193,6 +202,7 @@ export function BorderlessFormLayoutSection({ uiSize }: { uiSize: UiSize }) {
               <UITextInput
                 id="project-name-field-borderless"
                 size={uiSize}
+                borderRadius={borderRadius}
                 value={nameValue}
                 onValueChange={setNameValue}
                 invalid={showErrors && !!projectNameError}
@@ -212,6 +222,7 @@ export function BorderlessFormLayoutSection({ uiSize }: { uiSize: UiSize }) {
             >
               <UICheckbox
                 size={uiSize}
+                borderRadius={borderRadius}
                 id="published-field-borderless"
                 checked={isPublished}
                 onChange={(event) => setIsPublished(event.currentTarget.checked)}
@@ -249,6 +260,7 @@ export function BorderlessFormLayoutSection({ uiSize }: { uiSize: UiSize }) {
                 <UISegmentedControl
                   ariaLabel="Appearance"
                   size={uiSize}
+                  borderRadius={borderRadius}
                   value={appearance}
                   onValueChange={setAppearance}
                   borderless
@@ -270,7 +282,7 @@ export function BorderlessFormLayoutSection({ uiSize }: { uiSize: UiSize }) {
       </UikitSectionAnchor>
 
       <UIDialog open={isResultOpen} onOpenChange={setIsResultOpen}>
-        <UIDialogContent className="max-w-xl" ariaLabel="Submitted form data">
+        <UIDialogContent className="max-w-xl" borderRadius={borderRadius} ariaLabel="Submitted form data">
           <UIDialogHeader>
             <UIDialogTitle>Form submitted</UIDialogTitle>
             <UIDialogDescription>All required fields are valid.</UIDialogDescription>

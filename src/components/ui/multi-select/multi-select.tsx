@@ -228,13 +228,12 @@ export function UIMultiSelect({
           readOnly={readOnly}
           invalid={invalid}
           validationState={validationState}
+          borderless
           searchable={searchable}
           searchPlaceholder={searchPlaceholder}
           emptyLabel={emptyLabel}
           name={name}
           borderRadius={borderRadius}
-          data-borderless={borderless ? "true" : undefined}
-          data-invalid={isInvalid ? "true" : undefined}
           className={cx("bg-surface p-1 shadow-[0_10px_30px_rgba(0,0,0,0.12)]", radiusClassName[borderRadius])}
         />
       </UIDropdown>

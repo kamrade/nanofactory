@@ -9,6 +9,7 @@ export const componentsSectionNavItems: UikitSectionNavItem[] = [
   { id: "controls-switcher", label: "Switcher", href: "/showcase/components/controls-switcher" },
   { id: "controls-segmented-control", label: "Segmented Control", href: "/showcase/components/controls-segmented-control" },
   { id: "controls-accordion", label: "Accordion", href: "/showcase/components/controls-accordion" },
+  { id: "controls-dropdown", label: "Dropdown", href: "/showcase/components/controls-dropdown" },
   { id: "inputs-text-input", label: "Text Input", href: "/showcase/components/inputs-text-input" },
   { id: "inputs-select", label: "Select", href: "/showcase/components/inputs-select" },
   { id: "inputs-slider", label: "Slider", href: "/showcase/components/inputs-slider" },

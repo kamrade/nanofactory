@@ -13,6 +13,7 @@ import type { LayoutsSectionPageKey } from "./section-pages";
 type LayoutsShowcaseSectionProps = {
   activeSection: LayoutsSectionPageKey;
   uiSize: UiSize;
+  borderRadius: "none" | "md" | "lg";
   linkSearchParams?: URLSearchParams;
   topContent?: ReactNode;
 };
@@ -20,15 +21,16 @@ type LayoutsShowcaseSectionProps = {
 export function LayoutsShowcaseSection({
   activeSection,
   uiSize,
+  borderRadius,
   linkSearchParams,
   topContent,
 }: LayoutsShowcaseSectionProps) {
   const content = (() => {
     switch (activeSection) {
       case "form-layout":
-        return <FormLayoutSection uiSize={uiSize} />;
+        return <FormLayoutSection uiSize={uiSize} borderRadius={borderRadius} />;
       case "form-layout-borderless-inputs":
-        return <BorderlessFormLayoutSection uiSize={uiSize} />;
+        return <BorderlessFormLayoutSection uiSize={uiSize} borderRadius={borderRadius} />;
       default:
         return null;
     }
