@@ -23,12 +23,12 @@ export function resolveMenuBorderRadiusValue(borderRadius: UIMenuBorderRadius): 
   return menuRadiusValueMap[borderRadius];
 }
 
-export const menuRadiusStyles: Record<UIMenuBorderRadius, UIMenuRadiusStyle> = {
-  none: { "--menu-radius": menuRadiusValueMap.none, "--menu-item-radius": menuRadiusValueMap.none },
-  md: { "--menu-radius": menuRadiusValueMap.md, "--menu-item-radius": menuRadiusValueMap.md },
-  lg: { "--menu-radius": menuRadiusValueMap.lg, "--menu-item-radius": menuRadiusValueMap.lg },
-};
-
 export function resolveMenuBorderItemRadiusValue(borderRadius: UIMenuBorderRadius): string {
   return menuItemRadiusValueMap[borderRadius];
 }
+
+export const menuRadiusStyles: Record<UIMenuBorderRadius, UIMenuRadiusStyle> = {
+  none: { "--menu-radius": menuRadiusValueMap.none, "--menu-item-radius": menuItemRadiusValueMap.none },
+  md: { "--menu-radius": menuRadiusValueMap.md, "--menu-item-radius": menuItemRadiusValueMap.md },
+  lg: { "--menu-radius": menuRadiusValueMap.lg, "--menu-item-radius": menuItemRadiusValueMap.lg },
+};
