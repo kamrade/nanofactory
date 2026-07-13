@@ -130,7 +130,7 @@ export function MenuCard({ uiSize, borderRadius }: { uiSize: UiSize; borderRadiu
           <p className="text-sm text-text-muted">Dropdown manual action: {manualMenuAction}</p>
         </div>
 
-        <UIDivider spacing="sm" />
+        <UIDivider stripped spacing="sm" />
 
         <div className="grid gap-3">
           <p className="text-sm font-medium text-text-muted">Inline Menu List (without Dropdown)</p>

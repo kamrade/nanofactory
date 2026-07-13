@@ -1,29 +1,15 @@
 "use client";
 
-import {
-  createContext,
-  useEffect,
-  useId,
-  useRef,
-  useContext,
-  useState,
-  type KeyboardEvent,
-  type MouseEvent,
-  type ReactElement,
-  type ReactNode,
-} from "react";
+import { useEffect, useRef, useState, type KeyboardEvent, type ReactElement, type ReactNode } from "react";
 import type { Placement } from "@floating-ui/react";
 
 import { UIDropdown } from "@/components/ui/dropdown";
 import { cx } from "@/lib/cn";
 
-import {
-  menuRadiusStyles,
-  resolveMenuBorderRadiusValue,
-  type UIMenuBorderRadius,
-} from "./menu-radius";
-import { UIMenuList, type UIMenuItem as UIMenuDataItem } from "./menu-list";
-import { UIMenuItemSizeClassName, type UIMenuSize } from "./menu-size";
+import { MenuContext } from "./menu-context";
+import { UIMenuList, type UIMenuItem as UIMenuDataItem } from "./list";
+import { menuRadiusStyles, resolveMenuBorderRadiusValue, type UIMenuBorderRadius } from "./menu-radius";
+import type { UIMenuSize } from "./menu-size";
 import styles from "./menu.module.css";
 
 export type { UIMenuDataItem };
@@ -57,133 +43,6 @@ export type UIMenuProps = UIMenuItemsProps | UIMenuChildrenProps;
 
 function isItemsProps(props: UIMenuProps): props is UIMenuItemsProps {
   return "items" in props;
-}
-
-type MenuContextValue = {
-  requestClose: () => void;
-  activeItemId: string | null;
-  setActiveItemId: (id: string | null) => void;
-  size: UIMenuSize;
-  borderRadius: UIMenuBorderRadius;
-};
-
-const MenuContext = createContext<MenuContextValue>({
-  requestClose: () => undefined,
-  activeItemId: null,
-  setActiveItemId: () => undefined,
-  size: "lg",
-  borderRadius: "lg",
-});
-
-type UIMenuItemButtonProps = {
-  children: ReactNode;
-  icon?: ReactNode;
-  textValue?: string;
-  tone?: "default" | "danger";
-  size?: UIMenuSize;
-  borderRadius?: UIMenuBorderRadius;
-  disabled?: boolean;
-  closeOnSelect?: boolean;
-  className?: string;
-  onSelect?: () => void;
-};
-
-export function UIMenuItem({
-  children,
-  icon,
-  textValue,
-  tone = "default",
-  size,
-  borderRadius,
-  disabled,
-  closeOnSelect = true,
-  className,
-  onSelect,
-}: UIMenuItemButtonProps) {
-  const id = useId();
-  const {
-    requestClose,
-    activeItemId,
-    setActiveItemId,
-    size: contextSize,
-    borderRadius: contextBorderRadius,
-  } = useContext(MenuContext);
-  const resolvedSize = size ?? contextSize;
-  const resolvedBorderRadius = borderRadius ?? contextBorderRadius;
-  const sizeClasses = UIMenuItemSizeClassName[resolvedSize];
-
-  function handleClick(event: MouseEvent<HTMLButtonElement>) {
-    if (disabled) {
-      event.preventDefault();
-      return;
-    }
-
-    onSelect?.();
-    if (closeOnSelect) {
-      requestClose();
-    }
-  }
-
-  const menuText = textValue ?? (typeof children === "string" ? children : "");
-
-  return (
-    <button
-      data-component="UIMenuItem"
-      type="button"
-      role="menuitem"
-      data-menu-item="true"
-      data-menu-item-id={id}
-      data-menu-text={menuText}
-      data-size={resolvedSize}
-      data-tone={tone}
-      disabled={disabled}
-      tabIndex={activeItemId ? (activeItemId === id ? 0 : -1) : 0}
-      onFocus={() => setActiveItemId(id)}
-      onMouseEnter={() => {
-        if (!disabled) {
-          setActiveItemId(id);
-        }
-      }}
-      onClick={handleClick}
-      style={{ borderRadius: resolveMenuBorderRadiusValue(resolvedBorderRadius) }}
-      className={cx(
-        styles.item,
-        sizeClasses.item,
-        disabled ? styles.itemDisabled : tone === "danger" ? styles.toneDanger : styles.toneDefault,
-        className
-      )}
-    >
-      {icon ? (
-        <span className={cx(styles.icon, sizeClasses.icon)} aria-hidden>
-          {icon}
-        </span>
-      ) : null}
-      {children}
-    </button>
-  );
-}
-
-export function UIMenuSeparator({ className }: { className?: string }) {
-  return <div role="separator" className={cx(styles.separator, className)} />;
-}
-
-export function UIMenuLabel({
-  children,
-  size,
-  className,
-}: {
-  children: ReactNode;
-  size?: UIMenuSize;
-  className?: string;
-}) {
-  const { size: contextSize } = useContext(MenuContext);
-  const resolvedSize = size ?? contextSize;
-  const sizeClasses = UIMenuItemSizeClassName[resolvedSize];
-  return (
-    <div data-size={resolvedSize} className={cx(styles.label, sizeClasses.label, className)}>
-      {children}
-    </div>
-  );
 }
 
 export function UIMenu(allProps: UIMenuProps) {
@@ -320,15 +179,15 @@ export function UIMenu(allProps: UIMenuProps) {
     );
   } else {
     menuContent = (
-        <MenuContext.Provider
-          value={{
-            requestClose,
-            activeItemId: manualActiveItemId,
-            setActiveItemId: setManualActiveItemId,
-            size,
-            borderRadius,
-          }}
-        >
+      <MenuContext.Provider
+        value={{
+          requestClose,
+          activeItemId: manualActiveItemId,
+          setActiveItemId: setManualActiveItemId,
+          size,
+          borderRadius,
+        }}
+      >
         <div
           ref={manualContainerRef}
           role="menu"

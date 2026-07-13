@@ -1,0 +1,1 @@
+export { UIMenuLabel } from "./label";

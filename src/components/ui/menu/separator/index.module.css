@@ -1,0 +1,5 @@
+.separator {
+  margin-block: 0.25rem;
+  height: 1px;
+  background-color: var(--line);
+}

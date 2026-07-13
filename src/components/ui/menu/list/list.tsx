@@ -4,13 +4,10 @@ import { useRef, useState, type CSSProperties, type KeyboardEvent, type ReactNod
 
 import { cx } from "@/lib/cn";
 
-import {
-  menuRadiusStyles,
-  resolveMenuBorderRadiusValue,
-  type UIMenuBorderRadius,
-} from "./menu-radius";
-import { UIMenuItemSizeClassName, type UIMenuSize } from "./menu-size";
-import styles from "./menu.module.css";
+import { menuRadiusStyles, resolveMenuBorderRadiusValue, type UIMenuBorderRadius } from "../menu-radius";
+import type { UIMenuSize } from "../menu-size";
+import styles from "./index.module.css";
+import { MenuItemView } from "../item-view";
 
 export type UIMenuItem = {
   id: string;
@@ -53,7 +50,6 @@ export function UIMenuList({
   const itemRefs = useRef<Array<HTMLButtonElement | null>>([]);
   const typeaheadBuffer = useRef("");
   const typeaheadResetTimer = useRef<number | null>(null);
-  const sizeClasses = UIMenuItemSizeClassName[size];
 
   function setAndFocus(index: number) {
     setActiveIndex(index);
@@ -178,41 +174,30 @@ export function UIMenuList({
       }}
     >
       {items.map((item, index) => (
-        <button
+        <MenuItemView
+          data-element="UIMenuList--item"
           key={item.id}
           ref={(node) => {
             itemRefs.current[index] = node;
           }}
-          type="button"
           role="menuitem"
           data-size={size}
           data-tone={item.tone ?? "default"}
           tabIndex={activeIndex === index ? 0 : -1}
-          disabled={item.disabled}
           onMouseEnter={() => {
             if (!item.disabled) {
               setActiveIndex(index);
             }
           }}
           onClick={() => handleSelect(item)}
-          style={{ borderRadius: resolveMenuBorderRadiusValue(borderRadius) }}
-          className={cx(
-            styles.item,
-            sizeClasses.item,
-            item.disabled ? styles.itemDisabled : item.tone === "danger" ? styles.toneDanger : styles.toneDefault
-          )}
+          disabled={item.disabled}
+          size={size}
+          borderRadius={borderRadius}
+          tone={item.tone}
+          icon={item.icon}
         >
-          {item.icon ? (
-            <span
-              className={cx(styles.icon, sizeClasses.icon)}
-              data-size={size}
-              aria-hidden
-            >
-              {item.icon}
-            </span>
-          ) : null}
           {item.label}
-        </button>
+        </MenuItemView>
       ))}
     </div>
   );
