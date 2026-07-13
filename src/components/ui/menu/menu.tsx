@@ -128,6 +128,7 @@ export function UIMenuItem({
 
   return (
     <button
+      data-component="UIMenuItem"
       type="button"
       role="menuitem"
       data-menu-item="true"

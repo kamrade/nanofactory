@@ -165,6 +165,7 @@ export function UIMenuList({
 
   return (
     <div
+      data-component='UIMenuList'
       role="menu"
       aria-label={ariaLabel}
       data-border-radius={borderRadius}

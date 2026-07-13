@@ -78,10 +78,10 @@ This is a website/page builder with project-level editing, block-based content, 
   - publish status/buttons, mode containers, gallery counters, nav buttons.
 - Showcase refactor:
   - `showcase-client.tsx` slimmed down to composition.
-  - demo cards extracted: `src/app/showcase/demo-cards.tsx`
+  - demo cards extracted: `src/app/showcase/_shared/demo-cards.tsx`
   - showcase sections split into modular files:
-    - `src/app/showcase/uikit-sections/*`
-    - `src/app/showcase/animation-sections/*`
+    - `src/app/showcase/_shared/uikit-sections/*`
+    - `src/app/showcase/_shared/animation-sections/*`
 - Project settings `Actions` in `ProjectSettings` now apply immediately on selection (no `Apply` buttons):
   - `modePolicy`, `borderRadiusPolicy`, `spacingScale`, `surfaceStyle`, `headingFont`, and `theme` updates are triggered from client `onValueChange` via server actions.
   - files:
@@ -147,6 +147,13 @@ This is a website/page builder with project-level editing, block-based content, 
 - Gallery navigation UI extracted into shared `GalleryItemNav` component:
   - `src/app/p/[slug]/[galleryAnchor]/[itemAnchor]/gallery-item-nav.tsx`
   - Used by both `[itemAnchor]/page.tsx` and `[entryAnchor]/page.tsx`.
+- Showcase navigation and layout logic now lives in `_shared`:
+  - `src/app/showcase/_shared/showcase-client.tsx`
+  - `src/app/showcase/_shared/showcase-content.ts`
+  - `src/app/showcase/_shared/showcase-sidebar.tsx`
+  - `src/app/showcase/_shared/showcase-state.ts`
+  - `src/app/showcase/_shared/showcase-ui-state.ts`
+  - `src/app/showcase/_shared/showcase-url-state.ts`
 - Raw markdown in SEO metadata fixed:
   - Added `stripMarkdownForMeta()` in `src/lib/markdown/meta.ts`.
   - Applied in `[entryAnchor]/page.tsx` `generateMetadata`.
