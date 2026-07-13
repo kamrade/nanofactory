@@ -136,7 +136,7 @@ export function MenuCard({ uiSize, borderRadius }: { uiSize: UiSize; borderRadiu
           <p className="text-sm font-medium text-text-muted">Inline Menu List (without Dropdown)</p>
           <div className="max-w-56">
             <div
-              className="flex min-w-44 flex-col gap-[2px] border border-line bg-surface p-1"
+              className="flex min-w-44 flex-col gap-0.5 border border-line bg-surface p-1"
               role="menu"
               aria-label="Inline card actions"
               style={{

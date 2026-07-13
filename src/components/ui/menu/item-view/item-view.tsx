@@ -5,6 +5,7 @@ import { forwardRef, type ButtonHTMLAttributes, type ReactNode } from "react";
 import { cx } from "@/lib/cn";
 
 import { resolveMenuBorderRadiusValue, type UIMenuBorderRadius } from "../menu-radius";
+import { resolveMenuBorderItemRadiusValue } from "../menu-radius";
 import type { UIMenuSize } from "../menu-size";
 import styles from "./index.module.css";
 
@@ -47,7 +48,7 @@ export const MenuItemView = forwardRef<HTMLButtonElement, MenuItemViewProps>(fun
       ref={ref}
       type={type}
       disabled={disabled}
-      style={{ borderRadius: resolveMenuBorderRadiusValue(borderRadius) }}
+      style={{ borderRadius: resolveMenuBorderItemRadiusValue(borderRadius) }}
       className={cx(
         styles.item,
         resolvedSize.item,

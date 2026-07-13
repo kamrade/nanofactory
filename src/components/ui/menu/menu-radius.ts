@@ -13,6 +13,12 @@ const menuRadiusValueMap: Record<UIMenuBorderRadius, string> = {
   lg: "0.75rem",
 };
 
+const menuItemRadiusValueMap: Record<UIMenuBorderRadius, string> = {
+  none: "0px",
+  md: "0.375rem",
+  lg: "0.5rem",
+};
+
 export function resolveMenuBorderRadiusValue(borderRadius: UIMenuBorderRadius): string {
   return menuRadiusValueMap[borderRadius];
 }
@@ -22,3 +28,7 @@ export const menuRadiusStyles: Record<UIMenuBorderRadius, UIMenuRadiusStyle> = {
   md: { "--menu-radius": menuRadiusValueMap.md, "--menu-item-radius": menuRadiusValueMap.md },
   lg: { "--menu-radius": menuRadiusValueMap.lg, "--menu-item-radius": menuRadiusValueMap.lg },
 };
+
+export function resolveMenuBorderItemRadiusValue(borderRadius: UIMenuBorderRadius): string {
+  return menuItemRadiusValueMap[borderRadius];
+}
