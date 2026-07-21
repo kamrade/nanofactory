@@ -3,7 +3,7 @@ import { renderToStaticMarkup } from "react-dom/server";
 import { describe, expect, it } from "vitest";
 
 import { UIMenuItem, UIMenuLabel, UIMenuSeparator } from "@/components/ui/menu";
-import { UIMenuList } from "@/components/ui/menu/menu-list";
+import { UIMenuList } from "@/components/ui/menu/list";
 
 describe("UI menu components", () => {
   it("renders menu label and separator", () => {
@@ -98,6 +98,6 @@ describe("UI menu components", () => {
 
     expect(html).toContain('data-border-radius="lg"');
     expect(html).toContain("--menu-radius:0.75rem");
-    expect(html).toContain("--menu-item-radius:0.75rem");
+    expect(html).toContain("--menu-item-radius:0.5rem");
   });
 });

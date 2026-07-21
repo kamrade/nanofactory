@@ -12,6 +12,10 @@ export type UICheckboxProps = Omit<InputHTMLAttributes<HTMLInputElement>, "size"
   borderRadius?: UICheckboxBorderRadius;
 };
 
+export function resolveUICheckboxMarkChecked(checked: boolean | undefined): boolean | undefined {
+  return typeof checked === "boolean" ? checked : undefined;
+}
+
 const sizeClasses = {
   sm: {
     box: "h-4 w-4",
@@ -94,7 +98,7 @@ export function UICheckbox({
       <UICheckboxMark
         size={size}
         borderRadius={borderRadius}
-        checked={Boolean(props.checked ?? props.defaultChecked)}
+        checked={resolveUICheckboxMarkChecked(props.checked)}
         className="peer-focus-visible:ring-2 peer-focus-visible:ring-focus peer-focus-visible:ring-offset-0 peer-focus-visible:ring-offset-bg"
       />
       {label ? <span className={sizeClasses[size].label}>{label}</span> : null}

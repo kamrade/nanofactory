@@ -2,7 +2,7 @@ import { createElement } from "react";
 import { renderToStaticMarkup } from "react-dom/server";
 import { describe, expect, it } from "vitest";
 
-import { UICheckbox } from "@/components/ui/checkbox";
+import { UICheckbox, resolveUICheckboxMarkChecked } from "@/components/ui/checkbox";
 import { UISwitcher } from "@/components/ui/switcher";
 
 describe("UI form controls", () => {
@@ -27,6 +27,12 @@ describe("UI form controls", () => {
     expect(noneHtml).toContain("rounded-none");
     expect(mdHtml).toContain("rounded-[4px]");
     expect(lgHtml).toContain("rounded-[6px]");
+  });
+
+  it("resolves checkbox mark state only from controlled checked", () => {
+    expect(resolveUICheckboxMarkChecked(undefined)).toBeUndefined();
+    expect(resolveUICheckboxMarkChecked(false)).toBe(false);
+    expect(resolveUICheckboxMarkChecked(true)).toBe(true);
   });
 
   it("renders switcher sizes", () => {
