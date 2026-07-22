@@ -61,8 +61,8 @@
   outline: none;
 }
 
-.item:focus,
-.item:focus-visible {
+.itemFocusRing:focus,
+.itemFocusRing:focus-visible {
   box-shadow: 0 0 0 2px color-mix(in srgb, var(--focus) 50%, transparent);
   outline: none;
 }
@@ -90,11 +90,11 @@
 }
 
 .itemRadiusMd {
-  border-radius: 0.5rem;
+  border-radius: 0.25rem;
 }
 
 .itemRadiusLg {
-  border-radius: 0.75rem;
+  border-radius: 0.5rem;
 }
 
 .itemDisabled {

@@ -127,9 +127,7 @@ export function UISegmentedControl<T extends string>({
               styles.item,
               sizeClassName[size].item,
               itemRadiusClassName[borderRadius],
-              !borderless && "focus:ring-2 focus:ring-focus/50 focus:ring-offset-0 focus:ring-offset-bg",
-              !borderless &&
-                "focus-visible:ring-2 focus-visible:ring-focus/50 focus-visible:ring-offset-0 focus:ring-offset-bg",
+              !borderless && styles.itemFocusRing,
               option.disabled && styles.itemDisabled,
               active
                 ? borderless
